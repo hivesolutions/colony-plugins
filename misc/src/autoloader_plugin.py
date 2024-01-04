@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class AutoloaderPlugin(colony.Plugin):
     """
     The main class for the Autoloader plugin.
@@ -40,21 +41,14 @@ class AutoloaderPlugin(colony.Plugin):
     description = "Autoloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "main",
-        "autoload"
-    ]
-    main_modules = [
-        "autoloader_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["main", "autoload"]
+    main_modules = ["autoloader_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import autoloader_c
+
         self.system = autoloader_c.Autoloader(self)
         self.system.load_autoloader()
 

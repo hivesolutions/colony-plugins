@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceException(colony.ColonyException):
     """
     The service exception class.
@@ -38,6 +39,7 @@ class ServiceException(colony.ColonyException):
     message = None
     """ The exception's message """
 
+
 class ServiceRequestNotTranslatable(ServiceException):
     """
     The service request not translatable class.
@@ -45,12 +47,14 @@ class ServiceRequestNotTranslatable(ServiceException):
 
     pass
 
+
 class BadServiceRequest(ServiceException):
     """
     The bad service request class.
     """
 
     pass
+
 
 class InvalidNumberArguments(BadServiceRequest):
     """
@@ -78,6 +82,7 @@ class InvalidNumberArguments(BadServiceRequest):
 
         return "Invalid number of arguments - %s" % self.message
 
+
 class InvalidMethod(BadServiceRequest):
     """
     The invalid method class.
@@ -103,6 +108,7 @@ class InvalidMethod(BadServiceRequest):
         """
 
         return "Invalid Method - %s" % self.message
+
 
 class InvalidEncoder(BadServiceRequest):
     """
@@ -130,6 +136,7 @@ class InvalidEncoder(BadServiceRequest):
 
         return "Invalid Encoder - %s" % self.message
 
+
 class RESTRequestError(BadServiceRequest):
     """
     The REST request error class.
@@ -155,6 +162,7 @@ class RESTRequestError(BadServiceRequest):
         """
 
         return "REST Request Error - %s" % self.message
+
 
 class RESTRequestNotHandled(BadServiceRequest):
     """
@@ -182,6 +190,7 @@ class RESTRequestNotHandled(BadServiceRequest):
 
         return "REST Request Not handled - %s" % self.message
 
+
 class InvalidPath(BadServiceRequest):
     """
     The invalid path class.
@@ -208,6 +217,7 @@ class InvalidPath(BadServiceRequest):
 
         return "Invalid path - %s" % self.message
 
+
 class InvalidSession(ServiceException):
     """
     The invalid session class.
@@ -233,6 +243,7 @@ class InvalidSession(ServiceException):
         """
 
         return "Invalid session - %s" % self.message
+
 
 class InvalidCookie(ServiceException):
     """

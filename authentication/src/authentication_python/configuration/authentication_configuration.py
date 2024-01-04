@@ -29,12 +29,6 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 authentication_configuration = {
-    "admin" : {
-        "type" : "plain",
-        "password" : "admin"
-    },
-    "root" : {
-        "type" : "plain",
-        "password" : "root"
-    }
+    "admin": {"type": "plain", "password": "admin"},
+    "root": {"type": "plain", "password": "root"},
 }

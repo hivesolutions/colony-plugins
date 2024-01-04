@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceUtilsException(colony.ColonyException):
     """
     The service utils exception class.
@@ -37,6 +38,7 @@ class ServiceUtilsException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class SocketProviderNotFound(ServiceUtilsException):
     """
@@ -64,6 +66,7 @@ class SocketProviderNotFound(ServiceUtilsException):
 
         return "Socket provider not found - %s" % self.message
 
+
 class SocketUpgraderNotFound(ServiceUtilsException):
     """
     The socket upgrader not found class.
@@ -89,6 +92,7 @@ class SocketUpgraderNotFound(ServiceUtilsException):
         """
 
         return "Socket upgrader not found - %s" % self.message
+
 
 class ServerRequestTimeout(ServiceUtilsException):
     """
@@ -116,6 +120,7 @@ class ServerRequestTimeout(ServiceUtilsException):
 
         return "Server request timeout - %s" % self.message
 
+
 class ClientRequestTimeout(ServiceUtilsException):
     """
     The client request timeout class.
@@ -141,6 +146,7 @@ class ClientRequestTimeout(ServiceUtilsException):
         """
 
         return "Client request timeout - %s" % self.message
+
 
 class ServerResponseTimeout(ServiceUtilsException):
     """
@@ -168,6 +174,7 @@ class ServerResponseTimeout(ServiceUtilsException):
 
         return "Server response timeout - %s" % self.message
 
+
 class ClientResponseTimeout(ServiceUtilsException):
     """
     The client response timeout class.
@@ -193,6 +200,7 @@ class ClientResponseTimeout(ServiceUtilsException):
         """
 
         return "Client response timeout - %s" % self.message
+
 
 class RequestClosed(ServiceUtilsException):
     """
@@ -220,6 +228,7 @@ class RequestClosed(ServiceUtilsException):
 
         return "Request closed - %s" % self.message
 
+
 class PortStarvationReached(ServiceUtilsException):
     """
     The port starvation reached class.
@@ -245,6 +254,7 @@ class PortStarvationReached(ServiceUtilsException):
         """
 
         return "Port starvation reached - %s" % self.message
+
 
 class ConnectionChangeFailure(ServiceUtilsException):
     """

@@ -94,6 +94,7 @@ FACEBOOK_CLIENT_TYPE_OAUTH = "oauth"
 DEFAULT_FACEBOOK_CLIENT_TYPE = FACEBOOK_CLIENT_TYPE_REST
 """ The default Facebook client type is REST """
 
+
 class APIFacebook(colony.System):
     """
     The API Facebook class.
@@ -106,11 +107,11 @@ class APIFacebook(colony.System):
         colony.System.__init__(self, plugin)
 
         self.facebook_client_map = {
-            FACEBOOK_CLIENT_TYPE_REST : FacebookClient,
-            FACEBOOK_CLIENT_TYPE_OAUTH : FacebookClientOAuth
+            FACEBOOK_CLIENT_TYPE_REST: FacebookClient,
+            FACEBOOK_CLIENT_TYPE_OAUTH: FacebookClientOAuth,
         }
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -131,17 +132,25 @@ class APIFacebook(colony.System):
         # retrieves the various attributes to be used in the
         # construction of the Facebook client
         facebook_structure = api_attributes.get("facebook_structure", None)
-        facebook_client_type = api_attributes.get("facebook_client_type", DEFAULT_FACEBOOK_CLIENT_TYPE)
+        facebook_client_type = api_attributes.get(
+            "facebook_client_type", DEFAULT_FACEBOOK_CLIENT_TYPE
+        )
 
         # retrieves the Facebook client (class) for the "requested" type
-        facebook_client_class = self.facebook_client_map.get(facebook_client_type, FacebookClient)
+        facebook_client_class = self.facebook_client_map.get(
+            facebook_client_type, FacebookClient
+        )
 
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        facebook_client = facebook_client_class(json_plugin, client_http_plugin, facebook_structure)
-        if open_client: facebook_client.open()
+        facebook_client = facebook_client_class(
+            json_plugin, client_http_plugin, facebook_structure
+        )
+        if open_client:
+            facebook_client.open()
         return facebook_client
+
 
 class FacebookClient(object):
     """
@@ -160,7 +169,9 @@ class FacebookClient(object):
     http_client = None
     """ The HTTP client for the connection """
 
-    def __init__(self, json_plugin = None, client_http_plugin = None, facebook_structure = None):
+    def __init__(
+        self, json_plugin=None, client_http_plugin=None, facebook_structure=None
+    ):
         """
         Constructor of the class.
 
@@ -198,8 +209,8 @@ class FacebookClient(object):
         consumer_key,
         consumer_secret,
         next,
-        api_version = DEFAULT_API_VERSION,
-        set_structure = True
+        api_version=DEFAULT_API_VERSION,
+        set_structure=True,
     ):
         """
         Generates the Facebook structure for the given arguments.
@@ -221,7 +232,9 @@ class FacebookClient(object):
         """
 
         # creates a new Facebook structure
-        facebook_structure = FacebookStructure(consumer_key, consumer_secret, next, api_version)
+        facebook_structure = FacebookStructure(
+            consumer_key, consumer_secret, next, api_version
+        )
 
         # in case the structure is meant to be set
         if set_structure:
@@ -506,7 +519,7 @@ class FacebookClient(object):
         # calculates and sets the signature value
         parameters["sig"] = self._get_signature(parameters)
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -529,7 +542,9 @@ class FacebookClient(object):
         http_client = self._get_http_client()
 
         # fetches the URL retrieving the HTTP response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        http_response = http_client.fetch_url(
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
+        )
 
         # retrieves the contents from the HTTP response
         contents = http_response.received_message
@@ -572,12 +587,14 @@ class FacebookClient(object):
         # retrieves the data type and returns immediately
         # in case it is not of type dictionary
         data_type = type(data)
-        if not data_type == dict: return
+        if not data_type == dict:
+            return
 
         # retrieves the error code and returns
         # immediately in case the error code is not set
         error_code = data.get("error_code", None)
-        if not error_code: return
+        if not error_code:
+            return
 
         # retrieves the error message
         error_message = data.get("error_msg", None)
@@ -597,9 +614,7 @@ class FacebookClient(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
@@ -609,6 +624,7 @@ class FacebookClient(object):
 
         # returns the HTTP client
         return self.http_client
+
 
 class FacebookClientOAuth(object):
     """
@@ -627,7 +643,9 @@ class FacebookClientOAuth(object):
     http_client = None
     """ The HTTP client for the connection """
 
-    def __init__(self, json_plugin = None, client_http_plugin = None, facebook_structure = None):
+    def __init__(
+        self, json_plugin=None, client_http_plugin=None, facebook_structure=None
+    ):
         """
         Constructor of the class.
 
@@ -660,7 +678,16 @@ class FacebookClientOAuth(object):
             # closes the HTTP client
             self.http_client.close({})
 
-    def generate_facebook_structure(self, consumer_key, consumer_secret, next, api_version = DEFAULT_API_VERSION, consumer_id = DEFAULT_CONSUMER_ID, scope = DEFAULT_SCOPE, set_structure = True):
+    def generate_facebook_structure(
+        self,
+        consumer_key,
+        consumer_secret,
+        next,
+        api_version=DEFAULT_API_VERSION,
+        consumer_id=DEFAULT_CONSUMER_ID,
+        scope=DEFAULT_SCOPE,
+        set_structure=True,
+    ):
         """
         Generates the Facebook structure for the given arguments.
 
@@ -685,7 +712,9 @@ class FacebookClientOAuth(object):
         """
 
         # creates a new Facebook structure
-        facebook_structure = FacebookStructure(consumer_key, consumer_secret, next, api_version, consumer_id, scope)
+        facebook_structure = FacebookStructure(
+            consumer_key, consumer_secret, next, api_version, consumer_id, scope
+        )
 
         # in case the structure is meant to be set
         if set_structure:
@@ -815,7 +844,7 @@ class FacebookClientOAuth(object):
 
         self.facebook_structure = facebook_structure
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -838,7 +867,9 @@ class FacebookClientOAuth(object):
         http_client = self._get_http_client()
 
         # fetches the URL retrieving the HTTP response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        http_response = http_client.fetch_url(
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
+        )
 
         # retrieves the contents from the HTTP response
         contents = http_response.received_message
@@ -881,12 +912,14 @@ class FacebookClientOAuth(object):
         # retrieves the data type and returns immediately
         # in case it is not of type dictionary
         data_type = type(data)
-        if not data_type == dict: return
+        if not data_type == dict:
+            return
 
         # retrieves the error code and returns
         # immediately in case the error code is not set
         error_code = data.get("error_code", None)
-        if not error_code: return
+        if not error_code:
+            return
 
         # retrieves the error message
         error_message = data.get("error_msg", None)
@@ -939,9 +972,7 @@ class FacebookClientOAuth(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
@@ -951,6 +982,7 @@ class FacebookClientOAuth(object):
 
         # returns the HTTP client
         return self.http_client
+
 
 class FacebookStructure(object):
     """
@@ -992,9 +1024,9 @@ class FacebookStructure(object):
         consumer_key,
         consumer_secret,
         next,
-        api_version = DEFAULT_API_VERSION,
-        consumer_id = DEFAULT_CONSUMER_ID,
-        scope = DEFAULT_SCOPE
+        api_version=DEFAULT_API_VERSION,
+        consumer_id=DEFAULT_CONSUMER_ID,
+        scope=DEFAULT_SCOPE,
     ):
         """
         Constructor of the class.

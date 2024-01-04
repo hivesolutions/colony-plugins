@@ -50,6 +50,7 @@ SYSTEM_INFORMATION_RESOURCES_PATH = "service_http_system_information/resources"
 SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME = "system_information.html.tpl"
 """ The system information HTML template file name """
 
+
 class ServiceHTTPSystemInformation(colony.System):
     """
     The service HTTP system information (handler) class.
@@ -89,13 +90,17 @@ class ServiceHTTPSystemInformation(colony.System):
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the template file path
-        template_file_path = plugin_path +\
-            "/" + SYSTEM_INFORMATION_RESOURCES_PATH + "/" + SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME
+        template_file_path = (
+            plugin_path
+            + "/"
+            + SYSTEM_INFORMATION_RESOURCES_PATH
+            + "/"
+            + SYSTEM_INFORMATION_HTML_TEMPLATE_FILE_NAME
+        )
 
         # parses the template file path
         template_file = template_engine_plugin.parse_template(
-            template_file_path,
-            encoding = DEFAULT_TEMPLATE_ENCODING
+            template_file_path, encoding=DEFAULT_TEMPLATE_ENCODING
         )
 
         # retrieves the system information
@@ -116,7 +121,9 @@ class ServiceHTTPSystemInformation(colony.System):
         processed_template_file = template_file.process()
 
         # encodes the processed template file using the default encoding
-        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
+        processed_template_file_encoded = processed_template_file.encode(
+            DEFAULT_ENCODING
+        )
 
         # writes the processed template file encoded to the request
         request.write(processed_template_file_encoded)
@@ -143,14 +150,8 @@ class ServiceHTTPSystemInformation(colony.System):
 
         # defines the framework main item columns
         framework_main_item_columns = [
-            {
-                "type" : "name",
-                "value" : "Name"
-            },
-            {
-                "type" : "value",
-                "value" : "Value"
-            }
+            {"type": "name", "value": "Name"},
+            {"type": "value", "value": "Value"},
         ]
 
         # creates the framework main item
@@ -167,7 +168,9 @@ class ServiceHTTPSystemInformation(colony.System):
         # sets the framework copyright item values
         framework_copyright_item["type"] = "simple"
         framework_copyright_item["columns"] = []
-        framework_copyright_item["value"] = "This program makes use of the Hive Colony Framework, Copyright (c) 2008-2023 Hive Solutions Lda."
+        framework_copyright_item[
+            "value"
+        ] = "This program makes use of the Hive Colony Framework, Copyright (c) 2008-2023 Hive Solutions Lda."
 
         # creates the system information framework item
         system_information_framework_item = {}
@@ -176,7 +179,7 @@ class ServiceHTTPSystemInformation(colony.System):
         system_information_framework_item["name"] = "Framework"
         system_information_framework_item["items"] = [
             framework_main_item,
-            framework_copyright_item
+            framework_copyright_item,
         ]
 
         # sets the system information framework item in the system information
@@ -240,13 +243,17 @@ class ServiceHTTPSystemInformation(colony.System):
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
-        uptime_string = colony.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
+        uptime_string = colony.format_seconds_smart(
+            uptime, "basic", ("day", "hour", "minute", "second")
+        )
 
         # retrieves the plugin manager instances
         plugin_manager_instances = plugin_manager.plugin_instances
 
         # retrieves the plugin strings from the plugin manager instances
-        plugins_string, replicas_string, instances_string = self._get_plugin_strings(plugin_manager_instances)
+        plugins_string, replicas_string, instances_string = self._get_plugin_strings(
+            plugin_manager_instances
+        )
 
         # creates the framework information map
         framework_information = colony.OrderedMap()
@@ -327,11 +334,7 @@ class ServiceHTTPSystemInformation(colony.System):
 
         # creates the plugins tuple from the plugins string, the replicas
         # string and the instances string
-        plugins_tuple = (
-            plugins_string,
-            replicas_string,
-            instances_string
-        )
+        plugins_tuple = (plugins_string, replicas_string, instances_string)
 
         # returns the plugins tuple
         return plugins_tuple

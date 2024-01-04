@@ -36,6 +36,7 @@ RESOURCES_PARSER_NAME = "json"
 JSON_FILE_ENCODING = "utf-8"
 """ The JSON file encoding """
 
+
 class ResourcesJSON(colony.System):
     """
     The resources JSON (parser) class.
@@ -61,5 +62,9 @@ class ResourcesJSON(colony.System):
         # the complete set of contents from it and
         # closes the file to avoid any possible leaks
         json_file = open(full_json_file_path, "rb")
-        try: resource.data = json_plugin.load_file_encoding(json_file, JSON_FILE_ENCODING)
-        finally: json_file.close()
+        try:
+            resource.data = json_plugin.load_file_encoding(
+                json_file, JSON_FILE_ENCODING
+            )
+        finally:
+            json_file.close()

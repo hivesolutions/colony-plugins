@@ -34,8 +34,8 @@ from .base import BaseController
 
 models = colony.__import__("models")
 
-class ConsumerController(BaseController):
 
+class ConsumerController(BaseController):
     def create(self, request):
         # retrieves the consumer from the request
         # and applies it to the consumer entity

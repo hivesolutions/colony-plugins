@@ -34,8 +34,15 @@ from . import test
 
 from .analysis import EntityManagerAnalyser
 from .decorators import transaction, lock_table
-from .exceptions import EntityManagerException, RuntimeError, EntityManagerEngineNotFound,\
-    MissingRelationMethod, ValidationError, RelationValidationError, InvalidSerializerError
+from .exceptions import (
+    EntityManagerException,
+    RuntimeError,
+    EntityManagerEngineNotFound,
+    MissingRelationMethod,
+    ValidationError,
+    RelationValidationError,
+    InvalidSerializerError,
+)
 from .structures import Connection, EntityClass, rset, load_serializers
 from .system import DataEntityManager
 from .test import EntityManagerTest, EntityManagerBaseTestCase

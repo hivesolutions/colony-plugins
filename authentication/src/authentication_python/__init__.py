@@ -30,5 +30,9 @@ from . import exceptions
 from . import system
 
 from .configuration import *
-from .exceptions import AuthenticationPythonHandlerException, MissingArgument, AuthenticationError
+from .exceptions import (
+    AuthenticationPythonHandlerException,
+    MissingArgument,
+    AuthenticationError,
+)
 from .system import AuthenticationPython

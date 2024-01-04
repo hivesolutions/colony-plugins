@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class JSONPlugin(colony.Plugin):
     """
     The main class for the JSON plugin.
@@ -40,20 +41,14 @@ class JSONPlugin(colony.Plugin):
     description = "A plugin to serialize and unserialize JSON files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "serializer.json"
-    ]
-    main_modules = [
-        "json_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["serializer.json"]
+    main_modules = ["json_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import json_c
+
         self.system = json_c.JSON(self)
 
     def dumps(self, object):

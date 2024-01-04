@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class InfoUser(colony.System):
     """
     The info user class, this is the back-end class that

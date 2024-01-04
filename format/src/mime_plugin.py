@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class MimePlugin(colony.Plugin):
     """
     The main class for the Mime plugin.
@@ -43,19 +44,15 @@ class MimePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "test",
-        "format.mime"
-    ]
-    main_modules = [
-        "mime_c"
-    ]
+    capabilities = ["test", "format.mime"]
+    main_modules = ["mime_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mime_c
+
         self.system = mime_c.Mime(self)
         self.test = mime_c.MimeTest(self)
 

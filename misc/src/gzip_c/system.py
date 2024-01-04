@@ -37,12 +37,13 @@ import colony
 DEFAULT_COMPRESSION_LEVEL = 3
 """ The default compression level """
 
+
 class Gzip(colony.System):
     """
     Provides functions to interact with gzip files.
     """
 
-    def gzip_contents(self, contents_string, file_name = None):
+    def gzip_contents(self, contents_string, file_name=None):
         """
         Compresses the given contents using the deflate compression
         algorithm and encapsulating it into the gzip file format.
@@ -84,8 +85,7 @@ class Gzip(colony.System):
         # complete set of contents are compressed at a time, so
         # this operation may take a while to complete
         contents_string_compressed = zlib.compress(
-            contents_string,
-            DEFAULT_COMPRESSION_LEVEL
+            contents_string, DEFAULT_COMPRESSION_LEVEL
         )
 
         # writes the the contents string compressed into the string buffer

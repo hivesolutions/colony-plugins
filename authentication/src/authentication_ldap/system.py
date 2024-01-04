@@ -81,6 +81,7 @@ PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)
 MD5_CRYPT_SALT_VALUE_REGEX = re.compile(MD5_CRYPT_SALT_VALUE_REGEX_VALUE)
 """ The MD5 crypt salt value regex """
 
+
 class AuthenticationLDAP(colony.System):
     """
     The authentication LDAP class.
@@ -131,7 +132,9 @@ class AuthenticationLDAP(colony.System):
         # in case the username or password are not defined
         if not username or not password:
             # raises an authentication error
-            raise exceptions.AuthenticationError("an username and a password must be provided")
+            raise exceptions.AuthenticationError(
+                "an username and a password must be provided"
+            )
 
         # creates a new LDAP client
         ldap_client = client_ldap_plugin.create_client({})
@@ -141,7 +144,7 @@ class AuthenticationLDAP(colony.System):
 
         try:
             # connects the LDAP client
-            ldap_client.connect(host, name = root_dn, password = root_password)
+            ldap_client.connect(host, name=root_dn, password=root_password)
 
             # retrieves the user password searching in the LDAP client
             user_password = ldap_client.search(search_dn, username, password)
@@ -159,24 +162,27 @@ class AuthenticationLDAP(colony.System):
             # in case the user password hash is of type MD5 crypt
             if user_password_hash_lower == MD5_CRYPT_VALUE:
                 # processes the password using MD5 crypt
-                processed_password_value = self._process_password_md5_crypt(password, user_password_value)
+                processed_password_value = self._process_password_md5_crypt(
+                    password, user_password_value
+                )
             # in case the user password hash is of type SSHA
             elif user_password_hash_lower == SSHA_VALUE:
                 # processes the password using SSHA
-                processed_password_value = self._process_password_ssha(password, user_password_value)
+                processed_password_value = self._process_password_ssha(
+                    password, user_password_value
+                )
             # otherwise it must be a "normal" hash
             else:
                 # processes the password using hash
-                processed_password_value = self._process_password_hash(password, user_password_hash_lower)
+                processed_password_value = self._process_password_hash(
+                    password, user_password_hash_lower
+                )
 
             # in case the processed password value and
             # the user password value are equal
             if processed_password_value == user_password_value:
                 # creates the return value
-                return_value = {
-                    VALID_VALUE : True,
-                    USERNAME_VALUE : username
-                }
+                return_value = {VALID_VALUE: True, USERNAME_VALUE: username}
             # otherwise there is an error in authentication
             else:
                 # raises the authentication error
@@ -194,7 +200,9 @@ class AuthenticationLDAP(colony.System):
     def _process_password_md5_crypt(self, password, user_password_value):
         # matches the user password value against the
         # MD5 crypt salt value regex
-        user_password_value_match = MD5_CRYPT_SALT_VALUE_REGEX.match(user_password_value)
+        user_password_value_match = MD5_CRYPT_SALT_VALUE_REGEX.match(
+            user_password_value
+        )
 
         # retrieves the salt from the user password value match
         salt = user_password_value_match.group("salt")

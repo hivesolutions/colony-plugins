@@ -54,6 +54,7 @@ TRACEBACK_VALUE = "traceback"
 NO_AUTHENTICATION_METHOD_MESSAGE = "no authentication method found"
 """ The no authentication method found message """
 
+
 class Authentication(colony.System):
     """
     The authentication class.
@@ -94,7 +95,9 @@ class Authentication(colony.System):
         # iterates over all the authentication handler plugins
         for authentication_handler_plugin in self.plugin.authentication_handler_plugins:
             # retrieves the authentication handler plugin handler name
-            authentication_handler_plugin_handler_name = authentication_handler_plugin.get_handler_name()
+            authentication_handler_plugin_handler_name = (
+                authentication_handler_plugin.get_handler_name()
+            )
 
             # in case the handler name is not the same as the authentication
             # handler value
@@ -104,15 +107,14 @@ class Authentication(colony.System):
 
             try:
                 # handles the authentication request retrieving the return value
-                return_value = authentication_handler_plugin.handle_request(authentication_request)
+                return_value = authentication_handler_plugin.handle_request(
+                    authentication_request
+                )
             except Exception as exception:
                 # retrieves the exception map for the exception
                 # and then sets the return value to invalid
                 exception_map = self.get_exception_map(exception)
-                return_value = {
-                    VALID_VALUE : False,
-                    EXCEPTION_VALUE : exception_map
-                }
+                return_value = {VALID_VALUE: False, EXCEPTION_VALUE: exception_map}
 
             # returns the return value
             return return_value
@@ -120,10 +122,8 @@ class Authentication(colony.System):
         # creates the return value for the no authentication
         # method situation
         return_value = {
-            VALID_VALUE : False,
-            EXCEPTION_VALUE : {
-                MESSAGE_VALUE : NO_AUTHENTICATION_METHOD_MESSAGE
-            }
+            VALID_VALUE: False,
+            EXCEPTION_VALUE: {MESSAGE_VALUE: NO_AUTHENTICATION_METHOD_MESSAGE},
         }
 
         # returns return value
@@ -168,8 +168,12 @@ class Authentication(colony.System):
             file_system_encoding = sys.getfilesystemencoding()
 
             # decodes the traceback values using the file system encoding
-            formatted_traceback = [value.decode(file_system_encoding) if\
-                type(value) == colony.legacy.BYTES else value for value in formatted_traceback]
+            formatted_traceback = [
+                value.decode(file_system_encoding)
+                if type(value) == colony.legacy.BYTES
+                else value
+                for value in formatted_traceback
+            ]
 
         # retrieves the exception class
         exception_class = exception.__class__
@@ -182,23 +186,27 @@ class Authentication(colony.System):
 
         # creates the exception map
         exception_map = {
-            EXCEPTION_REFERENCE_VALUE : exception,
-            EXCEPTION_NAME_VALUE : exception_class_name,
-            MESSAGE_VALUE : exception_message,
-            TRACEBACK_VALUE : formatted_traceback
+            EXCEPTION_REFERENCE_VALUE: exception,
+            EXCEPTION_NAME_VALUE: exception_class_name,
+            MESSAGE_VALUE: exception_message,
+            TRACEBACK_VALUE: formatted_traceback,
         }
 
         # converts the exception class name to underscore notation
         exception_class_name_underscore = colony.to_underscore(exception_class_name)
 
         # creates the exception class process method name
-        exception_class_process_method_name = "process_map_" + exception_class_name_underscore
+        exception_class_process_method_name = (
+            "process_map_" + exception_class_name_underscore
+        )
 
         # in case the instance contains the process handler
         # for the exception class
         if hasattr(self, exception_class_process_method_name):
             # retrieves the exception class process method
-            exception_class_process_method = getattr(self, exception_class_process_method_name)
+            exception_class_process_method = getattr(
+                self, exception_class_process_method_name
+            )
 
             # calls the exception class process method with
             # the exception map and the exception
@@ -206,6 +214,7 @@ class Authentication(colony.System):
 
         # returns the exception map
         return exception_map
+
 
 class AuthenticationRequest(object):
     """

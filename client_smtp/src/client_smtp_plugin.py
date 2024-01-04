@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ClientSMTPPlugin(colony.Plugin):
     """
     The main class for the SMTP Client plugin.
@@ -40,23 +41,15 @@ class ClientSMTPPlugin(colony.Plugin):
     description = "The plugin that offers the SMTP client"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "client.smtp"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.client.utils")
-    ]
-    main_modules = [
-        "client_smtp"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["client.smtp"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.client.utils")]
+    main_modules = ["client_smtp"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import client_smtp
+
         self.system = client_smtp.ClientSMTP(self)
 
     def create_client(self, parameters):

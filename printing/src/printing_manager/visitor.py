@@ -32,6 +32,7 @@ import colony
 
 from . import ast
 
+
 class Visitor(object):
     """
     The visitor class.
@@ -71,7 +72,8 @@ class Visitor(object):
 
             # in case the current class real element does not contain
             # an AST node class reference must continue the loop
-            if not hasattr(self_class_real_element, "ast_node_class"): continue
+            if not hasattr(self_class_real_element, "ast_node_class"):
+                continue
 
             # retrieves the AST node class from the current class real element
             # and sets it in the node method map

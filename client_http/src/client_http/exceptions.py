@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ClientHTTPException(colony.ColonyException):
     """
     The client HTTP exception class.
@@ -37,6 +38,7 @@ class ClientHTTPException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class HTTPInvalidURLData(ClientHTTPException):
     """
@@ -64,6 +66,7 @@ class HTTPInvalidURLData(ClientHTTPException):
 
         return "HTTP invalid URL data - %s" % self.message
 
+
 class HTTPRuntimeException(ClientHTTPException):
     """
     The HTTP runtime exception class.
@@ -89,6 +92,7 @@ class HTTPRuntimeException(ClientHTTPException):
         """
 
         return "HTTP runtime exception - %s" % self.message
+
 
 class HTTPInvalidDataException(HTTPRuntimeException):
     """

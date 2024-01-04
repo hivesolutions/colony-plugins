@@ -41,6 +41,7 @@ AUTHENTICATION_HANDLER_VALUE = "authentication_handler"
 ARGUMENTS_VALUE = "arguments"
 """ The arguments value """
 
+
 class ServiceHTTPAuthentication(colony.System):
     """
     The service HTTP authentication (handler) class.
@@ -90,7 +91,9 @@ class ServiceHTTPAuthentication(colony.System):
         authentication_plugin = self.plugin.authentication_plugin
 
         # authenticates the user with the authentication plugin retrieving the result
-        authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+        authentication_result = authentication_plugin.authenticate_user(
+            username, password, authentication_handler, arguments
+        )
 
         # returns the authentication result
         return authentication_result

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class InfoUserPlugin(colony.Plugin):
     """
     The main class for the User Information plugin.
@@ -40,20 +41,14 @@ class InfoUserPlugin(colony.Plugin):
     description = "The plugin that offers the user information support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "info.user"
-    ]
-    main_modules = [
-        "info_user"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["info.user"]
+    main_modules = ["info_user"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import info_user
+
         self.system = info_user.InfoUser(self)
 
     @colony.set_configuration_property

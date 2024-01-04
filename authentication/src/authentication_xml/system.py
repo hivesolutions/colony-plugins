@@ -33,6 +33,7 @@ import colony
 HANDLER_NAME = "xml"
 """ The handler name """
 
+
 class AuthenticationXML(colony.System):
     """
     The authentication XML class.

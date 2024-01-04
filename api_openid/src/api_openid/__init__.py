@@ -29,7 +29,13 @@ from . import exceptions
 from . import parser
 from . import system
 
-from .exceptions import APIOpenIDException, InvalidData, ProviderError, VerificationFailed,\
-    InvalidHashFunction, InvalidClaimedId
+from .exceptions import (
+    APIOpenIDException,
+    InvalidData,
+    ProviderError,
+    VerificationFailed,
+    InvalidHashFunction,
+    InvalidClaimedId,
+)
 from .parser import YadisHTMLParser
 from .system import APIOpenID

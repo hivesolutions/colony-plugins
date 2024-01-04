@@ -50,6 +50,7 @@ RELOAD_ACTION = 2
 UNLOAD_ACTION = 3
 """ The unload action value """
 
+
 class Autoloader(colony.System):
     """
     The autoloader class.
@@ -128,7 +129,10 @@ class Autoloader(colony.System):
         # in case the search directory does not exists
         if not os.path.exists(search_directory):
             # prints a debug message
-            self.plugin.debug("Search directory '%s' does not exist in the current filesystem" % (search_directory))
+            self.plugin.debug(
+                "Search directory '%s' does not exist in the current filesystem"
+                % (search_directory)
+            )
 
             # returns immediately
             return
@@ -136,7 +140,9 @@ class Autoloader(colony.System):
         # iterates over all the search directories in the search directories information map
         if search_directory in self.search_directories_information_map:
             for file_name in self.search_directories_information_map[search_directory]:
-                self.search_directories_information_map[search_directory][file_name].exists = False
+                self.search_directories_information_map[search_directory][
+                    file_name
+                ].exists = False
 
             # unsets the new flag
             new_flag = False
@@ -160,7 +166,10 @@ class Autoloader(colony.System):
             # in case the search directory does not exists
             if not os.path.exists(full_path):
                 # prints a debug message
-                self.plugin.debug("Path '%s' does not exist in the current filesystem" % (search_directory))
+                self.plugin.debug(
+                    "Path '%s' does not exist in the current filesystem"
+                    % (search_directory)
+                )
 
                 # returns immediately
                 return
@@ -181,14 +190,22 @@ class Autoloader(colony.System):
             # in case it's not a directory and the extension of the file is .py (python file)
             # must be checked for previous existence or modification, and additional check is
             # made to verify that the file name ends with the plugin suffix
-            if not stat.S_ISDIR(mode) and extension == ".py"\
-                and module_name.endswith("plugin"):
+            if (
+                not stat.S_ISDIR(mode)
+                and extension == ".py"
+                and module_name.endswith("plugin")
+            ):
                 # in case the file name exists in the search directories information map
                 # for the current search directory
-                if file_name in self.search_directories_information_map[search_directory]:
+                if (
+                    file_name
+                    in self.search_directories_information_map[search_directory]
+                ):
                     # retrieves the file information for the given file name,
                     # then uses it to retrieve the file properties
-                    file_information = self.search_directories_information_map[search_directory][file_name]
+                    file_information = self.search_directories_information_map[
+                        search_directory
+                    ][file_name]
                     file_properties = file_information.file_properties
 
                     # in case the modified data is different from
@@ -202,11 +219,17 @@ class Autoloader(colony.System):
                         # in case the plugin is already loaded in the plugin manager
                         # must use the reload approach to get the plugin updated,
                         # the state of the environment is not changed
-                        if plugin: self.reload_module(plugin, module_name, operations = operations)
+                        if plugin:
+                            self.reload_module(
+                                plugin, module_name, operations=operations
+                            )
 
                         # otherwise the plugin is not loaded and the module
                         # must only be loaded in the plugin manager
-                        else: self.load_module(search_directory, module_name, operations = operations)
+                        else:
+                            self.load_module(
+                                search_directory, module_name, operations=operations
+                            )
 
                         # sets the new modified date
                         file_properties.modified_date = modified_date
@@ -225,17 +248,23 @@ class Autoloader(colony.System):
 
                     # sets the file information in the search directories information map
                     # for the current file name and search directory
-                    self.search_directories_information_map[search_directory][file_name] = file_information
+                    self.search_directories_information_map[search_directory][
+                        file_name
+                    ] = file_information
 
                     # in case the new plugin manager loading is complete or
                     # the new flag is not set loads the module
-                    (plugin_manager.init_complete or not new_flag) and self.load_module(search_directory, module_name, operations = operations)
+                    (plugin_manager.init_complete or not new_flag) and self.load_module(
+                        search_directory, module_name, operations=operations
+                    )
 
         # the list of file names to be removed
         remove_list = []
 
         for file_name in self.search_directories_information_map[search_directory]:
-            file_information = self.search_directories_information_map[search_directory][file_name]
+            file_information = self.search_directories_information_map[
+                search_directory
+            ][file_name]
             if not file_information.exists:
                 # adds the file name to the remove
                 # list (for file removal)
@@ -252,7 +281,7 @@ class Autoloader(colony.System):
 
             # unloads the module for the given
             # module name
-            self.unload_module(module_name, operations = operations)
+            self.unload_module(module_name, operations=operations)
 
             # deletes the search directories information map reference
             del self.search_directories_information_map[search_directory][remove_item]
@@ -272,7 +301,8 @@ class Autoloader(colony.System):
 
         # in case the operations list is empty, no need
         # to perform any action (returns immediately)
-        if not operations: return
+        if not operations:
+            return
 
         # retrieves the plugin manager reference for
         # latter usage
@@ -281,7 +311,7 @@ class Autoloader(colony.System):
         # sorts the operations list in a reverse order so
         # that the unload operations are positioned first
         # for execution (avoids possible problems)
-        operations.sort(reverse = True)
+        operations.sort(reverse=True)
 
         # iterates over all the operations to be performed
         # to execute them in the correct order, this loop
@@ -294,7 +324,8 @@ class Autoloader(colony.System):
 
             # in case the action to be performed is not an
             # unload operation (time to skipp the loop)
-            if not action == UNLOAD_ACTION: break
+            if not action == UNLOAD_ACTION:
+                break
 
             # unpacks the item into the action and the target
             # module name and then uses it to unload the module
@@ -322,7 +353,7 @@ class Autoloader(colony.System):
                 # unpacks the item into the action, the target module name
                 # and the search directory and then uses it to load the module
                 _action, module_name, search_directory = item
-                self.load_module(search_directory, module_name, load_plugins = False)
+                self.load_module(search_directory, module_name, load_plugins=False)
 
                 # retrieves the target plugin from the module and then adds its
                 # it to the list of loaded plugins (to be loaded at the end)
@@ -335,13 +366,16 @@ class Autoloader(colony.System):
                 # unpacks the item into the action, the target module name
                 # and the plugin name and then uses it to reload the module
                 _action, module_name, plugin = item
-                self.reload_module(plugin, module_name, load_plugins = False)
+                self.reload_module(plugin, module_name, load_plugins=False)
 
         # iterates over all the loaded plugins ids to load
         # them into the current plugin manager instance
-        for loaded_plugin_id in loaded_plugins_ids: plugin_manager.load_plugin(loaded_plugin_id)
+        for loaded_plugin_id in loaded_plugins_ids:
+            plugin_manager.load_plugin(loaded_plugin_id)
 
-    def load_module(self, search_directory, module_name, load_plugins = True, operations = None):
+    def load_module(
+        self, search_directory, module_name, load_plugins=True, operations=None
+    ):
         """
         Loads a module with the given module name and
         for the given search directory.
@@ -358,7 +392,9 @@ class Autoloader(colony.System):
         # in case the operations list is set no synchronous operation
         # is intended and so the operation tuple is added instead
         # then returns from the method immediately
-        if not operations == None: operations.append((LOAD_ACTION, module_name, search_directory)); return
+        if not operations == None:
+            operations.append((LOAD_ACTION, module_name, search_directory))
+            return
 
         try:
             # prints an info message
@@ -369,7 +405,8 @@ class Autoloader(colony.System):
 
             # in case the search directory is not is the system path
             # it's inserted into it (for local import reference)
-            if not search_directory in sys.path: sys.path.insert(0, search_directory)
+            if not search_directory in sys.path:
+                sys.path.insert(0, search_directory)
 
             # loads the plugins for the module name, this should
             # be able to import the main plugin file into the
@@ -387,9 +424,12 @@ class Autoloader(colony.System):
             load_plugins and plugin_manager.load_plugin(plugin.id)
         except Exception as exception:
             # prints an error message
-            self.plugin.error("There was a problem loading module %s: %s" % (module_name, colony.legacy.UNICODE(exception)))
+            self.plugin.error(
+                "There was a problem loading module %s: %s"
+                % (module_name, colony.legacy.UNICODE(exception))
+            )
 
-    def unload_module(self, module_name, operations = None):
+    def unload_module(self, module_name, operations=None):
         """
         Unloads a module with the given module name.
 
@@ -403,7 +443,9 @@ class Autoloader(colony.System):
         # in case the operations list is set no synchronous operation
         # is intended and so the operation tuple is added instead
         # then returns from the method immediately
-        if not operations == None: operations.append((UNLOAD_ACTION, module_name)); return
+        if not operations == None:
+            operations.append((UNLOAD_ACTION, module_name))
+            return
 
         try:
             # prints an info message
@@ -416,9 +458,12 @@ class Autoloader(colony.System):
             plugin_manager.stop_module(module_name)
         except Exception as exception:
             # prints an error message
-            self.plugin.error("There was a problem unloading module %s: %s" % (module_name, colony.legacy.UNICODE(exception)))
+            self.plugin.error(
+                "There was a problem unloading module %s: %s"
+                % (module_name, colony.legacy.UNICODE(exception))
+            )
 
-    def reload_module(self, plugin, module_name, load_plugins = True, operations = None):
+    def reload_module(self, plugin, module_name, load_plugins=True, operations=None):
         """
         Reloads the module with the given module name and
         reloads the main modules of the given plugin.
@@ -441,7 +486,9 @@ class Autoloader(colony.System):
         # in case the operations list is set no synchronous operation
         # is intended and so the operation tuple is added instead
         # then returns from the method immediately
-        if not operations == None: operations.append((RELOAD_ACTION, module_name, plugin)); return
+        if not operations == None:
+            operations.append((RELOAD_ACTION, module_name, plugin))
+            return
 
         try:
             # prints an info message
@@ -458,8 +505,12 @@ class Autoloader(colony.System):
 
             # creates a new list for the loaded plugins ids
             # this is going to be used later for re-loading
-            if load_plugins: loaded_plugins_ids = [loaded_plugin.id for loaded_plugin in loaded_plugins]
-            else: loaded_plugins_ids = []
+            if load_plugins:
+                loaded_plugins_ids = [
+                    loaded_plugin.id for loaded_plugin in loaded_plugins
+                ]
+            else:
+                loaded_plugins_ids = []
 
             # stops the module, this should remove the code
             # of referenced by the name from the virtual machine
@@ -483,10 +534,14 @@ class Autoloader(colony.System):
 
             # iterates over all the loaded plugins ids to load
             # them into the current plugin manager instance
-            for loaded_plugin_id in loaded_plugins_ids: plugin_manager.load_plugin(loaded_plugin_id)
+            for loaded_plugin_id in loaded_plugins_ids:
+                plugin_manager.load_plugin(loaded_plugin_id)
         except Exception as exception:
             # prints an error message
-            self.plugin.error("There was a problem reloading module %s: %s" % (module_name, colony.legacy.UNICODE(exception)))
+            self.plugin.error(
+                "There was a problem reloading module %s: %s"
+                % (module_name, colony.legacy.UNICODE(exception))
+            )
 
     def unload_autoloader(self):
         """
@@ -542,10 +597,12 @@ class Autoloader(colony.System):
 
             # in case the continue flag is not set
             # must return immediately
-            if not self.continue_flag: return
+            if not self.continue_flag:
+                return
 
         # sleeps the extra sleep time
         time.sleep(extra_sleep_time)
+
 
 class FileInformation(object):
     """
@@ -561,7 +618,7 @@ class FileInformation(object):
     exists = False
     """ The exists flag """
 
-    def __init__(self, filename = "none", file_properties = None, exists = False):
+    def __init__(self, filename="none", file_properties=None, exists=False):
         """
         Constructor of the class.
 
@@ -577,6 +634,7 @@ class FileInformation(object):
         self.file_properties = file_properties
         self.exists = exists
 
+
 class FileProperties(object):
     """
     The file properties class.
@@ -585,7 +643,7 @@ class FileProperties(object):
     modified_date = None
     """ The modified date """
 
-    def __init__(self, modified_date = None):
+    def __init__(self, modified_date=None):
         """
         Constructor of the class.
 

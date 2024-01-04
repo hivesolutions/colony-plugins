@@ -32,8 +32,16 @@ from . import parser
 from . import system
 from . import visitor
 
-from .ast import AstNode, GenericElement, PrintingDocument, Block, Paragraph, Line,\
-    Text, Image
+from .ast import (
+    AstNode,
+    GenericElement,
+    PrintingDocument,
+    Block,
+    Paragraph,
+    Line,
+    Text,
+    Image,
+)
 from .console import ConsolePrintingManager
 from .exceptions import PrintingManagerException, PrintingPluginNotAvailable
 from .parser import Parser

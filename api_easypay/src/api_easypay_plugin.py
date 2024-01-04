@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIEasypayPlugin(colony.Plugin):
     """
     The main class for the Easypay API plugin.
@@ -40,22 +41,15 @@ class APIEasypayPlugin(colony.Plugin):
     description = "The plugin that offers the Easypay API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.easypay"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.client.http")
-    ]
-    main_modules = [
-        "api_easypay"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.easypay"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.client.http")]
+    main_modules = ["api_easypay"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_easypay
+
         self.system = api_easypay.APIEasypay(self)
 
     def create_client(self, api_attributes):

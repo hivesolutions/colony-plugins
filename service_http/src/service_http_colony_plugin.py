@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPColonyPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Colony plugin.
@@ -43,21 +44,16 @@ class ServiceHTTPColonyPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "http_service_handler"
-    ]
-    capabilities_allowed = [
-        "http_handler"
-    ]
-    main_modules = [
-        "service_http_colony"
-    ]
+    capabilities = ["http_service_handler"]
+    capabilities_allowed = ["http_handler"]
+    main_modules = ["service_http_colony"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_colony
+
         self.system = service_http_colony.ServiceHTTPColony(self)
 
     @colony.load_allowed

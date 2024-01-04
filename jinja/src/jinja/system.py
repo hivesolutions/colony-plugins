@@ -33,27 +33,19 @@ import jinja2
 
 import colony
 
-ESCAPE_EXTENSIONS = (
-    ".xml",
-    ".html",
-    ".xhtml",
-    ".xml.tpl",
-    ".html.tpl",
-    ".xhtml.tpl"
-)
+ESCAPE_EXTENSIONS = (".xml", ".html", ".xhtml", ".xml.tpl", ".html.tpl", ".xhtml.tpl")
 """ The sequence containing the various extensions
 for which the autoescape mode will be enabled  by
 default as expected by the end developer """
 
-class Jinja(colony.System):
 
-    def parse_file_path(self, file_path, base_path = ".", encoding = "utf-8"):
+class Jinja(colony.System):
+    def parse_file_path(self, file_path, base_path=".", encoding="utf-8"):
         extension = self._extension(file_path)
 
         loader = jinja2.FileSystemLoader(base_path)
         jinja = jinja2.Environment(
-            loader = loader,
-            autoescape = extension in ESCAPE_EXTENSIONS
+            loader=loader, autoescape=extension in ESCAPE_EXTENSIONS
         )
 
         template = colony.relative_path(file_path, base_path)
@@ -66,11 +58,12 @@ class Jinja(colony.System):
     def _extension(self, file_path):
         _head, tail = os.path.split(file_path)
         tail_s = tail.split(".", 1)
-        if len(tail_s) > 1: return "." + tail_s[1]
+        if len(tail_s) > 1:
+            return "." + tail_s[1]
         return None
 
-class JinjaTemplate(object):
 
+class JinjaTemplate(object):
     def __init__(self, template):
         self.template = template
         self.values = dict()

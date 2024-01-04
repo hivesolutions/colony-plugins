@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPTemplateErrorPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Template Error plugin.
@@ -43,21 +44,16 @@ class ServiceHTTPTemplateErrorPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "http_service_error_handler"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.template_engine")
-    ]
-    main_modules = [
-        "service_http_template_error"
-    ]
+    capabilities = ["http_service_error_handler"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.template_engine")]
+    main_modules = ["service_http_template_error"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_template_error
+
         self.system = service_http_template_error.ServiceHTTPTemplateError(self)
 
     def get_error_handler_name(self):

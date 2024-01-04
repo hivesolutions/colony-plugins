@@ -53,94 +53,95 @@ ERROR_HTML_TEMPLATE_FILE_NAME = "error.html.tpl"
 """ The error HTML template file name """
 
 STATUS_MESSAGES = {
-    100 : "Continue",
-    101 : "Switching Protocols",
-    200 : "OK",
-    201 : "Created",
-    202 : "Accepted",
-    203 : "Non-Authoritative Information",
-    204 : "No Content",
-    205 : "Reset Content",
-    206 : "Partial Content",
-    207 : "Multi-Status",
-    301 : "Moved permanently",
-    302 : "Found",
-    303 : "See Other",
-    304 : "Not Modified",
-    305 : "Use Proxy",
-    306 : "(Unused)",
-    307 : "Temporary Redirect",
-    400 : "Bad Request",
-    401 : "Unauthorized",
-    402 : "Payment Required",
-    403 : "Forbidden",
-    404 : "Not Found",
-    405 : "Method Not Allowed",
-    406 : "Not Acceptable",
-    407 : "Proxy Authentication Required",
-    408 : "Request Timeout",
-    409 : "Conflict",
-    410 : "Gone",
-    411 : "Length Required",
-    412 : "Precondition Failed",
-    413 : "Request Entity Too Large",
-    414 : "Request-URI Too Long",
-    415 : "Unsupported Media Type",
-    416 : "Requested Range Not Satisfiable",
-    417 : "Expectation Failed",
-    500 : "Internal Server Error",
-    501 : "Not Implemented",
-    502 : "Bad Gateway",
-    503 : "Service Unavailable",
-    504 : "Gateway Timeout",
-    505 : "HTTP Version Not Supported"
+    100: "Continue",
+    101: "Switching Protocols",
+    200: "OK",
+    201: "Created",
+    202: "Accepted",
+    203: "Non-Authoritative Information",
+    204: "No Content",
+    205: "Reset Content",
+    206: "Partial Content",
+    207: "Multi-Status",
+    301: "Moved permanently",
+    302: "Found",
+    303: "See Other",
+    304: "Not Modified",
+    305: "Use Proxy",
+    306: "(Unused)",
+    307: "Temporary Redirect",
+    400: "Bad Request",
+    401: "Unauthorized",
+    402: "Payment Required",
+    403: "Forbidden",
+    404: "Not Found",
+    405: "Method Not Allowed",
+    406: "Not Acceptable",
+    407: "Proxy Authentication Required",
+    408: "Request Timeout",
+    409: "Conflict",
+    410: "Gone",
+    411: "Length Required",
+    412: "Precondition Failed",
+    413: "Request Entity Too Large",
+    414: "Request-URI Too Long",
+    415: "Unsupported Media Type",
+    416: "Requested Range Not Satisfiable",
+    417: "Expectation Failed",
+    500: "Internal Server Error",
+    501: "Not Implemented",
+    502: "Bad Gateway",
+    503: "Service Unavailable",
+    504: "Gateway Timeout",
+    505: "HTTP Version Not Supported",
 }
 """ The status code messages map """
 
 STATUS_CODE_IMAGES = {
-    100 : "none",
-    101 : "none",
-    200 : "none",
-    201 : "none",
-    202 : "none",
-    203 : "none",
-    204 : "none",
-    205 : "none",
-    206 : "none",
-    207 : "none",
-    301 : "none",
-    302 : "none",
-    303 : "none",
-    304 : "none",
-    305 : "none",
-    306 : "none",
-    307 : "none",
-    400 : "logo_question_mark",
-    401 : "logo_lock",
-    402 : "logo_question_mark",
-    403 : "logo_question_mark",
-    404 : "logo_question_mark",
-    405 : "logo_question_mark",
-    406 : "logo_question_mark",
-    407 : "logo_question_mark",
-    408 : "logo_question_mark",
-    409 : "logo_question_mark",
-    410 : "logo_question_mark",
-    411 : "logo_question_mark",
-    412 : "logo_question_mark",
-    413 : "logo_question_mark",
-    414 : "logo_question_mark",
-    415 : "logo_question_mark",
-    416 : "logo_question_mark",
-    417 : "logo_question_mark",
-    500 : "logo_thunder",
-    501 : "logo_thunder",
-    502 : "logo_thunder",
-    503 : "logo_thunder",
-    504 : "logo_thunder",
-    505 : "logo_thunder"
+    100: "none",
+    101: "none",
+    200: "none",
+    201: "none",
+    202: "none",
+    203: "none",
+    204: "none",
+    205: "none",
+    206: "none",
+    207: "none",
+    301: "none",
+    302: "none",
+    303: "none",
+    304: "none",
+    305: "none",
+    306: "none",
+    307: "none",
+    400: "logo_question_mark",
+    401: "logo_lock",
+    402: "logo_question_mark",
+    403: "logo_question_mark",
+    404: "logo_question_mark",
+    405: "logo_question_mark",
+    406: "logo_question_mark",
+    407: "logo_question_mark",
+    408: "logo_question_mark",
+    409: "logo_question_mark",
+    410: "logo_question_mark",
+    411: "logo_question_mark",
+    412: "logo_question_mark",
+    413: "logo_question_mark",
+    414: "logo_question_mark",
+    415: "logo_question_mark",
+    416: "logo_question_mark",
+    417: "logo_question_mark",
+    500: "logo_thunder",
+    501: "logo_thunder",
+    502: "logo_thunder",
+    503: "logo_thunder",
+    504: "logo_thunder",
+    505: "logo_thunder",
 }
 """ The status code images map """
+
 
 class ServiceHTTPTemplateError(colony.System):
     """
@@ -175,7 +176,9 @@ class ServiceHTTPTemplateError(colony.System):
         delta_time_rounded = round(delta_time, 2)
 
         # retrieves the error string
-        error_string = colony.legacy.UNICODE(error) + " (" + error.__class__.__name__ + ")"
+        error_string = (
+            colony.legacy.UNICODE(error) + " (" + error.__class__.__name__ + ")"
+        )
 
         # retrieves the execution information
         _type, _value, traceback_list = sys.exc_info()
@@ -189,8 +192,12 @@ class ServiceHTTPTemplateError(colony.System):
             file_system_encoding = sys.getfilesystemencoding()
 
             # decodes the traceback values using the file system encoding
-            formated_traceback = [value.decode(file_system_encoding) if value == colony.legacy.BYTES else\
-                value for value in formated_traceback]
+            formated_traceback = [
+                value.decode(file_system_encoding)
+                if value == colony.legacy.BYTES
+                else value
+                for value in formated_traceback
+            ]
         # otherwise there is no traceback list
         else:
             # sets an empty formated traceback
@@ -212,13 +219,17 @@ class ServiceHTTPTemplateError(colony.System):
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the template file path
-        template_file_path = plugin_path +\
-            "/" + TEMPLATE_ERROR_RESOURCES_PATH + "/" + ERROR_HTML_TEMPLATE_FILE_NAME
+        template_file_path = (
+            plugin_path
+            + "/"
+            + TEMPLATE_ERROR_RESOURCES_PATH
+            + "/"
+            + ERROR_HTML_TEMPLATE_FILE_NAME
+        )
 
         # parses the template file path
         template_file = template_engine_plugin.parse_template(
-            template_file_path,
-            encoding = DEFAULT_TEMPLATE_ENCODING
+            template_file_path, encoding=DEFAULT_TEMPLATE_ENCODING
         )
 
         # assigns the template variables
@@ -233,7 +244,9 @@ class ServiceHTTPTemplateError(colony.System):
         processed_template_file = template_file.process()
 
         # encodes the processed template file using the default encoding
-        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
+        processed_template_file_encoded = processed_template_file.encode(
+            DEFAULT_ENCODING
+        )
 
         # sets the status code in the request
         request.status_code = error_code

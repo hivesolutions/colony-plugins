@@ -30,9 +30,17 @@ from . import exceptions
 from . import system
 from . import visitor
 
-from .constants import HORIZONTAL_RESOLUTION, VERTICAL_RESOLUTION, LOG_PIXELS_X,\
-    LOG_PIXELS_Y, PHYSICAL_WIDTH, PHYSICAL_HEIGHT, PHYSICAL_OFFSET_X, PHYSICAL_OFFSET_Y,\
-    INCH
+from .constants import (
+    HORIZONTAL_RESOLUTION,
+    VERTICAL_RESOLUTION,
+    LOG_PIXELS_X,
+    LOG_PIXELS_Y,
+    PHYSICAL_WIDTH,
+    PHYSICAL_HEIGHT,
+    PHYSICAL_OFFSET_X,
+    PHYSICAL_OFFSET_Y,
+    INCH,
+)
 from .exceptions import PrintingBinieException, InvalidContextInformationName
 from .system import PrintingWin32
 from .visitor import Visitor

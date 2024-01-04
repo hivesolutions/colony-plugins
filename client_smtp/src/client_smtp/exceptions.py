@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ClientSMTPException(colony.ColonyException):
     """
     The client SMTP exception class.
@@ -37,6 +38,7 @@ class ClientSMTPException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class SMTPRuntimeException(ClientSMTPException):
     """
@@ -64,6 +66,7 @@ class SMTPRuntimeException(ClientSMTPException):
 
         return "SMTP runtime exception - %s" % self.message
 
+
 class SMTPInvalidDataException(SMTPRuntimeException):
     """
     The SMTP invalid data exception class.
@@ -88,6 +91,7 @@ class SMTPInvalidDataException(SMTPRuntimeException):
         """
 
         return "SMTP invalid data exception - %s" % self.message
+
 
 class SMTPResponseError(SMTPRuntimeException):
     """

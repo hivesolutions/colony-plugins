@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class WSGIException(colony.ColonyException):
     """
     The service WSGI exception class.
@@ -37,6 +38,7 @@ class WSGIException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class WSGIRuntimeException(WSGIException):
     """

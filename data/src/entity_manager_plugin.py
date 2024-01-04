@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class EntityManagerPlugin(colony.Plugin):
     """
     The main class for the Entity Manager plugin.
@@ -40,25 +41,16 @@ class EntityManagerPlugin(colony.Plugin):
     description = "The plugin that manages the entity manager orm system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "test"
-    ]
-    capabilities_allowed = [
-        "entity_engine"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
-    ]
-    main_modules = [
-        "entity_manager"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["test"]
+    capabilities_allowed = ["entity_engine"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.misc.json")]
+    main_modules = ["entity_manager"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import entity_manager
+
         self.system = entity_manager.DataEntityManager(self)
         self.test = entity_manager.test.EntityManagerTest(self)
         self.decorators = entity_manager.decorators

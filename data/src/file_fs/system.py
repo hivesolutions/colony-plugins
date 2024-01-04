@@ -41,6 +41,7 @@ is relevant for the performance of that operation as
 a small value would imply many operations and a large
 value may require a large amount of memory"""
 
+
 class FileFS(colony.System):
     """
     The File FS class, that implements the access to
@@ -76,7 +77,9 @@ class FileFS(colony.System):
 
         # retrieves the connection parameters
         context_name = connection_parameters.get("context_name", "default")
-        base_path = connection_parameters.get("base_path", "%configuration:" + self.plugin.id + "%")
+        base_path = connection_parameters.get(
+            "base_path", "%configuration:" + self.plugin.id + "%"
+        )
 
         # creates the (full) base path by appending the context name and
         # resolves it (for configuration directories) using the plugin manager
@@ -85,7 +88,8 @@ class FileFS(colony.System):
 
         # creates the required (base_path) directories for the
         # file system persistence
-        if not os.path.isdir(base_path): os.makedirs(base_path)
+        if not os.path.isdir(base_path):
+            os.makedirs(base_path)
 
         # creates the (FS) connection with the given
         # context name and base path
@@ -150,7 +154,8 @@ class FileFS(colony.System):
         # retrieves the target directory path and creates
         # if if it does not already exists
         target_directory_path = os.path.dirname(target_file_path)
-        if not os.path.isdir(target_directory_path): os.makedirs(target_directory_path)
+        if not os.path.isdir(target_directory_path):
+            os.makedirs(target_directory_path)
 
         # opens both the source and target files
         # for binary reading and writing
@@ -197,7 +202,8 @@ class FileFS(colony.System):
         # retrieves the target directory path and creates
         # if if it does not already exists
         target_directory_path = os.path.dirname(target_file_path)
-        if not os.path.isdir(target_directory_path): os.makedirs(target_directory_path)
+        if not os.path.isdir(target_directory_path):
+            os.makedirs(target_directory_path)
 
         # opens target file for writing
         target_file = open(target_file_path, "wb")
@@ -240,7 +246,8 @@ class FileFS(colony.System):
         # retrieves the target directory path and creates
         # if if it does not already exists
         target_directory_path = os.path.dirname(target_file_path)
-        if not os.path.isdir(target_directory_path): os.makedirs(target_directory_path)
+        if not os.path.isdir(target_directory_path):
+            os.makedirs(target_directory_path)
 
         # opens target file for writing
         target_file = open(target_file_path, "wb")
@@ -304,6 +311,7 @@ class FileFS(colony.System):
         target_file_path = os.path.join(base_path, file_name)
         target_file_path = os.path.normpath(target_file_path)
         return os.path.getmtime(target_file_path)
+
 
 class FsConnection(object):
     """

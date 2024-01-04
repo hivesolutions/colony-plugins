@@ -40,11 +40,7 @@ import colony
 
 from . import exceptions
 
-RESOLUTION_ORDER_ITEMS = (
-    "virtual_servers",
-    "redirections",
-    "contexts"
-)
+RESOLUTION_ORDER_ITEMS = ("virtual_servers", "redirections", "contexts")
 """ The items to be used in the resolution order """
 
 PREFIX_VALUE = "http://"
@@ -99,13 +95,28 @@ SERVER_VERSION = "1.0.1"
 """ The server version, this value should be coherent
 with the current plugin's version """
 
-ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) +\
-    "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+ENVIRONMENT_VERSION = (
+    str(sys.version_info[0])
+    + "."
+    + str(sys.version_info[1])
+    + "."
+    + str(sys.version_info[2])
+    + "-"
+    + str(sys.version_info[3])
+)
 """ The environment version, that should somehow identity
 the currently running environment  """
 
-SERVER_IDENTIFIER = SERVER_NAME + "/" + SERVER_VERSION + " (python-" +\
-    sys.platform + " " + ENVIRONMENT_VERSION + ")"
+SERVER_IDENTIFIER = (
+    SERVER_NAME
+    + "/"
+    + SERVER_VERSION
+    + " (python-"
+    + sys.platform
+    + " "
+    + ENVIRONMENT_VERSION
+    + ")"
+)
 """ The server identifier, this value will be presented
 in the server's identification areas (eg: HTTP headers) """
 
@@ -137,47 +148,47 @@ VALID_VALUE = "valid"
 """ The valid value """
 
 STATUS_MESSAGES = {
-    100 : "Continue",
-    101 : "Switching Protocols",
-    200 : "OK",
-    201 : "Created",
-    202 : "Accepted",
-    203 : "Non-Authoritative Information",
-    204 : "No Content",
-    205 : "Reset Content",
-    206 : "Partial Content",
-    207 : "Multi-Status",
-    301 : "Moved permanently",
-    302 : "Found",
-    303 : "See Other",
-    304 : "Not Modified",
-    305 : "Use Proxy",
-    306 : "(Unused)",
-    307 : "Temporary Redirect",
-    400 : "Bad Request",
-    401 : "Unauthorized",
-    402 : "Payment Required",
-    403 : "Forbidden",
-    404 : "Not Found",
-    405 : "Method Not Allowed",
-    406 : "Not Acceptable",
-    407 : "Proxy Authentication Required",
-    408 : "Request Timeout",
-    409 : "Conflict",
-    410 : "Gone",
-    411 : "Length Required",
-    412 : "Precondition Failed",
-    413 : "Request Entity Too Large",
-    414 : "Request-URI Too Long",
-    415 : "Unsupported Media Type",
-    416 : "Requested Range Not Satisfiable",
-    417 : "Expectation Failed",
-    500 : "Internal Server Error",
-    501 : "Not Implemented",
-    502 : "Bad Gateway",
-    503 : "Service Unavailable",
-    504 : "Gateway Timeout",
-    505 : "HTTP Version Not Supported"
+    100: "Continue",
+    101: "Switching Protocols",
+    200: "OK",
+    201: "Created",
+    202: "Accepted",
+    203: "Non-Authoritative Information",
+    204: "No Content",
+    205: "Reset Content",
+    206: "Partial Content",
+    207: "Multi-Status",
+    301: "Moved permanently",
+    302: "Found",
+    303: "See Other",
+    304: "Not Modified",
+    305: "Use Proxy",
+    306: "(Unused)",
+    307: "Temporary Redirect",
+    400: "Bad Request",
+    401: "Unauthorized",
+    402: "Payment Required",
+    403: "Forbidden",
+    404: "Not Found",
+    405: "Method Not Allowed",
+    406: "Not Acceptable",
+    407: "Proxy Authentication Required",
+    408: "Request Timeout",
+    409: "Conflict",
+    410: "Gone",
+    411: "Length Required",
+    412: "Precondition Failed",
+    413: "Request Entity Too Large",
+    414: "Request-URI Too Long",
+    415: "Unsupported Media Type",
+    416: "Requested Range Not Satisfiable",
+    417: "Expectation Failed",
+    500: "Internal Server Error",
+    501: "Not Implemented",
+    502: "Bad Gateway",
+    503: "Service Unavailable",
+    504: "Gateway Timeout",
+    505: "HTTP Version Not Supported",
 }
 """ The status code messages map """
 
@@ -292,10 +303,9 @@ DEFAULT_CONTENT_TYPE_CHARSET_VALUE = "default_content_type_charset"
 DEFAULT_CACHE_CONTROL_VALUE = "no-cache, must-revalidate"
 """ The default cache control value """
 
-UPGRADE_MESSAGE_SIZE_MAP = {
-    WEB_SOCKET_VALUE : 8
-}
+UPGRADE_MESSAGE_SIZE_MAP = {WEB_SOCKET_VALUE: 8}
 """ The upgrade message size map """
+
 
 class ServiceHTTP(colony.System):
     """
@@ -369,7 +379,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin handler name
         handler_name = http_service_handler_plugin.get_handler_name()
 
-        self.http_service_handler_plugins_map[handler_name] = http_service_handler_plugin
+        self.http_service_handler_plugins_map[
+            handler_name
+        ] = http_service_handler_plugin
 
     def http_service_handler_unload(self, http_service_handler_plugin):
         # retrieves the plugin handler name
@@ -381,7 +393,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin encoding name
         encoding_name = http_service_encoding_plugin.get_encoding_name()
 
-        self.http_service_encoding_plugins_map[encoding_name] = http_service_encoding_plugin
+        self.http_service_encoding_plugins_map[
+            encoding_name
+        ] = http_service_encoding_plugin
 
     def http_service_encoding_unload(self, http_service_encoding_plugin):
         # retrieves the plugin encoding name
@@ -389,13 +403,19 @@ class ServiceHTTP(colony.System):
 
         del self.http_service_encoding_plugins_map[encoding_name]
 
-    def http_service_authentication_handler_load(self, http_service_authentication_handler_plugin):
+    def http_service_authentication_handler_load(
+        self, http_service_authentication_handler_plugin
+    ):
         # retrieves the plugin handler name
         handler_name = http_service_authentication_handler_plugin.get_handler_name()
 
-        self.http_service_authentication_handler_plugins_map[handler_name] = http_service_authentication_handler_plugin
+        self.http_service_authentication_handler_plugins_map[
+            handler_name
+        ] = http_service_authentication_handler_plugin
 
-    def http_service_authentication_handler_unload(self, http_service_authentication_handler_plugin):
+    def http_service_authentication_handler_unload(
+        self, http_service_authentication_handler_plugin
+    ):
         # retrieves the plugin handler name
         handler_name = http_service_authentication_handler_plugin.get_handler_name()
 
@@ -405,7 +425,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin error handler name
         error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
 
-        self.http_service_error_handler_plugins_map[error_handler_name] = http_service_error_handler_plugin
+        self.http_service_error_handler_plugins_map[
+            error_handler_name
+        ] = http_service_error_handler_plugin
 
     def http_service_error_handler_unload(self, http_service_error_handler_plugin):
         # retrieves the plugin error handler name
@@ -421,14 +443,20 @@ class ServiceHTTP(colony.System):
         # that contain a resolution order field)
         for resolution_order_item in RESOLUTION_ORDER_ITEMS:
             # retrieves the resolution order item value
-            resolution_order_item_value = service_configuration.get(resolution_order_item, None)
+            resolution_order_item_value = service_configuration.get(
+                resolution_order_item, None
+            )
 
             # in case the resolution order item value is not set
             # nothing to be done, continues the loop
-            if not resolution_order_item_value: continue
+            if not resolution_order_item_value:
+                continue
 
             # retrieves the resolution order values
-            resolution_order = resolution_order_item_value.get(RESOLUTION_ORDER_VALUE, colony.legacy.iterkeys(resolution_order_item_value))
+            resolution_order = resolution_order_item_value.get(
+                RESOLUTION_ORDER_VALUE,
+                colony.legacy.iterkeys(resolution_order_item_value),
+            )
 
             # creates the regex buffer
             regex_buffer = colony.StringBuffer()
@@ -480,7 +508,8 @@ class ServiceHTTP(colony.System):
     def _get_encoding_handler(self, encoding):
         # in case no encoding is defined returns an invalid value
         # to the caller method (could not find anything)
-        if not encoding: return None
+        if not encoding:
+            return None
 
         # in case the encoding is not found in the HTTP service
         # encoding handler plugins map raises an exception
@@ -525,27 +554,49 @@ class ServiceHTTP(colony.System):
         # retrieves the various service configuration values using
         # the default values for each of the configuration items
         end_points = service_configuration.get("default_end_points", end_points)
-        socket_provider = service_configuration.get("default_socket_provider", socket_provider)
+        socket_provider = service_configuration.get(
+            "default_socket_provider", socket_provider
+        )
         port = service_configuration.get("default_port", port)
         encoding = service_configuration.get("default_encoding", encoding)
-        socket_parameters = service_configuration.get("default_socket_parameters", socket_parameters)
+        socket_parameters = service_configuration.get(
+            "default_socket_parameters", socket_parameters
+        )
         service_type = service_configuration.get("default_service_type", SERVICE_TYPE)
-        client_connection_timeout = service_configuration.get("default_client_connection_timeout", CLIENT_CONNECTION_TIMEOUT)
-        connection_timeout = service_configuration.get("default_connection_timeout", REQUEST_TIMEOUT)
-        request_timeout = service_configuration.get("default_request_timeout", REQUEST_TIMEOUT)
-        response_timeout = service_configuration.get("default_response_timeout", RESPONSE_TIMEOUT)
-        number_threads = service_configuration.get("default_number_threads", NUMBER_THREADS)
-        scheduling_algorithm = service_configuration.get("default_scheduling_algorithm", SCHEDULING_ALGORITHM)
-        maximum_number_threads = service_configuration.get("default_maximum_number_threads", MAXIMUM_NUMBER_THREADS)
-        maximum_number_work_threads = service_configuration.get("default_maximum_number_work_threads", MAXIMUM_NUMBER_WORKS_THREAD)
-        work_scheduling_algorithm = service_configuration.get("default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM)
+        client_connection_timeout = service_configuration.get(
+            "default_client_connection_timeout", CLIENT_CONNECTION_TIMEOUT
+        )
+        connection_timeout = service_configuration.get(
+            "default_connection_timeout", REQUEST_TIMEOUT
+        )
+        request_timeout = service_configuration.get(
+            "default_request_timeout", REQUEST_TIMEOUT
+        )
+        response_timeout = service_configuration.get(
+            "default_response_timeout", RESPONSE_TIMEOUT
+        )
+        number_threads = service_configuration.get(
+            "default_number_threads", NUMBER_THREADS
+        )
+        scheduling_algorithm = service_configuration.get(
+            "default_scheduling_algorithm", SCHEDULING_ALGORITHM
+        )
+        maximum_number_threads = service_configuration.get(
+            "default_maximum_number_threads", MAXIMUM_NUMBER_THREADS
+        )
+        maximum_number_work_threads = service_configuration.get(
+            "default_maximum_number_work_threads", MAXIMUM_NUMBER_WORKS_THREAD
+        )
+        work_scheduling_algorithm = service_configuration.get(
+            "default_work_scheduling_algorithm", WORK_SCHEDULING_ALGORITHM
+        )
         http_log_file_path = service_configuration.get("log_file_path", None)
 
         # uses the global configuration to try to configure some of the
         # parameters for the configuration to be created
         bind_host = colony.conf("SERVER_HOST", BIND_HOST)
-        port = colony.conf("SERVER_PORT", port, cast = int)
-        ssl = colony.conf("SERVER_SSL", False, cast = bool)
+        port = colony.conf("SERVER_PORT", port, cast=int)
+        ssl = colony.conf("SERVER_SSL", False, cast=bool)
 
         # creates the proper string definition of the connection type
         # and uses it to create the (full) end point definition tuple
@@ -558,14 +609,19 @@ class ServiceHTTP(colony.System):
         override = True if colony.conf("SERVER_HOST") else False
         override = True if colony.conf("SERVER_PORT") else override
         override = True if colony.conf("SERVER_SSL") else override
-        if override: end_points = (end_point,)
+        if override:
+            end_points = (end_point,)
 
         # resolves the HTTP log file path using the plugin manager,
         # this path will be used for the writing of the log files, then
         # creates the HTTP log file (using a file rotator) and then
         # opens it to be able to start writing in it
-        http_log_file_path = plugin_manager.resolve_file_path(http_log_file_path, True, True)
-        self.http_log_file = http_log_file_path and colony.FileRotator(http_log_file_path) or None
+        http_log_file_path = plugin_manager.resolve_file_path(
+            http_log_file_path, True, True
+        )
+        self.http_log_file = (
+            http_log_file_path and colony.FileRotator(http_log_file_path) or None
+        )
         self.http_log_file and self.http_log_file.open()
 
         # retrieves the encoding handler for the given encoding
@@ -573,41 +629,41 @@ class ServiceHTTP(colony.System):
 
         # creates the pool configuration map
         pool_configuration = dict(
-            name = "HTTP pool",
-            description = "pool to support HTTP client connections",
-            number_threads = number_threads,
-            scheduling_algorithm = scheduling_algorithm,
-            maximum_number_threads = maximum_number_threads,
-            maximum_number_works_thread = maximum_number_work_threads,
-            work_scheduling_algorithm = work_scheduling_algorithm
+            name="HTTP pool",
+            description="pool to support HTTP client connections",
+            number_threads=number_threads,
+            scheduling_algorithm=scheduling_algorithm,
+            maximum_number_threads=maximum_number_threads,
+            maximum_number_works_thread=maximum_number_work_threads,
+            work_scheduling_algorithm=work_scheduling_algorithm,
         )
 
         # creates the extra parameters map
         extra_parameters = dict(
-            encoding = encoding,
-            encoding_handler = encoding_handler,
-            log_file = self.http_log_file
+            encoding=encoding,
+            encoding_handler=encoding_handler,
+            log_file=self.http_log_file,
         )
 
         # creates the parameters map
         parameters = dict(
-            type = CONNECTION_TYPE,
-            service_plugin = self.plugin,
-            service_handling_task_class = HTTPClientServiceHandler,
-            end_points = end_points,
-            socket_provider = socket_provider,
-            bind_host = bind_host,
-            port = port,
-            socket_parameters = socket_parameters,
-            chunk_size = CHUNK_SIZE,
-            service_configuration = service_configuration,
-            extra_parameters = extra_parameters,
-            pool_configuration = pool_configuration,
-            service_type = service_type,
-            client_connection_timeout = client_connection_timeout,
-            connection_timeout = connection_timeout,
-            request_timeout = request_timeout,
-            response_timeout = response_timeout
+            type=CONNECTION_TYPE,
+            service_plugin=self.plugin,
+            service_handling_task_class=HTTPClientServiceHandler,
+            end_points=end_points,
+            socket_provider=socket_provider,
+            bind_host=bind_host,
+            port=port,
+            socket_parameters=socket_parameters,
+            chunk_size=CHUNK_SIZE,
+            service_configuration=service_configuration,
+            extra_parameters=extra_parameters,
+            pool_configuration=pool_configuration,
+            service_type=service_type,
+            client_connection_timeout=client_connection_timeout,
+            connection_timeout=connection_timeout,
+            request_timeout=request_timeout,
+            response_timeout=response_timeout,
         )
 
         # returns the parameters
@@ -625,6 +681,7 @@ class ServiceHTTP(colony.System):
 
         # closes the HTTP log file
         self.http_log_file and self.http_log_file.close()
+
 
 class HTTPClientServiceHandler(object):
     """
@@ -666,7 +723,7 @@ class HTTPClientServiceHandler(object):
         service_connection_handler,
         service_configuration,
         service_utils_exception_class,
-        extra_parameters
+        extra_parameters,
     ):
         """
         Constructor of the class.
@@ -694,7 +751,9 @@ class HTTPClientServiceHandler(object):
         self.encoding = extra_parameters.get(ENCODING_VALUE, None)
         self.encoding_handler = extra_parameters.get(ENCODING_HANDLER_VALUE, None)
         self.log_file = extra_parameters.get(LOG_FILE_VALUE, None)
-        self.content_type_charset = self.service_configuration.get(DEFAULT_CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
+        self.content_type_charset = self.service_configuration.get(
+            DEFAULT_CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET
+        )
 
     def handle_opened(self, service_connection):
         pass
@@ -705,7 +764,8 @@ class HTTPClientServiceHandler(object):
 
         # in case the request is not defined (no request
         # pending), must return the control flow
-        if not request: return
+        if not request:
+            return
 
         # in case the request is mediated (there
         # must be a mediated handler)
@@ -720,23 +780,30 @@ class HTTPClientServiceHandler(object):
             # to avoid possible resource leak
             request.chunk_handler.close()
 
-    def handle_request(self, service_connection, request = None):
+    def handle_request(self, service_connection, request=None):
         # retrieves the request handler using the service connection request handler map
-        request_handler = self.service_connection_request_handler_map.get(service_connection, self.default_request_handler)
+        request_handler = self.service_connection_request_handler_map.get(
+            service_connection, self.default_request_handler
+        )
 
         # handles the service connection with the request handler
         return request_handler(service_connection, request)
 
-    def default_request_handler(self, service_connection, request = None):
+    def default_request_handler(self, service_connection, request=None):
         # retrieves the HTTP service handler plugins map
-        http_service_handler_plugins_map = self.service_plugin.system.http_service_handler_plugins_map
+        http_service_handler_plugins_map = (
+            self.service_plugin.system.http_service_handler_plugins_map
+        )
 
         try:
             # retrieves the request
             request = request or self.retrieve_request(service_connection)
         except exceptions.ServiceHTTPException:
             # prints a debug message about the connection closing
-            self.service_plugin.debug("Connection: %s closed by peer, timeout or invalid request" % str(service_connection))
+            self.service_plugin.debug(
+                "Connection: %s closed by peer, timeout or invalid request"
+                % str(service_connection)
+            )
 
             # returns false (connection closed)
             return False
@@ -777,12 +844,16 @@ class HTTPClientServiceHandler(object):
             # in case no handler name is defined (request not handled)
             if not handler_name:
                 # raises an HTTP no handler exception
-                raise exceptions.HTTPNoHandlerException("no handler defined for current request")
+                raise exceptions.HTTPNoHandlerException(
+                    "no handler defined for current request"
+                )
 
             # in case the handler is not found in the handler plugins map
             if not handler_name in http_service_handler_plugins_map:
                 # raises an HTTP handler not found exception
-                raise exceptions.HTTPHandlerNotFoundException("no handler found for current request: " + handler_name)
+                raise exceptions.HTTPHandlerNotFoundException(
+                    "no handler found for current request: " + handler_name
+                )
 
             # retrieves the HTTP service handler plugin
             http_service_handler_plugin = http_service_handler_plugins_map[handler_name]
@@ -814,7 +885,9 @@ class HTTPClientServiceHandler(object):
         except Exception as exception:
             # processes the exception, retrieving the return
             # value (connection closed value)
-            return_value = self.process_exception(request, service_connection, exception)
+            return_value = self.process_exception(
+                request, service_connection, exception
+            )
 
         # runs the logging steps for the request, this call is going to
         # block for a while for the io operations
@@ -823,7 +896,8 @@ class HTTPClientServiceHandler(object):
         # in case the return value is invalid the connection
         # is meant to be closed (no need to process any extra
         # information), must return immediately
-        if not return_value: return False
+        if not return_value:
+            return False
 
         # checks if the service connection is of type asynchronous
         service_connection_is_async = service_connection.is_async()
@@ -831,18 +905,24 @@ class HTTPClientServiceHandler(object):
         # in case there is pending data and the service connection is of
         # type asynchronous calls the default request handler to handle the
         # remaining data (allows HTTP pipelining)
-        service_connection.pending_data() and not service_connection_is_async and\
-            self.default_request_handler(service_connection)
+        service_connection.pending_data() and not service_connection_is_async and self.default_request_handler(
+            service_connection
+        )
 
         # returns true (connection remains open)
         return True
 
     def process_delayed(self, request, service_connection):
         # retrieves the request timeout from the service connection
-        service_connection_request_timeout = service_connection.connection_request_timeout
+        service_connection_request_timeout = (
+            service_connection.connection_request_timeout
+        )
 
         # prints a debug message
-        self.service_plugin.debug("Connection: %s kept alive for %ss for delayed request" % (str(service_connection), str(service_connection_request_timeout)))
+        self.service_plugin.debug(
+            "Connection: %s kept alive for %ss for delayed request"
+            % (str(service_connection), str(service_connection_request_timeout))
+        )
 
         # returns true (connection meant to be kept alive)
         return True
@@ -855,18 +935,27 @@ class HTTPClientServiceHandler(object):
             # prints a warning message message and returns
             # an invalid value as there was a problem handling
             # the current request
-            self.service_plugin.warning("Runtime problem: %s, while sending request" % colony.legacy.UNICODE(exception))
+            self.service_plugin.warning(
+                "Runtime problem: %s, while sending request"
+                % colony.legacy.UNICODE(exception)
+            )
             return False
         except exceptions.ServiceHTTPException:
             # prints a debug message and returns an invalid
             # return value as the connection has been closed
-            self.service_plugin.debug("Connection: %s closed by peer, while sending request" % str(service_connection))
+            self.service_plugin.debug(
+                "Connection: %s closed by peer, while sending request"
+                % str(service_connection)
+            )
             return False
 
         # in case the connection is not meant to be kept alive
         if not self.keep_alive(request):
             # prints a debug message
-            self.service_plugin.debug("Connection: %s closed, not meant to be kept alive" % str(service_connection))
+            self.service_plugin.debug(
+                "Connection: %s closed, not meant to be kept alive"
+                % str(service_connection)
+            )
 
             # runs the logging steps for the request
             self._log(request)
@@ -875,10 +964,15 @@ class HTTPClientServiceHandler(object):
             return False
 
         # retrieves the request timeout from the service connection
-        service_connection_request_timeout = service_connection.connection_request_timeout
+        service_connection_request_timeout = (
+            service_connection.connection_request_timeout
+        )
 
         # prints a debug message
-        self.service_plugin.debug("Connection: %s kept alive for %ss" % (str(service_connection), str(service_connection_request_timeout)))
+        self.service_plugin.debug(
+            "Connection: %s kept alive for %ss"
+            % (str(service_connection), str(service_connection_request_timeout))
+        )
 
         # returns true (connection meant to be kept alive)
         return True
@@ -887,15 +981,19 @@ class HTTPClientServiceHandler(object):
         # prints info message about exception so that an easy diagnostic
         # operation is possible at runtime (for debugging)
         self.service_plugin.info(
-            "There was an exception handling the request (%s): " %\
-            exception.__class__.__name__ + colony.legacy.UNICODE(exception)
+            "There was an exception handling the request (%s): "
+            % exception.__class__.__name__
+            + colony.legacy.UNICODE(exception)
         )
         try:
             # sends the exception
             self.send_exception(service_connection, request, exception)
         except exceptions.ServiceHTTPException:
             # prints a debug message
-            self.service_plugin.debug("Connection: %s closed by peer, while sending exception" % str(service_connection))
+            self.service_plugin.debug(
+                "Connection: %s closed by peer, while sending exception"
+                % str(service_connection)
+            )
 
             # returns false (connection closed)
             return False
@@ -903,8 +1001,9 @@ class HTTPClientServiceHandler(object):
             # prints an error message about the raised exception so that it's
             # possible to properly act on it at a runtime level
             self.service_plugin.debug(
-                "There was an exception handling the exception (%s): " %\
-                exception.__class__.__name__ + colony.legacy.UNICODE(exception)
+                "There was an exception handling the exception (%s): "
+                % exception.__class__.__name__
+                + colony.legacy.UNICODE(exception)
             )
 
         # returns true (connection meant to be kept alive)
@@ -948,12 +1047,14 @@ class HTTPClientServiceHandler(object):
         current_date_time = datetime.datetime.utcnow()
 
         # formats the current date time
-        current_date_time_formatted = current_date_time.strftime("%d/%b/%Y:%H:%M:%S +0000")
+        current_date_time_formatted = current_date_time.strftime(
+            "%d/%b/%Y:%H:%M:%S +0000"
+        )
 
         # creates the log line value with all the aggregated
         # parameters, the log line will conform with the common
         # log form (according to the specification)
-        log_line_value = "%s - %s [%s] \"%s %s %s\" %d %d\n" % (
+        log_line_value = '%s - %s [%s] "%s %s %s" %d %d\n' % (
             connection_host,
             user_id,
             current_date_time_formatted,
@@ -961,7 +1062,7 @@ class HTTPClientServiceHandler(object):
             resource_path,
             protocol_version,
             status_code,
-            content_length
+            content_length,
         )
 
         # writes the log line value to the log file, note that the
@@ -1008,7 +1109,8 @@ class HTTPClientServiceHandler(object):
 
             # in case the request is not valid (not enough data for parsing)
             # must continue the loop
-            if not request: continue
+            if not request:
+                continue
 
             # breaks the loop
             break
@@ -1016,7 +1118,7 @@ class HTTPClientServiceHandler(object):
         # returns the request
         return request
 
-    def retrieve_request_data(self, service_connection, data = None):
+    def retrieve_request_data(self, service_connection, data=None):
         """
         Retrieves the request from the received message.
         This method retrieves the request using only the
@@ -1031,15 +1133,11 @@ class HTTPClientServiceHandler(object):
         """
 
         # creates the string buffer for the message
-        message = service_connection.request_data.get(
-            "message",
-            colony.StringBuffer()
-        )
+        message = service_connection.request_data.get("message", colony.StringBuffer())
 
         # creates a request object
         request = service_connection.request_data.get(
-            "request",
-            HTTPRequest(self, service_connection, self.content_type_charset)
+            "request", HTTPRequest(self, service_connection, self.content_type_charset)
         )
 
         # retrieves the various values from the request data that are going
@@ -1047,12 +1145,18 @@ class HTTPClientServiceHandler(object):
         # case they are not already initialized, special note for the message
         # offset index that represents the offset byte to the initialization
         # of the message content
-        start_line_loaded = service_connection.request_data.get("start_line_loaded", False)
+        start_line_loaded = service_connection.request_data.get(
+            "start_line_loaded", False
+        )
         header_loaded = service_connection.request_data.get("header_loaded", False)
         message_loaded = service_connection.request_data.get("message_loaded", False)
-        message_offset_index = service_connection.request_data.get("message_offset_index", 0)
+        message_offset_index = service_connection.request_data.get(
+            "message_offset_index", 0
+        )
         message_size = service_connection.request_data.get("message_size", 0)
-        received_data_size = service_connection.request_data.get("received_data_size", 0)
+        received_data_size = service_connection.request_data.get(
+            "received_data_size", 0
+        )
         start_line_index = service_connection.request_data.get("start_line_index", 0)
         end_header_index = service_connection.request_data.get("end_header_index", 0)
 
@@ -1072,7 +1176,10 @@ class HTTPClientServiceHandler(object):
         message.write(data)
 
         # in case the header is not loaded or the message contents are completely loaded
-        if not header_loaded or received_data_size >= message_offset_index + message_size:
+        if (
+            not header_loaded
+            or received_data_size >= message_offset_index + message_size
+        ):
             # retrieves the message value from the string buffer
             message_value = message.get_value()
         # in case there's no need to inspect the message contents
@@ -1100,7 +1207,9 @@ class HTTPClientServiceHandler(object):
                 # in case the length of the splitted line is not valid
                 if not start_line_splitted_length == 3:
                     # raises the HTTP invalid data exception
-                    raise exceptions.HTTPInvalidDataException("invalid data received: " + start_line)
+                    raise exceptions.HTTPInvalidDataException(
+                        "invalid data received: " + start_line
+                    )
 
                 # retrieve the operation type the path and the protocol version
                 # from the start line splitted and then sets these various values
@@ -1144,7 +1253,7 @@ class HTTPClientServiceHandler(object):
                     # retrieves the header name and the value for it and then
                     # converts both of the values to plain based unicode values
                     header_name = header_splitted[:division_index].strip()
-                    header_value = header_splitted[division_index + 1:].strip()
+                    header_value = header_splitted[division_index + 1 :].strip()
                     header_name = colony.legacy.str(header_name)
                     header_value = colony.legacy.str(header_value)
 
@@ -1236,7 +1345,9 @@ class HTTPClientServiceHandler(object):
             service_connection.request_data["start_line_loaded"] = start_line_loaded
             service_connection.request_data["header_loaded"] = header_loaded
             service_connection.request_data["message_loaded"] = message_loaded
-            service_connection.request_data["message_offset_index"] = message_offset_index
+            service_connection.request_data[
+                "message_offset_index"
+            ] = message_offset_index
             service_connection.request_data["message_size"] = message_size
             service_connection.request_data["received_data_size"] = received_data_size
             service_connection.request_data["start_line_index"] = start_line_index
@@ -1312,8 +1423,12 @@ class HTTPClientServiceHandler(object):
                     # splits the content type item stripped,
                     # retrieves the content type charset and
                     # sets the valid charset flag
-                    content_type_item_stripped_splitted = content_type_item_stripped.split("=")
-                    content_type_charset = content_type_item_stripped_splitted[1].lower()
+                    content_type_item_stripped_splitted = (
+                        content_type_item_stripped.split("=")
+                    )
+                    content_type_charset = content_type_item_stripped_splitted[
+                        1
+                    ].lower()
                     valid_charset = True
 
                     # breaks the cycle
@@ -1329,7 +1444,9 @@ class HTTPClientServiceHandler(object):
 
         try:
             # decodes the message value into unicode using the given charset
-            request.received_message = received_message_value.decode(content_type_charset)
+            request.received_message = received_message_value.decode(
+                content_type_charset
+            )
         except Exception:
             # sets the received message as the original one (fallback procedure)
             request.received_message = received_message_value
@@ -1347,10 +1464,14 @@ class HTTPClientServiceHandler(object):
         """
 
         # retrieves the preferred error handlers list
-        preferred_error_handlers_list = self.service_configuration.get("preferred_error_handlers", (DEFAULT_VALUE,))
+        preferred_error_handlers_list = self.service_configuration.get(
+            "preferred_error_handlers", (DEFAULT_VALUE,)
+        )
 
         # retrieves the HTTP service error handler plugins map
-        http_service_error_handler_plugins_map = self.service_plugin.system.http_service_error_handler_plugins_map
+        http_service_error_handler_plugins_map = (
+            self.service_plugin.system.http_service_error_handler_plugins_map
+        )
 
         # iterates over all the preferred error handlers
         for preferred_error_handler in preferred_error_handlers_list:
@@ -1366,7 +1487,9 @@ class HTTPClientServiceHandler(object):
                 # error handler plugins map
                 if preferred_error_handler in http_service_error_handler_plugins_map:
                     # retrieves the HTTP service error handler plugin
-                    http_service_error_handler_plugin = http_service_error_handler_plugins_map[preferred_error_handler]
+                    http_service_error_handler_plugin = (
+                        http_service_error_handler_plugins_map[preferred_error_handler]
+                    )
 
                     # calls the handle error in the HTTP service error handler plugin
                     http_service_error_handler_plugin.handle_error(request, exception)
@@ -1410,7 +1533,9 @@ class HTTPClientServiceHandler(object):
             # print an error description about the error in the
             # client side and the re-raises the exception to the
             # various upper levels so that is properly handled
-            self.service_plugin.error("Problem sending request simple: " + colony.legacy.UNICODE(exception))
+            self.service_plugin.error(
+                "Problem sending request simple: " + colony.legacy.UNICODE(exception)
+            )
             raise exceptions.HTTPDataSendingException("problem sending data")
 
     def send_request_mediated(self, service_connection, request):
@@ -1428,7 +1553,7 @@ class HTTPClientServiceHandler(object):
             self.send_request_mediated_sync(service_connection, request)
 
     def send_request_mediated_async(self, service_connection, request):
-        def request_mediated_writer(send_error = False):
+        def request_mediated_writer(send_error=False):
             # in case there was an error sending
             # the data
             if send_error:
@@ -1455,11 +1580,16 @@ class HTTPClientServiceHandler(object):
                 try:
                     # sends the mediated value to the client (writes in front of the others)
                     # and sets the callback as the current writer
-                    service_connection.send_callback(mediated_value, request_mediated_writer, write_front = True)
+                    service_connection.send_callback(
+                        mediated_value, request_mediated_writer, write_front=True
+                    )
                 except self.service_utils_exception_class as exception:
                     # prints an error message about the error in the client side and then
                     # raises the HTTP data sending exception to the upper layers
-                    self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
+                    self.service_plugin.error(
+                        "Problem sending request mediated: "
+                        + colony.legacy.UNICODE(exception)
+                    )
                     raise exceptions.HTTPDataSendingException("problem sending data")
             except:
                 # closes the mediated handler and then re-raises
@@ -1476,7 +1606,9 @@ class HTTPClientServiceHandler(object):
             service_connection.send_callback(result_value, request_mediated_writer)
         except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
+            self.service_plugin.error(
+                "Problem sending request mediated: " + colony.legacy.UNICODE(exception)
+            )
 
             # closes the mediated handler
             request.mediated_handler.close()
@@ -1493,7 +1625,9 @@ class HTTPClientServiceHandler(object):
             service_connection.send(result_value)
         except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
+            self.service_plugin.error(
+                "Problem sending request mediated: " + colony.legacy.UNICODE(exception)
+            )
 
             # closes the mediated handler
             request.mediated_handler.close()
@@ -1525,7 +1659,10 @@ class HTTPClientServiceHandler(object):
                 except self.service_utils_exception_class as exception:
                     # prints the error message about the error in the client
                     # side and then raises the HTTP data sending exception
-                    self.service_plugin.error("Problem sending request mediated: " + colony.legacy.UNICODE(exception))
+                    self.service_plugin.error(
+                        "Problem sending request mediated: "
+                        + colony.legacy.UNICODE(exception)
+                    )
                     raise exceptions.HTTPDataSendingException("problem sending data")
             except:
                 # closes the mediated handler and then
@@ -1548,10 +1685,12 @@ class HTTPClientServiceHandler(object):
             self.send_request_chunked_sync(service_connection, request)
 
     def send_request_chunked_async(self, service_connection, request):
-        def request_chunked_writer(send_error = False):
+        def request_chunked_writer(send_error=False):
             # in case there was an error sending the data must
             # close the chunk handler and return immediately
-            if send_error: request.chunk_handler.close(); return
+            if send_error:
+                request.chunk_handler.close()
+                return
 
             try:
                 # retrieves the chunk value from the currently associated
@@ -1572,8 +1711,13 @@ class HTTPClientServiceHandler(object):
                     except self.service_utils_exception_class as exception:
                         # logs the error coming from the client side and then raises
                         # a proper exception indicating the problem in sending data
-                        self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
-                        raise exceptions.HTTPDataSendingException("problem sending data")
+                        self.service_plugin.error(
+                            "Problem sending request chunked (final chunk): "
+                            + colony.legacy.UNICODE(exception)
+                        )
+                        raise exceptions.HTTPDataSendingException(
+                            "problem sending data"
+                        )
 
                     # returns immediately
                     return
@@ -1585,16 +1729,25 @@ class HTTPClientServiceHandler(object):
 
                     # sets the value for the hexadecimal length part of the chunk
                     # and then joins that value with the proper chunk value for sending
-                    length_chunk_value_hexadecimal_string = colony.legacy.bytes("%X\r\n" % length_chunk_value)
-                    message_value = length_chunk_value_hexadecimal_string + chunk_value + b"\r\n"
+                    length_chunk_value_hexadecimal_string = colony.legacy.bytes(
+                        "%X\r\n" % length_chunk_value
+                    )
+                    message_value = (
+                        length_chunk_value_hexadecimal_string + chunk_value + b"\r\n"
+                    )
 
                     # sends the message value to the client (writes in front of the others)
                     # and sets the callback as the current writer
-                    service_connection.send_callback(message_value, request_chunked_writer, write_front = True)
+                    service_connection.send_callback(
+                        message_value, request_chunked_writer, write_front=True
+                    )
                 except self.service_utils_exception_class as exception:
                     # logs the error information about the client side error and then
                     # raises the HTTP data sending exception to the upper levels
-                    self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
+                    self.service_plugin.error(
+                        "Problem sending request chunked: "
+                        + colony.legacy.UNICODE(exception)
+                    )
                     raise exceptions.HTTPDataSendingException("problem sending data")
             except:
                 # closes the chunk handler reference and then
@@ -1612,7 +1765,9 @@ class HTTPClientServiceHandler(object):
         except self.service_utils_exception_class as exception:
             # print an error message about the problem in the sending, then
             # closes the chunk(ed) handler and raises a new exception
-            self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
+            self.service_plugin.error(
+                "Problem sending request chunked: " + colony.legacy.UNICODE(exception)
+            )
             request.chunk_handler.close()
             raise exceptions.HTTPDataSendingException("problem sending data")
 
@@ -1625,7 +1780,9 @@ class HTTPClientServiceHandler(object):
             service_connection.send(result_value)
         except self.service_utils_exception_class as exception:
             # error in the client side
-            self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
+            self.service_plugin.error(
+                "Problem sending request chunked: " + colony.legacy.UNICODE(exception)
+            )
 
             # closes the chunk handler
             request.chunk_handler.close()
@@ -1650,10 +1807,15 @@ class HTTPClientServiceHandler(object):
                         service_connection.send("0\r\n\r\n")
                     except self.service_utils_exception_class as exception:
                         # error in the client side
-                        self.service_plugin.error("Problem sending request chunked (final chunk): " + colony.legacy.UNICODE(exception))
+                        self.service_plugin.error(
+                            "Problem sending request chunked (final chunk): "
+                            + colony.legacy.UNICODE(exception)
+                        )
 
                         # raises the HTTP data sending exception
-                        raise exceptions.HTTPDataSendingException("problem sending data")
+                        raise exceptions.HTTPDataSendingException(
+                            "problem sending data"
+                        )
 
                     # breaks the cycle
                     break
@@ -1663,16 +1825,23 @@ class HTTPClientServiceHandler(object):
                     length_chunk_value = len(chunk_value)
 
                     # sets the value for the hexadecimal length part of the chunk
-                    length_chunk_value_hexadecimal_string = "%X\r\n" % length_chunk_value
+                    length_chunk_value_hexadecimal_string = (
+                        "%X\r\n" % length_chunk_value
+                    )
 
                     # sets the message value
-                    message_value = length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+                    message_value = (
+                        length_chunk_value_hexadecimal_string + chunk_value + "\r\n"
+                    )
 
                     # sends the message value to the client
                     service_connection.send(message_value)
                 except self.service_utils_exception_class as exception:
                     # error in the client side
-                    self.service_plugin.error("Problem sending request chunked: " + colony.legacy.UNICODE(exception))
+                    self.service_plugin.error(
+                        "Problem sending request chunked: "
+                        + colony.legacy.UNICODE(exception)
+                    )
 
                     # raises the HTTP data sending exception
                     raise exceptions.HTTPDataSendingException("problem sending data")
@@ -1700,13 +1869,18 @@ class HTTPClientServiceHandler(object):
 
             # retrieves the connection type fields, by splitting
             # the connection type and stripping the values
-            connection_type_fields = [value.strip() for value in connection_type.split(",")]
+            connection_type_fields = [
+                value.strip() for value in connection_type.split(",")
+            ]
 
             # iterates over all the connection type fields
             for connection_type_field in connection_type_fields:
                 # in case the connection is meant to be kept alive
                 # or in case is of type upgrade
-                if connection_type_field.lower() in (KEEP_ALIVE_LOWER_VALUE, UPGRADE_LOWER_VALUE):
+                if connection_type_field.lower() in (
+                    KEEP_ALIVE_LOWER_VALUE,
+                    UPGRADE_LOWER_VALUE,
+                ):
                     # returns true
                     return True
 
@@ -1741,7 +1915,13 @@ class HTTPClientServiceHandler(object):
 
         # writes the header message and the initial error line
         # these values are sent as plain text values
-        request.write("colony web server - " + str(request.status_code) + " " + status_message + "\n")
+        request.write(
+            "colony web server - "
+            + str(request.status_code)
+            + " "
+            + status_message
+            + "\n"
+        )
         request.write("error: '" + colony.legacy.UNICODE(error) + "'\n")
 
         # writes the traceback header message in the request
@@ -1760,8 +1940,12 @@ class HTTPClientServiceHandler(object):
             # decode the traceback values using the file system encoding
             # in case that required (values encoded as byte strings)
             file_system_encoding = sys.getfilesystemencoding()
-            formated_traceback = [value.decode(file_system_encoding) if colony.legacy.is_bytes(value) else\
-                value for value in formated_traceback]
+            formated_traceback = [
+                value.decode(file_system_encoding)
+                if colony.legacy.is_bytes(value)
+                else value
+                for value in formated_traceback
+            ]
         # otherwise there is no traceback list, then
         # sets an empty formated traceback
         else:
@@ -1792,7 +1976,9 @@ class HTTPClientServiceHandler(object):
 
         self.current_request_handler = current_request_handler
 
-    def set_service_connection_request_handler(self, service_connection, request_handler_method):
+    def set_service_connection_request_handler(
+        self, service_connection, request_handler_method
+    ):
         """
         Sets a "custom" request handler method for the given service connection.
 
@@ -1804,9 +1990,13 @@ class HTTPClientServiceHandler(object):
         of the request.
         """
 
-        self.service_connection_request_handler_map[service_connection] = request_handler_method
+        self.service_connection_request_handler_map[
+            service_connection
+        ] = request_handler_method
 
-    def unset_service_connection_request_handler(self, service_connection, request_handler_method):
+    def unset_service_connection_request_handler(
+        self, service_connection, request_handler_method
+    ):
         """
         Unsets a "custom" request handler method for the given service connection.
 
@@ -1833,12 +2023,16 @@ class HTTPClientServiceHandler(object):
         """
 
         # retrieves the service configuration redirections
-        service_configuration_redirections = service_configuration.get("redirections", {})
+        service_configuration_redirections = service_configuration.get(
+            "redirections", {}
+        )
 
         # retrieves the service configuration redirections order
-        service_configuration_redirections_order = service_configuration_redirections.get(
-            RESOLUTION_ORDER_VALUE,
-            colony.legacy.iterkeys(service_configuration_redirections)
+        service_configuration_redirections_order = (
+            service_configuration_redirections.get(
+                RESOLUTION_ORDER_VALUE,
+                colony.legacy.iterkeys(service_configuration_redirections),
+            )
         )
 
         # (saves) the old/original path as the base path, this is going
@@ -1854,25 +2048,36 @@ class HTTPClientServiceHandler(object):
         current_path = request.original_path
 
         # iterates over the service configuration redirection names
-        for service_configuration_redirection_name in service_configuration_redirections_order:
+        for (
+            service_configuration_redirection_name
+        ) in service_configuration_redirections_order:
             # in case the path is not found in the request path, skips
             # the current iteration, as there's nothing to be done
-            if not current_path.find(service_configuration_redirection_name) == 0: continue
+            if not current_path.find(service_configuration_redirection_name) == 0:
+                continue
 
             # sets the handler base path as the service configuration
             # redirection name and then retrieve the proper service
             # configuration redirection specification
             request.handler_base_path = service_configuration_redirection_name
-            service_configuration_redirection = service_configuration_redirections[service_configuration_redirection_name]
+            service_configuration_redirection = service_configuration_redirections[
+                service_configuration_redirection_name
+            ]
 
             # retrieves the target path and the recursive redirection
             # flag value for context resolution
-            target_path = service_configuration_redirection.get("target", service_configuration_redirection_name)
-            recursive_redirection = service_configuration_redirection.get("recursive_redirection", False)
+            target_path = service_configuration_redirection.get(
+                "target", service_configuration_redirection_name
+            )
+            recursive_redirection = service_configuration_redirection.get(
+                "recursive_redirection", False
+            )
 
             # retrieves the sub request path as the request from the redirection name path
             # in front, so that only the remainder after the prefix is retrieved
-            sub_request_path = current_path[len(service_configuration_redirection_name):]
+            sub_request_path = current_path[
+                len(service_configuration_redirection_name) :
+            ]
 
             # in case the recursive redirection is disabled and there is a sub-directory
             # in the sub request path
@@ -1887,7 +2092,7 @@ class HTTPClientServiceHandler(object):
 
             # sets the new path in the request, avoids the overriding
             # of the original path by unsetting the flag
-            request.set_path(current_path, set_original_path = False)
+            request.set_path(current_path, set_original_path=False)
 
             # sets the redirect configuration in the request as the current
             # service configuration (still pending redirect confirmation, it
@@ -1917,7 +2122,12 @@ class HTTPClientServiceHandler(object):
         """
 
         # retrieves the service configuration context name and value from the request and the service configuration
-        _service_configuration_context_name, service_configuration_context = self._get_request_service_configuration_context(request, service_configuration)
+        (
+            _service_configuration_context_name,
+            service_configuration_context,
+        ) = self._get_request_service_configuration_context(
+            request, service_configuration
+        )
 
         # retrieves the "default" value for the force domain
         # from the service configuration and then "joins"
@@ -1939,7 +2149,8 @@ class HTTPClientServiceHandler(object):
 
         # in case the force domain value is not set no need to
         # proceed with the processing of it, returns immediately
-        if not force_domain: return
+        if not force_domain:
+            return
 
         # checks if the current service connection is secure (encrypted)
         # then uses it to retrieve the proper prefix value for the location
@@ -1952,7 +2163,15 @@ class HTTPClientServiceHandler(object):
 
         # construct the URL (new location) with the prefix and using the
         # port part of the value in case a non default secure port is defined
-        location = service_connection.connection_port in (80, 443) and prefix + force_domain + original_path or prefix + force_domain + ":" + str(service_connection.connection_port) + original_path
+        location = (
+            service_connection.connection_port in (80, 443)
+            and prefix + force_domain + original_path
+            or prefix
+            + force_domain
+            + ":"
+            + str(service_connection.connection_port)
+            + original_path
+        )
 
         # sets the status code in the request and then sets the location header
         # (using the location value)
@@ -1974,7 +2193,12 @@ class HTTPClientServiceHandler(object):
         """
 
         # retrieves the service configuration context name and value from the request and the service configuration
-        _service_configuration_context_name, service_configuration_context = self._get_request_service_configuration_context(request, service_configuration)
+        (
+            _service_configuration_context_name,
+            service_configuration_context,
+        ) = self._get_request_service_configuration_context(
+            request, service_configuration
+        )
 
         # retrieves the "default" values for the force secure and
         # secure port from the service configuration and then "joins"
@@ -1999,12 +2223,14 @@ class HTTPClientServiceHandler(object):
 
         # in case the force secure flag is not set no need to process the
         # redirection process, returns immediately
-        if not force_secure: return
+        if not force_secure:
+            return
 
         # in case the service connection port is the same as the port defined
         # as secure, no need to process the redirection the connection is
         # already considered as secure
-        if service_connection.connection_port == secure_port: return
+        if service_connection.connection_port == secure_port:
+            return
 
         # retrieves the host value from the request headers
         # in order to be able to construct the new full secure
@@ -2026,25 +2252,35 @@ class HTTPClientServiceHandler(object):
         # construct the secure URL (new location) with the secure prefix and
         # using the port part of the value in case a non default secure port
         # is defined
-        location = secure_port == 443 and SECURE_PREFIX_VALUE + hostname + original_path or SECURE_PREFIX_VALUE + hostname + ":" + str(secure_port) + original_path
+        location = (
+            secure_port == 443
+            and SECURE_PREFIX_VALUE + hostname + original_path
+            or SECURE_PREFIX_VALUE + hostname + ":" + str(secure_port) + original_path
+        )
 
         # sets the status code in the request and then sets the location header
         # (using the location value)
         request.status_code = 302
         request.set_header(LOCATION_VALUE, location)
 
-    def _get_request_service_configuration_context(self, request, service_configuration):
+    def _get_request_service_configuration_context(
+        self, request, service_configuration
+    ):
         # retrieves the service configuration contexts
         service_configuration_contexts = service_configuration.get("contexts", {})
 
         # retrieves the service configuration contexts resolution order
-        service_configuration_contexts_resolution_order = service_configuration_contexts.get(
-            RESOLUTION_ORDER_VALUE,
-            colony.legacy.iterkeys(service_configuration_contexts)
+        service_configuration_contexts_resolution_order = (
+            service_configuration_contexts.get(
+                RESOLUTION_ORDER_VALUE,
+                colony.legacy.iterkeys(service_configuration_contexts),
+            )
         )
 
         # retrieves the service configuration contexts resolution order regex
-        service_configuration_contexts_resolution_order_regex = service_configuration_contexts.get(RESOLUTION_ORDER_REGEX_VALUE, None)
+        service_configuration_contexts_resolution_order_regex = (
+            service_configuration_contexts.get(RESOLUTION_ORDER_REGEX_VALUE, None)
+        )
 
         # in case the request is pending redirection validation
         if request.redirection_validation:
@@ -2067,7 +2303,11 @@ class HTTPClientServiceHandler(object):
         # is defined and valid
         if service_configuration_contexts_resolution_order_regex:
             # tries to match the request path with the regex
-            request_path_match = service_configuration_contexts_resolution_order_regex.match(request_path)
+            request_path_match = (
+                service_configuration_contexts_resolution_order_regex.match(
+                    request_path
+                )
+            )
         else:
             # sets the request path match ad invalid
             request_path_match = None
@@ -2078,10 +2318,14 @@ class HTTPClientServiceHandler(object):
             group_index = request_path_match.lastindex
 
             # retrieves the service configuration context name
-            service_configuration_context_name = service_configuration_contexts_resolution_order[group_index - 1]
+            service_configuration_context_name = (
+                service_configuration_contexts_resolution_order[group_index - 1]
+            )
 
             # retrieves the service configuration context
-            service_configuration_context = service_configuration_contexts[service_configuration_context_name]
+            service_configuration_context = service_configuration_contexts[
+                service_configuration_context_name
+            ]
 
         # returns the service configuration context name and value
         return service_configuration_context_name, service_configuration_context
@@ -2101,7 +2345,12 @@ class HTTPClientServiceHandler(object):
         """
 
         # retrieves the service configuration context name and value from the request and the service configuration
-        service_configuration_context_name, service_configuration_context = self._get_request_service_configuration_context(request, service_configuration)
+        (
+            service_configuration_context_name,
+            service_configuration_context,
+        ) = self._get_request_service_configuration_context(
+            request, service_configuration
+        )
 
         # retrieves the allow redirection property
         allow_redirection = service_configuration_context.get("allow_redirection", True)
@@ -2112,7 +2361,7 @@ class HTTPClientServiceHandler(object):
             if not allow_redirection:
                 # changes the path to the base path, avoids the overriding
                 # of the original path by unsetting the flag
-                request.set_path(request.base_path, set_original_path = False)
+                request.set_path(request.base_path, set_original_path=False)
 
                 # unsets the request handler base path
                 request.handler_base_path = None
@@ -2148,10 +2397,17 @@ class HTTPClientServiceHandler(object):
 
     def _process_authentication(self, request, service_configuration):
         # retrieves the service configuration context name and value from the request and the service configuration
-        _service_configuration_context_name, service_configuration_context = self._get_request_service_configuration_context(request, service_configuration)
+        (
+            _service_configuration_context_name,
+            service_configuration_context,
+        ) = self._get_request_service_configuration_context(
+            request, service_configuration
+        )
 
         # retrieves the authentication handler
-        authentication_handler = service_configuration_context.get("authentication_handler", None)
+        authentication_handler = service_configuration_context.get(
+            "authentication_handler", None
+        )
 
         # in case no authentication handler is defined (no
         # authentication is required)
@@ -2160,10 +2416,14 @@ class HTTPClientServiceHandler(object):
             return
 
         # retrieves the authentication properties
-        authentication_properties = service_configuration_context.get("authentication_properties", {})
+        authentication_properties = service_configuration_context.get(
+            "authentication_properties", {}
+        )
 
         # retrieves the authentication realm
-        authentication_realm = authentication_properties.get("authentication_realm", "default")
+        authentication_realm = authentication_properties.get(
+            "authentication_realm", "default"
+        )
 
         # retrieves the authorization from the request headers
         authorization = request.headers_map.get(AUTHORIZATION_VALUE, None)
@@ -2171,7 +2431,9 @@ class HTTPClientServiceHandler(object):
         # in case no authorization is defined
         if not authorization:
             # sets the location header
-            request.set_header(WWW_AUTHENTICATE_VALUE, "Basic realm=\"" + authentication_realm + "\"")
+            request.set_header(
+                WWW_AUTHENTICATE_VALUE, 'Basic realm="' + authentication_realm + '"'
+            )
 
             # raises the unauthorized exception
             raise exceptions.UnauthorizedException("authentication required", 401)
@@ -2186,19 +2448,33 @@ class HTTPClientServiceHandler(object):
         username, password = authorization_value_decoded.split(":", 1)
 
         # retrieves the HTTP service authentication handler plugins map
-        http_service_authentication_handler_plugins_map = self.service_plugin.system.http_service_authentication_handler_plugins_map
+        http_service_authentication_handler_plugins_map = (
+            self.service_plugin.system.http_service_authentication_handler_plugins_map
+        )
 
         # in case the authentication handler is not found in the HTTP service authentication
         # handler plugins map
-        if not authentication_handler in http_service_authentication_handler_plugins_map:
+        if (
+            not authentication_handler
+            in http_service_authentication_handler_plugins_map
+        ):
             # raises the HTTP authentication handler not found exception
-            raise exceptions.HTTPAuthenticationHandlerNotFoundException("no authentication handler found for current request: " + authentication_handler)
+            raise exceptions.HTTPAuthenticationHandlerNotFoundException(
+                "no authentication handler found for current request: "
+                + authentication_handler
+            )
 
         # retrieves the HTTP service authentication handler plugin
-        http_service_authentication_handler_plugin = http_service_authentication_handler_plugins_map[authentication_handler]
+        http_service_authentication_handler_plugin = (
+            http_service_authentication_handler_plugins_map[authentication_handler]
+        )
 
         # uses the authentication handler to try to authenticate
-        authentication_result = http_service_authentication_handler_plugin.handle_authentication(username, password, authentication_properties)
+        authentication_result = (
+            http_service_authentication_handler_plugin.handle_authentication(
+                username, password, authentication_properties
+            )
+        )
 
         # retrieves the authentication result valid
         authentication_result_valid = authentication_result.get(VALID_VALUE, False)
@@ -2206,10 +2482,12 @@ class HTTPClientServiceHandler(object):
         # in case the authentication result is not valid
         if not authentication_result_valid:
             # sets the location header
-            request.set_header(WWW_AUTHENTICATE_VALUE, "Basic realm=\"Secure Area\"")
+            request.set_header(WWW_AUTHENTICATE_VALUE, 'Basic realm="Secure Area"')
 
             # raises the unauthorized exception
-            raise exceptions.UnauthorizedException("user is not permitted: " + username, 401)
+            raise exceptions.UnauthorizedException(
+                "user is not permitted: " + username, 401
+            )
 
     def _verify_request_information(self, request):
         """
@@ -2228,7 +2506,8 @@ class HTTPClientServiceHandler(object):
 
         # in case the request is not meant to be verified must
         # returns immediately (avoids validation)
-        if not verify_request: return
+        if not verify_request:
+            return
 
         # retrieves the host value from the request headers
         host = request.headers_map.get(HOST_VALUE, None)
@@ -2243,11 +2522,7 @@ class HTTPClientServiceHandler(object):
         # value for the map contains permission to the access
         # from the local machine domain names
         allowed_hosts = service_configuration.get(
-            "allowed_hosts",
-            {
-                "127.0.0.1" : True,
-                "localhost" : True
-            }
+            "allowed_hosts", {"127.0.0.1": True, "localhost": True}
         )
 
         # retrieves the "hostname" from the host and uses this value
@@ -2260,7 +2535,9 @@ class HTTPClientServiceHandler(object):
         # security violation exception to notify the system about the
         # security problem (avoids data providing)
         if not host_allowed:
-            raise exceptions.ClientRequestSecurityViolation("host not allowed: " + hostname)
+            raise exceptions.ClientRequestSecurityViolation(
+                "host not allowed: " + hostname
+            )
 
     def _get_service_configuration(self, request):
         """
@@ -2284,12 +2561,16 @@ class HTTPClientServiceHandler(object):
         # in case the host is defined
         if host:
             # retrieves the virtual servers map
-            service_configuration_virtual_servers = service_configuration.get("virtual_servers", {})
+            service_configuration_virtual_servers = service_configuration.get(
+                "virtual_servers", {}
+            )
 
             # retrieves the service configuration virtual servers resolution order
-            service_configuration_virtual_servers_resolution_order = service_configuration_virtual_servers.get(
-                RESOLUTION_ORDER_VALUE,
-                colony.legacy.iterkeys(service_configuration_virtual_servers)
+            service_configuration_virtual_servers_resolution_order = (
+                service_configuration_virtual_servers.get(
+                    RESOLUTION_ORDER_VALUE,
+                    colony.legacy.iterkeys(service_configuration_virtual_servers),
+                )
             )
 
             # splits the host value (to try
@@ -2301,23 +2582,34 @@ class HTTPClientServiceHandler(object):
 
             # in case the host splitted length is two,
             # retrieves the hostname and the port
-            if host_splitted_length == 2: hostname, _port = host_splitted
+            if host_splitted_length == 2:
+                hostname, _port = host_splitted
             # otherwise sets the hostname as the host
             # (for size one)
-            else: hostname = host
+            else:
+                hostname = host
 
             # in case the hostname exists in the service configuration virtual servers map
             if hostname in service_configuration_virtual_servers:
                 # iterates over the service configuration virtual server names
-                for service_configuration_virtual_server_name in service_configuration_virtual_servers_resolution_order:
+                for (
+                    service_configuration_virtual_server_name
+                ) in service_configuration_virtual_servers_resolution_order:
                     # in case this is the hostname
                     if hostname == service_configuration_virtual_server_name:
                         # retrieves the service configuration virtual server value
-                        service_configuration_virtual_server_value = service_configuration_virtual_servers[service_configuration_virtual_server_name]
+                        service_configuration_virtual_server_value = (
+                            service_configuration_virtual_servers[
+                                service_configuration_virtual_server_name
+                            ]
+                        )
 
                         # merges the service configuration map with the service configuration virtual server value,
                         # to retrieve the final service configuration for this request
-                        service_configuration = self._merge_values(service_configuration, service_configuration_virtual_server_value)
+                        service_configuration = self._merge_values(
+                            service_configuration,
+                            service_configuration_virtual_server_value,
+                        )
 
                         # breaks the loop
                         break
@@ -2421,6 +2713,7 @@ class HTTPClientServiceHandler(object):
 
         # returns the final map
         return final_map
+
 
 class HTTPRequest(object):
     """
@@ -2579,7 +2872,12 @@ class HTTPRequest(object):
     properties = {}
     """ The properties """
 
-    def __init__(self, service = None, service_connection = None, content_type_charset = DEFAULT_CHARSET):
+    def __init__(
+        self,
+        service=None,
+        service_connection=None,
+        content_type_charset=DEFAULT_CHARSET,
+    ):
         self.service = service
         self.service_connection = service_connection
         self.content_type_charset = content_type_charset
@@ -2597,7 +2895,7 @@ class HTTPRequest(object):
     def __repr__(self):
         return "(%s, %s)" % (self.operation_type, self.path)
 
-    def __getattributes__(self, attribute_name, default = None):
+    def __getattributes__(self, attribute_name, default=None):
         """
         Retrieves the attribute from the attributes map.
 
@@ -2646,7 +2944,7 @@ class HTTPRequest(object):
                 # and the attribute value
                 self.attributes_map[attribute_name] = [
                     attribute_value_reference,
-                    attribute_value
+                    attribute_value,
                 ]
         # otherwise the attribute is not defined and a normal
         # set must be done
@@ -2663,7 +2961,8 @@ class HTTPRequest(object):
 
         # in case there are no arguments to be parsed
         # must return the control flow immediately
-        if path_splitted_length < 2: return
+        if path_splitted_length < 2:
+            return
 
         # retrieves the query string from the path splitted
         self.query_string = path_splitted[1]
@@ -2718,7 +3017,10 @@ class HTTPRequest(object):
             attribute_field_splitted_length = len(attribute_field_splitted)
 
             # in case the attribute field splitted length is invalid
-            if attribute_field_splitted_length == 0 or attribute_field_splitted_length > 2:
+            if (
+                attribute_field_splitted_length == 0
+                or attribute_field_splitted_length > 2
+            ):
                 # continues the loops
                 continue
 
@@ -2733,7 +3035,7 @@ class HTTPRequest(object):
             # in case the attribute field splitted length is one
             elif attribute_field_splitted_length == 1:
                 # retrieves the attribute name, from the attribute field splitted
-                attribute_name, = attribute_field_splitted
+                (attribute_name,) = attribute_field_splitted
 
                 # sets the attribute value to none
                 attribute_value = None
@@ -2757,7 +3059,9 @@ class HTTPRequest(object):
         # in case no content type is defined
         if not content_type:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HTTPInvalidMultipartRequestException("no content type defined")
+            raise exceptions.HTTPInvalidMultipartRequestException(
+                "no content type defined"
+            )
 
         # splits the content type
         content_type_splitted = content_type.split(";")
@@ -2768,7 +3072,9 @@ class HTTPRequest(object):
         # in case the content type value is not valid
         if not content_type_value == MULTIPART_FORM_DATA_VALUE:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HTTPInvalidMultipartRequestException("invalid content type defined: " + content_type_value)
+            raise exceptions.HTTPInvalidMultipartRequestException(
+                "invalid content type defined: " + content_type_value
+            )
 
         # retrieves the boundary value
         boundary = content_type_splitted[1].strip()
@@ -2779,7 +3085,9 @@ class HTTPRequest(object):
         # in case the length of the boundary is not two (invalid)
         if not len(boundary_splitted) == 2:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HTTPInvalidMultipartRequestException("invalid boundary value: " + boundary)
+            raise exceptions.HTTPInvalidMultipartRequestException(
+                "invalid boundary value: " + boundary
+            )
 
         # retrieves the boundary reference and the boundary value,
         # ensures byte compatibility and calculates it's length
@@ -2798,12 +3106,15 @@ class HTTPRequest(object):
 
             # in case the end index is invalid (end of multipart)
             # must break the current loop (no more parsing)
-            if end_index == -1: break
+            if end_index == -1:
+                break
 
             # parses the multipart part retrieving the headers map and the contents
             # the sent indexes avoid the extra newline values incrementing and decrementing
             # the value of two at the end and start
-            headers_map, contents = self._parse_multipart_part(current_index + 2, end_index - 2)
+            headers_map, contents = self._parse_multipart_part(
+                current_index + 2, end_index - 2
+            )
 
             # parses the content disposition header retrieving the content
             # disposition map and list (with the attributes order)
@@ -2821,7 +3132,7 @@ class HTTPRequest(object):
             # sets the current index as the end index
             current_index = end_index + boundary_value_length
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def execute_background(self, callable, retries=0, timeout=0.0, timestamp=None):
         """
         Executes the given callable object in a background
         thread.
@@ -2842,21 +3153,19 @@ class HTTPRequest(object):
         """
 
         self.service_connection.execute_background(
-            callable,
-            retries = retries,
-            timeout = timeout,
-            timestamp = timestamp
+            callable, retries=retries, timeout=timeout, timestamp=timestamp
         )
 
     def read(self):
         return self.received_message
 
-    def write(self, message, flush = 1, encode = True):
+    def write(self, message, flush=1, encode=True):
         # tries to verify if the message to be written is a
         # generator and if that's the case uses the special
         # version of the method for a mediation handler
         is_generator = colony.legacy.is_generator(message)
-        if is_generator: return self.write_generator(message)
+        if is_generator:
+            return self.write_generator(message)
 
         # retrieves the message type, so that it's possible to
         # "know" if an encoding operation is required or not
@@ -2921,7 +3230,7 @@ class HTTPRequest(object):
 
         return self.headers_map.get(header_name, None)
 
-    def set_header(self, header_name, header_value, encode = True):
+    def set_header(self, header_name, header_value, encode=True):
         """
         Set a response header value on the request.
 
@@ -3001,9 +3310,13 @@ class HTTPRequest(object):
         # should be applied to the message
         if self.encoded:
             if self.mediated:
-                self.mediated_handler.encode_file(self.encoding_handler, self.encoding_type)
+                self.mediated_handler.encode_file(
+                    self.encoding_handler, self.encoding_type
+                )
             elif self.chunked_encoding:
-                self.chunk_handler.encode_file(self.encoding_handler, self.encoding_type)
+                self.chunk_handler.encode_file(
+                    self.encoding_handler, self.encoding_type
+                )
             else:
                 message = self.encoding_handler(message)
 
@@ -3025,7 +3338,14 @@ class HTTPRequest(object):
         status_message = self.get_status_message()
 
         # writes the HTTP command in the string buffer (version, status code and status message)
-        command = self.protocol_version + " " + str(self.status_code) + " " + status_message + "\r\n"
+        command = (
+            self.protocol_version
+            + " "
+            + str(self.status_code)
+            + " "
+            + status_message
+            + "\r\n"
+        )
         command = colony.legacy.bytes(command)
         result.write(command)
 
@@ -3044,7 +3364,11 @@ class HTTPRequest(object):
             headers_ordered_map[CONTENT_ENCODING_VALUE] = self.encoding_name
         if self.chunked_encoding:
             headers_ordered_map[TRANSFER_ENCODING_VALUE] = CHUNKED_VALUE
-        if not self.chunked_encoding and self.contains_message and not self.content_length == None:
+        if (
+            not self.chunked_encoding
+            and self.contains_message
+            and not self.content_length == None
+        ):
             headers_ordered_map[CONTENT_LENGTH_VALUE] = str(self.content_length)
         if self.upgrade_mode:
             headers_ordered_map[UPGRADE_VALUE] = self.upgrade_mode
@@ -3055,14 +3379,20 @@ class HTTPRequest(object):
         if self.expiration_timestamp:
             # converts the expiration timestamp to date time and formats it
             # according to the HTTP specification setting it in the headers map
-            expiration_date_time = datetime.datetime.fromtimestamp(self.expiration_timestamp)
+            expiration_date_time = datetime.datetime.fromtimestamp(
+                self.expiration_timestamp
+            )
             expiration_date_time_formatted = expiration_date_time.strftime(DATE_FORMAT)
             headers_ordered_map[EXPIRES_VALUE] = expiration_date_time_formatted
         if self.last_modified_timestamp:
             # converts the last modified timestamp to date time and formats it
             # according to the HTTP specification setting it in the headers map
-            last_modified_date_time = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
-            last_modified_date_time_formatted = last_modified_date_time.strftime(DATE_FORMAT)
+            last_modified_date_time = datetime.datetime.fromtimestamp(
+                self.last_modified_timestamp
+            )
+            last_modified_date_time_formatted = last_modified_date_time.strftime(
+                DATE_FORMAT
+            )
             headers_ordered_map[LAST_MODIFIED_VALUE] = last_modified_date_time_formatted
 
         # sets the default cache values in the unset header values
@@ -3087,9 +3417,11 @@ class HTTPRequest(object):
             # encoding so that the value that is written to the result
             # is always a normalized string value
             is_unicode = type(header_name) == colony.legacy.UNICODE
-            if is_unicode: header_name = header_name.encode(DEFAULT_CHARSET)
+            if is_unicode:
+                header_name = header_name.encode(DEFAULT_CHARSET)
             is_unicode = type(header_value) == colony.legacy.UNICODE
-            if is_unicode: header_value = header_value.encode(DEFAULT_CHARSET)
+            if is_unicode:
+                header_value = header_value.encode(DEFAULT_CHARSET)
             result.write(header_name + b": " + header_value + b"\r\n")
 
         # writes the end of the headers and the message
@@ -3159,7 +3491,7 @@ class HTTPRequest(object):
 
         return colony.legacy.keys(self.attributes_map)
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         return self.__getattributes__(attribute_name, default)
 
     def set_attribute(self, attribute_name, attribute_value):
@@ -3204,7 +3536,7 @@ class HTTPRequest(object):
 
         return self.get_operation_type()
 
-    def set_path(self, path, set_original_path = True):
+    def set_path(self, path, set_original_path=True):
         """
         Sets the path in the request.
         The paths is set by processing it, creating
@@ -3223,7 +3555,8 @@ class HTTPRequest(object):
 
         # "saves" the original path value
         # without unquoting (in case the flag is set)
-        if set_original_path: self.original_path = path
+        if set_original_path:
+            self.original_path = path
 
         # retrieves the resource path of the path, by
         # splitting the path around the separator
@@ -3296,7 +3629,8 @@ class HTTPRequest(object):
         # is already unicode if that's the case returns
         # the original value as it's already decoded
         is_unicode = type(self.resource_path) == colony.legacy.UNICODE
-        if is_unicode: return self.resource_path
+        if is_unicode:
+            return self.resource_path
 
         # decodes the resources path using the default
         # charset value and return the value to the caller
@@ -3314,7 +3648,8 @@ class HTTPRequest(object):
         # verifies if the resource base path is unicode based
         # already and if that's the case returns immediately
         is_unicode = colony.legacy.is_unicode(self.resource_base_path)
-        if is_unicode: return self.resource_base_path
+        if is_unicode:
+            return self.resource_base_path
 
         # decodes the resources base path using the currently defined
         # charset/encoding value and returns the value
@@ -3409,14 +3744,13 @@ class HTTPRequest(object):
             # retrieves the message for the status code, defaulting
             # to the default value in case none is defined (error)
             status_message = STATUS_MESSAGES.get(
-                self.status_code,
-                DEFAULT_STATUS_MESSAGE
+                self.status_code, DEFAULT_STATUS_MESSAGE
             )
 
         # returns the status message
         return status_message
 
-    def verify_resource_modification(self, modified_timestamp = None, etag_value = None):
+    def verify_resource_modification(self, modified_timestamp=None, etag_value=None):
         """
         Verifies the resource to check for any modification since the
         value defined in the HTTP request.
@@ -3437,16 +3771,21 @@ class HTTPRequest(object):
             try:
                 # converts the if modified header value to date time and then
                 # converts the modified timestamp to date time
-                if_modified_header_data_time = datetime.datetime.strptime(if_modified_header, DATE_FORMAT)
+                if_modified_header_data_time = datetime.datetime.strptime(
+                    if_modified_header, DATE_FORMAT
+                )
                 modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
 
                 # in case the modified date time is less or the same
                 # as the if modified header date time (no modification)
                 # must return false as there was no modification
-                if modified_date_time <= if_modified_header_data_time: return False
+                if modified_date_time <= if_modified_header_data_time:
+                    return False
             except Exception:
                 # prints a warning for not being able to check the modification date
-                self.service.service_plugin.warning("Problem while checking modification date")
+                self.service.service_plugin.warning(
+                    "Problem while checking modification date"
+                )
 
         # retrieves the if none match value and in case it is
         # defined together with the etag value the etag based
@@ -3456,7 +3795,8 @@ class HTTPRequest(object):
             # in case the value of the if none match header is the same
             # as the etag value of the file (no modification) must
             # return false as there was no modification
-            if if_none_match_header == etag_value: return False
+            if if_none_match_header == etag_value:
+                return False
 
         # returns true (modified or no information for
         # modification test)
@@ -3495,7 +3835,7 @@ class HTTPRequest(object):
             # retrieves the header name and the value for it and then
             # converts both of the values to plain based unicode values
             header_name = header_splitted[:division_index].strip()
-            header_value = header_splitted[division_index + 1:].strip()
+            header_value = header_splitted[division_index + 1 :].strip()
             header_name = colony.legacy.str(header_name)
             header_value = colony.legacy.str(header_value)
 
@@ -3503,13 +3843,10 @@ class HTTPRequest(object):
             headers_map[header_name] = header_value
 
         # retrieves the contents from the multipart
-        contents = self.multipart[end_header_index + 4:end_index - 2]
+        contents = self.multipart[end_header_index + 4 : end_index - 2]
 
         # returns the headers map and the contents as a tuple
-        return (
-            headers_map,
-            contents
-        )
+        return (headers_map, contents)
 
     def _parse_content_disposition(self, headers_map):
         """
@@ -3529,7 +3866,9 @@ class HTTPRequest(object):
         # in case no content disposition is defined
         if not content_disposition:
             # raises the HTTP invalid multipart request exception
-            raise exceptions.HTTPInvalidMultipartRequestException("missing content disposition in multipart value")
+            raise exceptions.HTTPInvalidMultipartRequestException(
+                "missing content disposition in multipart value"
+            )
 
         # splits the content disposition to obtain the attributes
         content_disposition_attributes = content_disposition.split(";")
@@ -3541,13 +3880,19 @@ class HTTPRequest(object):
         # the content disposition attributes are not stripped
         for content_disposition_attribute in content_disposition_attributes:
             # strips the content disposition attribute
-            content_disposition_attribute_stripped = content_disposition_attribute.strip()
+            content_disposition_attribute_stripped = (
+                content_disposition_attribute.strip()
+            )
 
             # splits the content disposition attribute
-            content_disposition_attribute_splitted = content_disposition_attribute_stripped.split("=")
+            content_disposition_attribute_splitted = (
+                content_disposition_attribute_stripped.split("=")
+            )
 
             # retrieves the length of the content disposition attribute splitted
-            content_disposition_attribute_splitted_length = len(content_disposition_attribute_splitted)
+            content_disposition_attribute_splitted_length = len(
+                content_disposition_attribute_splitted
+            )
 
             # in case the length is two (key and value)
             if content_disposition_attribute_splitted_length == 2:
@@ -3555,7 +3900,7 @@ class HTTPRequest(object):
                 key, value = content_disposition_attribute_splitted
 
                 # strips the value from the string items
-                value_stripped = value.strip("\"")
+                value_stripped = value.strip('"')
 
                 # sets the key with value in the
                 # content disposition map
@@ -3572,12 +3917,13 @@ class HTTPRequest(object):
             else:
                 # raises the HTTP invalid multipart request exception
                 raise exceptions.HTTPInvalidMultipartRequestException(
-                    "invalid content disposition value in multipart value: " +\
-                    content_disposition_attribute_stripped
+                    "invalid content disposition value in multipart value: "
+                    + content_disposition_attribute_stripped
                 )
 
         # returns the content disposition map
         return content_disposition_map
+
 
 class GeneratorHandler(object):
     """
@@ -3598,9 +3944,11 @@ class GeneratorHandler(object):
     def get_size(self):
         return None
 
-    def get_chunk(self, chunk_size = CHUNK_SIZE):
-        try: return next(self.generator)
-        except StopIteration: return None
+    def get_chunk(self, chunk_size=CHUNK_SIZE):
+        try:
+            return next(self.generator)
+        except StopIteration:
+            return None
 
     def close(self):
         self.generator.close()

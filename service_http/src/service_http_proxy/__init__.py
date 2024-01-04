@@ -28,6 +28,9 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ServiceHTTPProxyException, HTTPProxyRuntimeException,\
-    HTTPClientUnavailableException
+from .exceptions import (
+    ServiceHTTPProxyException,
+    HTTPProxyRuntimeException,
+    HTTPClientUnavailableException,
+)
 from .system import ServiceHTTPProxy

@@ -32,6 +32,7 @@ import colony
 
 from . import system
 
+
 class ConsoleTestCase(colony.ColonyTestCase):
     """
     The console test case class.
@@ -49,7 +50,9 @@ class ConsoleTestCase(colony.ColonyTestCase):
         """
 
         # process the invalid command line
-        return_value = self.console.process_command_line("invalid_command", self.output_method)
+        return_value = self.console.process_command_line(
+            "invalid_command", self.output_method
+        )
 
         # asserts the echo value
         self.assertEqual(self.last_output, system.INVALID_COMMAND_MESSAGE)
@@ -57,5 +60,5 @@ class ConsoleTestCase(colony.ColonyTestCase):
         # assets the return value
         self.assertEqual(return_value, False)
 
-    def output_method(self, text, new_line = True):
+    def output_method(self, text, new_line=True):
         self.last_output = text

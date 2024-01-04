@@ -72,10 +72,27 @@ USER_AGENT_NAME = "Hive-Colony-Web-Client"
 USER_AGENT_VERSION = "1.0.0"
 """ The user agent version """
 
-ENVIRONMENT_VERSION = str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + "-" + str(sys.version_info[3])
+ENVIRONMENT_VERSION = (
+    str(sys.version_info[0])
+    + "."
+    + str(sys.version_info[1])
+    + "."
+    + str(sys.version_info[2])
+    + "-"
+    + str(sys.version_info[3])
+)
 """ The environment version """
 
-USER_AGENT_IDENTIFIER = USER_AGENT_NAME + "/" + USER_AGENT_VERSION + " (python/" + sys.platform + "/" + ENVIRONMENT_VERSION + ")"
+USER_AGENT_IDENTIFIER = (
+    USER_AGENT_NAME
+    + "/"
+    + USER_AGENT_VERSION
+    + " (python/"
+    + sys.platform
+    + "/"
+    + ENVIRONMENT_VERSION
+    + ")"
+)
 """ The user agent identifier """
 
 DEFAULT_CONTENT_TYPE = None
@@ -88,47 +105,47 @@ DEFAULT_URL_CHARSET = "utf-8"
 """ The default URL charset """
 
 STATUS_MESSAGES = {
-    100 : "Continue",
-    101 : "Switching Protocols",
-    200 : "OK",
-    201 : "Created",
-    202 : "Accepted",
-    203 : "Non-Authoritative Information",
-    204 : "No Content",
-    205 : "Reset Content",
-    206 : "Partial Content",
-    207 : "Multi-Status",
-    301 : "Moved permanently",
-    302 : "Found",
-    303 : "See Other",
-    304 : "Not Modified",
-    305 : "Use Proxy",
-    306 : "(Unused)",
-    307 : "Temporary Redirect",
-    400 : "Bad Request",
-    401 : "Unauthorized",
-    402 : "Payment Required",
-    403 : "Forbidden",
-    404 : "Not Found",
-    405 : "Method Not Allowed",
-    406 : "Not Acceptable",
-    407 : "Proxy Authentication Required",
-    408 : "Request Timeout",
-    409 : "Conflict",
-    410 : "Gone",
-    411 : "Length Required",
-    412 : "Precondition Failed",
-    413 : "Request Entity Too Large",
-    414 : "Request-URI Too Long",
-    415 : "Unsupported Media Type",
-    416 : "Requested Range Not Satisfiable",
-    417 : "Expectation Failed",
-    500 : "Internal Server Error",
-    501 : "Not Implemented",
-    502 : "Bad Gateway",
-    503 : "Service Unavailable",
-    504 : "Gateway Timeout",
-    505 : "HTTP Version Not Supported"
+    100: "Continue",
+    101: "Switching Protocols",
+    200: "OK",
+    201: "Created",
+    202: "Accepted",
+    203: "Non-Authoritative Information",
+    204: "No Content",
+    205: "Reset Content",
+    206: "Partial Content",
+    207: "Multi-Status",
+    301: "Moved permanently",
+    302: "Found",
+    303: "See Other",
+    304: "Not Modified",
+    305: "Use Proxy",
+    306: "(Unused)",
+    307: "Temporary Redirect",
+    400: "Bad Request",
+    401: "Unauthorized",
+    402: "Payment Required",
+    403: "Forbidden",
+    404: "Not Found",
+    405: "Method Not Allowed",
+    406: "Not Acceptable",
+    407: "Proxy Authentication Required",
+    408: "Request Timeout",
+    409: "Conflict",
+    410: "Gone",
+    411: "Length Required",
+    412: "Precondition Failed",
+    413: "Request Entity Too Large",
+    414: "Request-URI Too Long",
+    415: "Unsupported Media Type",
+    416: "Requested Range Not Satisfiable",
+    417: "Expectation Failed",
+    500: "Internal Server Error",
+    501: "Not Implemented",
+    502: "Bad Gateway",
+    503: "Service Unavailable",
+    504: "Gateway Timeout",
+    505: "HTTP Version Not Supported",
 }
 """ The status code messages map, mapping the standard
 HTTP error codes with their descriptive value """
@@ -208,20 +225,15 @@ UNDEFINED_CONTENT_LENGTH_STATUS_CODES = (204, 304)
 REDIRECT_STATUS_CODES = (301, 302, 307)
 """ The status codes for redirection """
 
-PROTOCOL_SOCKET_NAME_MAP = {
-    HTTP_PREFIX_VALUE : "normal",
-    HTTPS_PREFIX_VALUE : "ssl"
-}
+PROTOCOL_SOCKET_NAME_MAP = {HTTP_PREFIX_VALUE: "normal", HTTPS_PREFIX_VALUE: "ssl"}
 """ The map associating the HTTP protocol prefixed with the name of the socket """
 
-PROTOCOL_DEFAULT_PORT_MAP = {
-    HTTP_PREFIX_VALUE : 80,
-    HTTPS_PREFIX_VALUE : 443
-}
+PROTOCOL_DEFAULT_PORT_MAP = {HTTP_PREFIX_VALUE: 80, HTTPS_PREFIX_VALUE: 443}
 """ The map associating the HTTP protocol prefixed with the port number """
 
 DATE_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 """ The date format """
+
 
 class ClientHTTP(colony.System):
     """
@@ -242,7 +254,9 @@ class ClientHTTP(colony.System):
         # retrieves the various parameters provided for the
         # creation of the HTTP client
         protocol_version = parameters.get(PROTOCOL_VERSION_VALUE, None)
-        content_type_charset = parameters.get(CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET)
+        content_type_charset = parameters.get(
+            CONTENT_TYPE_CHARSET_VALUE, DEFAULT_CHARSET
+        )
         key_file_path = parameters.get(KEY_FILE_PATH_VALUE, None)
         certificate_file_path = parameters.get(CERTIFICATE_FILE_PATH_VALUE, None)
         ssl_version = parameters.get(SSL_VERSION_VALUE, None)
@@ -252,15 +266,16 @@ class ClientHTTP(colony.System):
         http_client = HTTPClient(
             self,
             protocol_version,
-            content_type_charset = content_type_charset,
-            key_file_path = key_file_path,
-            certificate_file_path = certificate_file_path,
-            ssl_version = ssl_version
+            content_type_charset=content_type_charset,
+            key_file_path=key_file_path,
+            certificate_file_path=certificate_file_path,
+            ssl_version=ssl_version,
         )
         return http_client
 
     def create_request(self, parameters):
         pass
+
 
 class HTTPClient(object):
     """
@@ -317,10 +332,10 @@ class HTTPClient(object):
         self,
         client_http,
         protocol_version,
-        content_type_charset = DEFAULT_CHARSET,
-        key_file_path = None,
-        certificate_file_path = None,
-        ssl_version = None
+        content_type_charset=DEFAULT_CHARSET,
+        key_file_path=None,
+        certificate_file_path=None,
+        ssl_version=None,
     ):
         """
         Constructor of the class.
@@ -352,7 +367,7 @@ class HTTPClient(object):
 
         self._http_client_lock = threading.RLock()
 
-    def open(self, parameters = None):
+    def open(self, parameters=None):
         # retrieves the the parameters defaulting to an empty map
         # in case they are not provided and then generates the
         # final parameters map with the default parameters
@@ -361,27 +376,29 @@ class HTTPClient(object):
 
         # creates the HTTP client, generating the internal structures
         # and uses it to start the client
-        self._http_client = self.client_http.plugin.client_utils_plugin.generate_client(client_parameters)
+        self._http_client = self.client_http.plugin.client_utils_plugin.generate_client(
+            client_parameters
+        )
         self._http_client.start_client()
 
-    def close(self, parameters = None):
+    def close(self, parameters=None):
         parameters = parameters or {}
         self._http_client.stop_client()
 
     def fetch_url(
         self,
         url,
-        method = GET_METHOD_VALUE,
-        parameters = {},
-        protocol_version = HTTP_1_1_VERSION,
-        headers = {},
-        content_type = DEFAULT_CONTENT_TYPE,
-        content_type_charset = DEFAULT_CHARSET,
-        encode_path = False,
-        contents = None,
-        save_message = True,
-        yield_response = False,
-        handlers_map = {}
+        method=GET_METHOD_VALUE,
+        parameters={},
+        protocol_version=HTTP_1_1_VERSION,
+        headers={},
+        content_type=DEFAULT_CONTENT_TYPE,
+        content_type_charset=DEFAULT_CHARSET,
+        encode_path=False,
+        contents=None,
+        save_message=True,
+        yield_response=False,
+        handlers_map={},
     ):
         """
         Fetches the URL for the given URL, method and (HTTP) parameters.
@@ -426,7 +443,16 @@ class HTTPClient(object):
 
         # parses the URL retrieving the protocol the host, the username,
         # the password, the port, the path, the base URL and the options map
-        protocol, username, password, host, port, path, base_url, options_map = self._parse_url(url)
+        (
+            protocol,
+            username,
+            password,
+            host,
+            port,
+            path,
+            base_url,
+            options_map,
+        ) = self._parse_url(url)
 
         # extends the parameters map with the options map
         parameters = colony.map_extend(parameters, options_map)
@@ -449,16 +475,12 @@ class HTTPClient(object):
             socket_parameters["ssl_version"] = self.ssl_version
 
         # defines the connection parameters
-        connection_parameters = (
-            host,
-            port,
-            persistent,
-            socket_name,
-            socket_parameters
-        )
+        connection_parameters = (host, port, persistent, socket_name, socket_parameters)
 
         # retrieves the corresponding (HTTP) client connection
-        self.client_connection = self._http_client.get_client_connection(connection_parameters)
+        self.client_connection = self._http_client.get_client_connection(
+            connection_parameters
+        )
 
         # acquires the HTTP client lock
         self._http_client_lock.acquire()
@@ -498,13 +520,15 @@ class HTTPClient(object):
                 encode_path,
                 contents,
                 url,
-                base_url
+                base_url,
             )
 
             # retrieves the response, controls the saving of the message
             # and calls the appropriate handlers, the yield state is respected
             # it the yield response is set
-            response = self.retrieve_response(request, save_message, yield_response, handlers_map)
+            response = self.retrieve_response(
+                request, save_message, yield_response, handlers_map
+            )
 
             # retrieves the response according to the state of the yield response
             response = yield_response and response or ([value for value in response][0])
@@ -542,10 +566,11 @@ class HTTPClient(object):
 
         # in case the request method is not get as the parameters
         # are not meant to be encoded as URL parameters
-        if not method == GET_METHOD_VALUE: return base_url
+        if not method == GET_METHOD_VALUE:
+            return base_url
 
         # creates the HTTP request to build the URL
-        request = HTTPRequest(attributes_map = parameters)
+        request = HTTPRequest(attributes_map=parameters)
 
         # encodes the request attributes
         encoded_attributes = request._encode_attributes()
@@ -553,7 +578,8 @@ class HTTPClient(object):
         # in case the encoded attributes string
         # is not valid or is empty the URL remain
         # the base one, returns the base URL
-        if not encoded_attributes: return base_url
+        if not encoded_attributes:
+            return base_url
 
         # in case no exclamation mark exists in
         # the URL
@@ -585,7 +611,7 @@ class HTTPClient(object):
         encode_path,
         contents,
         url,
-        base_url
+        base_url,
     ):
         """
         Sends the request for the given parameters.
@@ -624,23 +650,24 @@ class HTTPClient(object):
         # the headers, the protocol version, the content type, the content type charset, the encode path,
         # the URL and the base URL
         request = HTTPRequest(
-            host = host,
-            port = port,
-            path = path,
-            attributes_map = parameters,
-            operation_type = operation_type,
-            headers_map = headers,
-            protocol_version = protocol_version,
-            content_type = content_type,
-            content_type_charset = content_type_charset,
-            encode_path = encode_path,
-            url = url,
-            base_url = base_url
+            host=host,
+            port=port,
+            path=path,
+            attributes_map=parameters,
+            operation_type=operation_type,
+            headers_map=headers,
+            protocol_version=protocol_version,
+            content_type=content_type,
+            content_type_charset=content_type_charset,
+            encode_path=encode_path,
+            url=url,
+            base_url=base_url,
         )
 
         # in case the contents are defined, writes the contents
         # to the request structure
-        if contents: request.write(contents)
+        if contents:
+            request.write(contents)
 
         # in case authentication is set, sets the authentication
         # parameters in the request
@@ -661,10 +688,10 @@ class HTTPClient(object):
     def retrieve_response(
         self,
         request,
-        save_message = True,
-        yield_response = False,
-        handlers_map = {},
-        response_timeout = None
+        save_message=True,
+        yield_response=False,
+        handlers_map={},
+        response_timeout=None,
     ):
         """
         Retrieves the response from the sent request.
@@ -749,11 +776,15 @@ class HTTPClient(object):
 
             # calls the data handler (data event)
             self._call_handler_data("data", handlers_map, response, data)
-            if yield_response: yield "data", response, data
+            if yield_response:
+                yield "data", response, data
 
             # calls the message data handler (message data event)
-            header_loaded and self._call_handler_data("message_data", handlers_map, response, data)
-            if header_loaded and yield_response: yield "message_data", response, data
+            header_loaded and self._call_handler_data(
+                "message_data", handlers_map, response, data
+            )
+            if header_loaded and yield_response:
+                yield "message_data", response, data
 
             # in case the message size is not yet set or is never going to
             # be set (undefined size) must retrieve the message value
@@ -762,13 +793,16 @@ class HTTPClient(object):
 
             # in case the header is not loaded or the current message has
             # been completely received must retrieve the message value
-            elif not header_loaded or\
-                received_data_size == message_size + message_offset_index:
+            elif (
+                not header_loaded
+                or received_data_size == message_size + message_offset_index
+            ):
                 message_value = message.get_value()
 
             # in case there's no need to inspect the message contents continues
             # the loop immediately (avoid extra computation)
-            else: continue
+            else:
+                continue
 
             # in case the start line is not loaded
             if not start_line_loaded:
@@ -789,7 +823,9 @@ class HTTPClient(object):
                     # in case the length of the splitted line is not valid
                     # raises the HTTP invalid data exception
                     if start_line_splitted_length < 3:
-                        raise exceptions.HTTPInvalidDataException("invalid data received: " + start_line)
+                        raise exceptions.HTTPInvalidDataException(
+                            "invalid data received: " + start_line
+                        )
 
                     # retrieve the protocol version the status code and the status message
                     # from the start line splitted, converts some of the values into their
@@ -805,7 +841,8 @@ class HTTPClient(object):
 
                     # calls the start line (end) handler (start line event)
                     self._call_handler("start_line", handlers_map, response)
-                    if yield_response: yield "start_line", response
+                    if yield_response:
+                        yield "start_line", response
 
             # in case the header is not loaded
             if not header_loaded:
@@ -838,7 +875,7 @@ class HTTPClient(object):
                         # retrieves the header name and value and then converts
                         # them into the appropriate string representation
                         header_name = header_splitted[:division_index].strip()
-                        header_value = header_splitted[division_index + 1:].strip()
+                        header_value = header_splitted[division_index + 1 :].strip()
                         header_name = colony.legacy.str(header_name)
                         header_value = colony.legacy.str(header_value)
 
@@ -864,13 +901,18 @@ class HTTPClient(object):
 
                     # calls the headers (end) handler (headers event)
                     self._call_handler("headers", handlers_map, response)
-                    if yield_response: yield "headers", response
+                    if yield_response:
+                        yield "headers", response
 
                     # retrieves the transfer encoding value
-                    transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_VALUE, None)
+                    transfer_encoding = response.headers_map.get(
+                        TRANSFER_ENCODING_VALUE, None
+                    )
 
                     # retrieves the transfer encoding value using the lower cased value
-                    transfer_encoding = response.headers_map.get(TRANSFER_ENCODING_LOWER_VALUE, transfer_encoding)
+                    transfer_encoding = response.headers_map.get(
+                        TRANSFER_ENCODING_LOWER_VALUE, transfer_encoding
+                    )
 
                     # retrieves the start message index (the end header
                     # index plus the newline characters) then uses it
@@ -882,13 +924,21 @@ class HTTPClient(object):
                     if transfer_encoding == CHUNKED_VALUE:
                         # retrieves the response in chunked mode, sends the start (initial)
                         # message value
-                        chunked_generator = self.retrieve_response_chunked(response, start_message_value, save_message, yield_response, handlers_map, response_timeout)
+                        chunked_generator = self.retrieve_response_chunked(
+                            response,
+                            start_message_value,
+                            save_message,
+                            yield_response,
+                            handlers_map,
+                            response_timeout,
+                        )
 
                         # iterates over all the chunked items in the chunked
                         # generator to yield them
                         for chunked_item in chunked_generator:
                             # yields the current chunked item
-                            if yield_response: yield chunked_item
+                            if yield_response:
+                                yield chunked_item
 
                         # breaks the loop
                         break
@@ -897,8 +947,11 @@ class HTTPClient(object):
                     # data (if any)
                     else:
                         # calls the message data handler (message data event)
-                        start_message_value and self._call_handler_data("message_data", handlers_map, response, start_message_value)
-                        if yield_response and start_message_value: yield "message_data", response, start_message_value
+                        start_message_value and self._call_handler_data(
+                            "message_data", handlers_map, response, start_message_value
+                        )
+                        if yield_response and start_message_value:
+                            yield "message_data", response, start_message_value
 
             # in case the message is not loaded and the header is loaded
             if not message_loaded and header_loaded:
@@ -906,16 +959,22 @@ class HTTPClient(object):
                 start_message_index = end_header_index + 4
 
                 # retrieves the message value length
-                message_value_length = not save_message and received_data_size or len(message_value)
+                message_value_length = (
+                    not save_message and received_data_size or len(message_value)
+                )
 
                 # calculates the message value message length
-                message_value_message_length = message_value_length - start_message_index
+                message_value_message_length = (
+                    message_value_length - start_message_index
+                )
 
                 # in case the length of the message value message size is defined
                 # and valid and the message value length (retrieved) is greater or
                 # equal to that same message size value (message loaded)
-                if not message_size == UNDEFINED_CONTENT_LENGTH and\
-                    message_value_message_length >= message_size:
+                if (
+                    not message_size == UNDEFINED_CONTENT_LENGTH
+                    and message_value_message_length >= message_size
+                ):
                     # retrieves the message part of the message value
                     message_value_message = message_value[start_message_index:]
 
@@ -924,7 +983,9 @@ class HTTPClient(object):
 
                     # sets the received message, taking into account
                     # the save message flag (empty received message, no saving)
-                    response.received_message = save_message and message_value_message or ""
+                    response.received_message = (
+                        save_message and message_value_message or ""
+                    )
 
                     # decodes the response if necessary
                     self.decode_response(response)
@@ -937,7 +998,8 @@ class HTTPClient(object):
 
                     # calls the message (end) handler (message event)
                     self._call_handler("message", handlers_map, response)
-                    if yield_response: yield "message", response
+                    if yield_response:
+                        yield "message", response
 
                     # breaks the loop
                     break
@@ -949,10 +1011,10 @@ class HTTPClient(object):
         self,
         response,
         message_value,
-        save_message = True,
-        yield_response = False,
-        handlers_map = {},
-        response_timeout = None
+        save_message=True,
+        yield_response=False,
+        handlers_map={},
+        response_timeout=None,
     ):
         # creates the message string buffer
         message = colony.StringBuffer()
@@ -965,7 +1027,8 @@ class HTTPClient(object):
 
         # calls the message data handler (message data event)
         self._call_handler_data("message_data", handlers_map, response, message_value)
-        if yield_response: yield "message_data", response, message_value
+        if yield_response:
+            yield "message_data", response, message_value
 
         # tries to find the octet end index
         octet_end_index = message_value.find(b"\r\n")
@@ -990,11 +1053,13 @@ class HTTPClient(object):
 
                 # calls the data handler (data event)
                 self._call_handler_data("data", handlers_map, response, data)
-                if yield_response: yield "data", response, data
+                if yield_response:
+                    yield "data", response, data
 
                 # calls the message data handler (message data event)
                 self._call_handler_data("message_data", handlers_map, response, data)
-                if yield_response: yield "message_data", response, data
+                if yield_response:
+                    yield "message_data", response, data
 
                 # retrieves the message value
                 message_value = message.get_value()
@@ -1014,7 +1079,7 @@ class HTTPClient(object):
                 break
 
             # retrieves the partial message (extra message in data retrieval)
-            partial_message = message_value[octet_end_index + 2:]
+            partial_message = message_value[octet_end_index + 2 :]
 
             # calculates the partial message length
             partial_message_length = len(partial_message)
@@ -1055,11 +1120,13 @@ class HTTPClient(object):
 
                 # calls the data handler (data event)
                 self._call_handler_data("data", handlers_map, response, data)
-                if yield_response: yield "data", response, data
+                if yield_response:
+                    yield "data", response, data
 
                 # calls the message data handler (message data event)
                 self._call_handler_data("message_data", handlers_map, response, data)
-                if yield_response: yield "message_data", response, data
+                if yield_response:
+                    yield "message_data", response, data
 
             # retrieves the message value
             message_value = message.get_value()
@@ -1102,13 +1169,16 @@ class HTTPClient(object):
 
         # in case the content type charset is not defined
         # (no decoding should take place), returns immediately
-        if not self.content_type_charset: return
+        if not self.content_type_charset:
+            return
 
         # retrieves the received message value
         received_message_value = response.received_message
 
         # decodes the message value into unicode using the given charset
-        received_message_value_decoded = received_message_value.decode(self.content_type_charset)
+        received_message_value_decoded = received_message_value.decode(
+            self.content_type_charset
+        )
 
         # sets the decoded message value in the received message field
         response.received_message = received_message_value_decoded
@@ -1172,20 +1242,16 @@ class HTTPClient(object):
 
         # creates the default parameters
         default_parameters = {
-            "client_plugin" : self.client_http.plugin,
-            "request_timeout" : REQUEST_TIMEOUT,
-            "response_timeout" : RESPONSE_TIMEOUT
+            "client_plugin": self.client_http.plugin,
+            "request_timeout": REQUEST_TIMEOUT,
+            "response_timeout": RESPONSE_TIMEOUT,
         }
 
         # creates the parameters map, from the default parameters
         # this operation should not override the base parameters
         # but sets the default ones in case their are not already set
         # the resulting map is then returned to the caller method
-        parameters = colony.map_extend(
-            parameters,
-            default_parameters,
-            override = False
-        )
+        parameters = colony.map_extend(parameters, default_parameters, override=False)
         return parameters
 
     def _parse_url(self, url):
@@ -1210,8 +1276,10 @@ class HTTPClient(object):
         # in case the URL structure contains the protocol sets the
         # protocol with the value in lower case (normalized) otherwise
         # raises an exception alerting for the missing protocol information
-        if url_structure.protocol: protocol = url_structure.protocol.lower()
-        else: raise exceptions.HTTPInvalidURLData("missing protocol information: " + url)
+        if url_structure.protocol:
+            protocol = url_structure.protocol.lower()
+        else:
+            raise exceptions.HTTPInvalidURLData("missing protocol information: " + url)
 
         # in case the URL structure contains both the username
         # and the password information must set it, otherwise
@@ -1219,48 +1287,51 @@ class HTTPClient(object):
         if url_structure.username and url_structure.password:
             username = url_structure.username
             password = url_structure.password
-        else: username = None; password = None
+        else:
+            username = None
+            password = None
 
         # in case the URL structure contains the base name sets it
         # as the host field otherwise raises an exception indicating
         # the missing of the host information
-        if url_structure.base_name: host = url_structure.base_name
-        else: raise exceptions.HTTPInvalidURLData("missing host information: " + url)
+        if url_structure.base_name:
+            host = url_structure.base_name
+        else:
+            raise exceptions.HTTPInvalidURLData("missing host information: " + url)
 
         # in case the URL structure contains the port (pre defined port)
         # must use it as it's enforced otherwise uses the map associating
         # each of the protocols with the default port to retrieve the port
-        if url_structure.port: port = url_structure.port
-        else: port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
+        if url_structure.port:
+            port = url_structure.port
+        else:
+            port = PROTOCOL_DEFAULT_PORT_MAP.get(protocol, None)
 
         # in case the URL structure contains the resource reference
         # uses it, otherwise assumes the root path (default behavior)
-        if url_structure.resource_reference: path = url_structure.resource_reference
-        else: path = "/"
+        if url_structure.resource_reference:
+            path = url_structure.resource_reference
+        else:
+            path = "/"
 
         # in case the URL structure contains the base URL sets it
         # otherwise invalidates the value
-        if url_structure.base_url: base_url = url_structure.base_url
-        else: base_url = None
+        if url_structure.base_url:
+            base_url = url_structure.base_url
+        else:
+            base_url = None
 
         # in case the URL structure contains the options map must set
         # it otherwise must use an empty map for the options
-        if url_structure.options_map: options_map = url_structure.options_map
-        else: options_map = {}
+        if url_structure.options_map:
+            options_map = url_structure.options_map
+        else:
+            options_map = {}
 
         # returns the tuple containing the protocol, the username,
         # the password, the host, the port, the path, the base URL
         # and the options map
-        return (
-            protocol,
-            username,
-            password,
-            host,
-            port,
-            path,
-            base_url,
-            options_map
-        )
+        return (protocol, username, password, host, port, path, base_url, options_map)
 
     def _process_redirection(self, request, response):
         """
@@ -1285,7 +1356,8 @@ class HTTPClient(object):
         # in case the location value is not set in the response header
         # cannot process any redirection operation, must return
         # immediately with an invalid value
-        if not LOCATION_VALUE in response.headers_map: return None
+        if not LOCATION_VALUE in response.headers_map:
+            return None
 
         # retrieves the location header from the response
         # and decodes it with the appropriate charset
@@ -1300,7 +1372,9 @@ class HTTPClient(object):
 
         # in case the location does not start with the HTTP prefix
         # it's not an absolute path but a relative one
-        if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(HTTPS_PREFIX_VALUE):
+        if not location.startswith(HTTP_PREFIX_VALUE) and not location.startswith(
+            HTTPS_PREFIX_VALUE
+        ):
             # in case the location starts with the slash value
             # the address refers to a base address
             if location.startswith("/"):
@@ -1319,7 +1393,11 @@ class HTTPClient(object):
 
         # in case the location is not the same, the status code is
         # of type redirect and the redirect flag is set
-        if not location == request_url and status_code in REDIRECT_STATUS_CODES and self.redirect:
+        if (
+            not location == request_url
+            and status_code in REDIRECT_STATUS_CODES
+            and self.redirect
+        ):
             # prints a debug message
             plugin.debug("Redirecting request to '%s'" % location)
 
@@ -1327,7 +1405,7 @@ class HTTPClient(object):
             request_headers = request.headers_map
 
             # returns the "new" fetched URL (redirection)
-            return self.fetch_url(location, GET_METHOD_VALUE, headers = request_headers)
+            return self.fetch_url(location, GET_METHOD_VALUE, headers=request_headers)
 
         # returns invalid
         return None
@@ -1345,8 +1423,9 @@ class HTTPClient(object):
         to a response with no message body contents.
         """
 
-        return (status_code_integer >= 100 and status_code_integer < 200) or\
-            status_code_integer in UNDEFINED_CONTENT_LENGTH_STATUS_CODES
+        return (
+            status_code_integer >= 100 and status_code_integer < 200
+        ) or status_code_integer in UNDEFINED_CONTENT_LENGTH_STATUS_CODES
 
     def _call_handler(self, event_name, handlers_map, response):
         """
@@ -1412,6 +1491,7 @@ class HTTPClient(object):
         # calls the handler method with the response
         # as first argument and the data as second
         handler_method(response, data)
+
 
 class HTTPRequest(object):
     """
@@ -1480,18 +1560,18 @@ class HTTPRequest(object):
 
     def __init__(
         self,
-        host = "none",
-        port = None,
-        path = "none",
-        attributes_map = {},
-        operation_type = GET_METHOD_VALUE,
-        headers_map = {},
-        protocol_version = HTTP_1_1_VERSION,
-        content_type = DEFAULT_CONTENT_TYPE,
-        content_type_charset = DEFAULT_CHARSET,
-        encode_path = False,
-        url = None,
-        base_url = None
+        host="none",
+        port=None,
+        path="none",
+        attributes_map={},
+        operation_type=GET_METHOD_VALUE,
+        headers_map={},
+        protocol_version=HTTP_1_1_VERSION,
+        content_type=DEFAULT_CONTENT_TYPE,
+        content_type_charset=DEFAULT_CHARSET,
+        encode_path=False,
+        url=None,
+        base_url=None,
     ):
         """
         Constructor of the class.
@@ -1537,7 +1617,7 @@ class HTTPRequest(object):
 
         self.message_stream = colony.StringBuffer()
 
-    def write(self, message, flush = 1, encode = True):
+    def write(self, message, flush=1, encode=True):
         # retrieves the message type
         message_type = type(message)
 
@@ -1609,7 +1689,9 @@ class HTTPRequest(object):
         self.content_length = len(message)
 
         # writes the HTTP command in the string buffer (version, status code and status value)
-        result.write(self.operation_type + " " + path + " " + self.protocol_version + "\r\n")
+        result.write(
+            self.operation_type + " " + path + " " + self.protocol_version + "\r\n"
+        )
 
         # creates the ordered map to hold the header values
         headers_ordered_map = colony.OrderedMap()
@@ -1816,7 +1898,8 @@ class HTTPRequest(object):
         # in case the content type charset is not defined
         # (no encoding should take place), returns the string
         # value immediately (no encoding possible)
-        if not self.content_type_charset: return string_value
+        if not self.content_type_charset:
+            return string_value
 
         # converts the string value to unicode, this may not
         # be required in case the string is already unicode based,
@@ -1825,6 +1908,7 @@ class HTTPRequest(object):
         unicode_value = colony.legacy.UNICODE(string_value)
         unicode_value_encoded = unicode_value.encode(self.content_type_charset)
         return unicode_value_encoded
+
 
 class HTTPResponse(object):
     """

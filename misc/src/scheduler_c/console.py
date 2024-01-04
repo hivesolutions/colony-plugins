@@ -34,6 +34,7 @@ CONSOLE_EXTENSION_NAME = "scheduler"
 TABLE_TOP_TEXT = "ID      TASK            TIME      RECURSIVITY"
 """ The table top text """
 
+
 class ConsoleScheduler(object):
     """
     The console scheduler class.
@@ -62,7 +63,9 @@ class ConsoleScheduler(object):
     def get_commands_map(self):
         return self.commands_map
 
-    def process_show_all_scheduler(self, arguments, arguments_map, output_method, console_context):
+    def process_show_all_scheduler(
+        self, arguments, arguments_map, output_method, console_context
+    ):
         """
         Processes the show all scheduler command, with the given
         arguments and output method.
@@ -92,8 +95,8 @@ class ConsoleScheduler(object):
 
     def __generate_commands_map(self):
         return {
-            "show_all_scheduler" : {
-                "handler" : self.process_show_all_scheduler,
-                "description" : "shows all the scheduled tasks"
+            "show_all_scheduler": {
+                "handler": self.process_show_all_scheduler,
+                "description": "shows all the scheduled tasks",
             }
         }

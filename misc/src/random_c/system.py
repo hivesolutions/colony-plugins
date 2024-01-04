@@ -48,6 +48,7 @@ SECRET_KEY = colony.legacy.LONG(123123123)
 SYSTEM_RANDOM_VALUE = "SystemRandom"
 """ The system random value """
 
+
 class Random(colony.System):
     """
     The random class.
@@ -97,12 +98,18 @@ class Random(colony.System):
         current_time_integer = int(current_time * TIME_FACTOR)
 
         # creates the random value
-        random = "%s%s%s%s%s" % (SECRET_KEY, process_id_absolute, thread_id_absolute, current_time_integer, random_key)
+        random = "%s%s%s%s%s" % (
+            SECRET_KEY,
+            process_id_absolute,
+            thread_id_absolute,
+            current_time_integer,
+            random_key,
+        )
 
         # returns the random value
         return random
 
-    def generate_random_int(self, number_digits = None):
+    def generate_random_int(self, number_digits=None):
         """
         Generates a random key, using the current
         default random generator and converts it

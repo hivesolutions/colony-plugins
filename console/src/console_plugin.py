@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ConsolePlugin(colony.Plugin):
     """
     The main class for the Console plugin.
@@ -43,27 +44,21 @@ class ConsolePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "console",
-        "test_case"
-    ]
+    capabilities = ["console", "test_case"]
     capabilities_allowed = [
         "console_command_extension",
-        "console_authentication_handler"
+        "console_authentication_handler",
     ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.authentication")
-    ]
-    main_modules = [
-        "console"
-    ]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.authentication")]
+    main_modules = ["console"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         self.system_command_plugins = []
         import console
+
         self.system = console.Console(self)
         self.test = console.ConsoleTestCase
 
@@ -106,7 +101,9 @@ class ConsolePlugin(colony.Plugin):
         :return: The create console interface character.
         """
 
-        return self.system.create_console_interface_character(console_handler, console_context)
+        return self.system.create_console_interface_character(
+            console_handler, console_context
+        )
 
     def execute_command_line(self, command_line):
         """

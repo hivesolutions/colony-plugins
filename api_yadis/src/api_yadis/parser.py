@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import xml.dom.minidom
 
+
 class Parser(object):
     """
     The abstract parser class.
@@ -59,6 +60,7 @@ class Parser(object):
 
         pass
 
+
 class ResourceDescriptorParser(Parser):
     """
     The resource descriptor parser class.
@@ -70,7 +72,7 @@ class ResourceDescriptorParser(Parser):
     resources_list = []
     """ The resources list """
 
-    def __init__(self, file_path = None):
+    def __init__(self, file_path=None):
         Parser.__init__(self)
         self.file_path = file_path
 
@@ -169,6 +171,7 @@ class ResourceDescriptorParser(Parser):
         service_attribute = attribute.firstChild.data.strip()
         return service_attribute
 
+
 class Resource(object):
     """
     Class that represent an xrd resource.
@@ -180,7 +183,7 @@ class Resource(object):
     services_list = []
     """ The list of service for the resource """
 
-    def __init__(self, version = "none"):
+    def __init__(self, version="none"):
         """
         Constructor of the class.
 
@@ -191,6 +194,7 @@ class Resource(object):
         self.version = version
 
         self.services_list = []
+
 
 class Service(object):
     """
@@ -206,7 +210,7 @@ class Service(object):
     attributes_map = {}
     """ The map containing all the attributes """
 
-    def __init__(self, priority = "none"):
+    def __init__(self, priority="none"):
         """
         Constructor of the class.
 
@@ -219,7 +223,7 @@ class Service(object):
         self.types_list = []
         self.attributes_map = {}
 
-    def get_attribute(self, attribute_name, default = None):
+    def get_attribute(self, attribute_name, default=None):
         """
         Retrieves an attribute from the attributes map.
 
@@ -245,6 +249,7 @@ class Service(object):
         """
 
         self.attributes_map[attribute_name] = attribute_value
+
 
 def valid_node(node):
     """

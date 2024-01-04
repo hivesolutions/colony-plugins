@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ClientUtilsException(colony.ColonyException):
     """
     The client exception class.
@@ -37,6 +38,7 @@ class ClientUtilsException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class SocketProviderNotFound(ClientUtilsException):
     """
@@ -64,6 +66,7 @@ class SocketProviderNotFound(ClientUtilsException):
 
         return "Socket provider not found - %s" % self.message
 
+
 class SocketUpgraderNotFound(ClientUtilsException):
     """
     The socket upgrader not found class.
@@ -89,6 +92,7 @@ class SocketUpgraderNotFound(ClientUtilsException):
         """
 
         return "Socket upgrader not found - %s" % self.message
+
 
 class ClientRequestTimeout(ClientUtilsException):
     """
@@ -116,6 +120,7 @@ class ClientRequestTimeout(ClientUtilsException):
 
         return "Client request timeout - %s" % self.message
 
+
 class ServerRequestTimeout(ClientUtilsException):
     """
     The server request timeout class.
@@ -141,6 +146,7 @@ class ServerRequestTimeout(ClientUtilsException):
         """
 
         return "Server request timeout - %s" % self.message
+
 
 class ClientResponseTimeout(ClientUtilsException):
     """
@@ -168,6 +174,7 @@ class ClientResponseTimeout(ClientUtilsException):
 
         return "Client response timeout - %s" % self.message
 
+
 class ServerResponseTimeout(ClientUtilsException):
     """
     The server response timeout class.
@@ -193,6 +200,7 @@ class ServerResponseTimeout(ClientUtilsException):
         """
 
         return "Server response timeout - %s" % self.message
+
 
 class RequestClosed(ClientUtilsException):
     """

@@ -51,12 +51,9 @@ TEMPLATE_DIRECTORY_RESOURCES_PATH = "service_http_template_directory/resources"
 DIRECTORY_HTML_TEMPLATE_FILE_NAME = "directory.html.tpl"
 """ The directory HTML template file name """
 
-FORMATS_MAP = {
-    "table" : "",
-    "mosaic" : "",
-    "thumbnail" : ""
-}
+FORMATS_MAP = {"table": "", "mosaic": "", "thumbnail": ""}
 """ The formats map """
+
 
 class ServiceHTTPTemplateDirectory(colony.System):
     """
@@ -80,13 +77,17 @@ class ServiceHTTPTemplateDirectory(colony.System):
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         # creates the template file path
-        template_file_path = plugin_path +\
-            "/" + TEMPLATE_DIRECTORY_RESOURCES_PATH + "/" + DIRECTORY_HTML_TEMPLATE_FILE_NAME
+        template_file_path = (
+            plugin_path
+            + "/"
+            + TEMPLATE_DIRECTORY_RESOURCES_PATH
+            + "/"
+            + DIRECTORY_HTML_TEMPLATE_FILE_NAME
+        )
 
         # parses the template file path
         template_file = template_engine_plugin.parse_template(
-            template_file_path,
-            encoding = DEFAULT_TEMPLATE_ENCODING
+            template_file_path, encoding=DEFAULT_TEMPLATE_ENCODING
         )
 
         # retrieves the directory entries
@@ -105,8 +106,11 @@ class ServiceHTTPTemplateDirectory(colony.System):
             # the size of the file according to the predefined rules
             # otherwise a slice must be used to indicate the size
             if directory_entry_type == "file":
-                directory_entry_size_string = colony.size_round_unit(directory_entry_size)
-            else: directory_entry_size_string = "-"
+                directory_entry_size_string = colony.size_round_unit(
+                    directory_entry_size
+                )
+            else:
+                directory_entry_size_string = "-"
 
             # sets the directory entry size string value
             directory_entry["size_string"] = directory_entry_size_string
@@ -181,7 +185,9 @@ class ServiceHTTPTemplateDirectory(colony.System):
         processed_template_file = template_file.process()
 
         # encodes the processed template file using the default encoding
-        processed_template_file_encoded = processed_template_file.encode(DEFAULT_ENCODING)
+        processed_template_file_encoded = processed_template_file.encode(
+            DEFAULT_ENCODING
+        )
 
         # writes the processed template file encoded to the request
         request.write(processed_template_file_encoded)

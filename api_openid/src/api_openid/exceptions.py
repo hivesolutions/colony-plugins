@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIOpenIDException(colony.ColonyException):
     """
     The API OpenID exception class.
@@ -37,6 +38,7 @@ class APIOpenIDException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class InvalidData(APIOpenIDException):
     """
@@ -64,6 +66,7 @@ class InvalidData(APIOpenIDException):
 
         return "Invalid data - %s" % self.message
 
+
 class ProviderError(APIOpenIDException):
     """
     The provider error class.
@@ -89,6 +92,7 @@ class ProviderError(APIOpenIDException):
         """
 
         return "Provider error - %s" % self.message
+
 
 class VerificationFailed(APIOpenIDException):
     """
@@ -116,6 +120,7 @@ class VerificationFailed(APIOpenIDException):
 
         return "Verification failed - %s" % self.message
 
+
 class InvalidHashFunction(APIOpenIDException):
     """
     The invalid hash function class.
@@ -141,6 +146,7 @@ class InvalidHashFunction(APIOpenIDException):
         """
 
         return "Invalid hash function - %s" % self.message
+
 
 class InvalidClaimedId(APIOpenIDException):
     """

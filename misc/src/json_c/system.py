@@ -44,6 +44,7 @@ FAST_LOADS = True
 """ Flag that controls if by default the strategy for the loading
 operation should try to use the embedded loader (faster) """
 
+
 class JSON(colony.System):
     """
     Provides functions to interact with JSON, this class should
@@ -62,11 +63,12 @@ class JSON(colony.System):
     def dumps_buffer(self, object):
         return serializer.dumps_buffer(object)
 
-    def loads(self, json_string, fast = FAST_LOADS):
-        if fast: return serializer.loads_f(json_string)
+    def loads(self, json_string, fast=FAST_LOADS):
+        if fast:
+            return serializer.loads_f(json_string)
         return serializer.loads(json_string)
 
-    def load_file(self, json_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, json_file, encoding=DEFAULT_ENCODING):
         # reads the JSON file
         json_file_contents = json_file.read()
 

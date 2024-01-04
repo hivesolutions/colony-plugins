@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIDropboxPlugin(colony.Plugin):
     """
     The main class for the Dropbox API plugin.
@@ -40,23 +41,18 @@ class APIDropboxPlugin(colony.Plugin):
     description = "The plugin that offers the Dropbox API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.dropbox"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.dropbox"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
-    main_modules = [
-        "api_dropbox"
-    ]
+    main_modules = ["api_dropbox"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_dropbox
+
         self.system = api_dropbox.APIDropbox(self)
 
     def create_client(self, api_attributes):

@@ -33,6 +33,7 @@ import colony
 ENCODING_NAME = "gzip"
 """ The encoding name """
 
+
 class ServiceHTTPGzip(colony.System):
     """
     The service HTTP gzip (encoding) class.

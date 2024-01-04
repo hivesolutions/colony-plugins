@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPWebsocketException(colony.ColonyException):
     """
     The service HTTP websocket exception class.
@@ -37,6 +38,7 @@ class ServiceHTTPWebsocketException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class InvalidHandshakeData(ServiceHTTPWebsocketException):
     """
@@ -63,6 +65,7 @@ class InvalidHandshakeData(ServiceHTTPWebsocketException):
         """
 
         return "Invalid handshake data - %s" % self.message
+
 
 class WebsocketHandlerNotFoundException(ServiceHTTPWebsocketException):
     """

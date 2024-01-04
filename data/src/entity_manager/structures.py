@@ -38,10 +38,7 @@ import colony
 
 from . import exceptions
 
-SERIALIZERS = (
-    "json",
-    "pickle"
-)
+SERIALIZERS = ("json", "pickle")
 """ The list to hold the various serializers
 in order of preference for serialization """
 
@@ -59,135 +56,96 @@ RESERVED_NAMES = ("_class", "_mtime")
 reserved (special cases) for the queries """
 
 PYTHON_TYPES_MAP = dict(
-    text = (
-        str,
-        colony.legacy.UNICODE,
-        type(None)
-    ),
-    string = (
-        str,
-        colony.legacy.UNICODE,
-        type(None)
-    ),
-    integer = (
-        int,
-        colony.legacy.LONG,
-        type(None)
-    ),
-    float = (
-        int,
-        colony.legacy.LONG,
-        float,
-        type(None)
-    ),
-    decimal = (
-        int,
-        colony.legacy.LONG,
-        float,
-        colony.Decimal,
-        type(None)
-    ),
-    date = (
-        datetime.datetime,
-        int,
-        colony.legacy.LONG,
-        float,
-        type(None)
-    ),
-    data = (
-        str,
-        colony.legacy.UNICODE,
-        type(None)
-    ),
-    metadata = (
-        dict,
-        str,
-        colony.legacy.UNICODE,
-        type(None)
-    )
+    text=(str, colony.legacy.UNICODE, type(None)),
+    string=(str, colony.legacy.UNICODE, type(None)),
+    integer=(int, colony.legacy.LONG, type(None)),
+    float=(int, colony.legacy.LONG, float, type(None)),
+    decimal=(int, colony.legacy.LONG, float, colony.Decimal, type(None)),
+    date=(datetime.datetime, int, colony.legacy.LONG, float, type(None)),
+    data=(str, colony.legacy.UNICODE, type(None)),
+    metadata=(dict, str, colony.legacy.UNICODE, type(None)),
 )
 """ The map containing the association between the entity
 types and the valid values for python types """
 
-PYTHON_WARN_MAP = dict(
-    decimal = (
-        float,
-    )
-)
+PYTHON_WARN_MAP = dict(decimal=(float,))
 """ Map that associates the various entity based types with
 the types that should trigger a warning because although
 compatible may create serious compatibility/integrity issues """
 
 PYTHON_CAST_MAP = dict(
-    text = colony.legacy.UNICODE,
-    string = colony.legacy.UNICODE,
-    integer = int,
-    float = float,
-    decimal = colony.Decimal,
-    date = float,
-    data = colony.legacy.UNICODE,
-    metadata = dict,
-    relation = None
+    text=colony.legacy.UNICODE,
+    string=colony.legacy.UNICODE,
+    integer=int,
+    float=float,
+    decimal=colony.Decimal,
+    date=float,
+    data=colony.legacy.UNICODE,
+    metadata=dict,
+    relation=None,
 )
 """ The map containing the association between the entity
 type and the best cast type for the value """
 
-INVALID_NAMES = set((
-    "__module__",
-    "__doc__",
-    "_system_instance",
-    "_entity_manager",
-    "_resources_path",
-    "_entities",
-    "_class",
-    "_scope",
-    "_attached",
-    "_attach_level",
-    "_names",
-    "_items",
-    "_generated",
-    "_indexed",
-    "_mandatory",
-    "_immutable",
-    "_relations",
-    "_mapped_relations",
-    "_unmapped_relations",
-    "_direct_relations",
-    "_indirect_relations",
-    "_to_one",
-    "_to_many",
-    "_id",
-    "_parents",
-    "_abstract_parents",
-    "_attr_methods",
-    "_items_map",
-    "_names_map",
-    "_generated_map",
-    "_indexed_map",
-    "_mandatory_map",
-    "_immutable_map",
-    "_relations_map",
-    "_direct_relations_map",
-    "_indirect_relations_map",
-    "_to_one_map",
-    "_to_many_map",
-    "_all_attr_methods",
-    "_all_relations",
-    "_all_parents",
-    "_all_abstract_parents",
-    "_non_foreign_items",
-    "_parameters",
-    "_storing",
-    "_validating",
-    "_has_parents",
-    "abstract",
-    "data_state",
-    "data_reference",
-    "mapping_options",
-    "id_attribute_name"
-))
+INVALID_NAMES = set(
+    (
+        "__module__",
+        "__doc__",
+        "_system_instance",
+        "_entity_manager",
+        "_resources_path",
+        "_entities",
+        "_class",
+        "_scope",
+        "_attached",
+        "_attach_level",
+        "_names",
+        "_items",
+        "_generated",
+        "_indexed",
+        "_mandatory",
+        "_immutable",
+        "_relations",
+        "_mapped_relations",
+        "_unmapped_relations",
+        "_direct_relations",
+        "_indirect_relations",
+        "_to_one",
+        "_to_many",
+        "_id",
+        "_parents",
+        "_abstract_parents",
+        "_attr_methods",
+        "_items_map",
+        "_names_map",
+        "_generated_map",
+        "_indexed_map",
+        "_mandatory_map",
+        "_immutable_map",
+        "_relations_map",
+        "_direct_relations_map",
+        "_indirect_relations_map",
+        "_to_one_map",
+        "_to_many_map",
+        "_all_attr_methods",
+        "_all_relations",
+        "_all_parents",
+        "_all_abstract_parents",
+        "_non_foreign_items",
+        "_parameters",
+        "_storing",
+        "_validating",
+        "_has_parents",
+        "abstract",
+        "data_state",
+        "data_reference",
+        "mapping_options",
+        "id_attribute_name",
+    )
+)
 """ The tuple containing all the names that are
 considered to be invalid for the entity model """
+
 
 class Connection(object):
     """
@@ -222,7 +180,7 @@ class Connection(object):
     """ The lock that controls the access to the calling of the
     handlers this lock ensures sequence in the calling """
 
-    def __init__(self, connection_parameters = {}):
+    def __init__(self, connection_parameters={}):
         """
         Constructor of the class.
 
@@ -266,7 +224,7 @@ class Connection(object):
 
         return self.closed
 
-    def add_commit_handler(self, commit_handler, one_time = False):
+    def add_commit_handler(self, commit_handler, one_time=False):
         """
         Adds a commit handler to be called upon commit
         to the current connection.
@@ -288,7 +246,7 @@ class Connection(object):
         commit_handler_tuple = (commit_handler, one_time)
         self.commit_handlers.append(commit_handler_tuple)
 
-    def add_rollback_handler(self, rollback_handler, one_time = False):
+    def add_rollback_handler(self, rollback_handler, one_time=False):
         """
         Adds a commit handler to be called upon rollback
         to the current connection.
@@ -363,7 +321,8 @@ class Connection(object):
 
             # removes all the elements currently present in the
             # removal list (items pending removal)
-            for removal_item in removal_list: self.commit_handlers.remove(removal_item)
+            for removal_item in removal_list:
+                self.commit_handlers.remove(removal_item)
         finally:
             # releases the handlers lock (avoids leaking
             # of the lock, causing a dead lock)
@@ -408,11 +367,13 @@ class Connection(object):
 
             # removes all the elements currently present in the
             # removal list (items pending removal)
-            for removal_item in removal_list: self.rollback_handlers.remove(removal_item)
+            for removal_item in removal_list:
+                self.rollback_handlers.remove(removal_item)
         finally:
             # releases the handlers lock (avoids leaking
             # of the lock, causing a dead lock)
             self.handlers_lock.release()
+
 
 class EntityClass(object):
     """
@@ -480,8 +441,10 @@ class EntityClass(object):
         # fails an extra retrieval is done using the (calculated)
         # attributes strategy, so that extra delay resolution is
         # possible according to the currently defined strategy
-        try: value = object.__getattribute__(self, name)
-        except AttributeError: value = self._try_attr(name)
+        try:
+            value = object.__getattribute__(self, name)
+        except AttributeError:
+            value = self._try_attr(name)
 
         # gathers the proper data type of the value that it's going
         # to be used for some of the runtime evaluation strategies
@@ -489,7 +452,8 @@ class EntityClass(object):
 
         # in case the value is not a dictionary, it's not
         # a lazy loaded relation description (that's for sure)
-        if not value_type == dict: return value
+        if not value_type == dict:
+            return value
 
         # extracts the parent class reference of the current
         # instance as it's going to be used through the various
@@ -500,8 +464,10 @@ class EntityClass(object):
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
         # of an entity attribute (it's a concrete value instead)
-        if not hasattr(cls, name): return value
-        if not getattr(cls, name) == value: return value
+        if not hasattr(cls, name):
+            return value
+        if not getattr(cls, name) == value:
+            return value
 
         # checks if the current attribute name refers a relation
         # so that options on how to lazy load it can be defined
@@ -518,20 +484,22 @@ class EntityClass(object):
         # may not be loaded in case it's not currently possible
         return attribute
 
-    def __getstate__(self, depth = None, detach = True):
+    def __getstate__(self, depth=None, detach=True):
         depth = depth or self._depth() or 0
         is_attached = self.is_attached()
         detach and is_attached and self.detach()
-        try: state = self.to_map(depth = depth)
-        finally: detach and is_attached and self.attach()
+        try:
+            state = self.to_map(depth=depth)
+        finally:
+            detach and is_attached and self.attach()
         return state
 
     def __setstate__(self, state):
         cls = self.__class__
-        cls.from_map(state, self._entity_manager, entity = self)
+        cls.from_map(state, self._entity_manager, entity=self)
 
     @classmethod
-    def build(cls, entity_manager = None, entities = None, scope = None):
+    def build(cls, entity_manager=None, entities=None, scope=None):
         """
         Creates a new instance of the current class, without
         calling the constructor and without initializing the
@@ -567,14 +535,16 @@ class EntityClass(object):
         # creates the required maps for the entities and
         # for the scope in case they are required (none
         # of them is provided as argument for the method)
-        if self._entities == None: self._entities = {}
-        if self._scope == None: self._scope = {}
+        if self._entities == None:
+            self._entities = {}
+        if self._scope == None:
+            self._scope = {}
 
         # return the created/generated instance
         return self
 
     @classmethod
-    def get_name(cls, safe_character = SAFE_CHARACTER):
+    def get_name(cls, safe_character=SAFE_CHARACTER):
         """
         Retrieves the name of the associated entity/table reference
         for the current model class.
@@ -594,7 +564,7 @@ class EntityClass(object):
 
     @classmethod
     def get_plain_name(cls):
-        return cls.get_name(safe_character = None)
+        return cls.get_name(safe_character=None)
 
     @classmethod
     def get_attr_methods(cls):
@@ -620,11 +590,18 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the current key does not start with the
             # attr method prefix
-            if not key.startswith("_attr_"): continue
+            if not key.startswith("_attr_"):
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if not type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if not type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # retrieves the name of the attribute associated with
             # the attr method and sets the current value in the attr
@@ -667,15 +644,11 @@ class EntityClass(object):
             # retrieves the (all) attr methods from the parents
             # and extends the all attr methods map with them
             _attr_methods = parent.get_all_attr_methods()
-            colony.map_extend(
-                all_attr_methods,
-                _attr_methods,
-                copy_base_map = False
-            )
+            colony.map_extend(all_attr_methods, _attr_methods, copy_base_map=False)
 
         # extends the all attr methods map with the attr methods
         # from the current entity class
-        colony.map_extend(all_attr_methods, attr_methods, copy_base_map = False)
+        colony.map_extend(all_attr_methods, attr_methods, copy_base_map=False)
 
         # caches the all attr methods element in the class
         # to provide fast access in latter access
@@ -708,12 +681,13 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's items map and uses it
             # to extend the current items map (iteration cycle)
             parent_items_map = parent.get_items_map()
-            colony.map_extend(items_map, parent_items_map, copy_base_map = False)
+            colony.map_extend(items_map, parent_items_map, copy_base_map=False)
 
         # retrieves the items (without foreign relation)
         # for the class and then sets them in the items
@@ -753,17 +727,15 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's names map and uses it
             # to extend the current names map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_names_map = parent.get_names_map()
             colony.map_extend(
-                names_map,
-                parent_names_map,
-                override = False,
-                copy_base_map = False
+                names_map, parent_names_map, override=False, copy_base_map=False
             )
 
         # retrieves all of the names for the
@@ -806,13 +778,16 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's generated map and uses it
             # to extend the current generated map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_generated_map = parent.get_generated_map()
-            colony.map_extend(generated_map, parent_generated_map, override = False, copy_base_map = False)
+            colony.map_extend(
+                generated_map, parent_generated_map, override=False, copy_base_map=False
+            )
 
         # retrieves all of the generated (names) for the
         # class and then sets them in the generated map
@@ -854,13 +829,16 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's indexed map and uses it
             # to extend the current indexed map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_indexed_map = parent.get_indexed_map()
-            colony.map_extend(indexed_map, parent_indexed_map, override = False, copy_base_map = False)
+            colony.map_extend(
+                indexed_map, parent_indexed_map, override=False, copy_base_map=False
+            )
 
         # retrieves all of the indexed (names) for the
         # class and then sets them in the indexed map
@@ -902,13 +880,16 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's mandatory map and uses it
             # to extend the current mandatory map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_mandatory_map = parent.get_mandatory_map()
-            colony.map_extend(mandatory_map, parent_mandatory_map, override = False, copy_base_map = False)
+            colony.map_extend(
+                mandatory_map, parent_mandatory_map, override=False, copy_base_map=False
+            )
 
         # retrieves all of the mandatory (names) for the
         # class and then sets them in the mandatory map
@@ -950,13 +931,16 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's immutable map and uses it
             # to extend the current immutable map (iteration cycle),
             # the extension is made with no overriding of keys
             parent_immutable_map = parent.get_immutable_map()
-            colony.map_extend(immutable_map, parent_immutable_map, override = False, copy_base_map = False)
+            colony.map_extend(
+                immutable_map, parent_immutable_map, override=False, copy_base_map=False
+            )
 
         # retrieves all of the immutable (names) for the
         # class and then sets them in the immutable map
@@ -1011,12 +995,13 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's relations map and uses it
             # to extend the current relations map (iteration cycle)
             parent_relations_map = parent.get_relations_map()
-            colony.map_extend(relations_map, parent_relations_map, copy_base_map = False)
+            colony.map_extend(relations_map, parent_relations_map, copy_base_map=False)
 
         # retrieves the relations (meta information)
         # for the class and then sets them in the relations
@@ -1058,12 +1043,15 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's direct relations map and uses it
             # to extend the current direct relations map (iteration cycle)
             parent_direct_relations_map = parent.get_direct_relations_map()
-            colony.map_extend(direct_relations_map, parent_direct_relations_map, copy_base_map = False)
+            colony.map_extend(
+                direct_relations_map, parent_direct_relations_map, copy_base_map=False
+            )
 
         # retrieves the direct relations (meta information)
         # for the class and then sets them in the direct
@@ -1105,12 +1093,17 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's indirect relations map and uses it
             # to extend the current indirect relations map (iteration cycle)
             parent_indirect_relations_map = parent.get_indirect_relations_map()
-            colony.map_extend(indirect_relations_map, parent_indirect_relations_map, copy_base_map = False)
+            colony.map_extend(
+                indirect_relations_map,
+                parent_indirect_relations_map,
+                copy_base_map=False,
+            )
 
         # retrieves the indirect relations (meta information)
         # for the class and then sets them in the indirect
@@ -1150,12 +1143,13 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's to one relations map and uses it
             # to extend the current to one relations map (iteration cycle)
             parent_to_one_map = parent.get_to_one_map()
-            colony.map_extend(to_one_map, parent_to_one_map, copy_base_map = False)
+            colony.map_extend(to_one_map, parent_to_one_map, copy_base_map=False)
 
         # retrieves the to one relations (meta information)
         # for the class and then sets them in the to one
@@ -1195,12 +1189,13 @@ class EntityClass(object):
         for parent in parents:
             # in case the current parent is abstract no need
             # to retrieve its items (not going to be persisted)
-            if parent.is_abstract(): continue
+            if parent.is_abstract():
+                continue
 
             # retrieves the parent's to many relations map and uses it
             # to extend the current to many relations map (iteration cycle)
             parent_to_many_map = parent.get_to_many_map()
-            colony.map_extend(to_many_map, parent_to_many_map, copy_base_map = False)
+            colony.map_extend(to_many_map, parent_to_many_map, copy_base_map=False)
 
         # retrieves the to many relations (meta information)
         # for the class and then sets them in the to many
@@ -1245,7 +1240,8 @@ class EntityClass(object):
             # in case there is no "mapper" for the current relation,
             # it's not considered to be a mapped relation and so the
             # loop must continue
-            if not is_mapped: continue
+            if not is_mapped:
+                continue
 
             # sets the relation in the mapped relations map, because
             # the current entity model is not the "mapper" of the relation
@@ -1300,7 +1296,8 @@ class EntityClass(object):
             # in case the relations is mapped by the entity, it's
             # not considered to be an unmapped relation and so
             # the loop must continue
-            if is_mapped: continue
+            if is_mapped:
+                continue
 
             # sets the relation in the unmapped relations map, because
             # the relation does not contain a mapper or the current
@@ -1348,7 +1345,8 @@ class EntityClass(object):
             # (indirect) or the "mapper" for the relation is the
             # current entity model (mapped), it's not considered
             # to be a direct relation and so the loop must continue
-            if not mapper or is_mapped: continue
+            if not mapper or is_mapped:
+                continue
 
             # sets the relation in the direct relations map, because
             # the current entity model is not the "mapper" of the relation
@@ -1390,7 +1388,8 @@ class EntityClass(object):
             # in case there is a "mapper" for the current relation
             # it is not considered to be an indirect relation and
             # so the loop must continue
-            if mapper: continue
+            if mapper:
+                continue
 
             # sets the relation in the indirect relations map, because
             # there is no "mapper" for the current relation
@@ -1459,19 +1458,28 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not an item)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not an item)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # in case the key does not refer a relation
             # value (must be ignored)
-            if not cls.is_relation(key): continue
+            if not cls.is_relation(key):
+                continue
 
             # retrieves the relation (map) for the current
             # key (relation name) then sets it in the relation
@@ -1515,11 +1523,11 @@ class EntityClass(object):
             # retrieves the (all) relations from the parents
             # and extends the all relations map with them
             _relations = parent.get_all_relations()
-            colony.map_extend(all_relations, _relations, copy_base_map = False)
+            colony.map_extend(all_relations, _relations, copy_base_map=False)
 
         # extends the all relations map with the relations
         # from the current entity class
-        colony.map_extend(all_relations, relations, copy_base_map = False)
+        colony.map_extend(all_relations, relations, copy_base_map=False)
 
         # caches the all relations element in the class
         # to provide fast access in latter access
@@ -1556,7 +1564,8 @@ class EntityClass(object):
             # no need to continue it's not a proper relation
             # (considers that any relations that is not of type
             # to many is of type to one)
-            if cls.is_to_many(key): continue
+            if cls.is_to_many(key):
+                continue
 
             # sets the relation in the to one relations
             # map associated with the current key
@@ -1595,7 +1604,8 @@ class EntityClass(object):
         for key, relation in colony.legacy.iteritems(relations):
             # in case the relation is not of type to many
             # no need to continue it's not a proper relation
-            if not cls.is_to_many(key): continue
+            if not cls.is_to_many(key):
+                continue
 
             # sets the relation in the to many relations
             # map associated with the current key
@@ -1640,7 +1650,7 @@ class EntityClass(object):
         return is_lazy
 
     @classmethod
-    def get_items(cls, foreign_relations = False):
+    def get_items(cls, foreign_relations=False):
         """
         Retrieves the various items (fields) of the current entity
         that describe it (class) in the current depth level.
@@ -1662,7 +1672,8 @@ class EntityClass(object):
 
         # in case the current class is abstract no items should be defined
         # (the current class does not reference items)
-        if cls.is_abstract(): return {}
+        if cls.is_abstract():
+            return {}
 
         # in case the items are already "cached" in the current
         # class (fast retrieval)
@@ -1692,20 +1703,33 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not an item)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not an item)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not an item)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # in case the foreign relations are meant to be ignored and
             # the current attribute is a non mapped relation (foreign)
             # it should be ignored
-            if not foreign_relations and cls.is_relation(key) and not cls.is_mapped(key): continue
+            if (
+                not foreign_relations
+                and cls.is_relation(key)
+                and not cls.is_mapped(key)
+            ):
+                continue
 
             # sets the value as the item for the current
             # key (valid field in the context)
@@ -1730,10 +1754,11 @@ class EntityClass(object):
         return _items
 
     @classmethod
-    def get_names(cls, foreign_relations = False):
+    def get_names(cls, foreign_relations=False):
         # in case the current class is abstract no names should be defined
         # (the current class does not reference names)
-        if cls.is_abstract(): return []
+        if cls.is_abstract():
+            return []
 
         # in case the names are already "cached" in the current
         # class (fast retrieval)
@@ -1756,15 +1781,23 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not a name)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # adds the key (name) to the list of names
             # for the current entity model (class)
@@ -1779,7 +1812,7 @@ class EntityClass(object):
         return names
 
     @classmethod
-    def get_generated(cls, foreign_relations = False):
+    def get_generated(cls, foreign_relations=False):
         # in case the generated are already "cached" in the current
         # class (fast retrieval)
         if foreign_relations and "_generated" in cls.__dict__:
@@ -1801,20 +1834,29 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not an item)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # in case the current key name does not refer a
             # generated value, it is not mean to be added to
             # the generated list
-            if not cls.is_generated(key): continue
+            if not cls.is_generated(key):
+                continue
 
             # adds the key (name) to the list of generated
             # for the current entity model (class)
@@ -1829,7 +1871,7 @@ class EntityClass(object):
         return generated
 
     @classmethod
-    def get_indexed(cls, foreign_relations = False):
+    def get_indexed(cls, foreign_relations=False):
         # in case the indexed are already "cached" in the current
         # class (fast retrieval)
         if foreign_relations and "_indexed" in cls.__dict__:
@@ -1851,20 +1893,29 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not a name)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # in case the current key name does not refer a
             # indexed value, it is not mean to be added to
             # the indexed list
-            if not cls.is_indexed(key): continue
+            if not cls.is_indexed(key):
+                continue
 
             # adds the key (name) to the list of indexed
             # for the current entity model (class)
@@ -1879,7 +1930,7 @@ class EntityClass(object):
         return indexed
 
     @classmethod
-    def get_mandatory(cls, foreign_relations = False):
+    def get_mandatory(cls, foreign_relations=False):
         # in case the mandatory are already "cached" in the current
         # class (fast retrieval)
         if foreign_relations and "_mandatory" in cls.__dict__:
@@ -1901,20 +1952,29 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not a name)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # in case the current key name does not refer a
             # mandatory value, it is not mean to be added to
             # the mandatory list
-            if not cls.is_mandatory(key): continue
+            if not cls.is_mandatory(key):
+                continue
 
             # adds the key (name) to the list of mandatory
             # for the current entity model (class)
@@ -1929,7 +1989,7 @@ class EntityClass(object):
         return mandatory
 
     @classmethod
-    def get_immutable(cls, foreign_relations = False):
+    def get_immutable(cls, foreign_relations=False):
         # in case the immutable are already "cached" in the current
         # class (fast retrieval)
         if foreign_relations and "_immutable" in cls.__dict__:
@@ -1951,20 +2011,29 @@ class EntityClass(object):
         for key, value in colony.legacy.iteritems(items):
             # in case the key is one of the "private" non safe values it
             # should be ignored (not a name)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (not a name)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the type is a function or a method it
             # should be ignored (not a name)
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # in case the current key name does not refer a
             # immutable value, it is not mean to be added to
             # the immutable list
-            if not cls.is_immutable(key): continue
+            if not cls.is_immutable(key):
+                continue
 
             # adds the key (name) to the list of immutable
             # for the current entity model (class)
@@ -2096,7 +2165,8 @@ class EntityClass(object):
             # in case there's no parent returns an invalid
             # value meaning that no id value exists for it
             parent = cls.get_parent()
-            if not parent: return None
+            if not parent:
+                return None
 
             # runs the recursive step of retrieving the id
             # value from the parent class (default behavior)
@@ -2265,7 +2335,7 @@ class EntityClass(object):
         return parent
 
     @classmethod
-    def get_top_parent(cls, abstract_valid = False):
+    def get_top_parent(cls, abstract_valid=False):
         """
         Retrieves the top level parent class in the inheritance
         chain, this class should be the left most class in the
@@ -2298,7 +2368,8 @@ class EntityClass(object):
             # parent class is abstract continues the loop, (not
             # considered a valid top parent class) otherwise sets
             # the top parent class and breaks the loop
-            if not abstract_valid and _parent.is_abstract(): continue
+            if not abstract_valid and _parent.is_abstract():
+                continue
             top_parent = _parent
             break
 
@@ -2306,7 +2377,7 @@ class EntityClass(object):
         return top_parent
 
     @classmethod
-    def has_parents(cls, abstract_valid = False):
+    def has_parents(cls, abstract_valid=False):
         # in case the has parents flag is already "cached"
         # in the current class (fast retrieval)
         if "_has_parents" in cls.__dict__:
@@ -2339,7 +2410,9 @@ class EntityClass(object):
 
         # in case the abstract valid flag is not set
         # and there are no valid non abstract parents
-        if not abstract_valid and not [parent for parent in parents if not parent.is_abstract()]:
+        if not abstract_valid and not [
+            parent for parent in parents if not parent.is_abstract()
+        ]:
             # returns false (the parent classes
             # are all abstract)
             cls._has_parents = False
@@ -2364,7 +2437,8 @@ class EntityClass(object):
         """
 
         table_id = cls.get_id()
-        if table_id == None: return False
+        if table_id == None:
+            return False
         return True
 
     @classmethod
@@ -2399,7 +2473,8 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == dict: return False
+        if not attribute_type == dict:
+            return False
         is_generated = attribute.get("generated", False)
 
         # returns the value of the generated checking
@@ -2422,7 +2497,8 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == dict: return False
+        if not attribute_type == dict:
+            return False
         is_indexed = attribute.get("indexed", False)
 
         # returns the value of the indexed checking
@@ -2445,7 +2521,8 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == dict: return False
+        if not attribute_type == dict:
+            return False
         is_mandatory = attribute.get("mandatory", False)
 
         # returns the value of the mandatory checking
@@ -2468,7 +2545,8 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == dict: return False
+        if not attribute_type == dict:
+            return False
         is_immutable = attribute.get("immutable", False)
 
         # returns the value of the immutable checking
@@ -2507,7 +2585,8 @@ class EntityClass(object):
         # meta data information from it
         attribute = getattr(cls, attribute_name)
         attribute_type = type(attribute)
-        if not attribute_type == dict: return False
+        if not attribute_type == dict:
+            return False
         data_type = attribute.get("type", None)
 
         # checks the value of the data type to "see"
@@ -2541,7 +2620,7 @@ class EntityClass(object):
         # so this is considered an expensive operation the "mapper"
         # name is retrieved so that an additional verification may
         # be processed
-        mapper, mapper_name = cls.get_mapper(relation_name, get_mapper_name = True)
+        mapper, mapper_name = cls.get_mapper(relation_name, get_mapper_name=True)
 
         # checks if the "mapper" for the relation is the
         # "current" class and the mapper name is the current
@@ -2553,7 +2632,7 @@ class EntityClass(object):
         return is_mapped
 
     @classmethod
-    def get_mapper(cls, relation_name, get_mapper_name = False):
+    def get_mapper(cls, relation_name, get_mapper_name=False):
         # starts the "mapper" name value with an initial
         # invalid value
         mapper_name = None
@@ -2579,7 +2658,8 @@ class EntityClass(object):
         # retrieve the name of the relation (side) that maps the relation
         # this is done by checking the "mapper" against the current entity
         # class, if it fails it must be the "other" side of the relation
-        if mapper: mapper_name = mapper == cls and relation_name or reverse
+        if mapper:
+            mapper_name = mapper == cls and relation_name or reverse
 
         # checks the target relation for the is "mapper" attribute, in case
         # it's set the "mapper" class is considered to be the target
@@ -2699,7 +2779,7 @@ class EntityClass(object):
         return target_class
 
     @classmethod
-    def get_relation(cls, relation_name, raise_exception = False):
+    def get_relation(cls, relation_name, raise_exception=False):
         """
         Retrieves the relation (attributes) for the relation
         with the given name.
@@ -2734,7 +2814,9 @@ class EntityClass(object):
         # raise exception is active, should raise exception
         elif raise_exception:
             # raises an entity manager missing relation method exception
-            raise exceptions.MissingRelationMethod("'%s' method not found" % relation_name)
+            raise exceptions.MissingRelationMethod(
+                "'%s' method not found" % relation_name
+            )
         # otherwise the relation is not present and the exception should
         # not be raise, return a empty descriptor
         else:
@@ -2779,7 +2861,7 @@ class EntityClass(object):
         return is_reference
 
     @classmethod
-    def _attr(cls, instance, name, default = None):
+    def _attr(cls, instance, name, default=None):
         """
         Retrieves the value of an attribute from the provided
         name, the provided instance may be both a map or a class
@@ -2806,7 +2888,8 @@ class EntityClass(object):
 
         # verifies if the provided instance is not valid/unset,
         # if that's the case the default value is returned
-        if instance == None: return default
+        if instance == None:
+            return default
 
         # retrieves the type of the provided instance
         # it can be both a map or a concrete object
@@ -2816,8 +2899,10 @@ class EntityClass(object):
         # in case the provided instance is a map the value
         # is retrieve using the normal map accessor otherwise
         # reflection is used to retrieve the instance attribute
-        if instance_type == dict: return instance.get(name, default)
-        else: return instance.get_value(name, default = default, load_lazy = True)
+        if instance_type == dict:
+            return instance.get(name, default)
+        else:
+            return instance.get_value(name, default=default, load_lazy=True)
 
     @classmethod
     def _get_bases(cls):
@@ -2835,7 +2920,8 @@ class EntityClass(object):
         # the current class and in case the object is not
         # the bases set returns the set immediately
         bases = cls.__bases__
-        if not object in bases: return bases
+        if not object in bases:
+            return bases
 
         # converts the base classes into a list and removes
         # the object class from it, then returns the new bases
@@ -2877,7 +2963,7 @@ class EntityClass(object):
         self._entities = {}
 
     def use_scope(self, scope_entity):
-        """"
+        """ "
         Sets (uses) the scope and entities map attributes in the current
         entity copying them from the given entity considered as scope
         entity (the one to be used as base in diffusion scope context).
@@ -2920,7 +3006,8 @@ class EntityClass(object):
         # of the current instance in case it's not present the method
         # fails silently
         id_value = self.get_id_value()
-        if not id_value: return
+        if not id_value:
+            return
 
         # retrieves the entity class associated with the
         # current entity
@@ -2929,10 +3016,11 @@ class EntityClass(object):
         # sets the entity in the entities map, first verifies
         # if the class is present and if is not creates a new
         # map to hold the various entities
-        if not entity_class in self._entities: self._entities[entity_class] = {}
+        if not entity_class in self._entities:
+            self._entities[entity_class] = {}
         self._entities[entity_class][id_value] = self
 
-    def attach(self, force = True):
+    def attach(self, force=True):
         """
         Attaches the current entity to the data source (on-line)
         the current diffusion scope is changed into attached state.
@@ -2959,14 +3047,15 @@ class EntityClass(object):
 
         # in case the force flag is set the attach level is
         # set to the minimum required for attaching (forces it)
-        if force: attach_level = 1
+        if force:
+            attach_level = 1
 
         # updates the attached and attach level values in the
         # scope definition map
         self._scope["attached"] = attach_level > 0
         self._scope["attach_level"] = attach_level
 
-    def detach(self, force = True, reset = False):
+    def detach(self, force=True, reset=False):
         """
         Detaches the current entity from the data source (off-line)
         the current diffusion scope is changed into detached state.
@@ -2999,7 +3088,8 @@ class EntityClass(object):
 
         # in case the force flag is set the attach level is
         # set to the minimum required for detaching (forces it)
-        if force: attach_level = 0
+        if force:
+            attach_level = 0
 
         # updates the attached and attach level values in the
         # scope definition map
@@ -3011,7 +3101,7 @@ class EntityClass(object):
         # mixed scopes in relations
         reset and self.reset()
 
-    def attach_l(self, force = True):
+    def attach_l(self, force=True):
         """
         Attaches the current entity to the data source (on-line)
         the current scope is not changed as this operation is
@@ -3036,14 +3126,15 @@ class EntityClass(object):
 
         # in case the force flag is set the attach level is
         # set to the minimum required for attaching (forces it)
-        if force: attach_level = 1
+        if force:
+            attach_level = 1
 
         # updates the attached and attach level values in the
         # current entity
         self._attached = attach_level > 0
         self._attach_level = attach_level
 
-    def detach_l(self, force = True, reset = False):
+    def detach_l(self, force=True, reset=False):
         """
         Detaches the current entity from the data source (off-line)
         the current scope is not changed as this operation is
@@ -3074,7 +3165,8 @@ class EntityClass(object):
 
         # in case the force flag is set the attach level is
         # set to the minimum required for detaching (forces it)
-        if force: attach_level = 0
+        if force:
+            attach_level = 0
 
         # updates the attached and attach level values in the
         # current entity
@@ -3102,7 +3194,7 @@ class EntityClass(object):
         is_attached = self._attached and self._scope.get("attached", True)
         return is_attached
 
-    def get_map(self, recursive = True):
+    def get_map(self, recursive=True):
         """
         Retrieves a map containing the "exact" same data
         representative of this entity.
@@ -3140,14 +3232,16 @@ class EntityClass(object):
             # check if the current name contains a value in the
             # model and in case it does not continues the loop
             has_value = self.has_value(name)
-            if not has_value: continue
+            if not has_value:
+                continue
 
             # checks if the current name refers a relation in the
             # model and in case it does and the current mapping
             # mode is not recursive continues the loop, not going
             # to step into the recursive mode
             is_relation = entity_class.is_relation(name)
-            if is_relation and not recursive: continue
+            if is_relation and not recursive:
+                continue
 
             # retrieves the value for the current name in the mode
             # (it may be a sequence or a value)
@@ -3161,8 +3255,10 @@ class EntityClass(object):
                 # contained in it, otherwise serializes only the value
                 # because no sequence exists
                 is_to_many = entity_class.is_to_many(name)
-                if is_to_many: value = [value.get_map(recursive = recursive) for value in value]
-                else: value = value.get_map(recursive = recursive)
+                if is_to_many:
+                    value = [value.get_map(recursive=recursive) for value in value]
+                else:
+                    value = value.get_map(recursive=recursive)
 
             # sets the current value in iteration (already converted
             # into the map mode) in the current map
@@ -3179,7 +3275,8 @@ class EntityClass(object):
             # checks if the current model contains the current
             # reserved name value set in case it does not continues
             # the loop not possible to set the value
-            if not hasattr(self, name): continue
+            if not hasattr(self, name):
+                continue
 
             # retrieves the reserved value and sets it in the
             # current map for setting
@@ -3190,7 +3287,7 @@ class EntityClass(object):
         # method, it's now completely populated
         return map
 
-    def nullify(self, recursive = False):
+    def nullify(self, recursive=False):
         """
         "Nullifies" the current entity instance by setting all
         the undefined values of it as none, so that a reference
@@ -3224,7 +3321,8 @@ class EntityClass(object):
             # in case the current instance already has
             # the value (no need to change id) otherwise
             # sets the value as none
-            if self.has_value(name): continue
+            if self.has_value(name):
+                continue
             setattr(self, name, None)
 
         # in case the recursive flag is set, runs the
@@ -3249,17 +3347,20 @@ class EntityClass(object):
             # the retrieved value is not set continue
             # the loop (no need to nullify)
             relation_value = self.get_value(relation)
-            if relation_value == None: continue
+            if relation_value == None:
+                continue
 
             # checks if the relation is of type to many
             # and in case it's not creates a sequence
             # with the single value
             is_to_many = entity_class.is_to_many(relation)
-            if not is_to_many: relation_value = [relation_value]
+            if not is_to_many:
+                relation_value = [relation_value]
 
             # iterates over all the relation values to run
             # the nullify process over them (recursive step)
-            for _relation_value in relation_value: _relation_value.nullify(True)
+            for _relation_value in relation_value:
+                _relation_value.nullify(True)
 
     def get_data_state(self):
         return self.data_state
@@ -3283,16 +3384,24 @@ class EntityClass(object):
             # to the invalid names list, continues
             # the loop the current item is not valid
             # (invalid name)
-            if key in INVALID_NAMES: continue
+            if key in INVALID_NAMES:
+                continue
 
             # in case the key value is completely based in upper case letters
             # characters it must be ignored as it is a constant (invalid name)
-            if key.isupper(): continue
+            if key.isupper():
+                continue
 
             # in case the value type is not valid as
             # a field (function or method) continues the
             # loop, functions or method are not items
-            if type(value) in (types.FunctionType, types.MethodType, staticmethod, classmethod): continue
+            if type(value) in (
+                types.FunctionType,
+                types.MethodType,
+                staticmethod,
+                classmethod,
+            ):
+                continue
 
             # sets the value in the map of fields
             # for the current key value
@@ -3337,7 +3446,7 @@ class EntityClass(object):
     def has_value(self, name):
         return name in self.__dict__
 
-    def get_value(self, name, default = None, load_lazy = False):
+    def get_value(self, name, default=None, load_lazy=False):
         # in case the current entity contains a
         # value for the attribute name (simple
         # case) it's returned normally
@@ -3408,7 +3517,8 @@ class EntityClass(object):
             # in case the current entity does not contains the unmapped
             # relation continue the loop (tries to find more) otherwise
             # return valid (contains unmapped relations)
-            if not self.has_value(unmapped_relation): continue
+            if not self.has_value(unmapped_relation):
+                continue
             return True
 
         # returns invalid (the current entity does not
@@ -3456,15 +3566,16 @@ class EntityClass(object):
             # to none in case it's not set (or lazy loaded) and
             # then continues the loop in case the value is valid
             # (not none)
-            value = self.get_value(key, default = None)
-            if not value == None: continue
+            value = self.get_value(key, default=None)
+            if not value == None:
+                continue
 
             # raises a validation error for the missing of the
             # mandatory field
             raise exceptions.ValidationError(
-                "missing mandatory field '%s', for entity '%s'" %
-                (key, entity_class.__name__),
-                context = self
+                "missing mandatory field '%s', for entity '%s'"
+                % (key, entity_class.__name__),
+                context=self,
             )
 
     def validate_mandatory_u(self):
@@ -3486,19 +3597,21 @@ class EntityClass(object):
             # to true (valid) in case it's not set (or lazy loaded)
             # and then continues the loop in case the value is valid
             # (not none) or in case the value is lazy loaded
-            value = self.get_value(key, default = True)
-            if not value == None: continue
-            if value == colony.Lazy: continue
+            value = self.get_value(key, default=True)
+            if not value == None:
+                continue
+            if value == colony.Lazy:
+                continue
 
             # raises a validation error for the missing of the
             # mandatory field
             raise exceptions.ValidationError(
-                "missing mandatory fields '%s', for entity '%s'" %
-                (key, entity_class.__name__),
-                context = self
+                "missing mandatory fields '%s', for entity '%s'"
+                % (key, entity_class.__name__),
+                context=self,
             )
 
-    def validate_value(self, name, value = None, force = False):
+    def validate_value(self, name, value=None, force=False):
         """
         Validates both the name and the associated value
         currently present in the entity.
@@ -3540,10 +3653,11 @@ class EntityClass(object):
         # is correct according to the entity definition)
         # only retrieves the value in case the force (value)
         # flag is not set
-        if value == None and not force: value = self.get_value(name)
+        if value == None and not force:
+            value = self.get_value(name)
         self.__class__._validate_value(name, value)
 
-    def validate_set(self, name, value = None, force = False):
+    def validate_set(self, name, value=None, force=False):
         """
         Validates that the value for the attribute with the given
         is set, according to the entity specification.
@@ -3571,10 +3685,11 @@ class EntityClass(object):
         or any other evaluating to false).
         """
 
-        if value == None and not force: value = self.get_value(name)
+        if value == None and not force:
+            value = self.get_value(name)
         self.__class__._validate_set(name, value)
 
-    def validate_sequence(self, name, value = None, force = False):
+    def validate_sequence(self, name, value=None, force=False):
         """
         Validates that the value for the attribute with the given
         is a relation, according to the entity specification.
@@ -3598,10 +3713,11 @@ class EntityClass(object):
         for relation in the current entity.
         """
 
-        if value == None and not force: value = self.get_value(name)
+        if value == None and not force:
+            value = self.get_value(name)
         self.__class__._validate_sequence(name, value)
 
-    def validate_relation_value(self, name, value = None, force = False):
+    def validate_relation_value(self, name, value=None, force=False):
         """
         Validates that the value for the attribute with the given
         contains a valid relation, according to the entity specification.
@@ -3625,16 +3741,18 @@ class EntityClass(object):
         or any other evaluating to false).
         """
 
-        if value == None and not force: value = self.get_value(name)
+        if value == None and not force:
+            value = self.get_value(name)
         self.__class__._validate_relation_value(name, value, self._entity_manager)
 
-    def get_sql_value(self, name, value = None, force = False):
+    def get_sql_value(self, name, value=None, force=False):
         # retrieves the value of the attribute for
         # the provided name, (the value is null in
         # case no value is found) in case the value
         # is not valid and the force flag is not set
         # uses the normal value retriever from the entity
-        if value == None and not force: value = self.get_value(name)
+        if value == None and not force:
+            value = self.get_value(name)
 
         # retrieves the SQL value for the name and value
         # using the class method (forwarding)
@@ -3643,15 +3761,15 @@ class EntityClass(object):
         # returns the converted SQL value
         return sql_value
 
-    def set_sql_value(self, name, sql_value, encoding = None):
+    def set_sql_value(self, name, sql_value, encoding=None):
         value = self.__class__._from_sql_value(name, sql_value, encoding)
         setattr(self, name, value)
 
-    def from_sql_value(self, name, sql_value, encoding = None):
+    def from_sql_value(self, name, sql_value, encoding=None):
         value = self.__class__._from_sql_value(name, sql_value, encoding)
         return value
 
-    def to_map(self, entity_class = None, depth = 0, special = True):
+    def to_map(self, entity_class=None, depth=0, special=True):
         """
         Converts the current entity (instance) into a linear
         (non recursive) map representation with a random
@@ -3692,8 +3810,10 @@ class EntityClass(object):
         # in case the special flag is set the special attributes
         # of the current instance should also be serialized, so
         # that even information like the class type is included
-        if special: map["_class"] = self.__class__.__name__
-        if special and hasattr(self, "mtime"): map["_mtime"] = self.mtime
+        if special:
+            map["_class"] = self.__class__.__name__
+        if special and hasattr(self, "mtime"):
+            map["_mtime"] = self.mtime
 
         # retrieves the id name and values and sets the id
         # value in the map (this is a mandatory field event
@@ -3715,7 +3835,8 @@ class EntityClass(object):
             # as relations are not meant to be serialized
             # at this state of the loop
             is_relation = entity_class.is_relation(name)
-            if is_relation: continue
+            if is_relation:
+                continue
 
             # retrieves the value for the current
             # name and sets it in the map
@@ -3725,7 +3846,8 @@ class EntityClass(object):
         # in case the current depth level does not allow
         # the conversion of the relations, must return
         # the map immediately
-        if depth == 0: return map
+        if depth == 0:
+            return map
 
         # retrieves all the relations from the entity class
         # used for the conversion, these are the relations
@@ -3750,8 +3872,9 @@ class EntityClass(object):
                 # loaded relation (in case it's necessary) in case
                 # the returned value is still lazy the current iteration
                 # loop is skipped to avoid storing invalid values
-                value = self.get_value(relation, load_lazy = True)
-                if colony.is_lazy(value): continue
+                value = self.get_value(relation, load_lazy=True)
+                if colony.is_lazy(value):
+                    continue
 
                 # creates the relations value as a new empty
                 # list that is going to be populated with the
@@ -3769,14 +3892,13 @@ class EntityClass(object):
                     # in case the value is not valid, or
                     # not set it cannot be converted into
                     # a valid map, must skip conversion
-                    if not _value: continue
+                    if not _value:
+                        continue
 
                     # converts the value into a map and set it as
                     # the relation value in the relation value list
                     _relation_value = _value.to_map(
-                        entity_class = target_class,
-                        depth = depth - 1,
-                        special = special
+                        entity_class=target_class, depth=depth - 1, special=special
                     )
                     relation_value.append(_relation_value)
 
@@ -3789,13 +3911,16 @@ class EntityClass(object):
                 # note that the value is verifies to check if it's
                 # a lazy loaded value, if that's the case the current
                 # relation storage is skipped to avoid problems
-                value = self.get_value(relation, load_lazy = True)
-                if colony.is_lazy(value): continue
-                relation_value = value.to_map(
-                    entity_class = target_class,
-                    depth = depth - 1,
-                    special = special
-                ) if value else value
+                value = self.get_value(relation, load_lazy=True)
+                if colony.is_lazy(value):
+                    continue
+                relation_value = (
+                    value.to_map(
+                        entity_class=target_class, depth=depth - 1, special=special
+                    )
+                    if value
+                    else value
+                )
 
             # sets the relation value (list of maps or map)
             # in the current entity map representation
@@ -3810,37 +3935,36 @@ class EntityClass(object):
         cls,
         map,
         entity_manager,
-        entity = None,
-        recursive = True,
-        set_empty_relations = True,
-        entities = None,
-        scope = None,
-        reset = True,
-        set_mtime = True,
-        cls_names = None
+        entity=None,
+        recursive=True,
+        set_empty_relations=True,
+        entities=None,
+        scope=None,
+        reset=True,
+        set_mtime=True,
+        cls_names=None,
     ):
         # creates a new entity class from the current
         # class using the current entity manager, no scope
         # or entities map is provided so a new diffusion
         # scope is created
-        entity = entity or cls.build(
-            entity_manager,
-            entities = entities,
-            scope = scope
-        )
+        entity = entity or cls.build(entity_manager, entities=entities, scope=scope)
 
         # in case the reset flag is set the constructor of the
         # model must be "re-called" again so that the default
         # values are set one more time (as expected)
-        if reset: entity.__init__()
+        if reset:
+            entity.__init__()
 
         # verifies the current status of both the entities
         # and the scope and in case these values are not set
         # set's it for the first time as the entity values
         # so that they are re-used along the various entities
         # that are going to be created as part of the loading
-        if entities == None: entities = entity._entities
-        if scope == None: scope = entity._scope
+        if entities == None:
+            entities = entity._entities
+        if scope == None:
+            scope = entity._scope
 
         # retrieves the complete set of names from the class
         # to be used to set the correct values into the entity
@@ -3854,7 +3978,8 @@ class EntityClass(object):
         for name in names:
             # in case the current name does not exist
             # in the map, must skip the cycle
-            if not name in map: continue
+            if not name in map:
+                continue
 
             # retrieves the current value for the name to
             # be iterated, this may value may be a sequence
@@ -3869,7 +3994,8 @@ class EntityClass(object):
                 # in case the value is invalid or in case it's
                 # an empty sequence and the set empty relations
                 # flag is not set (no need to set the relation)
-                if not value and not set_empty_relations: continue
+                if not value and not set_empty_relations:
+                    continue
 
                 # in case the relation is of type to many, must
                 # process the sequence of values in it, otherwise
@@ -3887,7 +4013,11 @@ class EntityClass(object):
                         # then if successful uses it to retrieve the target class
                         # otherwise retrieves the target class from the relation information
                         class_name = _value and _value.get("_class", None)
-                        target_class = class_name and entity_manager.get_entity(class_name) or cls.get_target(name)
+                        target_class = (
+                            class_name
+                            and entity_manager.get_entity(class_name)
+                            or cls.get_target(name)
+                        )
 
                         # converts the map into an entity object (in case the value is valid)
                         # and the adds it to the list of entity values the new object will
@@ -3895,11 +4025,11 @@ class EntityClass(object):
                         _entity = _value and target_class.from_map(
                             _value,
                             entity_manager,
-                            recursive = recursive,
-                            set_empty_relations = set_empty_relations,
-                            entities = entities,
-                            scope = scope,
-                            set_mtime = set_mtime
+                            recursive=recursive,
+                            set_empty_relations=set_empty_relations,
+                            entities=entities,
+                            scope=scope,
+                            set_mtime=set_mtime,
                         )
                         values.append(_entity)
 
@@ -3914,7 +4044,11 @@ class EntityClass(object):
                     # then if successful uses it to retrieve the target class
                     # otherwise retrieves the target class from the relation information
                     class_name = value and value.get("_class", None)
-                    target_class = class_name and entity_manager.get_entity(class_name) or cls.get_target(name)
+                    target_class = (
+                        class_name
+                        and entity_manager.get_entity(class_name)
+                        or cls.get_target(name)
+                    )
 
                     # converts the map into an entity object (in case the value is valid)
                     # and sets it as the value to be set in the entity, note that the scope
@@ -3922,11 +4056,11 @@ class EntityClass(object):
                     value = value and target_class.from_map(
                         value,
                         entity_manager,
-                        recursive = recursive,
-                        set_empty_relations = set_empty_relations,
-                        entities = entities,
-                        scope = scope,
-                        set_mtime = set_mtime
+                        recursive=recursive,
+                        set_empty_relations=set_empty_relations,
+                        entities=entities,
+                        scope=scope,
+                        set_mtime=set_mtime,
                     )
 
             # sets the correct value associated with the name in
@@ -3952,7 +4086,7 @@ class EntityClass(object):
         return entity
 
     @classmethod
-    def _get_data_type(cls, name, resolve_relations = True):
+    def _get_data_type(cls, name, resolve_relations=True):
         # retrieves the "abstract" information
         # on the attribute and then uses it to
         # retrieve the data type of the attribute
@@ -3987,7 +4121,8 @@ class EntityClass(object):
         # to be a special case and the value (must be previously
         # casted according to the SQL syntax) is returned as the
         # valid SQL representation
-        if name in RESERVED_NAMES: return str(value)
+        if name in RESERVED_NAMES:
+            return str(value)
 
         # retrieves the (attribute) data type for
         # the attribute with the given name for
@@ -3997,7 +4132,8 @@ class EntityClass(object):
         # in case the value is none a null
         # string must be used, returns the
         # null string immediately
-        if value == None: return "null"
+        if value == None:
+            return "null"
 
         # in case the attribute data type is text,
         # normal separators must be applied
@@ -4005,7 +4141,8 @@ class EntityClass(object):
             # for the "special" string data type a truncation operation
             # must be performed in case it overflows the maximum value
             # allowed by the underlying SQL data source
-            if data_type == "string" and len(value) > 255: value = value[:255]
+            if data_type == "string" and len(value) > 255:
+                value = value[:255]
 
             # retrieves the escaped attribute value and
             # returns the escaped attribute value with the
@@ -4105,7 +4242,7 @@ class EntityClass(object):
             return value_string
 
     @classmethod
-    def _from_sql_value(cls, name, value, encoding = None):
+    def _from_sql_value(cls, name, value, encoding=None):
         # retrieves the (attribute) data type for
         # the attribute with the given name for
         # the current entity class
@@ -4129,8 +4266,12 @@ class EntityClass(object):
             # string and the encoding value is present decode
             # the value creating an unicode representation of it
             value_type = type(value)
-            string_value = encoding and value_type == colony.legacy.BYTES and\
-                value.decode(encoding) or value
+            string_value = (
+                encoding
+                and value_type == colony.legacy.BYTES
+                and value.decode(encoding)
+                or value
+            )
 
             # returns the "just" converted string representation
             # (probably an unicode object)
@@ -4162,9 +4303,12 @@ class EntityClass(object):
             # default zeroed value is used instead, providing a
             # simple fallback process (required for os like windows)
             value = float(value)
-            try: date_time_value = datetime.datetime.utcfromtimestamp(value)
-            except ValueError: date_time_value = datetime.datetime.utcfromtimestamp(0)
-            except IOError: date_time_value = datetime.datetime.utcfromtimestamp(0)
+            try:
+                date_time_value = datetime.datetime.utcfromtimestamp(value)
+            except ValueError:
+                date_time_value = datetime.datetime.utcfromtimestamp(0)
+            except IOError:
+                date_time_value = datetime.datetime.utcfromtimestamp(0)
 
             # returns the date time (converted) value it may
             # be used in a coherent
@@ -4251,23 +4395,24 @@ class EntityClass(object):
 
         # in case the name is a reserved one, it's considered
         # to be valid according to the entity manager structure
-        if name in RESERVED_NAMES: return
+        if name in RESERVED_NAMES:
+            return
 
         # in case the (attribute) name exists in the
         # context of the current entity class, nothing
         # must be done
-        if cls.has_name(name): return
+        if cls.has_name(name):
+            return
 
         # raises an entity manager validation error, indicating the
         # invalid attribute name for the entity class (this may avoid
         # possible security problems)
         raise exceptions.ValidationError(
-            "invalid name '%s', attribute does not exist in '%s'" %
-            (name, cls.__name__)
+            "invalid name '%s', attribute does not exist in '%s'" % (name, cls.__name__)
         )
 
     @classmethod
-    def _validate_value(cls, name, value, strict = True):
+    def _validate_value(cls, name, value, strict=True):
         """
         Validates that the value for the attribute with the given
         contains a valid type, according to the entity specification.
@@ -4295,7 +4440,8 @@ class EntityClass(object):
 
         # in case the name is a reserved one, it's considered
         # to be valid according to the entity manager structure
-        if name in RESERVED_NAMES: return
+        if name in RESERVED_NAMES:
+            return
 
         # retrieves the (attribute) data type for
         # the attribute with the given name for
@@ -4318,26 +4464,28 @@ class EntityClass(object):
         # is enabled a validation error is raised (cautious)
         if strict and value_type in warn_types:
             raise exceptions.ValidationError(
-                "data type '%s' is not perfect for '%s' in '%s'" %\
-                (value_type, name, cls.__name__)
+                "data type '%s' is not perfect for '%s' in '%s'"
+                % (value_type, name, cls.__name__)
             )
 
         # checks if the current value is not set (considered
         # to be universally valid) in such case the control
         # is returned immediately
-        if value == None: return
+        if value == None:
+            return
 
         # checks if the type of the value is valid (exists
         # in the set of valid types) in such case the control
         # is returned immediately
-        if value_type in valid_types: return
+        if value_type in valid_types:
+            return
 
         # raises an entity manager validation error, indicating the
         # invalid attribute type for the entity class (this may avoid
         # possible security problems)
         raise exceptions.ValidationError(
-            "invalid value for name '%s' in '%s', expected '%s' got base '%s'" %
-            (name, cls.__name__, attribute_data_type, value_type)
+            "invalid value for name '%s' in '%s', expected '%s' got base '%s'"
+            % (name, cls.__name__, attribute_data_type, value_type)
         )
 
     @classmethod
@@ -4364,13 +4512,14 @@ class EntityClass(object):
         # in case the value is valid and set the set validation
         # is considered to be fulfilled the control is returned
         # immediately to the calling method
-        if not value == None: return
+        if not value == None:
+            return
 
         # raises an entity manager validation error, indicating that
         # the request name is not correctly set in the current entity
         raise exceptions.ValidationError(
-            "name '%s' unset for attribute of type '%s', expected attribute set" %
-            (name, cls.__name__)
+            "name '%s' unset for attribute of type '%s', expected attribute set"
+            % (name, cls.__name__)
         )
 
     @classmethod
@@ -4402,13 +4551,14 @@ class EntityClass(object):
         # in case the class for the valuer inherits from the list
         # or from the tuple class the validation is said to be
         # correctly respected, returns control immediately
-        if issubclass(value_class, list) or issubclass(value_class, tuple): return
+        if issubclass(value_class, list) or issubclass(value_class, tuple):
+            return
 
         # raises an entity manager validation error, indicating that
         # the request name is not a valid sequence in the current entity
         raise exceptions.ValidationError(
-            "name '%s' is not a valid sequence for attribute of type '%s'" %\
-            (name, cls.__name__)
+            "name '%s' is not a valid sequence for attribute of type '%s'"
+            % (name, cls.__name__)
         )
 
     @classmethod
@@ -4438,7 +4588,8 @@ class EntityClass(object):
         # in case the relation is not set it must be considered to
         # be valid according to the entity manager definition, returns
         # the control immediately
-        if value == None: return
+        if value == None:
+            return
 
         # retrieves the target class for the relation, in order to be
         # able to check if the value represents a class or sub class
@@ -4448,27 +4599,30 @@ class EntityClass(object):
         # and so an exception must be raised (not possible to validate)
         target_class = cls.get_target(name)
         target_is_reference = target_class.is_reference()
-        if target_is_reference: target_class = entity_manager.get_entity(target_class.__name__)
-        if not target_class: raise exceptions.RelationValidationError(
-            "not possible to find referenced class '%s' for relation '%s'" %\
-            (target_class.__name__, name)
-        )
+        if target_is_reference:
+            target_class = entity_manager.get_entity(target_class.__name__)
+        if not target_class:
+            raise exceptions.RelationValidationError(
+                "not possible to find referenced class '%s' for relation '%s'"
+                % (target_class.__name__, name)
+            )
 
         # in case the class of the relation value is compatible
         # with the one defined in the target attribute of the relation
         # no problem occurred
-        if issubclass(value.__class__, target_class): return
+        if issubclass(value.__class__, target_class):
+            return
 
         # raises a relation validation error, because the relation
         # attribute value must be of type target class or a sub class
         # of it (assertion error)
         raise exceptions.RelationValidationError(
-            "invalid class for relation '%s', expected '%s' got '%s'" %\
-            (name, target_class.__name__, value.__class__.__name__)
+            "invalid class for relation '%s', expected '%s' got '%s'"
+            % (name, target_class.__name__, value.__class__.__name__)
         )
 
     @classmethod
-    def _escape_text(cls, text_value, escape_slash = False, escape_double_quotes = False):
+    def _escape_text(cls, text_value, escape_slash=False, escape_double_quotes=False):
         """
         Escapes the text value in the SQL context.
         This escaping process is important even for
@@ -4494,11 +4648,13 @@ class EntityClass(object):
 
         # in case the escape slash flag is set
         # the slash character should be escaped too
-        if escape_slash: escaped_text_value = escaped_text_value.replace("\\", "\\\\")
+        if escape_slash:
+            escaped_text_value = escaped_text_value.replace("\\", "\\\\")
 
         # in case the escape double quotes flag is set
         # the double quotes should be escaped too
-        if escape_double_quotes: escaped_text_value = escaped_text_value.replace("\"", "\"\"")
+        if escape_double_quotes:
+            escaped_text_value = escaped_text_value.replace('"', '""')
 
         # returns the escaped text value
         return escaped_text_value
@@ -4524,7 +4680,7 @@ class EntityClass(object):
 
         # extends the items map with the items present in
         # the current class (no map copy is made)
-        items = colony.map_extend(items, cls.__dict__, copy_base_map = False)
+        items = colony.map_extend(items, cls.__dict__, copy_base_map=False)
 
         # retrieves the complete set of abstract parent for
         # the current class, so that is possible to add their
@@ -4534,7 +4690,7 @@ class EntityClass(object):
             # retrieves the abstract parent items and adds them
             # into the current set of items
             abstract_parent_items = abstract_parent.__dict__
-            colony.map_extend(items, abstract_parent_items, copy_base_map = False)
+            colony.map_extend(items, abstract_parent_items, copy_base_map=False)
 
         # returns the map containing the complete set of items
         # for the current class (includes abstract class items)
@@ -4557,8 +4713,10 @@ class EntityClass(object):
         # creates the required maps for the entities and
         # for the scope in case they are required not
         # already set in the entity
-        if self._entities == None: self._entities = {}
-        if self._scope == None: self._scope = {}
+        if self._entities == None:
+            self._entities = {}
+        if self._scope == None:
+            self._scope = {}
 
     def _load_lazy(self, name):
         """
@@ -4579,13 +4737,15 @@ class EntityClass(object):
         # in case the entity manger is not currently loaded in the
         # current model it's not possible to run the loading and
         # so the attribute must be considered to be lazy
-        if not self._entity_manager: return colony.Lazy
+        if not self._entity_manager:
+            return colony.Lazy
 
         # checks if the current entity (and diffusion scope) is
         # attached to the data source in case it's not a lazy
         # loading object is returned (not possible to load it)
         is_attached = self.is_attached()
-        if not is_attached: return colony.Lazy
+        if not is_attached:
+            return colony.Lazy
 
         # retrieves the target class for the (relation name)
         # checks if the target class is a "data reference" and
@@ -4595,34 +4755,36 @@ class EntityClass(object):
         # and so it must be marked as a lazy relation
         target_class = self.get_target(name)
         target_is_reference = target_class.is_reference()
-        if target_is_reference: target_class = self._entity_manager.get_entity(target_class.__name__)
-        if not target_class: return colony.Lazy
+        if target_is_reference:
+            target_class = self._entity_manager.get_entity(target_class.__name__)
+        if not target_class:
+            return colony.Lazy
 
         # retrieves id value from the entity instance and checks
         # if the value is correctly set in case it's not it's not
         # possible to retrieve (load) the relation must set the
         # relation as lazy loaded
         table_id_value = self.get_id_value()
-        if table_id_value == None: return colony.Lazy
+        if table_id_value == None:
+            return colony.Lazy
 
         # creates the map of options to load the various
         # entities that are associated with the current
         # entity in the appropriate (reverse) relation
         options = dict(
-            eager = (
-                name,
-            ),
-            entities = self._entities,
-            scope = self._scope,
-            minimal = True,
-            cache = True
+            eager=(name,),
+            entities=self._entities,
+            scope=self._scope,
+            minimal=True,
+            cache=True,
         )
 
         # runs the "finding" the appropriate (place holder) entity
         # from which the the proper relation will be extracted, in
         # case not entity is found (error situation)
         _entity = self._entity_manager.get(self.__class__, table_id_value, options)
-        if not _entity: raise RuntimeError("Not possible to load entity")
+        if not _entity:
+            raise RuntimeError("Not possible to load entity")
 
         # in case the retrieved entity does not contain the requested
         # (relation) name and exception should be raised indicating
@@ -4639,7 +4801,7 @@ class EntityClass(object):
         # attribute is not going to be "lazy loaded" again)
         return attribute
 
-    def _load_lazy_attr(self, name, force = False):
+    def _load_lazy_attr(self, name, force=False):
         """
         Loads a lazy loaded base attribute, this will be used in
         entities that have been loaded using polymorphism and for
@@ -4670,20 +4832,23 @@ class EntityClass(object):
         # in case the entity manger is not currently loaded in the
         # current model it's not possible to run the loading and
         # so the attribute must be considered to be lazy
-        if not self._entity_manager: return colony.Lazy
+        if not self._entity_manager:
+            return colony.Lazy
 
         # checks if the current entity (and diffusion scope) is
         # attached to the data source in case it's not a lazy
         # loading object is returned (not possible to load it)
         is_attached = self.is_attached()
-        if not is_attached: return colony.Lazy
+        if not is_attached:
+            return colony.Lazy
 
         # retrieves id value from the entity instance and checks
         # if the value is correctly set in case it's not it's not
         # possible to retrieve (load) the relation must set the
         # relation as lazy loaded
         table_id_value = self.get_id_value()
-        if table_id_value == None: return colony.Lazy
+        if table_id_value == None:
+            return colony.Lazy
 
         # retrieves the entity class associated with the current entity
         # to be able to access class level attributes
@@ -4692,9 +4857,7 @@ class EntityClass(object):
         # creates the map of options to load the various
         # base value for the concrete entity defined, this way
         # it will be possible to populate all the base names
-        options = dict(
-            scope = self._scope
-        )
+        options = dict(scope=self._scope)
 
         # runs the "finding" the appropriate (place holder) entity
         # then retrieves the attribute from it and retrieves the
@@ -4709,13 +4872,15 @@ class EntityClass(object):
             # in case the current name in iteration is
             # not present in the (new) entity no need to
             # retrieve it and set it in the entity
-            if not _entity.has_value(name): continue
+            if not _entity.has_value(name):
+                continue
 
             # in case the value is already set in the base
             # no duplicate setting should occur (would possibly
             # revert changed to entity), note that in case the
             # force flag is set the value is set the same way
-            if self.has_value(name) and not force: continue
+            if self.has_value(name) and not force:
+                continue
 
             # retrieves the value for the current
             # name in the (new) entity and sets it in
@@ -4754,7 +4919,8 @@ class EntityClass(object):
         # exists for the associated class and if that's not true raises
         # the current exception in handling
         has_attr = hasattr(cls, "_attr_" + name)
-        if not has_attr: raise
+        if not has_attr:
+            raise
 
         # sets the initial value for the error flag as false (default
         # value) and then tries to extract the proper attribute method
@@ -4764,13 +4930,17 @@ class EntityClass(object):
         # runs the calculated attribute method and retrieves the associated
         # value setting the error flag in case an exception occurs, otherwise
         # sets the value in the current instance (no more delayed resolution)
-        try: value = method(self)
-        except Exception: error = True
-        else: setattr(self, name, value)
+        try:
+            value = method(self)
+        except Exception:
+            error = True
+        else:
+            setattr(self, name, value)
 
         # in case the error flag is set re-raise the current exception in
         # handling (attribute not found) otherwise returns the resolved value
-        if error: raise
+        if error:
+            raise
         return value
 
     def _depth(self):
@@ -4790,12 +4960,14 @@ class EntityClass(object):
         return 0
 
     @classmethod
-    def get_serializer(cls, name = None):
+    def get_serializer(cls, name=None):
         # in case the serializers map is not defined triggers the
         # initial loading of the serializer, then in case the serializers
         # list is empty (or invalid) raises the no serializer error
-        if SERIALIZERS_MAP == None: load_serializers()
-        if not SERIALIZERS: raise exceptions.InvalidSerializerError("no serializer available")
+        if SERIALIZERS_MAP == None:
+            load_serializers()
+        if not SERIALIZERS:
+            raise exceptions.InvalidSerializerError("no serializer available")
 
         # in case no (serializer) name is provided the first
         # (and preferred) serializer name is used then retrieves
@@ -4803,12 +4975,16 @@ class EntityClass(object):
         # raises an error
         name = name or SERIALIZERS[0]
         serializer = SERIALIZERS_MAP.get(name, None)
-        if not serializer: raise exceptions.InvalidSerializerError("no serializer available for '%s'", name)
+        if not serializer:
+            raise exceptions.InvalidSerializerError(
+                "no serializer available for '%s'", name
+            )
 
         # creates the serializer tuple containing both
         # the serializer object and the name
         serializer_tuple = (serializer, name)
         return serializer_tuple
+
 
 class rset(list):
     """
@@ -4827,7 +5003,7 @@ class rset(list):
     """ The hash map that associates each of the
     header names with the index position in the header """
 
-    def __init__(self, base = []):
+    def __init__(self, base=[]):
         """
         Constructor of the class.
 
@@ -4838,8 +5014,10 @@ class rset(list):
 
         list.__init__(self, base)
 
-        if hasattr(base, "header_set"): self.header_set = base.header_set
-        if hasattr(base, "header_h"): self.header_h = copy.copy(base.header_h)
+        if hasattr(base, "header_set"):
+            self.header_set = base.header_set
+        if hasattr(base, "header_h"):
+            self.header_h = copy.copy(base.header_h)
 
     def join(self, set):
         """
@@ -4865,7 +5043,7 @@ class rset(list):
         data = set.data()
         self.extend(data)
 
-    def sort_set(self, name, ascending = True):
+    def sort_set(self, name, ascending=True):
         """
         Sorts the result set according to the attribute
         with the given name.
@@ -4891,7 +5069,7 @@ class rset(list):
         # the just created sorter operation then sets the data
         # for the current instance with the result of it
         data = self.data()
-        data.sort(key = lambda item: item[index], reverse = not ascending)
+        data.sort(key=lambda item: item[index], reverse=not ascending)
         self.data_s(data)
 
     def data(self):
@@ -4905,8 +5083,10 @@ class rset(list):
         current result set.
         """
 
-        if self.header_set: return self[1:]
-        else: return self
+        if self.header_set:
+            return self[1:]
+        else:
+            return self
 
     def data_s(self, data):
         """
@@ -4921,8 +5101,10 @@ class rset(list):
         data in the result set.
         """
 
-        if self.header_set: self[1:] = data
-        else: self[:] = data
+        if self.header_set:
+            self[1:] = data
+        else:
+            self[:] = data
 
     def header(self):
         """
@@ -4938,7 +5120,7 @@ class rset(list):
             raise RuntimeError("No header set in result set structure")
         return self[0]
 
-    def header_t(self, replace = ":"):
+    def header_t(self, replace=":"):
         """
         Retrieves the header list (transformed) values that consist
         of the original values replaces with a special character.
@@ -4979,7 +5161,8 @@ class rset(list):
         # the value is the same returns immediately no reorder
         # is required (performance improvement)
         _header = self.header()
-        if _header == header: return
+        if _header == header:
+            return
 
         # creates the list that will hold the various lines
         # that constitute the re-ordered "raw" data
@@ -5126,7 +5309,7 @@ class rset(list):
         # result set structure to the caller method
         return map_set
 
-    def add_h(self, name, nullify = False):
+    def add_h(self, name, nullify=False):
         """
         Adds a new header to the current set, note that in case
         the provided nullify parameter is provided the data is
@@ -5153,8 +5336,10 @@ class rset(list):
         # in case the nullify value was not set returns immediately
         # otherwise invalidates the last values of the complete set
         # of data lines/items (as expected)
-        if not nullify: return
-        for item in self.data(): item.append(None)
+        if not nullify:
+            return
+        for item in self.data():
+            item.append(None)
 
     def rename_h(self, old, new):
         """
@@ -5204,7 +5389,8 @@ class rset(list):
         # in case they match a replace header operation will be "issued"
         header = self.header()
         for name in header:
-            if not name.startswith(old): continue
+            if not name.startswith(old):
+                continue
             name_new = name.replace(old, new)
             self.rename_h(name, name_new)
 
@@ -5222,7 +5408,8 @@ class rset(list):
         information on the result set.
         """
 
-        if self.header_set: del self[0]
+        if self.header_set:
+            del self[0]
         self.header_set = True
         self.insert(0, names)
         self._hash_h()
@@ -5257,7 +5444,8 @@ class rset(list):
 
         # iterates over the complete set of lines of the current
         # data yielding the created result dictionary for such line
-        for line in self.data(): yield rdict(self, line)
+        for line in self.data():
+            yield rdict(self, line)
 
     def _hash_h(self):
         """
@@ -5274,6 +5462,7 @@ class rset(list):
             self.header_h[name] = index
             index += 1
 
+
 class rdict(dict):
     """
     Specialized dictionary structure that provides a key
@@ -5289,11 +5478,13 @@ class rdict(dict):
             dict.__setitem__(self, key, value)
 
     def __setitem__(self, key, value):
-        if not key in self.rset.header_h: self.rset.add_h(key, nullify = True)
+        if not key in self.rset.header_h:
+            self.rset.add_h(key, nullify=True)
         self.rset.set(self.line, key, value)
 
-    def get_value(self, name, default = None, load_lazy = False):
+    def get_value(self, name, default=None, load_lazy=False):
         return self.get(name, default)
+
 
 def load_serializers():
     """
@@ -5323,10 +5514,14 @@ def load_serializers():
         # serializer and in case it fails adds the name
         # to the removal list otherwise sets the serializer
         # in the associated map
-        try: object = __import__(name)
-        except ImportError: removal.append(name)
-        else: SERIALIZERS_MAP[name] = object
+        try:
+            object = __import__(name)
+        except ImportError:
+            removal.append(name)
+        else:
+            SERIALIZERS_MAP[name] = object
 
     # iterates over all the (serializer) names to be
     # removed and removes them from the serializers list
-    for name in removal: SERIALIZERS.remove(name)
+    for name in removal:
+        SERIALIZERS.remove(name)

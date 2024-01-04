@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class CSVPlugin(colony.Plugin):
     """
     The main class for the CSV plugin.
@@ -40,21 +41,14 @@ class CSVPlugin(colony.Plugin):
     description = "A plugin to serialize and unserialize CSV files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "test",
-        "serializer.csv"
-    ]
-    main_modules = [
-        "csv_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["test", "serializer.csv"]
+    main_modules = ["csv_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import csv_c
+
         self.system = csv_c.CSV(self)
         self.test = csv_c.CSVTest(self)
 

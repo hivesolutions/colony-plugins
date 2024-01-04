@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceException(colony.ColonyException):
     """
     The service exception class.
@@ -38,6 +39,7 @@ class ServiceException(colony.ColonyException):
     message = None
     """ The exception's message """
 
+
 class ServiceRequestNotTranslatable(ServiceException):
     """
     The service request not translatable class.
@@ -45,12 +47,14 @@ class ServiceRequestNotTranslatable(ServiceException):
 
     pass
 
+
 class BadServiceRequest(ServiceException):
     """
     The bad service request class.
     """
 
     pass
+
 
 class InvalidTokenValue(BadServiceRequest):
     """
@@ -77,6 +81,7 @@ class InvalidTokenValue(BadServiceRequest):
         """
 
         return "Invalid token value - %s" % self.message
+
 
 class RuntimeRequestException(BadServiceRequest):
     """
@@ -106,12 +111,13 @@ class RuntimeRequestException(BadServiceRequest):
 
         return "Runtime request exception - %s" % self.message
 
+
 class MVCRequestNotHandled(BadServiceRequest):
     """
     The MVC request not handled class.
     """
 
-    def __init__(self, message, status_code = 404):
+    def __init__(self, message, status_code=404):
         """
         Constructor of the class.
 
@@ -136,6 +142,7 @@ class MVCRequestNotHandled(BadServiceRequest):
 
         return "MVC Request Not handled - %s" % self.message
 
+
 class FileNotFoundException(MVCRequestNotHandled):
     """
     The file not found exception class.
@@ -144,7 +151,7 @@ class FileNotFoundException(MVCRequestNotHandled):
     status_code = None
     """ The exceptions's status code """
 
-    def __init__(self, message, status_code = 404):
+    def __init__(self, message, status_code=404):
         """
         Constructor of the class.
 
@@ -166,6 +173,7 @@ class FileNotFoundException(MVCRequestNotHandled):
         """
 
         return "File not found - %s" % self.message
+
 
 class InvalidCommunicationCommandException(MVCRequestNotHandled):
     """
@@ -197,6 +205,7 @@ class InvalidCommunicationCommandException(MVCRequestNotHandled):
         """
 
         return "Invalid communication command - %s" % self.message
+
 
 class CommunicationCommandException(MVCRequestNotHandled):
     """

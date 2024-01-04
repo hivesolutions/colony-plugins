@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PrintingBinieException(colony.ColonyException):
     """
     The printing binie exception class.
@@ -37,6 +38,7 @@ class PrintingBinieException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class InvalidContextInformationName(PrintingBinieException):
     """

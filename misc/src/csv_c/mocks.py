@@ -33,54 +33,58 @@ import colony
 SIMPLE_OBJECT = [
     ["age", "country", "name"],
     [24, "Portugal", "João"],
-    [12, "Ireland", "Michael"]
+    [12, "Ireland", "Michael"],
 ]
 
 COMPLEX_OBJECT = [
     ["age", "country", "name"],
     [24, "Portugal", "João"],
     [12, "Ireland", "Michael"],
-    [36, "China", "杰"]
+    [36, "China", "杰"],
 ]
 
-SIMPLE_CSV = colony.legacy.u("""age;country;name
+SIMPLE_CSV = colony.legacy.u(
+    """age;country;name
 24;Portugal;João
 12;Ireland;Michael
-""")
+"""
+)
 
-COMPLEX_CSV = colony.legacy.u("""age;country;name
+COMPLEX_CSV = colony.legacy.u(
+    """age;country;name
 24;Portugal;João
 12;Ireland;Michael
 36;China;杰
-""")
+"""
+)
 
 SIMPLE_RAW = [
     dict(
-        age = colony.legacy.u("24"),
-        country = colony.legacy.u("Portugal"),
-        name = colony.legacy.u("João")
+        age=colony.legacy.u("24"),
+        country=colony.legacy.u("Portugal"),
+        name=colony.legacy.u("João"),
     ),
     dict(
-        age = colony.legacy.u("12"),
-        country = colony.legacy.u("Ireland"),
-        name = colony.legacy.u("Michael")
-    )
+        age=colony.legacy.u("12"),
+        country=colony.legacy.u("Ireland"),
+        name=colony.legacy.u("Michael"),
+    ),
 ]
 
 COMPLEX_RAW = [
     dict(
-        age = colony.legacy.u("24"),
-        country = colony.legacy.u("Portugal"),
-        name = colony.legacy.u("João")
+        age=colony.legacy.u("24"),
+        country=colony.legacy.u("Portugal"),
+        name=colony.legacy.u("João"),
     ),
     dict(
-        age = colony.legacy.u("12"),
-        country = colony.legacy.u("Ireland"),
-        name = colony.legacy.u("Michael")
+        age=colony.legacy.u("12"),
+        country=colony.legacy.u("Ireland"),
+        name=colony.legacy.u("Michael"),
     ),
     dict(
-        age = colony.legacy.u("36"),
-        country = colony.legacy.u("China"),
-        name = colony.legacy.u("杰")
-    )
+        age=colony.legacy.u("36"),
+        country=colony.legacy.u("China"),
+        name=colony.legacy.u("杰"),
+    ),
 ]

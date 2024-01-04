@@ -29,6 +29,10 @@ from . import exceptions
 from . import serializer
 from . import system
 
-from .exceptions import FormcodeException, FormcodeEncodeException, FormcodeDecodeException
+from .exceptions import (
+    FormcodeException,
+    FormcodeEncodeException,
+    FormcodeDecodeException,
+)
 from .serializer import dumps, dump_parts, loads
 from .system import Formcode

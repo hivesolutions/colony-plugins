@@ -49,6 +49,7 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
+
 class EntitySQLite(colony.System):
     """
     The entity SQLite class.
@@ -63,8 +64,8 @@ class EntitySQLite(colony.System):
     def create_engine(self, entity_manager):
         return SQLiteEngine(self, entity_manager)
 
-class SQLiteEngine(object):
 
+class SQLiteEngine(object):
     sqlite_system = None
     """ The reference to the "owning" system entity """
 
@@ -103,18 +104,16 @@ class SQLiteEngine(object):
     def get_insensitive_collate(self):
         return "nocase"
 
-    def connect(self, connection, parameters = {}):
+    def connect(self, connection, parameters={}):
         file_path = parameters.get("file_path", None)
         cache_size = parameters.get("cache_size", 200000)
         synchronous = parameters.get("synchronous", 2)
-        show_sql = colony.conf("SHOW_SQL", False, cast = bool)
-        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
+        show_sql = colony.conf("SHOW_SQL", False, cast=bool)
+        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast=bool)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
         connection._connection = SQLiteConnection(
-            file_path,
-            cache_size = cache_size,
-            synchronous = synchronous
+            file_path, cache_size=cache_size, synchronous=synchronous
         )
         connection._show_sql = show_sql
         connection._show_slow_sql = show_slow_sql
@@ -154,7 +153,8 @@ class SQLiteEngine(object):
         # not a valid situation as not transaction is open, must
         # raise an exception alerting for the situation
         is_empty_transaction = _connection.is_empty_transaction()
-        if is_empty_transaction: raise RuntimeError("invalid transaction level, commit without begin")
+        if is_empty_transaction:
+            raise RuntimeError("invalid transaction level, commit without begin")
 
         # pops the current transaction, decrementing the current
         # transaction level by one, this will release a transaction
@@ -162,7 +162,8 @@ class SQLiteEngine(object):
         _connection.pop_transaction()
 
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return False
+        if not is_empty_transaction:
+            return False
         self._commit()
         return True
 
@@ -174,7 +175,8 @@ class SQLiteEngine(object):
         # not a valid situation as not transaction is open, must
         # raise an exception alerting for the situation
         is_empty_transaction = _connection.is_empty_transaction()
-        if is_empty_transaction: raise RuntimeError("invalid transaction level, rollback without begin")
+        if is_empty_transaction:
+            raise RuntimeError("invalid transaction level, rollback without begin")
 
         # pops the current transaction, decrementing the current
         # transaction level by one, this will release a transaction
@@ -185,19 +187,18 @@ class SQLiteEngine(object):
         # it's not empty there is no need to rollback the transaction
         # because it's an inner level and no effect should be made
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return False
+        if not is_empty_transaction:
+            return False
 
         # runs the "rollback" command in the underlying data base
         # layer, executes the "rollback" operation
         self._rollback()
         return True
 
-    def lock(self, entity_class, id_value = None, lock_parents = True):
+    def lock(self, entity_class, id_value=None, lock_parents=True):
         table_name = entity_class.get_name()
         table_id = entity_class.get_id()
-        self.lock_table(table_name, {
-            "field_name" : table_id
-        })
+        self.lock_table(table_name, {"field_name": table_id})
 
     def lock_table(self, table_name, parameters):
         query = self._lock_table_query(table_name, parameters)
@@ -206,18 +207,22 @@ class SQLiteEngine(object):
     def has_definition(self, entity_class):
         query = self._has_definition_query(entity_class)
         cursor = self.execute_query(query)
-        try: result = self._has_definition_result(entity_class, cursor)
-        finally: cursor.close()
+        try:
+            result = self._has_definition_result(entity_class, cursor)
+        finally:
+            cursor.close()
         return result
 
     def has_table_definition(self, table_name):
         query = self._has_table_definition_query(table_name)
         cursor = self.execute_query(query)
-        try: result = self._has_table_definition_result(table_name, cursor)
-        finally: cursor.close()
+        try:
+            result = self._has_table_definition_result(table_name, cursor)
+        finally:
+            cursor.close()
         return result
 
-    def execute_query(self, query, cursor = None):
+    def execute_query(self, query, cursor=None):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
@@ -257,7 +262,8 @@ class SQLiteEngine(object):
 
             # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly
-            if connection._show_sql: self.sqlite_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
+            if connection._show_sql:
+                self.sqlite_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
@@ -267,8 +273,13 @@ class SQLiteEngine(object):
             # executes the query in the current cursor context
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
-            try: cursor.execute(query)
-            except Exception: self.sqlite_system.info("[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query)); raise
+            try:
+                cursor.execute(query)
+            except Exception:
+                self.sqlite_system.info(
+                    "[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query)
+                )
+                raise
             final = time.time()
 
             # verifies if the timing for the current executing query
@@ -277,7 +288,9 @@ class SQLiteEngine(object):
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
             if is_slow and connection._show_slow_sql:
-                self.sqlite_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
+                self.sqlite_system.info(
+                    "[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query)
+                )
 
             # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)
@@ -322,7 +335,7 @@ class SQLiteEngine(object):
         connection.call_rollback_handlers()
         connection.reset_handlers()
 
-    def _execute_query_t(self, query, cursor = None):
+    def _execute_query_t(self, query, cursor=None):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
@@ -369,7 +382,7 @@ class SQLiteEngine(object):
         # the resulting values from the query execution
         return cursor
 
-    def _index_query(self, entity_class, attribute_name, index_type = "hash"):
+    def _index_query(self, entity_class, attribute_name, index_type="hash"):
         # retrieves the associated table name
         # as the "name" of the entity class
         table_name = entity_class.get_name()
@@ -381,7 +394,7 @@ class SQLiteEngine(object):
         # returns the generated "dropping" query
         return query
 
-    def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
+    def _table_index_query(self, table_name, attribute_name, index_type="hash"):
         # constructs the index name from the various components of it, the value
         # for the identifier is not truncated and it's assumed to be possible to
         # have a variable length value on the naming o the index
@@ -390,7 +403,9 @@ class SQLiteEngine(object):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("create index %s on %s(%s)" % (index_name, table_name, attribute_name))
+        query_buffer.write(
+            "create index %s on %s(%s)" % (index_name, table_name, attribute_name)
+        )
 
         # retrieves the "final" query value from
         # the query (string) buffer
@@ -409,7 +424,9 @@ class SQLiteEngine(object):
         # base values of the query (updating of the table in invalid
         # value should be able to lock the SQLite database)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("update %s set %s = %s where 0 = 1" % (table_name, field_name, field_name))
+        query_buffer.write(
+            "update %s set %s = %s where 0 = 1" % (table_name, field_name, field_name)
+        )
 
         # retrieves the "final" query value from
         # the query (string) buffer
@@ -439,8 +456,10 @@ class SQLiteEngine(object):
         # selects the table names from the cursor
         # by fetching all the items from it, then
         # closes the cursor
-        try: table_names = [value[0] for value in cursor]
-        finally: cursor.close()
+        try:
+            table_names = [value[0] for value in cursor]
+        finally:
+            cursor.close()
 
         # checks if there is a definition for the current entity
         # class in the table names list
@@ -467,8 +486,10 @@ class SQLiteEngine(object):
         # selects the table names from the cursor
         # by fetching all the items from it, then
         # closes the cursor
-        try: table_names = [value[0] for value in cursor]
-        finally: cursor.close()
+        try:
+            table_names = [value[0] for value in cursor]
+        finally:
+            cursor.close()
 
         # checks if there is a definition for the current entity
         # class in the table names list
@@ -508,6 +529,7 @@ class SQLiteEngine(object):
     def _allow_for_update(self):
         return False
 
+
 class SQLiteConnection(object):
     """
     Class representing an abstraction on top of
@@ -538,7 +560,7 @@ class SQLiteConnection(object):
     """ The map associating the thread identifier with the
     connection """
 
-    def __init__(self, file_path, cache_size = 200000, synchronous = 2):
+    def __init__(self, file_path, cache_size=200000, synchronous=2):
         self.file_path = file_path
         self.cache_size = cache_size
         self.synchronous = synchronous
@@ -559,9 +581,7 @@ class SQLiteConnection(object):
             # creates a new connection and sets it in the
             # connections map for the current thread
             connection = sqlite3.connect(
-                self.file_path,
-                timeout = 30,
-                isolation_level = "DEFERRED"
+                self.file_path, timeout=30, isolation_level="DEFERRED"
             )
             self.connections_map[thread_id] = connection
 
@@ -647,10 +667,11 @@ class SQLiteConnection(object):
         return self.file_path
 
     def get_database(self):
-        if not self.file_path: return None
+        if not self.file_path:
+            return None
         return os.path.basename(self.file_path)
 
-    def _execute_query(self, query, connection = None):
+    def _execute_query(self, query, connection=None):
         # retrieves the current connection and creates
         # a new cursor object for query execution
         connection = connection or self.get_connection()
@@ -659,8 +680,11 @@ class SQLiteConnection(object):
         # executes the query using the current cursor
         # then closes the cursor avoid the leak of
         # cursor objects (memory reference leaking)
-        try: cursor.execute(query)
-        except: cursor.close(); raise
+        try:
+            cursor.execute(query)
+        except:
+            cursor.close()
+            raise
 
         # returns the cursor that has just been created for
         # the execution of the requested query

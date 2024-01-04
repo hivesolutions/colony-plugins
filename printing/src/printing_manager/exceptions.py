@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PrintingManagerException(colony.ColonyException):
     """
     The printing manager exception class.
@@ -37,6 +38,7 @@ class PrintingManagerException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class PrintingPluginNotAvailable(PrintingManagerException):
     """

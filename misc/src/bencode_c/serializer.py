@@ -38,43 +38,34 @@ import colony
 from . import exceptions
 
 EXCLUSION_MAP = {
-    "__class__" : True,
-    "__delattr__" : True,
-    "__dict__" : True,
-    "__doc__" : True,
-    "__getattribute__" : True,
-    "__hash__" : True,
-    "__init__" : True,
-    "__module__" : True,
-    "__new__" : True,
-    "__reduce__" : True,
-    "__reduce_ex__" : True,
-    "__repr__" : True,
-    "__setattr__" : True,
-    "__str__" : True,
-    "__weakref__" : True,
-    "__format__" : True,
-    "__sizeof__" : True,
-    "__subclasshook__" : True
+    "__class__": True,
+    "__delattr__": True,
+    "__dict__": True,
+    "__doc__": True,
+    "__getattribute__": True,
+    "__hash__": True,
+    "__init__": True,
+    "__module__": True,
+    "__new__": True,
+    "__reduce__": True,
+    "__reduce_ex__": True,
+    "__repr__": True,
+    "__setattr__": True,
+    "__str__": True,
+    "__weakref__": True,
+    "__format__": True,
+    "__sizeof__": True,
+    "__subclasshook__": True,
 }
 """ The map of items to be excluded from object serialization """
 
-EXCLUSION_TYPES = {
-    types.MethodType : True,
-    types.FunctionType : True
-}
+EXCLUSION_TYPES = {types.MethodType: True, types.FunctionType: True}
 """ The map of types to be excluded from object serialization """
 
-INT_TYPES = {
-    int : True,
-    colony.legacy.LONG : True
-}
+INT_TYPES = {int: True, colony.legacy.LONG: True}
 """ The map of int types """
 
-LIST_TYPES = {
-    list : True,
-    tuple : True
-}
+LIST_TYPES = {list: True, tuple: True}
 """ The map of list types """
 
 DECIMAL_REGEX_VALUE = "\d"
@@ -82,6 +73,7 @@ DECIMAL_REGEX_VALUE = "\d"
 
 DECIMAL_REGEX = re.compile(DECIMAL_REGEX_VALUE)
 """ The decimal regular expression """
+
 
 def dumps(object):
     # creates a new string buffer
@@ -97,7 +89,8 @@ def dumps(object):
     # returns the string value
     return string_value
 
-def _chunk(chunk, string_buffer, instances = True):
+
+def _chunk(chunk, string_buffer, instances=True):
     # retrieves the chunk type
     chunk_type = type(chunk)
 
@@ -163,8 +156,13 @@ def _chunk(chunk, string_buffer, instances = True):
         string_buffer.write("d")
 
         # retrieves all the chunk keys
-        chunk_keys = [value for value in dir(chunk) if not value.startswith("_") and\
-            not value in EXCLUSION_MAP and not type(getattr(chunk, value)) in EXCLUSION_TYPES]
+        chunk_keys = [
+            value
+            for value in dir(chunk)
+            if not value.startswith("_")
+            and not value in EXCLUSION_MAP
+            and not type(getattr(chunk, value)) in EXCLUSION_TYPES
+        ]
 
         # sorts the chunk keys
         chunk_keys.sort()
@@ -190,6 +188,7 @@ def _chunk(chunk, string_buffer, instances = True):
         # raises the bencode encode exception
         raise exceptions.BencodeEncodeException("data type not defined: " + str(chunk))
 
+
 def loads(data):
     # creates a list from the data
     # (the chunks list)
@@ -203,6 +202,7 @@ def loads(data):
 
     # returns the root element
     return root_element
+
 
 def _dechunk(chunks):
     # retrieves an item from

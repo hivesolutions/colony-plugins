@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIPaypalPlugin(colony.Plugin):
     """
     The main class for the PayPal API plugin.
@@ -40,22 +41,15 @@ class APIPaypalPlugin(colony.Plugin):
     description = "The plugin that offers the PayPal API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.paypal"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.client.http")
-    ]
-    main_modules = [
-        "api_paypal"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.paypal"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.client.http")]
+    main_modules = ["api_paypal"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_paypal
+
         self.system = api_paypal.APIPaypal(self)
 
     def create_client(self, api_attributes):

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ClientUtilsPlugin(colony.Plugin):
     """
     The main class for the Client Utils plugin.
@@ -43,19 +44,15 @@ class ClientUtilsPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities_allowed = [
-        "socket_provider",
-        "socket_upgrader"
-    ]
-    main_modules = [
-        "client_utils"
-    ]
+    capabilities_allowed = ["socket_provider", "socket_upgrader"]
+    main_modules = ["client_utils"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import client_utils
+
         self.system = client_utils.ClientUtils(self)
 
     @colony.load_allowed

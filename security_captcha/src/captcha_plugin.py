@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class CaptchaPlugin(colony.Plugin):
     """
     The main class for the Captcha plugin.
@@ -43,22 +44,16 @@ class CaptchaPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "startup",
-        "security_captcha"
-    ]
-    dependencies = [
-        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
-    ]
-    main_modules = [
-        "captcha"
-    ]
+    capabilities = ["startup", "security_captcha"]
+    dependencies = [colony.PackageDependency("Python Imaging Library (PIL)", "PIL")]
+    main_modules = ["captcha"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import captcha
+
         self.system = captcha.Captcha(self)
 
     def generate_captcha(self, string_value, properties):

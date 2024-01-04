@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class URLParserPlugin(colony.Plugin):
     """
     The main class for the URL Parser plugin.
@@ -40,19 +41,14 @@ class URLParserPlugin(colony.Plugin):
     description = "A plugin to parse URL for agile interpretation"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "url_parse"
-    ]
-    main_modules = [
-        "url_parser_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["url_parse"]
+    main_modules = ["url_parser_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import url_parser_c
+
         self.system = url_parser_c.URLParser(self)
 
     def parse_url(self, url):

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class AuthenticationEntityManagerHandlerException(colony.ColonyException):
     """
     The authentication entity manager handler exception class.
@@ -37,6 +38,7 @@ class AuthenticationEntityManagerHandlerException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class MissingArgument(AuthenticationEntityManagerHandlerException):
     """
@@ -63,6 +65,7 @@ class MissingArgument(AuthenticationEntityManagerHandlerException):
         """
 
         return "Missing argument - %s" % self.message
+
 
 class AuthenticationError(AuthenticationEntityManagerHandlerException):
     """

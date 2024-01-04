@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class WorkPoolDummyPlugin(colony.Plugin):
     """
     The main class for the Work Pool Dummy plugin
@@ -43,21 +44,16 @@ class WorkPoolDummyPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "startup"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.work.pool")
-    ]
-    main_modules = [
-        "work_pool_dummy"
-    ]
+    capabilities = ["startup"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.work.pool")]
+    main_modules = ["work_pool_dummy"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import work_pool_dummy
+
         self.system = work_pool_dummy.WorkPoolDummy(self)
 
     def end_load_plugin(self):

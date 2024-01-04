@@ -116,11 +116,9 @@ DEFAULT_STATUS = 200
 DEFAULT_PATH = "~/cgi-bin"
 """ The default path """
 
-WINDOWS_CONTENT_HANDLERS_MAP = {
-    "py" : "python.exe",
-    "py.sh" : "python.exe"
-}
+WINDOWS_CONTENT_HANDLERS_MAP = {"py": "python.exe", "py.sh": "python.exe"}
 """ The windows content handlers map """
+
 
 class ServiceHTTPCGI(colony.System):
     """
@@ -179,10 +177,15 @@ class ServiceHTTPCGI(colony.System):
         request_connection_port = request_service_connection.connection_port
 
         # retrieves the request content type
-        request_content_type = request.get_header(CONTENT_TYPE_HEADER_VALUE) or DEFAULT_APPLICATION_CONTENT_TYPE
+        request_content_type = (
+            request.get_header(CONTENT_TYPE_HEADER_VALUE)
+            or DEFAULT_APPLICATION_CONTENT_TYPE
+        )
 
         # retrieves the request content length
-        request_content_length = request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
+        request_content_length = (
+            request.get_header(CONTENT_LENGTH_HEADER_VALUE) or DEFAULT_CONTENT_LENGTH
+        )
 
         # retrieves the client hostname and port
         client_http_address, _client_http_port = request_connection_address
@@ -216,7 +219,9 @@ class ServiceHTTPCGI(colony.System):
         # retrieves the real base directory, resolving it using
         # both the resources manager and the plugin manager (this is quite
         # an expensive operation)
-        real_base_directory = self.plugin.resources_manager_plugin.get_real_string_value(base_directory)
+        real_base_directory = (
+            self.plugin.resources_manager_plugin.get_real_string_value(base_directory)
+        )
         real_base_directory = self.plugin.manager.resolve_file_path(real_base_directory)
 
         # constructs the complete path
@@ -263,7 +268,9 @@ class ServiceHTTPCGI(colony.System):
                 environment_map[complete_header_name] = header_value
 
             # iterates over all the environment values and keys
-            for environment_key, environment_value in colony.legacy.items(environment_map):
+            for environment_key, environment_value in colony.legacy.items(
+                environment_map
+            ):
                 # retrieves the environment value type
                 environment_value_type = type(environment_value)
 
@@ -275,11 +282,11 @@ class ServiceHTTPCGI(colony.System):
             # creates the process executing the command
             process = subprocess.Popen(
                 complete_command,
-                stdin = subprocess.PIPE,
-                stdout = subprocess.PIPE,
-                stderr = subprocess.PIPE,
-                shell = True,
-                env = environment_map
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True,
+                env=environment_map,
             )
 
             # retrieves the standard output data and the standard error data
@@ -336,7 +343,9 @@ class ServiceHTTPCGI(colony.System):
                 raise exceptions.InvalidCGIHeader("problem parsing the CGI header")
 
             # retrieves the content type
-            content_type = headers_map.get(CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE)
+            content_type = headers_map.get(
+                CONTENT_TYPE_HEADER_VALUE, DEFAULT_CONTENT_TYPE
+            )
 
             # retrieves the status
             status = headers_map.get(STATUS_VALUE, DEFAULT_STATUS)

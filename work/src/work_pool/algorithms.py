@@ -31,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import random
 import threading
 
+
 class WorkPoolAlgorithm(object):
     """
     The generic work pool algorithm.
@@ -86,6 +87,7 @@ class WorkPoolAlgorithm(object):
         """
 
         return None
+
 
 class RandomAlgorithm(WorkPoolAlgorithm):
     """
@@ -145,6 +147,7 @@ class RandomAlgorithm(WorkPoolAlgorithm):
 
         # returns the work task
         return work_task
+
 
 class RoundRobinAlgorithm(WorkPoolAlgorithm):
     """
@@ -224,6 +227,7 @@ class RoundRobinAlgorithm(WorkPoolAlgorithm):
 
         # returns the work task
         return work_task
+
 
 class SmartBusyAlgorithm(WorkPoolAlgorithm):
     """
@@ -353,10 +357,7 @@ class SmartBusyAlgorithm(WorkPoolAlgorithm):
         # work tasks list
         for work_task in self.work_pool.work_tasks_list:
             # creates the work task tuple
-            work_task_tuple = [
-                work_task,
-                0
-            ]
+            work_task_tuple = [work_task, 0]
 
             # adds the work task tuple to the work tasks list
             self.work_tasks_list.append(work_task_tuple)

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPException(colony.ColonyException):
     """
     The service HTTP exception class.
@@ -37,6 +38,7 @@ class ServiceHTTPException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class EncodingNotFound(ServiceHTTPException):
     """
@@ -64,6 +66,7 @@ class EncodingNotFound(ServiceHTTPException):
 
         return "Encoding not found - %s" % self.message
 
+
 class ClientRequestSecurityViolation(ServiceHTTPException):
     """
     The client request security violation request timeout class.
@@ -89,6 +92,7 @@ class ClientRequestSecurityViolation(ServiceHTTPException):
         """
 
         return "Client request security violation - %s" % self.message
+
 
 class HTTPRuntimeException(ServiceHTTPException):
     """
@@ -116,6 +120,7 @@ class HTTPRuntimeException(ServiceHTTPException):
 
         return "HTTP runtime exception - %s" % self.message
 
+
 class HTTPInvalidDataException(HTTPRuntimeException):
     """
     The HTTP invalid data exception class.
@@ -140,6 +145,7 @@ class HTTPInvalidDataException(HTTPRuntimeException):
         """
 
         return "HTTP invalid data exception - %s" % self.message
+
 
 class HTTPNoHandlerException(HTTPRuntimeException):
     """
@@ -166,6 +172,7 @@ class HTTPNoHandlerException(HTTPRuntimeException):
 
         return "HTTP no handler exception - %s" % self.message
 
+
 class HTTPHandlerNotFoundException(HTTPRuntimeException):
     """
     The HTTP handler not found exception.
@@ -190,6 +197,7 @@ class HTTPHandlerNotFoundException(HTTPRuntimeException):
         """
 
         return "HTTP handler not found exception - %s" % self.message
+
 
 class HTTPAuthenticationHandlerNotFoundException(HTTPRuntimeException):
     """
@@ -216,6 +224,7 @@ class HTTPAuthenticationHandlerNotFoundException(HTTPRuntimeException):
 
         return "HTTP authentication handler not found exception - %s" % self.message
 
+
 class HTTPInvalidMultipartRequestException(HTTPRuntimeException):
     """
     The HTTP invalid multipart request exception.
@@ -240,6 +249,7 @@ class HTTPInvalidMultipartRequestException(HTTPRuntimeException):
         """
 
         return "HTTP invalid multipart request exception - %s" % self.message
+
 
 class HTTPDataRetrievalException(HTTPRuntimeException):
     """
@@ -266,6 +276,7 @@ class HTTPDataRetrievalException(HTTPRuntimeException):
 
         return "HTTP data retrieval exception - %s" % self.message
 
+
 class HTTPDataSendingException(HTTPRuntimeException):
     """
     The HTTP data sending exception.
@@ -290,6 +301,7 @@ class HTTPDataSendingException(HTTPRuntimeException):
         """
 
         return "HTTP data sending exception - %s" % self.message
+
 
 class UnauthorizedException(HTTPRuntimeException):
     """

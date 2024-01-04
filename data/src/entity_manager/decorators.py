@@ -28,7 +28,8 @@ __copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-def transaction(transaction_type = "required"):
+
+def transaction(transaction_type="required"):
     """
     Decorator for the "transactional" data logic.
     This decorator should provide the "best" way to create
@@ -115,6 +116,7 @@ def transaction(transaction_type = "required"):
 
     # returns the created decorator
     return decorator
+
 
 def lock_table(table_name, parameters):
     """

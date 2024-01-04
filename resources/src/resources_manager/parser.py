@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import xml.dom.minidom
 
+
 class Parser(object):
     """
     The abstract parser class.
@@ -59,6 +60,7 @@ class Parser(object):
 
         pass
 
+
 class ResourcesFileParser(Parser):
     """
     The resources file parser class.
@@ -70,7 +72,7 @@ class ResourcesFileParser(Parser):
     resource_list = []
     """ The resource list """
 
-    def __init__(self, file_path = None):
+    def __init__(self, file_path=None):
         Parser.__init__(self)
         self.file_path = file_path
 
@@ -120,17 +122,25 @@ class ResourcesFileParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_plugin_configuration_element(child_node, plugin_configuration_structure)
+                self.parse_plugin_configuration_element(
+                    child_node, plugin_configuration_structure
+                )
 
         return plugin_configuration_structure
 
-    def parse_plugin_configuration_element(self, plugin_configuration_element, plugin_configuration):
+    def parse_plugin_configuration_element(
+        self, plugin_configuration_element, plugin_configuration
+    ):
         node_name = plugin_configuration_element.nodeName
 
         if node_name == "plugin_id":
-            plugin_configuration.plugin_id = self.parse_plugin_id(plugin_configuration_element)
+            plugin_configuration.plugin_id = self.parse_plugin_id(
+                plugin_configuration_element
+            )
         elif node_name == "resource":
-            plugin_configuration.resources_list.append(self.parse_resource(plugin_configuration_element))
+            plugin_configuration.resources_list.append(
+                self.parse_resource(plugin_configuration_element)
+            )
 
     def parse_plugin_id(self, plugin_id):
         plugin_configuration_plugin_id = plugin_id.firstChild.data.strip()
@@ -208,17 +218,25 @@ class ResourcesFileParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_equals_expression_element(child_node, equals_expression_structure)
+                self.parse_equals_expression_element(
+                    child_node, equals_expression_structure
+                )
 
         return equals_expression_structure
 
-    def parse_equals_expression_element(self, equals_expression_element, equals_expression):
+    def parse_equals_expression_element(
+        self, equals_expression_element, equals_expression
+    ):
         node_name = equals_expression_element.nodeName
 
         if node_name == "first_operand":
-            equals_expression.first_operand = self.parse_operand(equals_expression_element)
+            equals_expression.first_operand = self.parse_operand(
+                equals_expression_element
+            )
         elif node_name == "second_operand":
-            equals_expression.second_operand = self.parse_operand(equals_expression_element)
+            equals_expression.second_operand = self.parse_operand(
+                equals_expression_element
+            )
 
     def parse_operand(self, operand):
         operand_structure = Operand()
@@ -238,6 +256,7 @@ class ResourcesFileParser(Parser):
         elif node_name == "data":
             operand.data = self.parse_data(operand_element)
 
+
 class PluginConfiguration(object):
     """
     The plugin configuration class.
@@ -249,9 +268,10 @@ class PluginConfiguration(object):
     resources_list = []
     """ The plugin configuration resources list """
 
-    def __init__(self, plugin_id = "none"):
+    def __init__(self, plugin_id="none"):
         self.plugin_id = plugin_id
         self.resources_list = []
+
 
 class Resource(object):
     """
@@ -273,7 +293,7 @@ class Resource(object):
     process_resouce = None
     """ The process resource handler """
 
-    def __init__(self, namespace = "none", name = "none", type = "none", data = "none"):
+    def __init__(self, namespace="none", name="none", type="none", data="none"):
         self.namespace = namespace
         self.name = name
         self.type = type
@@ -288,6 +308,7 @@ class Resource(object):
 
         return self.data
 
+
 class Validation(object):
     """
     The validation class.
@@ -296,8 +317,9 @@ class Validation(object):
     expression = None
     """ The validation expression """
 
-    def __init__(self, expression = None):
+    def __init__(self, expression=None):
         self.expression = expression
+
 
 class Expression(object):
     """
@@ -307,6 +329,7 @@ class Expression(object):
     def __init__(self):
         pass
 
+
 class UnaryExpressionNode(Expression):
     """
     The unary expression class.
@@ -315,7 +338,7 @@ class UnaryExpressionNode(Expression):
     operand = None
     """ The expression node """
 
-    def __init__(self, operand = None):
+    def __init__(self, operand=None):
         """
         Constructor of the class.
 
@@ -326,6 +349,7 @@ class UnaryExpressionNode(Expression):
         Expression.__init__(self)
 
         self.operand = operand
+
 
 class BinaryExpression(Expression):
     """
@@ -338,7 +362,7 @@ class BinaryExpression(Expression):
     second_operand = None
     """ The binary expression second operand """
 
-    def __init__(self, first_operand = None, second_operand = None):
+    def __init__(self, first_operand=None, second_operand=None):
         """
         Constructor of the class.
 
@@ -353,6 +377,7 @@ class BinaryExpression(Expression):
         self.first_operand = first_operand
         self.second_operand = second_operand
 
+
 class Operand(object):
     """
     The operand class.
@@ -364,7 +389,7 @@ class Operand(object):
     data = "none"
     """ The operand data """
 
-    def __init__(self, type = "none", data = "none"):
+    def __init__(self, type="none", data="none"):
         """
         Constructor of the class.
 
@@ -377,12 +402,13 @@ class Operand(object):
         self.type = type
         self.data = data
 
+
 class EqualsExpression(BinaryExpression):
     """
     The equals expression class.
     """
 
-    def __init__(self, first_operand = None, second_operand = None):
+    def __init__(self, first_operand=None, second_operand=None):
         """
         Constructor of the class.
 
@@ -393,6 +419,7 @@ class EqualsExpression(BinaryExpression):
         """
 
         BinaryExpression.__init__(self, first_operand, second_operand)
+
 
 def valid_node(node):
     """

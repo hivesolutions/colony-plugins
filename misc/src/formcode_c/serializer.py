@@ -51,23 +51,21 @@ ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w
 ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)
 """ The attribute parsing regex """
 
-NUMBER_TYPES = {
-    int : True,
-    colony.legacy.LONG : True,
-    float : True
-}
+NUMBER_TYPES = {int: True, colony.legacy.LONG: True, float: True}
 """ The map used to check number types """
 
 SEQUENCE_TYPES = {
-    tuple : True,
-    list : True,
-    types.GeneratorType : True,
-    itertools.chain : True
+    tuple: True,
+    list: True,
+    types.GeneratorType: True,
+    itertools.chain: True,
 }
 """ The map used to check sequence types """
 
-def dumps(object, base_path = ""):
+
+def dumps(object, base_path=""):
     return "".join([part for part in dump_parts(object, base_path)]).rstrip("&")
+
 
 def dump_parts(object, current_path):
     """
@@ -134,6 +132,7 @@ def dump_parts(object, current_path):
         # raises the formcode encode exception
         raise exceptions.FormcodeEncodeException(object)
 
+
 def loads(data):
     # creates the base attributes map
     base_attributes_map = {}
@@ -150,10 +149,13 @@ def loads(data):
 
         # parses the given form attribute using the base attributes map and the
         # current form attribute name and value
-        _process_form_attribute(base_attributes_map, form_attribute_name, form_attribute_value)
+        _process_form_attribute(
+            base_attributes_map, form_attribute_name, form_attribute_value
+        )
 
     # returns the base attributes map
     return base_attributes_map
+
 
 def _create_value(value, current_path):
     """
@@ -171,7 +173,10 @@ def _create_value(value, current_path):
 
     return current_path + "=" + value + "&"
 
-def _process_form_attribute(parent_structure, current_attribute_name, attribute_value, index = 0):
+
+def _process_form_attribute(
+    parent_structure, current_attribute_name, attribute_value, index=0
+):
     """
     Processes a form attribute using the sent parent structure and for
     the given index as a reference.
@@ -197,7 +202,9 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
     # in case there is no match result
     if not match_result:
         # raises the formcode decode exception
-        raise exceptions.FormcodeEncodeException("invalid match value: " + current_attribute_name)
+        raise exceptions.FormcodeEncodeException(
+            "invalid match value: " + current_attribute_name
+        )
 
     # retrieves the match result end position
     match_result_end = match_result.end()
@@ -236,12 +243,16 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
     # there is more parsing to be made
     else:
         # retrieves the next match value in order to make
-        next_match_result = ATTRIBUTE_PARSING_REGEX.match(current_attribute_name, match_result_end)
+        next_match_result = ATTRIBUTE_PARSING_REGEX.match(
+            current_attribute_name, match_result_end
+        )
 
         # in case there is no next match result
         if not next_match_result:
             # raises the formcode decode exception
-            raise exceptions.FormcodeEncodeException("invalid next match value: " + current_attribute_name)
+            raise exceptions.FormcodeEncodeException(
+                "invalid next match value: " + current_attribute_name
+            )
 
         # retrieves the next match result name
         next_match_result_name = next_match_result.lastgroup
@@ -258,7 +269,9 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
         # in case the next match is of type name
         if next_match_result_name == NAME_TYPE_VALUE:
             # raises the formcode decode exception
-            raise exceptions.FormcodeEncodeException("invalid next match value (it's a name): " + current_attribute_name)
+            raise exceptions.FormcodeEncodeException(
+                "invalid next match value (it's a name): " + current_attribute_name
+            )
 
         # in case the next match is of type list, a list needs to
         # be created in order to support the sequence, in case a list
@@ -332,4 +345,6 @@ def _process_form_attribute(parent_structure, current_attribute_name, attribute_
         # processes the next form attribute with the current attribute value as the new parent structure
         # the remaining attribute name as the new current attribute name and the attribute value
         # continues with the same value
-        _process_form_attribute(current_attribute_value, remaining_attribute_name, attribute_value, index)
+        _process_form_attribute(
+            current_attribute_value, remaining_attribute_name, attribute_value, index
+        )

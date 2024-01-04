@@ -46,8 +46,8 @@ _EPOLLOUT = 0x004
 _EPOLLERR = 0x008
 _EPOLLHUP = 0x010
 _EPOLLRDHUP = 0x2000
-_EPOLLONESHOT = (1 << 30)
-_EPOLLET = (1 << 31)
+_EPOLLONESHOT = 1 << 30
+_EPOLLET = 1 << 31
 """ The various constant values that are going to be
 used in the detection of errors and states for the
 non blocking connection states """
@@ -99,6 +99,7 @@ computer resources may be "consumed" """
 PENDING_TIMEOUT = 5.0
 """ The timeout to be used to cancel connection in the
 handshake pending state (not possible to accept) """
+
 
 class AbstractService(object):
     """
@@ -174,7 +175,7 @@ class AbstractService(object):
     closing operation before continue with the unloading of the plugin
     (providing a blocking call on the unload plugin) """
 
-    def __init__(self, service_utils, service_utils_plugin, parameters = {}):
+    def __init__(self, service_utils, service_utils_plugin, parameters={}):
         """
         Constructor of the class.
 
@@ -190,7 +191,9 @@ class AbstractService(object):
         self.service_utils_plugin = service_utils_plugin
 
         self.service_plugin = parameters.get("service_plugin", None)
-        self.service_handling_task_class = parameters.get("service_handling_task_class", None)
+        self.service_handling_task_class = parameters.get(
+            "service_handling_task_class", None
+        )
         self.end_points = parameters.get("end_points", [])
         self.socket_provider = parameters.get("socket_provider", None)
         self.bind_host = parameters.get("bind_host", BIND_HOST)
@@ -217,7 +220,7 @@ class AbstractService(object):
             None,
             self.service_configuration,
             exceptions.ServiceUtilsException,
-            self.extra_parameters
+            self.extra_parameters,
         )
         self.service_execution_thread = threads.ServiceExecutionThread(self)
 
@@ -225,12 +228,14 @@ class AbstractService(object):
         # a default end point is created with those values as they are considered
         # to be the fallback value to the no end points definition situation
         if not self.end_points and self.socket_provider:
-            self.end_points.append((
-                self.socket_provider,
-                self.bind_host,
-                self.port,
-                self.socket_parameters
-            ))
+            self.end_points.append(
+                (
+                    self.socket_provider,
+                    self.bind_host,
+                    self.port,
+                    self.socket_parameters,
+                )
+            )
 
     def add_socket(self, client_socket, client_address, service_port):
         client_socket_fd = client_socket.fileno()
@@ -239,7 +244,9 @@ class AbstractService(object):
         self.address_fd_map[client_socket_fd] = (client_address, service_port)
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
-        client_connection = ClientConnection(self, client_socket, client_address, service_port)
+        client_connection = ClientConnection(
+            self, client_socket, client_address, service_port
+        )
         client_connection.service_execution_thread = self.service_execution_thread
         self.client_connection_map[client_socket] = client_connection
 
@@ -278,7 +285,8 @@ class AbstractService(object):
         lista = self.handlers_map[tuple]
         lista.remove(callback_method)
 
-        if not lista: del self.handlers_map[tuple]
+        if not lista:
+            del self.handlers_map[tuple]
 
     def call_handlers(self, socket_fd, operation):
         tuple = (socket_fd, operation)
@@ -290,7 +298,8 @@ class AbstractService(object):
         # to be handled, in case there are no handlers
         # registered for the tuple, returns immediately
         handlers = self.handlers_map.get(tuple, [])
-        if not handlers: return
+        if not handlers:
+            return
 
         # retrieves the socket fd and then retrieves
         # the socket from the socket fd map
@@ -308,8 +317,8 @@ class AbstractService(object):
                 # prints a warning message message using the service
                 # plugin (this message is considered important)
                 self.service_plugin.warning(
-                    "Runtime problem: %s, while handling event" %
-                    colony.legacy.UNICODE(exception)
+                    "Runtime problem: %s, while handling event"
+                    % colony.legacy.UNICODE(exception)
                 )
 
                 # retrieves the client connection from the client
@@ -347,8 +356,8 @@ class AbstractService(object):
             # prints a warning message message using the service
             # plugin (this message is considered important)
             self.service_plugin.warning(
-                "Runtime problem: %s, while starting the service" %
-                colony.legacy.UNICODE(exception)
+                "Runtime problem: %s, while starting the service"
+                % colony.legacy.UNICODE(exception)
             )
 
             # sets the service connection active flag as false
@@ -403,27 +412,35 @@ class AbstractService(object):
             # in case the socket provider is defined
             if socket_provider:
                 # retrieves the socket provider plugins map
-                socket_provider_plugins_map = self.service_utils.socket_provider_plugins_map
+                socket_provider_plugins_map = (
+                    self.service_utils.socket_provider_plugins_map
+                )
 
                 # in case the socket provider is available in the socket
                 # provider plugins map
                 if socket_provider in socket_provider_plugins_map:
                     # retrieves the socket provider plugin from the socket provider plugins map
-                    socket_provider_plugin = socket_provider_plugins_map[socket_provider]
+                    socket_provider_plugin = socket_provider_plugins_map[
+                        socket_provider
+                    ]
 
                     # the parameters for the socket provider
                     parameters = {
-                        SERVER_SIDE_VALUE : True,
-                        DO_HANDSHAKE_ON_CONNECT_VALUE : False
+                        SERVER_SIDE_VALUE: True,
+                        DO_HANDSHAKE_ON_CONNECT_VALUE: False,
                     }
 
                     # copies the socket parameters to the parameters map and then
                     # uses it to create new service socket with the socket provider plugin
                     colony.map_copy(socket_parameters, parameters)
-                    service_socket = socket_provider_plugin.provide_socket_parameters(parameters)
+                    service_socket = socket_provider_plugin.provide_socket_parameters(
+                        parameters
+                    )
                 else:
                     # raises the socket provider not found exception
-                    raise exceptions.SocketProviderNotFound("socket provider %s not found" % socket_provider)
+                    raise exceptions.SocketProviderNotFound(
+                        "socket provider %s not found" % socket_provider
+                    )
             else:
                 # creates the service socket
                 service_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -432,7 +449,9 @@ class AbstractService(object):
             # options in the socket to false so that new sockets are are
             # created automatically in non blocking mode
             service_socket.setblocking(0)
-            hasattr(service_socket, "set_option") and service_socket.set_option("blocking", False)
+            hasattr(service_socket, "set_option") and service_socket.set_option(
+                "blocking", False
+            )
 
             # adds the service socket to the service sockets
             self.service_sockets.append(service_socket)
@@ -468,7 +487,9 @@ class AbstractService(object):
 
             # creates the service connection instance that will be
             # responsible for the handling of new client connections
-            service_connection = ServiceConnection(self, service_socket, bind_host, port)
+            service_connection = ServiceConnection(
+                self, service_socket, bind_host, port
+            )
 
             # retrieves the service socket file descriptor and then
             # updates the file descriptor maps with the proper socket
@@ -508,7 +529,8 @@ class AbstractService(object):
         while True:
             # in case the stop flag is set must break the
             # loop as no more operations are allowed
-            if self.stop_flag: break
+            if self.stop_flag:
+                break
 
             # pools the poll instance to retrieve the
             # current loop events
@@ -545,7 +567,8 @@ class AbstractService(object):
                 # in case the time for execution has not been
                 # yet reached (finished callback execution)
                 _time = time_event[0]
-                if _time > current_time: break
+                if _time > current_time:
+                    break
 
                 # retrieves the callback part of the event
                 # and calls it (event handling)
@@ -614,8 +637,8 @@ class AbstractService(object):
         # (background) thread
         self.service_execution_thread.join()
 
-class SelectPolling(object):
 
+class SelectPolling(object):
     readable_socket_list = None
     writeable_socket_list = None
     errors_socket_list = None
@@ -639,7 +662,7 @@ class SelectPolling(object):
             # as closed connections are reported as read in select
             self.readable_socket_list.add(socket_fd)
 
-    def unregister(self, socket_fd, operations = ALL):
+    def unregister(self, socket_fd, operations=ALL):
         if operations & READ:
             self.readable_socket_list.discard(socket_fd)
 
@@ -658,7 +681,8 @@ class SelectPolling(object):
         readable, writeable, errors = select.select(
             self.readable_socket_list,
             self.writeable_socket_list,
-            self.errors_socket_list, timeout
+            self.errors_socket_list,
+            timeout,
         )
 
         # creates the events map to hold the socket fd's
@@ -679,8 +703,8 @@ class SelectPolling(object):
         # returns the events list
         return events_list
 
-class EpollPolling(object):
 
+class EpollPolling(object):
     def __init__(self):
         pass
 
@@ -692,9 +716,9 @@ class EpollPolling(object):
 
     def poll(self):
         pass
+
 
 class KqueuePolling(object):
-
     def __init__(self):
         pass
 
@@ -707,8 +731,8 @@ class KqueuePolling(object):
     def poll(self):
         pass
 
-class Connection(object):
 
+class Connection(object):
     service = None
     """ The reference to the service implementation
     this will be used to reference top level methods """
@@ -762,16 +786,19 @@ class Connection(object):
 
     def call_delegate(self, name, *args, **kwargs):
         for delegate in self.delegates:
-            if not hasattr(delegate, name): continue
+            if not hasattr(delegate, name):
+                continue
             method = getattr(delegate, name)
             method(*args, **kwargs)
 
     def add_delegate(self, delegate):
-        if delegate in self.delegates: return
+        if delegate in self.delegates:
+            return
         self.delegates.append(delegate)
 
     def remove_delegate(self, delegate):
-        if not delegate in self.delegates: return
+        if not delegate in self.delegates:
+            return
         self.delegates.remove(delegate)
 
     def is_secure(self):
@@ -809,29 +836,29 @@ class Connection(object):
         # in case the current connection socket contains the process
         # exception method and the exception is process successfully
         # returns valid as the exception is not critical
-        if hasattr(_socket, "process_exception") and\
-            _socket.process_exception(exception):
+        if hasattr(_socket, "process_exception") and _socket.process_exception(
+            exception
+        ):
             return True
 
         # tries to run the verification of the exception against the
         # "valid" socket errors in case it's one of such errors the
         # returned valid is true (should be ignored)
-        if isinstance(exception, socket.error) and\
-            exception.args[0] in (
-                errno.EWOULDBLOCK,
-                errno.EAGAIN,
-                errno.EPERM,
-                errno.ENOENT,
-                WSAEWOULDBLOCK
-            ):
+        if isinstance(exception, socket.error) and exception.args[0] in (
+            errno.EWOULDBLOCK,
+            errno.EAGAIN,
+            errno.EPERM,
+            errno.ENOENT,
+            WSAEWOULDBLOCK,
+        ):
             return True
 
         # by default returns an invalid value meaning that the exception
         # should be handled as an error and not ignored
         return False
 
-class ServiceConnection(Connection):
 
+class ServiceConnection(Connection):
     handlers_association = {}
     """ The map associating the socket fd with the respective
     close handler method or function """
@@ -862,13 +889,17 @@ class ServiceConnection(Connection):
                 # in case this option is set a non complete accept
                 # operation should be retried for a certain timeout
                 # until it's finally discarded
-                handle_not_complete = self.service.socket_parameters.get("handle_not_complete", True)
+                handle_not_complete = self.service.socket_parameters.get(
+                    "handle_not_complete", True
+                )
 
                 # in case the handle not complete flag is set the pending
                 # mode is enabled for the current socket (tries the handshake
                 # latter) otherwise the service connection is discarded
-                if handle_not_complete: self._enable_pending(service_connection, service_address, socket_fd)
-                else: service_connection.close()
+                if handle_not_complete:
+                    self._enable_pending(service_connection, service_address, socket_fd)
+                else:
+                    service_connection.close()
                 return
 
             except socket.error as exception:
@@ -876,19 +907,22 @@ class ServiceConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # sending "event" (returns immediately)
-                if self._process_exception(_socket, exception): return
+                if self._process_exception(_socket, exception):
+                    return
 
                 # otherwise the exception is more severe and must re-raise it
                 # to the top level layers for proper handling
-                else: raise
+                else:
+                    raise
 
             # sets the service connection to non blocking mode
             # and then adds the service connection in the service
             service_connection.setblocking(0)
-            self.service.add_socket(service_connection, service_address, self.connection_port)
+            self.service.add_socket(
+                service_connection, service_address, self.connection_port
+            )
 
     def get_handshake_handler(self, service_connection, service_address, socket_fd):
-
         def handshake_handler(_socket):
             try:
                 # tries to run the handshake in the service connection
@@ -905,29 +939,41 @@ class ServiceConnection(Connection):
                     errno.EAGAIN,
                     errno.EPERM,
                     errno.ENOENT,
-                    WSAEWOULDBLOCK
-                ): return
+                    WSAEWOULDBLOCK,
+                ):
+                    return
                 # otherwise it's a major error and the connection is considered
                 # to be in an erroneous state (meant to be discarded)
                 else:
                     # disables the pending connection, no more need to listen
                     # to the changes on it for enabling
-                    self._disable_pending(service_connection, service_address, socket_fd); return
+                    self._disable_pending(
+                        service_connection, service_address, socket_fd
+                    )
+                    return
             except Exception:
                 # disables the pending connection, no more need to listen
                 # to the changes on it for enabling (meant to be discarded)
-                self._disable_pending(service_connection, service_address, socket_fd); return
+                self._disable_pending(service_connection, service_address, socket_fd)
+                return
             else:
                 try:
                     # disables the pending connection, no more need to listen
                     # to the changes on it for enabling (in this case the connection
                     # is not meant to be closed)
-                    self._disable_pending(service_connection, service_address, socket_fd, close_connection = False)
+                    self._disable_pending(
+                        service_connection,
+                        service_address,
+                        socket_fd,
+                        close_connection=False,
+                    )
 
                     # sets the service connection to non blocking mode and
                     # adds service connection in the service
                     service_connection.setblocking(0)
-                    self.service.add_socket(service_connection, service_address, self.connection_port)
+                    self.service.add_socket(
+                        service_connection, service_address, self.connection_port
+                    )
                 except:
                     # closes the service connection, because there was an
                     # "extraordinary" exception (unexpected) the re-raises
@@ -940,19 +986,20 @@ class ServiceConnection(Connection):
         return handshake_handler
 
     def get_close_handler(self, service_connection, service_address, socket_fd):
-
         def close_handler():
             # in case the socket fd is no longer present in the pending
             # fd map there's no need to proceed with the disable of the
             # pending operations (normal situation)
-            if not socket_fd in self.service.pending_fd_map: return
+            if not socket_fd in self.service.pending_fd_map:
+                return
 
             # verifies if the socket of the service that is going to be
             # closed as the same that is currently set for the socket
             # descriptor, in case it's not returns immediately as the
             # socket fd must have been re-used
             _service_connection = self.service.socket_fd_map[socket_fd]
-            if not _service_connection == service_connection: return
+            if not _service_connection == service_connection:
+                return
 
             # disables the pending connection, this operation should close
             # the socket and release all the allocated structures inside the
@@ -964,8 +1011,12 @@ class ServiceConnection(Connection):
         return close_handler
 
     def _enable_pending(self, service_connection, service_address, socket_fd):
-        handshake_handler = self.get_handshake_handler(service_connection, service_address, socket_fd)
-        close_handler = self.get_close_handler(service_connection, service_address, socket_fd)
+        handshake_handler = self.get_handshake_handler(
+            service_connection, service_address, socket_fd
+        )
+        close_handler = self.get_close_handler(
+            service_connection, service_address, socket_fd
+        )
 
         self.handlers_association[socket_fd] = handshake_handler
         self.service.socket_fd_map[socket_fd] = service_connection
@@ -976,7 +1027,9 @@ class ServiceConnection(Connection):
 
         self.service.add_time_handler(time.time() + PENDING_TIMEOUT, close_handler)
 
-    def _disable_pending(self, service_connection, service_address, socket_fd, close_connection = True):
+    def _disable_pending(
+        self, service_connection, service_address, socket_fd, close_connection=True
+    ):
         handshake_handler = self.handlers_association[socket_fd]
         del self.service.socket_fd_map[socket_fd]
         del self.service.address_fd_map[socket_fd]
@@ -985,8 +1038,8 @@ class ServiceConnection(Connection):
         self.service.remove_handler(socket_fd, handshake_handler, READ)
         close_connection and service_connection.close()
 
-class ClientConnection(Connection):
 
+class ClientConnection(Connection):
     pending_data_buffer = []
     """ The buffer that holds the pending data """
 
@@ -1008,7 +1061,8 @@ class ClientConnection(Connection):
     def open(self):
         # in case the current connection is already open
         # must return immediately (no duplicate open)
-        if self.is_open(): return
+        if self.is_open():
+            return
 
         # sets the connection status to open
         self.connection_status = True
@@ -1021,7 +1075,8 @@ class ClientConnection(Connection):
     def close(self):
         # in case the current connection is already closed
         # must return immediately (no duplicate close)
-        if not self.is_open(): return
+        if not self.is_open():
+            return
 
         # removes the socket from the service, this should
         # properly close the socket
@@ -1046,11 +1101,13 @@ class ClientConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # receiving "event"
-                if self._process_exception(_socket, exception): return
+                if self._process_exception(_socket, exception):
+                    return
 
                 # otherwise the exception is more severe and must be re-raised
                 # so that the top layers may properly handle it
-                else: raise
+                else:
+                    raise
 
             # in case the data is empty, the connection is considered
             # closed and the final operations must be performed
@@ -1106,7 +1163,8 @@ class ClientConnection(Connection):
                 # complete or the socket would block nothing should be done
                 # and the read operation must be deferred to the next data
                 # sending "event"
-                if self._process_exception(_socket, exception): return
+                if self._process_exception(_socket, exception):
+                    return
 
                 # otherwise the exception is more severe
                 # and it shall be handled properly
@@ -1143,7 +1201,7 @@ class ClientConnection(Connection):
         # closes the client connection
         self.close()
 
-    def write(self, data, write_front = False):
+    def write(self, data, write_front=False):
         # in case the connection status is closed
         if not self.connection_status:
             raise Exception("Trying to write in a closed socket")
@@ -1176,7 +1234,7 @@ class ClientConnection(Connection):
 
         self.service.poll_instance.unregister(socket_fd, operations)
 
-    def execute_background(self, callable, retries = 0, timeout = 0.0, timestamp = None):
+    def execute_background(self, callable, retries=0, timeout=0.0, timestamp=None):
         """
         Executes the given callable object in a background
         thread.
@@ -1198,16 +1256,15 @@ class ClientConnection(Connection):
 
         # adds the callable to the service execution thread
         self.service_execution_thread.add_callable(
-            callable,
-            retries = retries,
-            timeout = timeout,
-            timestamp = timestamp
+            callable, retries=retries, timeout=timeout, timestamp=timestamp
         )
 
-    def send(self, message, response_timeout = None, retries = None, write_front = False):
+    def send(self, message, response_timeout=None, retries=None, write_front=False):
         self.write(message, write_front)
 
-    def send_callback(self, message, callback, response_timeout = None, retries = None, write_front = False):
+    def send_callback(
+        self, message, callback, response_timeout=None, retries=None, write_front=False
+    ):
         message_tuple = (message, callback)
         self.write(message_tuple, write_front)
 
@@ -1239,7 +1296,8 @@ class ClientConnection(Connection):
 
         # in case the pending data is not valid
         # returns immediately as it can't be added
-        if not pending_data: return
+        if not pending_data:
+            return
 
         # adds the pending data to the pending data
         # buffer (list)
@@ -1258,7 +1316,8 @@ class ClientConnection(Connection):
         # in case the pending data buffer is not
         # valid, returns immediately with an invalid
         # value to the caller method
-        if not self.pending_data_buffer: return None
+        if not self.pending_data_buffer:
+            return None
 
         # returns the result of a "pop" in the
         # pending data buffer

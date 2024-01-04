@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PrintingManagerPlugin(colony.Plugin):
     """
     The main class for the Printing Manager plugin.
@@ -40,23 +41,15 @@ class PrintingManagerPlugin(colony.Plugin):
     description = "Printing Manager Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "printing_manager",
-        "console_command_extension"
-    ]
-    capabilities_allowed = [
-        "printing"
-    ]
-    main_modules = [
-        "printing_manager"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["printing_manager", "console_command_extension"]
+    capabilities_allowed = ["printing"]
+    main_modules = ["printing_manager"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import printing_manager
+
         self.system = printing_manager.PrintingManager(self)
         self.console = printing_manager.ConsolePrintingManager(self)
 
@@ -87,7 +80,9 @@ class PrintingManagerPlugin(colony.Plugin):
         return self.system.print_test_image()
 
     def print_printing_language(self, printing_language_string, printing_options):
-        return self.system.print_printing_language(printing_language_string, printing_options)
+        return self.system.print_printing_language(
+            printing_language_string, printing_options
+        )
 
     def print_printing_language_no_options(self, printing_language_string):
         return self.system.print_printing_language(printing_language_string)

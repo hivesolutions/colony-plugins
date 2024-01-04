@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class TemplateEngineException(colony.ColonyException):
     """
     The template engine exception class. This is
@@ -39,6 +40,7 @@ class TemplateEngineException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class RuntimeError(TemplateEngineException):
     """
@@ -68,6 +70,7 @@ class RuntimeError(TemplateEngineException):
 
         return "Runtime error - %s" % self.message
 
+
 class UndefinedVariable(TemplateEngineException):
     """
     The undefined variable class.
@@ -93,6 +96,7 @@ class UndefinedVariable(TemplateEngineException):
         """
 
         return "Undefined variable - %s" % self.message
+
 
 class UndefinedReference(TemplateEngineException):
     """
@@ -120,6 +124,7 @@ class UndefinedReference(TemplateEngineException):
 
         return "Undefined reference - %s" % self.message
 
+
 class VariableNotIterable(TemplateEngineException):
     """
     The variable not iterable class.
@@ -145,6 +150,7 @@ class VariableNotIterable(TemplateEngineException):
         """
 
         return "Variable not iterable - %s" % self.message
+
 
 class InvalidNumberAttributes(TemplateEngineException):
     """
@@ -172,6 +178,7 @@ class InvalidNumberAttributes(TemplateEngineException):
 
         return "Invalid number attributes - %s" % self.message
 
+
 class InvalidBooleanValue(TemplateEngineException):
     """
     The invalid boolean value class.
@@ -197,6 +204,7 @@ class InvalidBooleanValue(TemplateEngineException):
         """
 
         return "Invalid boolean value - %s" % self.message
+
 
 class InvalidSerializer(TemplateEngineException):
     """

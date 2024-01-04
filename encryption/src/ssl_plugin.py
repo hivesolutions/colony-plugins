@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class SSLPlugin(colony.Plugin):
     """
     The main class for the SSL plugin.
@@ -40,25 +41,18 @@ class SSLPlugin(colony.Plugin):
     description = "The plugin that offers the SSL support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "test",
-        "encryption.ssl"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["test", "encryption.ssl"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.encryption.rsa"),
-        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1")
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1"),
     ]
-    main_modules = [
-        "ssl_c"
-    ]
+    main_modules = ["ssl_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ssl_c
+
         self.system = ssl_c.SSL(self)
         self.test = ssl_c.SSLTest(self)
 

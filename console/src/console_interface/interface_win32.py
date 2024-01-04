@@ -43,7 +43,7 @@ KEYBOARD_KEY_TIMEOUT = 0.02
 ASYNCHRONOUS_MODE_VALUE = 0x4000
 """ The asynchronous  mode value """
 
-SPECIAL_CHARACTER_ORDINAL_VALUE = 0xe0
+SPECIAL_CHARACTER_ORDINAL_VALUE = 0xE0
 """ The special character ordinal value """
 
 CONSOLE_CONTEXT_VALUE = "console_context"
@@ -51,6 +51,7 @@ CONSOLE_CONTEXT_VALUE = "console_context"
 
 TEST_VALUE = "test"
 """ The test value """
+
 
 class ConsoleInterfaceWin32:
     """
@@ -100,7 +101,11 @@ class ConsoleInterfaceWin32:
         test and self._run_test()
 
         # creates the console interface character
-        self.console_interface_character = console_plugin.create_console_interface_character(self, self.console_context)
+        self.console_interface_character = (
+            console_plugin.create_console_interface_character(
+                self, self.console_context
+            )
+        )
 
         # starts the console interface character
         self.console_interface_character.start(arguments)
@@ -110,11 +115,15 @@ class ConsoleInterfaceWin32:
         self.console_context = None
 
         # stops the console interface character
-        self.console_interface_character and self.console_interface_character.stop(arguments)
+        self.console_interface_character and self.console_interface_character.stop(
+            arguments
+        )
 
     def cleanup(self, arguments):
         # cleanups the console interface character
-        self.console_interface_character and self.console_interface_character.cleanup(arguments)
+        self.console_interface_character and self.console_interface_character.cleanup(
+            arguments
+        )
 
     def get_line(self):
         # starts the line
@@ -128,9 +137,9 @@ class ConsoleInterfaceWin32:
                 return
 
             # in case there is a character (key) available
-            if msvcrt.kbhit(): #@UndefinedVariable
+            if msvcrt.kbhit():  # @UndefinedVariable
                 # reads a character from the standard input (locks)
-                character = msvcrt.getch() #@UndefinedVariable
+                character = msvcrt.getch()  # @UndefinedVariable
             # otherwise
             else:
                 # sleeps for a while
@@ -144,31 +153,29 @@ class ConsoleInterfaceWin32:
 
             # in case the character ordinal value is possibly "special"
             # and there is a keyboard hit
-            if character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE and msvcrt.kbhit(): #@UndefinedVariable
+            if (
+                character_ordinal == SPECIAL_CHARACTER_ORDINAL_VALUE and msvcrt.kbhit()
+            ):  # @UndefinedVariable
                 # reads a character from the standard input (locks)
-                extra_character = msvcrt.getch() #@UndefinedVariable
+                extra_character = msvcrt.getch()  # @UndefinedVariable
 
                 # convert the extra character to ordinal
                 extra_character_ordinal = ord(extra_character)
 
                 # in case the character ordinal value is "special"
-                if extra_character_ordinal in (0x48, 0x50, 0x4d, 0x4b):
+                if extra_character_ordinal in (0x48, 0x50, 0x4D, 0x4B):
                     # sets the character as the tuple
                     # with the extra character
-                    character = (
-                        character,
-                        extra_character
-                    )
+                    character = (character, extra_character)
 
                     # sets the character ordinal as the tuple
                     # with the extra character ordinal
-                    character_ordinal = (
-                        character_ordinal,
-                        extra_character_ordinal
-                    )
+                    character_ordinal = (character_ordinal, extra_character_ordinal)
 
             # processes the character
-            if self.console_interface_character.process_character(character, character_ordinal):
+            if self.console_interface_character.process_character(
+                character, character_ordinal
+            ):
                 # breaks the loop
                 break
 
@@ -196,12 +203,16 @@ class ConsoleInterfaceWin32:
         try:
             # retrieves the handle to the standard output
             # device (console window)
-            stdout_handle = ctypes.windll.kernel32.GetStdHandle(-12) #@UndefinedVariable
+            stdout_handle = ctypes.windll.kernel32.GetStdHandle(
+                -12
+            )  # @UndefinedVariable
 
             # creates the console buffer info structure and populates
             # it using the get console screen buffer info function
             console_buffer_info = ctypes.create_string_buffer(22)
-            result = ctypes.windll.kernel32.GetConsoleScreenBufferInfo(stdout_handle, console_buffer_info) #@UndefinedVariable
+            result = ctypes.windll.kernel32.GetConsoleScreenBufferInfo(
+                stdout_handle, console_buffer_info
+            )  # @UndefinedVariable
         except Exception:
             # returns an invalid value
             return None
@@ -214,9 +225,19 @@ class ConsoleInterfaceWin32:
 
         # unpacks the console buffer info structure into the various
         # components of it so that they may be used in the context
-        _buffer_x, _buffer_y, _current_x, _current_y,\
-        _wattr, left, top, right, bottom, _max_x,\
-        _max_y = struct.unpack("hhhhHhhhhhh", console_buffer_info.raw)
+        (
+            _buffer_x,
+            _buffer_y,
+            _current_x,
+            _current_y,
+            _wattr,
+            left,
+            top,
+            right,
+            bottom,
+            _max_x,
+            _max_y,
+        ) = struct.unpack("hhhhHhhhhhh", console_buffer_info.raw)
 
         # calculates the width and the height of the console
         # window from the right, left, bottom, and top positions
@@ -238,7 +259,7 @@ class ConsoleInterfaceWin32:
         is_tty = sys.stdin.isatty()
 
         # tries to set the binary mode
-        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT) #@UndefinedVariable
+        mode_value = msvcrt.setmode(stdin_file_number, os.O_TEXT)  # @UndefinedVariable
 
         # in case the current standard input is not tty
         # or the mode value is not valid, must raise an
@@ -271,14 +292,14 @@ class ConsoleInterfaceWin32:
         # writes the backspace character to the standard output
         sys.stdout.write("\x08")
 
-    def _cursor_top(self, amount = 1):
+    def _cursor_top(self, amount=1):
         pass
 
-    def _cursor_down(self, amount = 1):
+    def _cursor_down(self, amount=1):
         pass
 
-    def _cursor_right(self, amount = 1):
+    def _cursor_right(self, amount=1):
         pass
 
-    def _cursor_left(self, amount = 1):
+    def _cursor_left(self, amount=1):
         pass

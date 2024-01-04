@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class DiffieHellmanPlugin(colony.Plugin):
     """
     The main class for the Diffie Hellman plugin.
@@ -40,20 +41,14 @@ class DiffieHellmanPlugin(colony.Plugin):
     description = "The plugin that offers the diffie hellman support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "encryption.diffie_hellman"
-    ]
-    main_modules = [
-        "diffie_hellman_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["encryption.diffie_hellman"]
+    main_modules = ["diffie_hellman_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import diffie_hellman_c
+
         self.system = diffie_hellman_c.DiffieHellman(self)
 
     def create_structure(self, parameters):

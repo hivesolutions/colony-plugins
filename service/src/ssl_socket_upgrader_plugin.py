@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class SSLSocketUpgraderPlugin(colony.Plugin):
     """
     The main class for the SSL Socket Upgrader plugin.
@@ -40,22 +41,15 @@ class SSLSocketUpgraderPlugin(colony.Plugin):
     description = "The plugin that offers the SSL socket upgrader"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "socket_upgrader"
-    ]
-    dependencies = [
-        colony.PackageDependency("Python 2.6", "ssl")
-    ]
-    main_modules = [
-        "ssl_socket_upgrader"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["socket_upgrader"]
+    dependencies = [colony.PackageDependency("Python 2.6", "ssl")]
+    main_modules = ["ssl_socket_upgrader"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ssl_socket_upgrader
+
         self.system = ssl_socket_upgrader.SSLSocketUpgrader(self)
 
     def get_upgrader_name(self):

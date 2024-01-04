@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class NangerPlugin(colony.Plugin):
     """
     The main class for the Nanger plugin.
@@ -40,24 +41,19 @@ class NangerPlugin(colony.Plugin):
     description = "Plugin that provides a simple web interface for colony"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "mvc_service"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["mvc_service"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.diagnostics"),
         colony.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
-    main_modules = [
-        "nanger"
-    ]
+    main_modules = ["nanger"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import nanger
+
         self.nanger = nanger.Nanger(self)
 
     def end_load_plugin(self):

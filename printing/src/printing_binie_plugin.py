@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PrintingBiniePlugin(colony.Plugin):
     """
     The main class for the Printing Binie plugin.
@@ -40,22 +41,15 @@ class PrintingBiniePlugin(colony.Plugin):
     description = "Printing Binie Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "printing"
-    ]
-    dependencies = [
-        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
-    ]
-    main_modules = [
-        "printing_binie"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["printing"]
+    dependencies = [colony.PackageDependency("Python Imaging Library (PIL)", "PIL")]
+    main_modules = ["printing_binie"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import printing_binie
+
         self.system = printing_binie.PrintingBinie(self)
 
     def get_printing_name(self):

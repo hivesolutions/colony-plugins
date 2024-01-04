@@ -41,6 +41,7 @@ WSAEWOULDBLOCK = 10035
 blocking connection is not able to read/write more, this
 error should be raised constantly in no blocking connections """
 
+
 class NormalSocket(colony.System):
     """
     The normal socket (provider) class.
@@ -71,7 +72,7 @@ class NormalSocket(colony.System):
         # returns the normal socket
         return normal_socket
 
-    def provide_socket_parameters(self, parameters = {}):
+    def provide_socket_parameters(self, parameters={}):
         """
         Provides a new socket, configured with
         the given parameters.
@@ -113,18 +114,18 @@ class NormalSocket(colony.System):
 
         return process_exception(socket, exception)
 
+
 def process_exception(self, exception):
     # in case the exception is of type socket error and the error
     # value is inside the list of valid error the exception is considered
     # valid and a valid value is returned
-    if isinstance(exception, socket.error) and\
-        exception.args[0] in (
-            errno.EWOULDBLOCK,
-            errno.EAGAIN,
-            errno.EPERM,
-            errno.ENOENT,
-            WSAEWOULDBLOCK
-        ):
+    if isinstance(exception, socket.error) and exception.args[0] in (
+        errno.EWOULDBLOCK,
+        errno.EAGAIN,
+        errno.EPERM,
+        errno.ENOENT,
+        WSAEWOULDBLOCK,
+    ):
         return True
 
     # return false (exception must be processed) as no graceful

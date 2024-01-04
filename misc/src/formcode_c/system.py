@@ -38,6 +38,7 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "application/x-formcode"
 """ The mime type """
 
+
 class Formcode(colony.System):
     """
     Provides functions to interact with formcode.
@@ -52,7 +53,7 @@ class Formcode(colony.System):
     def loads(self, formcode_string):
         return serializer.loads(formcode_string)
 
-    def load_file(self, formcode_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, formcode_file, encoding=DEFAULT_ENCODING):
         # reads the formcode file
         formcode_file_contents = formcode_file.read()
 

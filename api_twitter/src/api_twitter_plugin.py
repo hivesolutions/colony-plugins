@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APITwitterPlugin(colony.Plugin):
     """
     The main class for the Twitter API plugin.
@@ -40,23 +41,18 @@ class APITwitterPlugin(colony.Plugin):
     description = "The plugin that offers the Twitter API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.twitter"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.twitter"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
-    main_modules = [
-        "api_twitter"
-    ]
+    main_modules = ["api_twitter"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_twitter
+
         self.system = api_twitter.APITwitter(self)
 
     def create_client(self, api_attributes):

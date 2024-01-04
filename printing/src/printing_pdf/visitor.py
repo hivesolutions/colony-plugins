@@ -79,16 +79,11 @@ EXCLUSION_LIST = [
     "set_value",
     "indent",
     "value",
-    "child_nodes"
+    "child_nodes",
 ]
 """ The exclusion list """
 
-FONT_SUFFIX_MAP = {
-    "regular" : "",
-    "bold" : "b",
-    "italic" : "i",
-    "bold_italic" : "z"
-}
+FONT_SUFFIX_MAP = {"regular": "", "bold": "b", "italic": "i", "bold_italic": "z"}
 """ The map associating the type of font
 and the suffix to be appended to the name
 to created the full font name """
@@ -121,6 +116,7 @@ size value is defined for the print operation """
 FONT_PATHS = ("", "~/.fonts/", "/usr/share/fonts/truetype/")
 """ The set of base paths to be used for searching
 for fonts on the current system """
+
 
 class Visitor(object):
     """
@@ -205,7 +201,8 @@ class Visitor(object):
 
             # in case the current class real element does not contain
             # an AST node class reference must continue the loop
-            if not hasattr(self_class_real_element, "ast_node_class"): continue
+            if not hasattr(self_class_real_element, "ast_node_class"):
+                continue
 
             # retrieves the AST node class from the current class real element
             # and sets it in the node method map
@@ -277,7 +274,7 @@ class Visitor(object):
             if not printing_document_width == 0 and not printing_document_height == 0:
                 size = (
                     printing_document_width / 100 * SCALE,
-                    printing_document_height / 100 * SCALE
+                    printing_document_height / 100 * SCALE,
                 )
 
             # unpacks the size tuple into the width and height
@@ -288,16 +285,11 @@ class Visitor(object):
 
             # creates the canvas object to be used as the primary
             # entry point for operation on the PDF
-            self.canvas = reportlab.pdfgen.canvas.Canvas(
-                file,
-                pagesize = self.size
-            )
+            self.canvas = reportlab.pdfgen.canvas.Canvas(file, pagesize=self.size)
 
             # sets the initial position so that the "virtual" cursor
             # position is situated at the top left corner of the page
-            self.current_position = (
-                0, self.height
-            )
+            self.current_position = (0, self.height)
 
         # in case it's the second visit
         elif self.visit_index == 1:
@@ -325,8 +317,10 @@ class Visitor(object):
 
     @colony.visit(printing_manager.Paragraph)
     def visit_paragraph(self, node):
-        if self.visit_index == 0: self.add_context(node)
-        elif self.visit_index == 1: self.remove_context(node)
+        if self.visit_index == 0:
+            self.add_context(node)
+        elif self.visit_index == 1:
+            self.remove_context(node)
 
     @colony.visit(printing_manager.Line)
     def visit_line(self, node):
@@ -343,7 +337,7 @@ class Visitor(object):
             current_position_x, current_position_y = self.current_position
             self.current_position = (
                 current_position_x,
-                current_position_y - margin_top * FONT_SCALE_FACTOR
+                current_position_y - margin_top * FONT_SCALE_FACTOR,
             )
 
         elif self.visit_index == 1:
@@ -358,7 +352,8 @@ class Visitor(object):
             # and then updates the current position
             current_position_x, current_position_y = self.current_position
             self.current_position = (
-                0, current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR
+                0,
+                current_position_y - biggest_height - margin_bottom * FONT_SCALE_FACTOR,
             )
 
             # removes the context information
@@ -432,7 +427,7 @@ class Visitor(object):
             # problems in accordance with the printing language specification,
             # this is the "first" font setting and ensures that the measuring
             # of the font size is the correct one (required by algorithm)
-            self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
+            self.canvas.setFont(font_name_c, font_size_r, leading=1.0)
 
             # retrieves the current position in x and y unpacking the values
             # from the current position tuple (as expected)
@@ -451,15 +446,19 @@ class Visitor(object):
 
             # calculates the appropriate text position according to the
             # "requested" horizontal text alignment
-            if text_align == "left": text_x += clip_left
-            elif text_align == "right": text_x += clip_right - text_width
+            if text_align == "left":
+                text_x += clip_left
+            elif text_align == "right":
+                text_x += clip_right - text_width
             elif text_align == "center":
-                text_x += clip_left + int((clip_right - clip_left) / 2) - int(text_width / 2)
+                text_x += (
+                    clip_left + int((clip_right - clip_left) / 2) - int(text_width / 2)
+                )
 
             # sets the text y as the current position context y
             # default position for the text is the current position
             text_y = clip_top + current_position_y - text_height_r
-            text_y = self.ensure_y(text_y, offset = text_height)
+            text_y = self.ensure_y(text_y, offset=text_height)
 
             # updates the fill color to a white color and then uses
             # this color to draw a white (background) rectangle around
@@ -470,8 +469,8 @@ class Visitor(object):
                 text_y - (font_size - font_size_r),
                 text_width,
                 text_height,
-                stroke = 0,
-                fill = 1
+                stroke=0,
+                fill=1,
             )
 
             # "resets" the fill color of the current canvas context to
@@ -484,7 +483,7 @@ class Visitor(object):
             # problems in accordance with the printing language specification,
             # the font must be set after the ensure vertical operation so that
             # in case a new page is created the new font is set correctly in it
-            self.canvas.setFont(font_name_c, font_size_r, leading = 1.0)
+            self.canvas.setFont(font_name_c, font_size_r, leading=1.0)
 
             # draws the text string at the calculated position the text
             # is encoded in the expected encoding so that no encoding
@@ -515,8 +514,10 @@ class Visitor(object):
 
             # retrieves the path or source value to be used
             # in the retrieval (only one value is set)
-            if self.has_context("path"): image_path = self.get_context("path")
-            elif self.has_context("source"): image_source = self.get_context("source")
+            if self.has_context("path"):
+                image_path = self.get_context("path")
+            elif self.has_context("source"):
+                image_source = self.get_context("source")
 
             # retrieves the complete set of attributes for the current
             # context to be used for the processing of the node
@@ -581,9 +582,7 @@ class Visitor(object):
             # creates a new image without transparency settings, so that
             # no extra color is used ands copies the bitmap image into it
             other_image = PIL.Image.new(
-                "RGB",
-                (bitmap_image_width, bitmap_image_height),
-                color = "white"
+                "RGB", (bitmap_image_width, bitmap_image_height), color="white"
             )
             other_image.paste(bitmap_image, bitmap_image)
 
@@ -593,20 +592,27 @@ class Visitor(object):
 
             # calculates the appropriate bitmap position according to the
             # "requested" horizontal text alignment
-            if text_align == "left": real_bitmap_x = clip_left
+            if text_align == "left":
+                real_bitmap_x = clip_left
             elif text_align == "right":
                 real_bitmap_x = clip_right - bitmap_image_width * IMAGE_SCALE_FACTOR
             elif text_align == "center":
-                real_bitmap_x = clip_left + int((clip_right - clip_left) / 2) -\
-                    int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+                real_bitmap_x = (
+                    clip_left
+                    + int((clip_right - clip_left) / 2)
+                    - int(bitmap_image_width * IMAGE_SCALE_FACTOR / 2)
+                )
 
             # calculates the real bitmap vertical position from the current
             # vertical position minus the height of the image and ensures the
             # position, recalculating a new y position in case the page overflows
-            real_bitmap_y = clip_top + current_position_y - (bitmap_image_height * IMAGE_SCALE_FACTOR)
+            real_bitmap_y = (
+                clip_top
+                + current_position_y
+                - (bitmap_image_height * IMAGE_SCALE_FACTOR)
+            )
             real_bitmap_y = self.ensure_y(
-                real_bitmap_y,
-                offset = bitmap_image_height * IMAGE_SCALE_FACTOR
+                real_bitmap_y, offset=bitmap_image_height * IMAGE_SCALE_FACTOR
             )
 
             # loads the image image using the proper image reader structure
@@ -618,14 +624,16 @@ class Visitor(object):
                 real_bitmap_x,
                 real_bitmap_y,
                 bitmap_image_width * IMAGE_SCALE_FACTOR,
-                bitmap_image_height * IMAGE_SCALE_FACTOR
+                bitmap_image_height * IMAGE_SCALE_FACTOR,
             )
 
             # in case the current image height is bigger than the current
             # context biggest height, updates the information
             biggest_height = self.get_context("biggest_height")
             if biggest_height < bitmap_image_height * IMAGE_SCALE_FACTOR:
-                self.put_context("biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR)
+                self.put_context(
+                    "biggest_height", bitmap_image_height * IMAGE_SCALE_FACTOR
+                )
 
         elif self.visit_index == 1:
             self.remove_context(node)
@@ -653,14 +661,16 @@ class Visitor(object):
         # in case the current document in parsing has been marked
         # as single page oriented (absolute positioning), there's
         # no need to verify for new page creation
-        if self.single: return y_position
+        if self.single:
+            return y_position
 
         # verifies if the current vertical position "overflows"
         # the page value (lower than zero) in case it does not
         # returns immediately with the provided position (no
         # overflow has occurred)
         b_position = y_position - offset
-        if b_position >= 0.0: return y_position
+        if b_position >= 0.0:
+            return y_position
 
         # calculates the delta position (inside the new page)
         # according to the current y position in case it's positive
@@ -680,7 +690,7 @@ class Visitor(object):
         self.canvas.showPage()
         return y_position
 
-    def ensure_font(self, font_name, file_path = None):
+    def ensure_font(self, font_name, file_path=None):
         """
         Ensures that the font is present in the current
         canvas object, loading it into the PDF context
@@ -702,7 +712,8 @@ class Visitor(object):
         # in case the font is already present in the fonts
         # map it's considered to be loaded and so the control
         # must be returned immediately
-        if font_name in self.fonts: return
+        if font_name in self.fonts:
+            return
 
         # converts the font name into a lower cased version and
         # then uses it to create the default font path in case
@@ -740,9 +751,10 @@ class Visitor(object):
         # in case the error flag is set raises the invalid font
         # exception, indicating that it was not possible to load
         # the associated font file
-        if error: raise exceptions.InvalidFont(
-            "not possible to load '%s' - '%s'" % (font_name, file_path)
-        )
+        if error:
+            raise exceptions.InvalidFont(
+                "not possible to load '%s' - '%s'" % (font_name, file_path)
+            )
 
         # updates the fonts map so that the current font is associated
         # with the corresponding loaded file path, this marks the
@@ -765,15 +777,16 @@ class Visitor(object):
         # converts the current position to context
         current_position_context = (
             FONT_SCALE_FACTOR * current_position_x,
-            -1 * FONT_SCALE_FACTOR * current_position_y
+            -1 * FONT_SCALE_FACTOR * current_position_y,
         )
 
         # returns the current position context
         return current_position_context
 
-    def get_context(self, context_name, default = None):
+    def get_context(self, context_name, default=None):
         if not self.has_context(context_name):
-            if not default == None: return default
+            if not default == None:
+                return default
             raise exceptions.InvalidContextInformationName(
                 "the context information name: " + context_name + " is invalid"
             )
@@ -781,13 +794,19 @@ class Visitor(object):
         return self.peek_context(context_name)
 
     def add_context(self, node):
-        valid_attributes = [(value, getattr(node, value)) for value in dir(node) if not value in EXCLUSION_LIST]
+        valid_attributes = [
+            (value, getattr(node, value))
+            for value in dir(node)
+            if not value in EXCLUSION_LIST
+        ]
 
         for valid_attribute_name, valid_attribute_value in valid_attributes:
             self.push_context(valid_attribute_name, valid_attribute_value)
 
     def remove_context(self, node):
-        valid_attribute_names = [value for value in dir(node) if not value in EXCLUSION_LIST]
+        valid_attribute_names = [
+            value for value in dir(node) if not value in EXCLUSION_LIST
+        ]
 
         for valid_attribute_name in valid_attribute_names:
             self.pop_context(valid_attribute_name)
@@ -849,6 +868,7 @@ class Visitor(object):
 
         # in case the context information name exists in the
         # context information map and is not invalid
-        if context_name in self.context_map and\
-            self.context_map[context_name]: return True
-        else: return False
+        if context_name in self.context_map and self.context_map[context_name]:
+            return True
+        else:
+            return False

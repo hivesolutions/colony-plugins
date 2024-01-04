@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+
 class AstNode(object):
     """
     The AST node class.
@@ -57,7 +58,10 @@ class AstNode(object):
         :return: The default representation of the class.
         """
 
-        return "<ast_node indent:%s child_nodes:%s>" % (self.indent, len(self.child_nodes))
+        return "<ast_node indent:%s child_nodes:%s>" % (
+            self.indent,
+            len(self.child_nodes),
+        )
 
     def accept(self, visitor):
         """
@@ -145,6 +149,7 @@ class AstNode(object):
 
         self.child_nodes.remove(child_node)
 
+
 class GenericElement(AstNode):
     """
     The generic element class.
@@ -152,9 +157,10 @@ class GenericElement(AstNode):
 
     element_name = "none"
 
-    def __init__(self, element_name = "none"):
+    def __init__(self, element_name="none"):
         AstNode.__init__(self)
         self.element_name = element_name
+
 
 class PrintingDocument(AstNode):
     """
@@ -164,6 +170,7 @@ class PrintingDocument(AstNode):
     def __init__(self):
         AstNode.__init__(self)
 
+
 class Block(AstNode):
     """
     The block class.
@@ -171,6 +178,7 @@ class Block(AstNode):
 
     def __init__(self):
         AstNode.__init__(self)
+
 
 class Paragraph(AstNode):
     """
@@ -180,6 +188,7 @@ class Paragraph(AstNode):
     def __init__(self):
         AstNode.__init__(self)
 
+
 class Line(AstNode):
     """
     The line class.
@@ -188,6 +197,7 @@ class Line(AstNode):
     def __init__(self):
         AstNode.__init__(self)
 
+
 class Text(AstNode):
     """
     The text class.
@@ -195,6 +205,7 @@ class Text(AstNode):
 
     def __init__(self):
         AstNode.__init__(self)
+
 
 class Image(AstNode):
     """

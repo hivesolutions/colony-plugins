@@ -32,6 +32,7 @@ from .crypton_root import CryptonRoot
 
 CryptonRoot = CryptonRoot
 
+
 class Consumer(CryptonRoot):
     """
     The consumer class, which represents a generic
@@ -44,31 +45,16 @@ class Consumer(CryptonRoot):
     STATUS_INACTIVE = 2
     """ The consumer status inactive """
 
-    STATUS_ENUM = (
-        STATUS_ACTIVE,
-        STATUS_INACTIVE
-    )
+    STATUS_ENUM = (STATUS_ACTIVE, STATUS_INACTIVE)
     """ The status enumeration """
 
-    name = dict(
-        type = "text",
-        mandatory = True,
-        secure = True
-    )
+    name = dict(type="text", mandatory=True, secure=True)
     """ The consumers's name """
 
-    api_key = dict(
-        type = "text",
-        mandatory = True,
-        secure = True
-    )
+    api_key = dict(type="text", mandatory=True, secure=True)
     """ The consumers's value """
 
-    status = dict(
-        type = "integer",
-        mandatory = True,
-        secure = True
-    )
+    status = dict(type="integer", mandatory=True, secure=True)
     """ The consumers's status (1 - active, 2 - inactive) """
 
     def __init__(self):
@@ -101,7 +87,7 @@ class Consumer(CryptonRoot):
 
         # adds the validation methods to the status attribute
         self.add_validation("status", "not_none", True)
-        self.add_validation("status", "in_enumeration", values = Consumer.STATUS_ENUM)
+        self.add_validation("status", "in_enumeration", values=Consumer.STATUS_ENUM)
 
     def _generate_api_key(self):
         # retrieves the random plugin

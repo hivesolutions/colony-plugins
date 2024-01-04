@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PrintingPDFPlugin(colony.Plugin):
     """
     The main class for the Printing PDF plugin.
@@ -40,23 +41,18 @@ class PrintingPDFPlugin(colony.Plugin):
     description = "Printing PDF Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "printing"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["printing"]
     dependencies = [
         colony.PackageDependency("ReportLab PDF library", "reportlab"),
-        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
+        colony.PackageDependency("Python Imaging Library (PIL)", "PIL"),
     ]
-    main_modules = [
-        "printing_pdf"
-    ]
+    main_modules = ["printing_pdf"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import printing_pdf
+
         self.system = printing_pdf.PrintingPDF(self)
 
     def get_printing_name(self):

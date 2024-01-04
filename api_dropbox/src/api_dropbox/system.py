@@ -77,9 +77,7 @@ PUT_METHOD_VALUE = "PUT"
 OUT_OF_BAND_CALLBACK_VALUE = "oob"
 """ The out of band (default) callback value """
 
-HMAC_HASH_MODULES_MAP = {
-    HMAC_SHA1_VALUE : hashlib.sha1
-}
+HMAC_HASH_MODULES_MAP = {HMAC_SHA1_VALUE: hashlib.sha1}
 """ The map associating the HMAC values with the hashlib hash function modules """
 
 BASE_REST_URL = "http://api.dropbox.com/1/"
@@ -100,12 +98,13 @@ CONTENT_REST_SECURE_URL = "http://api-content.dropbox.com/1/"
 CONTENT_REST_SECURE_URL = "https://api-content.dropbox.com/1/"
 """ The content REST secure URL to be used """
 
+
 class APIDropbox(colony.System):
     """
     The API Dropbox class.
     """
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -131,9 +130,13 @@ class APIDropbox(colony.System):
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        dropbox_client = DropboxClient(json_plugin, client_http_plugin, encoding, oauth_structure)
-        if open_client: dropbox_client.open()
+        dropbox_client = DropboxClient(
+            json_plugin, client_http_plugin, encoding, oauth_structure
+        )
+        if open_client:
+            dropbox_client.open()
         return dropbox_client
+
 
 class DropboxClient(object):
     """
@@ -160,10 +163,10 @@ class DropboxClient(object):
 
     def __init__(
         self,
-        json_plugin = None,
-        client_http_plugin = None,
-        encoding = None,
-        oauth_structure = None
+        json_plugin=None,
+        client_http_plugin=None,
+        encoding=None,
+        oauth_structure=None,
     ):
         """
         Constructor of the class.
@@ -206,13 +209,13 @@ class DropboxClient(object):
         self,
         oauth_consumer_key,
         oauth_consumer_secret,
-        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
-        oauth_signature = None,
-        oauth_timestamp = None,
-        oauth_nonce = None,
-        oauth_version = DEFAULT_OAUTH_VERSION,
-        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE,
-        set_structure = True
+        oauth_signature_method=DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature=None,
+        oauth_timestamp=None,
+        oauth_nonce=None,
+        oauth_version=DEFAULT_OAUTH_VERSION,
+        oauth_callback=OUT_OF_BAND_CALLBACK_VALUE,
+        set_structure=True,
     ):
         """
         Generates a new OAuth structure, for the given parameters.
@@ -243,18 +246,19 @@ class DropboxClient(object):
         oauth_structure = OAuthStructure(
             oauth_consumer_key,
             oauth_consumer_secret,
-            oauth_signature_method = oauth_signature_method,
-            oauth_signature = oauth_signature,
-            oauth_timestamp = oauth_timestamp,
-            oauth_nonce = oauth_nonce,
-            oauth_version = oauth_version,
-            oauth_callback = oauth_callback
+            oauth_signature_method=oauth_signature_method,
+            oauth_signature=oauth_signature,
+            oauth_timestamp=oauth_timestamp,
+            oauth_nonce=oauth_nonce,
+            oauth_version=oauth_version,
+            oauth_callback=oauth_callback,
         )
 
         # in case the structure is meant to be set
         # sets it in the current instance and returns
         # the structure that was "just" generated
-        if set_structure: self.set_oauth_structure(oauth_structure)
+        if set_structure:
+            self.set_oauth_structure(oauth_structure)
         return oauth_structure
 
     def open_oauth_request_token(self):
@@ -279,7 +283,9 @@ class DropboxClient(object):
 
         # sets the OAuth parameters
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
-        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+        parameters[
+            "oauth_signature_method"
+        ] = self.oauth_structure.oauth_signature_method
         parameters["oauth_timestamp"] = oauth_timestamp
         parameters["oauth_nonce"] = oauth_nonce
         parameters["oauth_version"] = self.oauth_structure.oauth_version
@@ -294,20 +300,36 @@ class DropboxClient(object):
             parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&" % self._escape_url(self.oauth_structure.oauth_consumer_secret)
+            oauth_consumer_secret_escaped = "%s&" % self._escape_url(
+                self.oauth_structure.oauth_consumer_secret
+            )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = [
+                "%s=%s"
+                % (
+                    self._escape_url(key),
+                    self._escape_url(
+                        colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
+                    ),
+                )
+                for key in sorted(parameters)
+            ]
 
             # creates the message
-            message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
+            message = "&".join(
+                map(
+                    self._escape_url,
+                    [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)],
+                )
+            )
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(
-                oauth_consumer_secret_escaped,
-                message,
-                hashlib.sha1
-            ).digest().encode("base64")[:-1]
+            parameters["oauth_signature"] = (
+                hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1)
+                .digest()
+                .encode("base64")[:-1]
+            )
 
         # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
@@ -317,7 +339,9 @@ class DropboxClient(object):
         # a key to value dictionary
         values = result.split("&")
         values_list = [value.split("=", 1) for value in values]
-        values_list = [tuple if len(tuple) == 2 else (tuple[0], None) for tuple in values_list]
+        values_list = [
+            tuple if len(tuple) == 2 else (tuple[0], None) for tuple in values_list
+        ]
         values_map = dict(values_list)
 
         # retrieves both the OAuth token and the OAuth token secret to
@@ -351,7 +375,9 @@ class DropboxClient(object):
         # sets the OAuth parameters
         parameters["oauth_token"] = self.oauth_structure.oauth_token
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
-        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+        parameters[
+            "oauth_signature_method"
+        ] = self.oauth_structure.oauth_signature_method
         parameters["oauth_timestamp"] = oauth_timestamp
         parameters["oauth_nonce"] = oauth_nonce
         parameters["oauth_version"] = self.oauth_structure.oauth_version
@@ -366,20 +392,37 @@ class DropboxClient(object):
             parameters["oauth_signature"] = self.oauth_structure.oauth_signature
         else:
             # escapes the consumer secret
-            oauth_consumer_secret_escaped = "%s&%s" % (self._escape_url(self.oauth_structure.oauth_consumer_secret), self._escape_url(self.oauth_structure.oauth_token_secret))
+            oauth_consumer_secret_escaped = "%s&%s" % (
+                self._escape_url(self.oauth_structure.oauth_consumer_secret),
+                self._escape_url(self.oauth_structure.oauth_token_secret),
+            )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (self._escape_url(key), self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING))) for key in sorted(parameters)]
+            parameters_tuple = [
+                "%s=%s"
+                % (
+                    self._escape_url(key),
+                    self._escape_url(
+                        colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
+                    ),
+                )
+                for key in sorted(parameters)
+            ]
 
             # creates the message
-            message = "&".join(map(self._escape_url, [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)]))
+            message = "&".join(
+                map(
+                    self._escape_url,
+                    [GET_METHOD_VALUE, retrieval_url, "&".join(parameters_tuple)],
+                )
+            )
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(
-                oauth_consumer_secret_escaped,
-                message,
-                hashlib.sha1
-            ).digest().encode("base64")[:-1]
+            parameters["oauth_signature"] = (
+                hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1)
+                .digest()
+                .encode("base64")[:-1]
+            )
 
         # fetches the retrieval URL with the given parameters retrieving the JSON
         result = self._fetch_url(retrieval_url, parameters)
@@ -389,7 +432,9 @@ class DropboxClient(object):
         # a key to value dictionary
         values = result.split("&")
         values_list = [value.split("=", 1) for value in values]
-        values_list = [tuple if len(tuple) == 2 else (tuple[0], None) for tuple in values_list]
+        values_list = [
+            tuple if len(tuple) == 2 else (tuple[0], None) for tuple in values_list
+        ]
         values_map = dict(values_list)
 
         # retrieves the OAuth values from the values map
@@ -412,8 +457,8 @@ class DropboxClient(object):
 
         # creates the authentication parameters
         authentication_parameters = {
-            "oauth_token" : self.oauth_structure.oauth_token,
-            "oauth_callback" : self.oauth_structure.oauth_callback
+            "oauth_token": self.oauth_structure.oauth_token,
+            "oauth_callback": self.oauth_structure.oauth_callback,
         }
 
         # creates the authentication URL from the authentication token
@@ -434,9 +479,7 @@ class DropboxClient(object):
         retrieval_url = WWW_REST_SECURE_URL + "oauth/authenticate"
 
         # creates the authentication parameters
-        authentication_parameters = {
-            "oauth_token" : self.oauth_structure.oauth_token
-        }
+        authentication_parameters = {"oauth_token": self.oauth_structure.oauth_token}
 
         # creates the authentication URL from the authentication token
         authentication_url = self._build_url(retrieval_url, authentication_parameters)
@@ -472,7 +515,7 @@ class DropboxClient(object):
         # returns the data
         return data
 
-    def files_put(self, file_path, target_path = None):
+    def files_put(self, file_path, target_path=None):
         """
         Uploads a file in the given file to the given target
         path, this is a very slow operation.
@@ -497,8 +540,10 @@ class DropboxClient(object):
 
         # reads the complete file contents and then
         # closes the file at the end or error
-        try: file_contents = file.read()
-        finally: file.close()
+        try:
+            file_contents = file.read()
+        finally:
+            file.close()
 
         # retrieves the base name to be set for the file
         # (this is the default file name value to be used)
@@ -513,7 +558,9 @@ class DropboxClient(object):
         retrieval_url = CONTENT_REST_SECURE_URL + "files_put/dropbox/" + target_path
 
         # fetches the retrieval URL with the given parameters retrieving the JSON
-        json = self._fetch_url(retrieval_url, parameters, PUT_METHOD_VALUE, file_contents)
+        json = self._fetch_url(
+            retrieval_url, parameters, PUT_METHOD_VALUE, file_contents
+        )
 
         # loads JSON retrieving the data
         data = self.json_plugin.loads(json)
@@ -556,7 +603,7 @@ class DropboxClient(object):
 
         self.oauth_structure = oauth_structure
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE, contents = None):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE, contents=None):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -594,8 +641,8 @@ class DropboxClient(object):
             url,
             method,
             parameters,
-            content_type_charset = DEFAULT_CHARSET,
-            contents = contents
+            content_type_charset=DEFAULT_CHARSET,
+            contents=contents,
         )
 
         # retrieves the contents from the HTTP response
@@ -622,7 +669,7 @@ class DropboxClient(object):
         url = http_client.build_url(base_url, GET_METHOD_VALUE, parameters)
         return url
 
-    def _build_oauth_arguments(self, url, parameters, method = GET_METHOD_VALUE):
+    def _build_oauth_arguments(self, url, parameters, method=GET_METHOD_VALUE):
         """
         Builds the OAuth arguments encoding them into the OAuth message specification.
 
@@ -645,7 +692,9 @@ class DropboxClient(object):
         # sets the OAuth parameters
         parameters["oauth_token"] = self.oauth_structure.oauth_access_token
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
-        parameters["oauth_signature_method"] = self.oauth_structure.oauth_signature_method
+        parameters[
+            "oauth_signature_method"
+        ] = self.oauth_structure.oauth_signature_method
         parameters["oauth_timestamp"] = oauth_timestamp
         parameters["oauth_nonce"] = oauth_nonce
         parameters["oauth_version"] = self.oauth_structure.oauth_version
@@ -657,24 +706,32 @@ class DropboxClient(object):
             # escapes the consumer secret
             oauth_consumer_secret_escaped = "%s&%s" % (
                 self._escape_url(self.oauth_structure.oauth_consumer_secret),
-                self._escape_url(self.oauth_structure.oauth_token_secret)
+                self._escape_url(self.oauth_structure.oauth_token_secret),
             )
 
             # creates the parameters tuple
-            parameters_tuple = ["%s=%s" % (
-                self._escape_url(key),
-                self._escape_url(colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
-            )) for key in sorted(parameters)]
+            parameters_tuple = [
+                "%s=%s"
+                % (
+                    self._escape_url(key),
+                    self._escape_url(
+                        colony.legacy.UNICODE(parameters[key]).encode(DEFAULT_ENCODING)
+                    ),
+                )
+                for key in sorted(parameters)
+            ]
 
             # creates the message
-            message = "&".join(map(self._escape_url, [method, url, "&".join(parameters_tuple)]))
+            message = "&".join(
+                map(self._escape_url, [method, url, "&".join(parameters_tuple)])
+            )
 
             # sets the signature
-            parameters["oauth_signature"] = hmac.new(
-                oauth_consumer_secret_escaped,
-                message,
-                hashlib.sha1
-            ).digest().encode("base64")[:-1]
+            parameters["oauth_signature"] = (
+                hmac.new(oauth_consumer_secret_escaped, message, hashlib.sha1)
+                .digest()
+                .encode("base64")[:-1]
+            )
 
     def _escape_url(self, url_text):
         """
@@ -755,9 +812,7 @@ class DropboxClient(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client and opens the client
             # with empty options (default)
@@ -766,6 +821,7 @@ class DropboxClient(object):
 
         # returns the HTTP client
         return self.http_client
+
 
 class OAuthStructure(object):
     """
@@ -812,12 +868,12 @@ class OAuthStructure(object):
         self,
         oauth_consumer_key,
         oauth_consumer_secret,
-        oauth_signature_method = DEFAULT_OAUTH_SIGNATURE_METHOD,
-        oauth_signature = None,
-        oauth_timestamp = None,
-        oauth_nonce = None,
-        oauth_version = DEFAULT_OAUTH_VERSION,
-        oauth_callback = OUT_OF_BAND_CALLBACK_VALUE
+        oauth_signature_method=DEFAULT_OAUTH_SIGNATURE_METHOD,
+        oauth_signature=None,
+        oauth_timestamp=None,
+        oauth_nonce=None,
+        oauth_version=DEFAULT_OAUTH_VERSION,
+        oauth_callback=OUT_OF_BAND_CALLBACK_VALUE,
     ):
         """
         Constructor of the class.

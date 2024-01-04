@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class TemplateEnginePlugin(colony.Plugin):
     """
     The main class for the Template Engine plugin.
@@ -43,25 +44,20 @@ class TemplateEnginePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "template_engine"
-    ]
-    main_modules = [
-        "template_engine"
-    ]
+    capabilities = ["template_engine"]
+    main_modules = ["template_engine"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import template_engine
+
         self.system = template_engine.TemplateEngine(self)
 
-    def parse_template(self, file_path, base_path = ".", encoding = "utf-8"):
+    def parse_template(self, file_path, base_path=".", encoding="utf-8"):
         return self.system.parse_file_path(
-            file_path,
-            base_path = base_path,
-            encoding = encoding
+            file_path, base_path=base_path, encoding=encoding
         )
 
     def parse_file(self, file):

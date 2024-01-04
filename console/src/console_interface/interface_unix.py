@@ -45,22 +45,22 @@ KEYBOARD_SELECT_TIMEOUT = 1.0
 """ The keyboard select timeout """
 
 CHARACTER_CONVERSION_MAP = {
-    "\x0a" : "\x0d",
-    "\x7f" : "\x08",
-    ("\x1b", "\x5b", "\x41") : ("\xe0", "\x48"),
-    ("\x1b", "\x5b", "\x42") : ("\xe0", "\x50"),
-    ("\x1b", "\x5b", "\x43") : ("\xe0", "\x4d"),
-    ("\x1b", "\x5b", "\x44") : ("\xe0", "\x4b")
+    "\x0a": "\x0d",
+    "\x7f": "\x08",
+    ("\x1b", "\x5b", "\x41"): ("\xe0", "\x48"),
+    ("\x1b", "\x5b", "\x42"): ("\xe0", "\x50"),
+    ("\x1b", "\x5b", "\x43"): ("\xe0", "\x4d"),
+    ("\x1b", "\x5b", "\x44"): ("\xe0", "\x4b"),
 }
 """ The map for character conversion """
 
 CHARACTER_ORDINAL_CONVERSION_MAP = {
-    0x0a : 0x0d,
-    0x7f : 0x08,
-    (0x1b, 0x5b, 0x41) : (0xe0, 0x48),
-    (0x1b, 0x5b, 0x42) : (0xe0, 0x50),
-    (0x1b, 0x5b, 0x43) : (0xe0, 0x4d),
-    (0x1b, 0x5b, 0x44) : (0xe0, 0x4b)
+    0x0A: 0x0D,
+    0x7F: 0x08,
+    (0x1B, 0x5B, 0x41): (0xE0, 0x48),
+    (0x1B, 0x5B, 0x42): (0xE0, 0x50),
+    (0x1B, 0x5B, 0x43): (0xE0, 0x4D),
+    (0x1B, 0x5B, 0x44): (0xE0, 0x4B),
 }
 """ The map for character ordinal conversion """
 
@@ -82,11 +82,12 @@ CONSOLE_CONTEXT_VALUE = "console_context"
 TEST_VALUE = "test"
 """ The test value """
 
-SPECIAL_CHARACTER_ORDINAL_VALUE = 0x1b
+SPECIAL_CHARACTER_ORDINAL_VALUE = 0x1B
 """ The special character ordinal value """
 
-EXTRA_CHARACTER_ORDINAL_VALUE = 0x5b
+EXTRA_CHARACTER_ORDINAL_VALUE = 0x5B
 """ The extra character ordinal value """
+
 
 class ConsoleInterfaceUnix(object):
     """
@@ -161,24 +162,42 @@ class ConsoleInterfaceUnix(object):
         self.old_terminal_reference = termios.tcgetattr(self.stdin_file_number)
 
         # changes the new terminal reference for echo
-        self.new_terminal_reference[IFLAG] = self.new_terminal_reference[IFLAG] & ~(termios.BRKINT | termios.ICRNL | termios.INPCK | termios.ISTRIP | termios.IXON)
-        self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] & ~(termios.CSIZE | termios.PARENB)
-        self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] | termios.CS8
-        self.new_terminal_reference[LFLAG] = self.new_terminal_reference[LFLAG] & ~(termios.ECHO | termios.ICANON | termios.IEXTEN)
+        self.new_terminal_reference[IFLAG] = self.new_terminal_reference[IFLAG] & ~(
+            termios.BRKINT
+            | termios.ICRNL
+            | termios.INPCK
+            | termios.ISTRIP
+            | termios.IXON
+        )
+        self.new_terminal_reference[CFLAG] = self.new_terminal_reference[CFLAG] & ~(
+            termios.CSIZE | termios.PARENB
+        )
+        self.new_terminal_reference[CFLAG] = (
+            self.new_terminal_reference[CFLAG] | termios.CS8
+        )
+        self.new_terminal_reference[LFLAG] = self.new_terminal_reference[LFLAG] & ~(
+            termios.ECHO | termios.ICANON | termios.IEXTEN
+        )
         self.new_terminal_reference[CC][termios.VMIN] = 1
         self.new_terminal_reference[CC][termios.VTIME] = 0
 
         # sets the new terminal reference in the standard input
-        termios.tcsetattr(self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference)
+        termios.tcsetattr(
+            self.stdin_file_number, termios.TCSANOW, self.new_terminal_reference
+        )
 
         # retrieves the "old" flags for the standard input
         self.old_flags = fcntl.fcntl(self.stdin_file_number, fcntl.F_GETFL)
 
         # creates the new flags from the old flags
-        self.new_flags = self.old_flags | os.O_NONBLOCK #@UndefinedVariable
+        self.new_flags = self.old_flags | os.O_NONBLOCK  # @UndefinedVariable
 
         # creates the console interface character
-        self.console_interface_character = console_plugin.create_console_interface_character(self, self.console_context)
+        self.console_interface_character = (
+            console_plugin.create_console_interface_character(
+                self, self.console_context
+            )
+        )
 
         # starts the console interface character
         self.console_interface_character.start(arguments)
@@ -188,31 +207,43 @@ class ConsoleInterfaceUnix(object):
         self.console_context = None
 
         # sets the old terminal reference in the standard input
-        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+        (not self.old_terminal_reference == None) and termios.tcsetattr(
+            self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference
+        )
 
         # sets the old flags in the standard input
-        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
+        (not self.old_flags == None) and fcntl.fcntl(
+            self.stdin_file_number, fcntl.F_SETFL, self.old_flags
+        )
 
         # unsets the old terminal reference and the old flags
         self.old_terminal_reference = None
         self.old_flags = None
 
         # stops the console interface character
-        self.console_interface_character and self.console_interface_character.stop(arguments)
+        self.console_interface_character and self.console_interface_character.stop(
+            arguments
+        )
 
     def cleanup(self, arguments):
         # sets the old terminal reference in the standard input
-        (not self.old_terminal_reference == None) and termios.tcsetattr(self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference)
+        (not self.old_terminal_reference == None) and termios.tcsetattr(
+            self.stdin_file_number, termios.TCSAFLUSH, self.old_terminal_reference
+        )
 
         # sets the old flags in the standard input
-        (not self.old_flags == None) and fcntl.fcntl(self.stdin_file_number, fcntl.F_SETFL, self.old_flags)
+        (not self.old_flags == None) and fcntl.fcntl(
+            self.stdin_file_number, fcntl.F_SETFL, self.old_flags
+        )
 
         # unsets the old terminal reference and the old flags
         self.old_terminal_reference = None
         self.old_flags = None
 
         # cleanups the console interface character
-        self.console_interface_character and self.console_interface_character.cleanup(arguments)
+        self.console_interface_character and self.console_interface_character.cleanup(
+            arguments
+        )
 
     def get_line(self):
         # starts the line
@@ -226,7 +257,9 @@ class ConsoleInterfaceUnix(object):
                 return
 
             # "selects" the standard input
-            selected_values = select.select([sys.stdin], [], [], KEYBOARD_SELECT_TIMEOUT)
+            selected_values = select.select(
+                [sys.stdin], [], [], KEYBOARD_SELECT_TIMEOUT
+            )
 
             # in case no values are selected (timeout)
             if selected_values == ([], [], []):
@@ -268,18 +301,14 @@ class ConsoleInterfaceUnix(object):
 
                         # sets the character as the tuple
                         # with the final character
-                        character = (
-                            character,
-                            extra_character,
-                            final_character
-                        )
+                        character = (character, extra_character, final_character)
 
                         # sets the character ordinal as the tuple
                         # with the extra character ordinal
                         character_ordinal = (
                             character_ordinal,
                             extra_character_ordinal,
-                            final_character_ordinal
+                            final_character_ordinal,
                         )
                 except IOError:
                     # ignores no special sequence
@@ -289,10 +318,14 @@ class ConsoleInterfaceUnix(object):
             character = CHARACTER_CONVERSION_MAP.get(character, character)
 
             # tries to convert the character ordinal using the conversion map
-            character_ordinal = CHARACTER_ORDINAL_CONVERSION_MAP.get(character_ordinal, character_ordinal)
+            character_ordinal = CHARACTER_ORDINAL_CONVERSION_MAP.get(
+                character_ordinal, character_ordinal
+            )
 
             # processes the character
-            if self.console_interface_character.process_character(character, character_ordinal):
+            if self.console_interface_character.process_character(
+                character, character_ordinal
+            ):
                 # breaks the loop
                 break
 
@@ -320,7 +353,9 @@ class ConsoleInterfaceUnix(object):
         try:
             # retrieves the console size value from the termios
             # reference values
-            console_size_value = fcntl.ioctl(0, termios.TIOCGWINSZ, struct.pack("HHHH", 0, 0, 0, 0))
+            console_size_value = fcntl.ioctl(
+                0, termios.TIOCGWINSZ, struct.pack("HHHH", 0, 0, 0, 0)
+            )
 
             # unpacks the console size value into height and width
             # and the hp and wp values
@@ -372,14 +407,14 @@ class ConsoleInterfaceUnix(object):
         # writes the backspace character to the standard output
         sys.stdout.write("\x08")
 
-    def _cursor_top(self, amount = 1):
+    def _cursor_top(self, amount=1):
         sys.stdout.write("\033[%dA", amount)
 
-    def _cursor_down(self, amount = 1):
+    def _cursor_down(self, amount=1):
         sys.stdout.write("\033[%dB", amount)
 
-    def _cursor_right(self, amount = 1):
+    def _cursor_right(self, amount=1):
         sys.stdout.write("\033[%dC" % amount)
 
-    def _cursor_left(self, amount = 1):
+    def _cursor_left(self, amount=1):
         sys.stdout.write("\033[%dD" % amount)

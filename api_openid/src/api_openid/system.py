@@ -50,7 +50,7 @@ DEFAULT_SIGNED_NAMES = (
     "response_nonce",
     "assoc_handle",
     "claimed_id",
-    "identity"
+    "identity",
 )
 """ The default signed names """
 
@@ -60,7 +60,7 @@ DEFAULT_SIGNED_ITEMS = (
     "response_nonce",
     "association_handle",
     "claimed_id",
-    "identity"
+    "identity",
 )
 """ The default signed items """
 
@@ -146,25 +146,25 @@ MAXIMUM_NONCE_VALUES_LIST_SIZE = 1000
 """ The maximum nonce values list size """
 
 HMAC_HASH_MODULES_MAP = {
-    HMAC_SHA1_VALUE : hashlib.sha1,
-    HMAC_SHA256_VALUE : hashlib.sha256,
-    DH_SHA1_VALUE : hashlib.sha1,
-    DH_SHA256_VALUE : hashlib.sha1
+    HMAC_SHA1_VALUE: hashlib.sha1,
+    HMAC_SHA256_VALUE: hashlib.sha256,
+    DH_SHA1_VALUE: hashlib.sha1,
+    DH_SHA256_VALUE: hashlib.sha1,
 }
 """ The map associating the HMAC values with the hashlib
 hash function modules """
 
-DIFFIE_HELLMAN_ASSOCIATION_TYPES = (
-    DH_SHA1_VALUE,
-    DH_SHA256_VALUE
-)
+DIFFIE_HELLMAN_ASSOCIATION_TYPES = (DH_SHA1_VALUE, DH_SHA256_VALUE)
 """ The diffie hellman association types """
 
-DEFAULT_PRIME_VALUE = colony.legacy.LONG(155172898181473697471232257763715539915724801966915404479707795314057629378541917580651227423698188993727816152646631438561595825688188889951272158842675419950341258706556549803580104870537681476726513255747040765857479291291572334510643245094715007229621094194349783925984760375594985848253359305585439638443)
+DEFAULT_PRIME_VALUE = colony.legacy.LONG(
+    155172898181473697471232257763715539915724801966915404479707795314057629378541917580651227423698188993727816152646631438561595825688188889951272158842675419950341258706556549803580104870537681476726513255747040765857479291291572334510643245094715007229621094194349783925984760375594985848253359305585439638443
+)
 """ The default prime value to be used in Diffie Hellman """
 
 DEFAULT_BASE_VALUE = 2
 """ The default base value to be used in diffie hellman """
+
 
 class APIOpenID(colony.System):
     """
@@ -178,7 +178,7 @@ class APIOpenID(colony.System):
         colony.System.__init__(self, plugin)
         self.nonce_values_map = {}
 
-    def create_server(self, api_attributes, open_server = True):
+    def create_server(self, api_attributes, open_server=True):
         """
         Creates a server, with the given API attributes.
 
@@ -200,11 +200,7 @@ class APIOpenID(colony.System):
         # to create the "new" OpenID server
         openid_structure = api_attributes.get("openid_structure", None)
         openid_server = OpenIDServer(
-            self.plugin,
-            diffie_hellman_plugin,
-            random_plugin,
-            self,
-            openid_structure
+            self.plugin, diffie_hellman_plugin, random_plugin, self, openid_structure
         )
 
         # in case the server is meant to be open
@@ -214,7 +210,7 @@ class APIOpenID(colony.System):
         # returns the OpenID server
         return openid_server
 
-    def create_client(self, api_attributes, open_client = True):
+    def create_client(self, api_attributes, open_client=True):
         """
         Creates a client, with the given API attributes.
 
@@ -238,8 +234,11 @@ class APIOpenID(colony.System):
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
-        openid_client = OpenIDClient(self.plugin, client_http_plugin, api_yadis_plugin, self, openid_structure)
-        if open_client: openid_client.open()
+        openid_client = OpenIDClient(
+            self.plugin, client_http_plugin, api_yadis_plugin, self, openid_structure
+        )
+        if open_client:
+            openid_client.open()
         return openid_client
 
     def _verify_nonce(self, nonce_value, provider_url):
@@ -373,6 +372,7 @@ class APIOpenID(colony.System):
         # returns the result
         return result
 
+
 class OpenIDServer(object):
     """
     The class that represents an OpenID server connection.
@@ -398,12 +398,12 @@ class OpenIDServer(object):
 
     def __init__(
         self,
-        api_openid_plugin = None,
-        diffie_hellman_plugin = None,
-        random_plugin = None,
-        api_openid = None,
-        openid_structure = None,
-        diffie_hellman = None
+        api_openid_plugin=None,
+        diffie_hellman_plugin=None,
+        random_plugin=None,
+        api_openid=None,
+        openid_structure=None,
+        diffie_hellman=None,
     ):
         """
         Constructor of the class.
@@ -445,29 +445,38 @@ class OpenIDServer(object):
 
     def generate_openid_structure(
         self,
-        provider_url = None,
-        association_type = HMAC_SHA256_VALUE,
-        session_type = NO_ENCRYPTION_VALUE,
-        prime_value = None,
-        base_value = None,
-        consumer_public = None,
-        set_structure = True
+        provider_url=None,
+        association_type=HMAC_SHA256_VALUE,
+        session_type=NO_ENCRYPTION_VALUE,
+        prime_value=None,
+        base_value=None,
+        consumer_public=None,
+        set_structure=True,
     ):
         # creates a new OpenID structure
         openid_structure = OpenIDStructure(
-            provider_url,
-            association_type = association_type,
-            session_type = session_type
+            provider_url, association_type=association_type, session_type=session_type
         )
 
         # in case the structure is meant to be set
         # sets the OpenID structure
-        if set_structure: self.set_openid_structure(openid_structure)
+        if set_structure:
+            self.set_openid_structure(openid_structure)
 
         # decodes the Diffie Hellman values in case they exist
-        prime_value = prime_value and self.api_openid._mklong(base64.b64decode(prime_value)) or None
-        base_value = base_value and self.api_openid._mklong(base64.b64decode(base_value)) or None
-        consumer_public = consumer_public and self.api_openid._mklong(base64.b64decode(consumer_public)) or None
+        prime_value = (
+            prime_value
+            and self.api_openid._mklong(base64.b64decode(prime_value))
+            or None
+        )
+        base_value = (
+            base_value and self.api_openid._mklong(base64.b64decode(base_value)) or None
+        )
+        consumer_public = (
+            consumer_public
+            and self.api_openid._mklong(base64.b64decode(consumer_public))
+            or None
+        )
 
         # sets the default Diffie Hellman values
         prime_value = prime_value or DEFAULT_PRIME_VALUE
@@ -475,10 +484,7 @@ class OpenIDServer(object):
 
         # creates the parameters to send to be used in the Diffie Hellman
         # structure creation
-        parameters = dict(
-            prime_value = prime_value,
-            base_value = base_value
-        )
+        parameters = dict(prime_value=prime_value, base_value=base_value)
 
         # creates the Diffie Hellman management structure with the prime
         # and base values given
@@ -530,7 +536,9 @@ class OpenIDServer(object):
 
     def openid_request(self):
         # generates an invalidate handle if necessary
-        invalidate_handle = self.openid_structure.invalidate_handle or self._generate_handle()
+        invalidate_handle = (
+            self.openid_structure.invalidate_handle or self._generate_handle()
+        )
 
         # retrieves the current date time
         current_date_time = datetime.datetime.utcnow()
@@ -563,7 +571,7 @@ class OpenIDServer(object):
         # sets the signature in the OpenID structure
         self.openid_structure.signature = signature
 
-    def openid_check_authentication(self, return_openid_structure, strict = True):
+    def openid_check_authentication(self, return_openid_structure, strict=True):
         """
         Verifies the given return OpenID structure (verification)
         according to the OpenID specification.
@@ -578,15 +586,18 @@ class OpenIDServer(object):
         """
 
         # in case the verification is strict and any of the base information items mismatches
-        if strict and not (self.openid_structure.return_to == return_openid_structure.return_to and\
-            self.openid_structure.claimed_id == return_openid_structure.claimed_id and\
-            self.openid_structure.identity == return_openid_structure.identity and\
-            self.openid_structure.provider_url == return_openid_structure.provider_url and\
-            self.openid_structure.response_nonce == return_openid_structure.response_nonce and\
-            self.openid_structure.signed == return_openid_structure.signed and\
-            self.openid_structure.signature == return_openid_structure.signature and\
-            return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
-
+        if strict and not (
+            self.openid_structure.return_to == return_openid_structure.return_to
+            and self.openid_structure.claimed_id == return_openid_structure.claimed_id
+            and self.openid_structure.identity == return_openid_structure.identity
+            and self.openid_structure.provider_url
+            == return_openid_structure.provider_url
+            and self.openid_structure.response_nonce
+            == return_openid_structure.response_nonce
+            and self.openid_structure.signed == return_openid_structure.signed
+            and self.openid_structure.signature == return_openid_structure.signature
+            and return_openid_structure.ns == OPENID_NAMESPACE_VALUE
+        ):
             # raises a verification failed exception
             raise exceptions.VerificationFailed("invalid discovered information")
 
@@ -633,13 +644,17 @@ class OpenIDServer(object):
             encoded_key_value = hash_module(self.api_openid._btwoc(key_value)).digest()
 
             # calculates the encoded MAC key value and retrieves the digest
-            encoded_mac_key = colony.xor_string_value(decoded_mac_key, encoded_key_value)
+            encoded_mac_key = colony.xor_string_value(
+                decoded_mac_key, encoded_key_value
+            )
 
             # encodes the encoded MAC key into Base64
             encoded_mac_key = base64.b64encode(encoded_mac_key)
 
             # sets the DH server public
-            parameters["dh_server_public"] = base64.b64encode(self.api_openid._btwoc(B_value))
+            parameters["dh_server_public"] = base64.b64encode(
+                self.api_openid._btwoc(B_value)
+            )
 
             # sets the encoded MAC key
             parameters["enc_mac_key"] = encoded_mac_key
@@ -681,7 +696,9 @@ class OpenIDServer(object):
         check_authentication_parameters = self.get_check_authentication_parameters()
 
         # encodes the check authentication parameters
-        encoded_check_authentication_parameters = self._encode_key_value(check_authentication_parameters)
+        encoded_check_authentication_parameters = self._encode_key_value(
+            check_authentication_parameters
+        )
 
         # returns the encoded check authentication parameters
         return encoded_check_authentication_parameters
@@ -775,7 +792,12 @@ class OpenIDServer(object):
             signed_item_real_name = signed_names_list[index]
 
             # adds the key value pair to the message string buffer
-            message_string_buffer.write(signed_item_real_name.encode(DEFAULT_CHARSET) + ":" + signed_item_value.encode(DEFAULT_CHARSET) + "\n")
+            message_string_buffer.write(
+                signed_item_real_name.encode(DEFAULT_CHARSET)
+                + ":"
+                + signed_item_value.encode(DEFAULT_CHARSET)
+                + "\n"
+            )
 
             # increments the index
             index += 1
@@ -787,12 +809,17 @@ class OpenIDServer(object):
         signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
         # retrieves the hash module from the HMAC hash modules map
-        hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
+        hash_module = HMAC_HASH_MODULES_MAP.get(
+            self.openid_structure.association_type, None
+        )
 
         # in case no hash module is set
         if not hash_module:
             # raises the invalid hash function exception
-            raise exceptions.InvalidHashFunction("the hash function is not available: " + self.openid_structure.association_type)
+            raise exceptions.InvalidHashFunction(
+                "the hash function is not available: "
+                + self.openid_structure.association_type
+            )
 
         # calculates the signature value and retrieves the digest
         signature = hmac.new(signature_mac_key, message, hash_module).digest()
@@ -816,7 +843,7 @@ class OpenIDServer(object):
         # returns the handle
         return handle
 
-    def _generate_mac_key(self, mac_key_type = HMAC_SHA1_VALUE):
+    def _generate_mac_key(self, mac_key_type=HMAC_SHA1_VALUE):
         # in case the key type is SHA1
         if mac_key_type == HMAC_SHA1_VALUE:
             # generates a MAC key with the SHA1 random value
@@ -895,7 +922,10 @@ class OpenIDServer(object):
         :return: The key value encoded string.
         """
 
-        return "\n".join([key + ":" + value for key, value in colony.legacy.items(values_map)])
+        return "\n".join(
+            [key + ":" + value for key, value in colony.legacy.items(values_map)]
+        )
+
 
 class OpenIDClient(object):
     """
@@ -925,11 +955,11 @@ class OpenIDClient(object):
 
     def __init__(
         self,
-        api_openid_plugin = None,
-        client_http_plugin = None,
-        api_yadis_plugin = None,
-        api_openid = None,
-        openid_structure = None
+        api_openid_plugin=None,
+        client_http_plugin=None,
+        api_yadis_plugin=None,
+        api_openid=None,
+        openid_structure=None,
     ):
         """
         Constructor of the class.
@@ -966,11 +996,13 @@ class OpenIDClient(object):
 
         # in case an HTTP client is defined, must close
         # it to avoid any leak in HTTP associated resources
-        if self.http_client: self.http_client.close({})
+        if self.http_client:
+            self.http_client.close({})
 
         # in case an Yadis (remote) client is defined, must
         # close it to avoid any leak in resources
-        if self.yadis_client: self.yadis_client.close()
+        if self.yadis_client:
+            self.yadis_client.close()
 
     def generate_openid_structure(
         self,
@@ -979,12 +1011,20 @@ class OpenIDClient(object):
         identity,
         return_to,
         realm,
-        association_type = DEFAULT_OPENID_ASSOCIATE_TYPE,
-        session_type = DEFAULT_OPENID_SESSION_TYPE,
-        set_structure = True
+        association_type=DEFAULT_OPENID_ASSOCIATE_TYPE,
+        session_type=DEFAULT_OPENID_SESSION_TYPE,
+        set_structure=True,
     ):
         # creates a new OpenID structure
-        openid_structure = OpenIDStructure(provider_url, claimed_id, identity, return_to, realm, association_type, session_type)
+        openid_structure = OpenIDStructure(
+            provider_url,
+            claimed_id,
+            identity,
+            return_to,
+            realm,
+            association_type,
+            session_type,
+        )
 
         # in case the structure is meant to be set
         if set_structure:
@@ -1009,7 +1049,9 @@ class OpenIDClient(object):
         claimed_id = claimed_id.strip()
 
         # in case the claimed id is of type XRI
-        if claimed_id.startswith(XRI_URI_VALUE) or claimed_id.startswith(XRI_INITIALIZER_VALUE):
+        if claimed_id.startswith(XRI_URI_VALUE) or claimed_id.startswith(
+            XRI_INITIALIZER_VALUE
+        ):
             # in case the claimed id starts with the XRI URI value
             if claimed_id.startswith(XRI_URI_VALUE):
                 # removes the XRI URI from the claimed id
@@ -1017,7 +1059,9 @@ class OpenIDClient(object):
         # in case the claimed id is of type URL
         else:
             # in case the claimed id (URL) does not start with the correct URI value
-            if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(HTTPS_URI_VALUE):
+            if not claimed_id.startswith(HTTP_URI_VALUE) and not claimed_id.startswith(
+                HTTPS_URI_VALUE
+            ):
                 # adds the HTTP URI to the claimed id
                 claimed_id = HTTP_URI_VALUE + claimed_id
 
@@ -1110,7 +1154,7 @@ class OpenIDClient(object):
         parameters["openid.session_type"] = self.openid_structure.session_type
 
         # fetches the retrieval URL with the given parameters retrieving the result
-        result = self._fetch_url(retrieval_url, parameters, method = POST_METHOD_VALUE)
+        result = self._fetch_url(retrieval_url, parameters, method=POST_METHOD_VALUE)
 
         # strips the result value
         result = result.strip()
@@ -1144,7 +1188,7 @@ class OpenIDClient(object):
         # returns the OpenID structure
         return self.openid_structure
 
-    def openid_verify(self, return_openid_structure, strict = True):
+    def openid_verify(self, return_openid_structure, strict=True):
         """
         Verifies the given return OpenID structure (verification)
         according to the OpenID specification.
@@ -1159,17 +1203,21 @@ class OpenIDClient(object):
         """
 
         # in case the verification is strict and any of the base information items mismatches
-        if strict and not (self.openid_structure.return_to == return_openid_structure.return_to and\
-            self.openid_structure.claimed_id == return_openid_structure.claimed_id and\
-            self.openid_structure.identity == return_openid_structure.identity and\
-            self.openid_structure.provider_url == return_openid_structure.provider_url and\
-            return_openid_structure.ns == OPENID_NAMESPACE_VALUE):
-
+        if strict and not (
+            self.openid_structure.return_to == return_openid_structure.return_to
+            and self.openid_structure.claimed_id == return_openid_structure.claimed_id
+            and self.openid_structure.identity == return_openid_structure.identity
+            and self.openid_structure.provider_url
+            == return_openid_structure.provider_url
+            and return_openid_structure.ns == OPENID_NAMESPACE_VALUE
+        ):
             # raises a verification failed exception
             raise exceptions.VerificationFailed("invalid discovered information")
 
         # verifies the nonce value retrieving the result
-        nonce_verification_result = self.api_openid._verify_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
+        nonce_verification_result = self.api_openid._verify_nonce(
+            return_openid_structure.response_nonce, return_openid_structure.provider_url
+        )
 
         # in case the nonce verification is not successful
         if not nonce_verification_result:
@@ -1188,7 +1236,12 @@ class OpenIDClient(object):
             signed_item_value = getattr(return_openid_structure, signed_item_name)
 
             # adds the key value pair to the message string buffer
-            message_string_buffer.write(signed_item_name.encode(DEFAULT_CHARSET) + ":" + signed_item_value.encode(DEFAULT_CHARSET) + "\n")
+            message_string_buffer.write(
+                signed_item_name.encode(DEFAULT_CHARSET)
+                + ":"
+                + signed_item_value.encode(DEFAULT_CHARSET)
+                + "\n"
+            )
 
         # retrieves the value from the message string buffer
         message = message_string_buffer.get_value()
@@ -1197,12 +1250,17 @@ class OpenIDClient(object):
         signature_mac_key = base64.b64decode(self.openid_structure.mac_key)
 
         # retrieves the hash module from the HMAC hash modules map
-        hash_module = HMAC_HASH_MODULES_MAP.get(self.openid_structure.association_type, None)
+        hash_module = HMAC_HASH_MODULES_MAP.get(
+            self.openid_structure.association_type, None
+        )
 
         # in case no hash module is set
         if not hash_module:
             # raises the invalid hash function exception
-            raise exceptions.InvalidHashFunction("the hash function is not available: " + self.openid_structure.association_type)
+            raise exceptions.InvalidHashFunction(
+                "the hash function is not available: "
+                + self.openid_structure.association_type
+            )
 
         # calculates the signature value and retrieves the digest
         signature = hmac.new(signature_mac_key, message, hash_module).digest()
@@ -1216,7 +1274,9 @@ class OpenIDClient(object):
             raise exceptions.VerificationFailed("invalid message signature")
 
         # updates the nonce value
-        self.api_openid._update_nonce(return_openid_structure.response_nonce, return_openid_structure.provider_url)
+        self.api_openid._update_nonce(
+            return_openid_structure.response_nonce, return_openid_structure.provider_url
+        )
 
         # returns the OpenID structure
         return self.openid_structure
@@ -1277,7 +1337,10 @@ class OpenIDClient(object):
 
         # in case the sreg 1.1 extension exists in the current OpenID
         # context information
-        if OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
+        if (
+            OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE
+            in self.openid_structure.types_list
+        ):
             parameters["openid.ns.sreg"] = OPENID_SREG_1_1_EXTENSION_NAMESPACE_VALUE
             parameters["openid.sreg.required"] = ""
             parameters["openid.sreg.optional"] = "nickname,email,fullname,dob,gender"
@@ -1287,7 +1350,9 @@ class OpenIDClient(object):
         if OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
             parameters["openid.ns.ax"] = OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE
             parameters["openid.ax.mode"] = "fetch_request"
-            parameters["openid.ax.type.nickname"] = "http://axschema.org/namePerson/friendly"
+            parameters[
+                "openid.ax.type.nickname"
+            ] = "http://axschema.org/namePerson/friendly"
             parameters["openid.ax.type.email"] = "http://axschema.org/contact/email"
             parameters["openid.ax.type.fullname"] = "http://axschema.org/namePerson"
             parameters["openid.ax.type.dob"] = "http://axschema.org/birthDate"
@@ -1342,10 +1407,12 @@ class OpenIDClient(object):
         parameters = {}
 
         # fetches the retrieval URL with the given parameters retrieving the result
-        result, headers_map = self._fetch_url(retrieval_url, parameters, headers = True)
+        result, headers_map = self._fetch_url(retrieval_url, parameters, headers=True)
 
         # tries to retrieve the Yadis provider URL
-        yadis_provider_url = headers_map.get(XRDS_LOCATION_VALUE, headers_map.get(XRDS_LOCATION_LOWER_VALUE, None))
+        yadis_provider_url = headers_map.get(
+            XRDS_LOCATION_VALUE, headers_map.get(XRDS_LOCATION_LOWER_VALUE, None)
+        )
 
         # in case a valid Yadis provider
         # URL was discovered
@@ -1362,8 +1429,8 @@ class OpenIDClient(object):
         except Exception as exception:
             # prints an info message
             self.api_openid_plugin.info(
-                "There was a problem parsing Yadis HTML: %s" %\
-                colony.legacy.UNICODE(exception)
+                "There was a problem parsing Yadis HTML: %s"
+                % colony.legacy.UNICODE(exception)
             )
 
         # retrieves the Yadis provider URL
@@ -1401,7 +1468,7 @@ class OpenIDClient(object):
         # returns the built URL
         return url
 
-    def _fetch_url(self, url, parameters = None, method = GET_METHOD_VALUE, headers = False):
+    def _fetch_url(self, url, parameters=None, method=GET_METHOD_VALUE, headers=False):
         """
         Fetches the given URL for the given parameters and using the given method.
 
@@ -1426,7 +1493,9 @@ class OpenIDClient(object):
         http_client = self._get_http_client()
 
         # fetches the URL retrieving the HTTP response
-        http_response = http_client.fetch_url(url, method, parameters, content_type_charset = DEFAULT_CHARSET)
+        http_response = http_client.fetch_url(
+            url, method, parameters, content_type_charset=DEFAULT_CHARSET
+        )
 
         # retrieves the contents from the HTTP response
         contents = http_response.received_message
@@ -1454,9 +1523,7 @@ class OpenIDClient(object):
         # in case no HTTP client exists
         if not self.http_client:
             # defines the client parameters
-            client_parameters = {
-                CONTENT_TYPE_CHARSET_VALUE : DEFAULT_CHARSET
-            }
+            client_parameters = {CONTENT_TYPE_CHARSET_VALUE: DEFAULT_CHARSET}
 
             # creates the HTTP client
             self.http_client = self.client_http_plugin.create_client(client_parameters)
@@ -1483,6 +1550,7 @@ class OpenIDClient(object):
 
         # returns the Yadis remote client
         return self.yadis_client
+
 
 class OpenIDStructure(object):
     """
@@ -1545,13 +1613,13 @@ class OpenIDStructure(object):
 
     def __init__(
         self,
-        provider_url = None,
-        claimed_id = None,
-        identity = None,
-        return_to = None,
-        realm = None,
-        association_type = DEFAULT_OPENID_ASSOCIATE_TYPE,
-        session_type = DEFAULT_OPENID_SESSION_TYPE
+        provider_url=None,
+        claimed_id=None,
+        identity=None,
+        return_to=None,
+        realm=None,
+        association_type=DEFAULT_OPENID_ASSOCIATE_TYPE,
+        session_type=DEFAULT_OPENID_SESSION_TYPE,
     ):
         """
         Constructor of the class.

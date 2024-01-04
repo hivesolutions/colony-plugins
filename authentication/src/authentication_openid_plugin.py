@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class AuthenticationOpenIDPlugin(colony.Plugin):
     """
     The main class for the Authentication OpenID plugin.
@@ -40,19 +41,14 @@ class AuthenticationOpenIDPlugin(colony.Plugin):
     description = "Authentication OpenID Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "authentication_handler"
-    ]
-    main_modules = [
-        "authentication_openid"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["authentication_handler"]
+    main_modules = ["authentication_openid"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import authentication_openid
+
         self.system = authentication_openid.AuthenticationOpenID(self)
 
     def get_handler_name(self):

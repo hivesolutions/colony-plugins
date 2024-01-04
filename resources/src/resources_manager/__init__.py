@@ -31,8 +31,18 @@ from . import system
 from . import tests
 
 from .exceptions import ResourcesManagerException
-from .parser import Parser, ResourcesFileParser, PluginConfiguration, Resource,\
-    Validation, Expression, UnaryExpressionNode, BinaryExpression, Operand,\
-    EqualsExpression, valid_node
+from .parser import (
+    Parser,
+    ResourcesFileParser,
+    PluginConfiguration,
+    Resource,
+    Validation,
+    Expression,
+    UnaryExpressionNode,
+    BinaryExpression,
+    Operand,
+    EqualsExpression,
+    valid_node,
+)
 from .system import ResourcesManager
 from .tests import ResourcesManagerTestCase

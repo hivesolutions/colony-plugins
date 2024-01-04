@@ -44,6 +44,7 @@ LOGIN_ENTITY_NAME_VALUE = "login_entity_name"
 LOGIN_SALT_VALUE = "login_salt"
 """ The login salt value """
 
+
 class AuthenticationEntityManager(colony.System):
     """
     The authentication entity manager class.
@@ -98,31 +99,34 @@ class AuthenticationEntityManager(colony.System):
         # in case the username or password are not defined
         # an authentication error must be raised
         if not username or not password:
-            raise exceptions.AuthenticationError("an username and a password must be provided")
+            raise exceptions.AuthenticationError(
+                "an username and a password must be provided"
+            )
 
         # retrieves the users that match the authentication parameters
         # and retrieves the first user as the possible valid one, defaulting
         # to an invalid/unset value in case no entities exist
-        users = entity_manager.find(login_entity_class, username = username)
+        users = entity_manager.find(login_entity_class, username=username)
         user = users[0] if users else None
 
         # in case the user was not found an authentication
         # error must be raised about the issue
-        if not user: raise exceptions.AuthenticationError("user not found")
+        if not user:
+            raise exceptions.AuthenticationError("user not found")
 
         # checks that the password is valid
         password_valid = colony.password_match(user.password_hash, password, login_salt)
 
         # in case the password is valid, creates the return
         # value as a map containing some of the user data
-        if password_valid: return_value = dict(
-            valid = True,
-            username = username
-        )
+        if password_valid:
+            return_value = dict(valid=True, username=username)
         # otherwise there is no valid username password
         # combination and raises an exception
         else:
-            raise exceptions.AuthenticationError("invalid username password combination")
+            raise exceptions.AuthenticationError(
+                "invalid username password combination"
+            )
 
         # returns the return value
         return return_value

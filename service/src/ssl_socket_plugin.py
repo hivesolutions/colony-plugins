@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class SSLSocketPlugin(colony.Plugin):
     """
     The main class for the SSL Socket plugin.
@@ -40,22 +41,15 @@ class SSLSocketPlugin(colony.Plugin):
     description = "The plugin that offers the SSL socket"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "socket_provider"
-    ]
-    dependencies = [
-        colony.PackageDependency("Python 2.6", "ssl")
-    ]
-    main_modules = [
-        "ssl_socket"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["socket_provider"]
+    dependencies = [colony.PackageDependency("Python 2.6", "ssl")]
+    main_modules = ["ssl_socket"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ssl_socket
+
         self.system = ssl_socket.SSLSocket(self)
 
     def get_provider_name(self):

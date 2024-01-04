@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class FileManagerPlugin(colony.Plugin):
     """
     The main class for the File Manager plugin.
@@ -40,22 +41,15 @@ class FileManagerPlugin(colony.Plugin):
     description = "The plugin that manages the file system abstraction sub system"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "file_manager"
-    ]
-    capabilities_allowed = [
-        "file_engine"
-    ]
-    main_modules = [
-        "file_manager"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["file_manager"]
+    capabilities_allowed = ["file_engine"]
+    main_modules = ["file_manager"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import file_manager
+
         self.system = file_manager.DataFileManager(self)
 
     @colony.load_allowed

@@ -36,6 +36,7 @@ import colony
 
 from . import exceptions
 
+
 class RSA(colony.System):
     """
     The RSA class.
@@ -47,6 +48,7 @@ class RSA(colony.System):
         keys = parameters.get("keys", None)
         rsa_structure = RSAStructure(keys)
         return rsa_structure
+
 
 class RSAStructure(object):
     """
@@ -98,36 +100,21 @@ class RSAStructure(object):
         c_value = (1 / q_value) % p_value
 
         # creates the public key map
-        public_key_map = {
-            "n" : n_value,
-            "e" : e_value
-        }
+        public_key_map = {"n": n_value, "e": e_value}
 
         # creates the private key map
-        private_key_map = {
-            "d" : d_value,
-            "p" : p_value,
-            "q" : q_value
-        }
+        private_key_map = {"d": d_value, "p": p_value, "q": q_value}
 
         # creates the extra map
-        extra_map = {
-            "fe" : fe_value,
-            "se" : se_value,
-            "c" : c_value
-        }
+        extra_map = {"fe": fe_value, "se": se_value, "c": c_value}
 
         # creates the keys (tuple)
-        keys = (
-            public_key_map,
-            private_key_map,
-            extra_map
-        )
+        keys = (public_key_map, private_key_map, extra_map)
 
         # sets the keys (tuple) in the instance
         self.keys = keys
 
-    def encrypt(self, message, public_key = None):
+    def encrypt(self, message, public_key=None):
         """
         Encrypts the given message using the given public key.
 
@@ -148,7 +135,7 @@ class RSAStructure(object):
 
         return self._encrypt_buffer(message, public_exponent, modulus)
 
-    def encrypt_s(self, message, public_key = None):
+    def encrypt_s(self, message, public_key=None):
         # retrieves the public key to be used
         public_key = public_key and public_key or self.keys[0]
 
@@ -158,7 +145,7 @@ class RSAStructure(object):
 
         return self._encrypt_string(message, public_exponent, modulus)
 
-    def decrypt(self, encrypted_message, private_key = None):
+    def decrypt(self, encrypted_message, private_key=None):
         """
         Decrypts the given message using the given private key.
 
@@ -185,7 +172,7 @@ class RSAStructure(object):
 
         return self._decrypt_buffer(encrypted_message, private_exponent, modulus)
 
-    def decrypt_s(self, encrypted_message, private_key = None):
+    def decrypt_s(self, encrypted_message, private_key=None):
         # retrieves the key to be used either from the provided
         # private key or from the already stored keys list
         private_key = private_key and private_key or self.keys[1]
@@ -200,7 +187,7 @@ class RSAStructure(object):
 
         return self._decrypt_string(encrypted_message, private_exponent, modulus)
 
-    def sign(self, message, private_key = None):
+    def sign(self, message, private_key=None):
         """
         Signs the given message using the given private key.
 
@@ -237,7 +224,7 @@ class RSAStructure(object):
 
         return self._encrypt_string(message, private_exponent, modulus)
 
-    def verify(self, signed_message, public_key = None):
+    def verify(self, signed_message, public_key=None):
         """
         Verifies the given signed message using the given public key.
 
@@ -321,10 +308,12 @@ class RSAStructure(object):
             offset = index * modulus_number_bytes
 
             # retrieves the current block value
-            current_block_value = message[offset:offset + modulus_number_bytes]
+            current_block_value = message[offset : offset + modulus_number_bytes]
 
             # encrypts the current block value
-            current_block_value_encrypted = self._encrypt_string(current_block_value, key, modulus)
+            current_block_value_encrypted = self._encrypt_string(
+                current_block_value, key, modulus
+            )
 
             # adds the encrypted current block value to the block values (list)
             block_values.append(current_block_value_encrypted)
@@ -361,7 +350,9 @@ class RSAStructure(object):
         # the resulting encrypted integer back to a string
         message_integer = self._string_to_integer(message)
         message_integer_encrypted = self._encrypt_integer(message_integer, key, modulus)
-        message_encrypted = self._integer_to_string(message_integer_encrypted, modulus_size_bytes)
+        message_encrypted = self._integer_to_string(
+            message_integer_encrypted, modulus_size_bytes
+        )
 
         # returns the resulting message encrypted using the RSA
         # algorithm for cryptographic purposes
@@ -392,7 +383,9 @@ class RSAStructure(object):
         if not type(message) == colony.legacy.LONG:
             raise TypeError("you must pass a long or an int")
 
-        if message > 0 and math.floor(math.log(message, 2)) > math.floor(math.log(n_value, 2)):
+        if message > 0 and math.floor(math.log(message, 2)) > math.floor(
+            math.log(n_value, 2)
+        ):
             raise OverflowError("the message is too long")
 
         return pow(message, e_value, n_value)
@@ -418,19 +411,17 @@ class RSAStructure(object):
 
             # calculates the exponents (private and public) for
             # the given prime number and number of bits
-            e_value, d_value = self._generate_exponents(p_value, q_value, number_bits // 2)
+            e_value, d_value = self._generate_exponents(
+                p_value, q_value, number_bits // 2
+            )
 
             # tests if the number is positive
             # for such cases breaks the loop
-            if d_value > 0: break
+            if d_value > 0:
+                break
 
         # creates a tuple with the generated keys
-        generated_keys = (
-            p_value,
-            q_value,
-            e_value,
-            d_value
-        )
+        generated_keys = (p_value, q_value, e_value, d_value)
 
         # returns the generated keys
         return generated_keys
@@ -466,11 +457,15 @@ class RSAStructure(object):
             # checks if the exponent and the modulus are relative primes
             # and also checks if the exponent and the phi modulus are relative
             # primes if they are a valid exponent is found (breaks loop)
-            if self._relatively_prime(e_value, n_value) and self._relatively_prime(e_value, phi_n_value):
+            if self._relatively_prime(e_value, n_value) and self._relatively_prime(
+                e_value, phi_n_value
+            ):
                 break
 
         # retrieves the result of the extended euclid greatest common divisor
-        d_value, i_value, _j_value = self._extended_euclid_greatest_common_divisor(e_value, phi_n_value)
+        d_value, i_value, _j_value = self._extended_euclid_greatest_common_divisor(
+            e_value, phi_n_value
+        )
 
         # in case the greatest common divisor between both is not one
         # (not relative primes), raises the key generation error
@@ -485,15 +480,11 @@ class RSAStructure(object):
         if not (e_value * i_value) % phi_n_value == 1:
             raise exceptions.KeyGenerationError(
                 "The public exponent '%d' and private exponent '%d' are not multiplicative"
-                "inverse modulo of phi modulus '%d'" %\
-                (e_value, i_value, phi_n_value)
+                "inverse modulo of phi modulus '%d'" % (e_value, i_value, phi_n_value)
             )
 
         # creates a tuple with the keys
-        keys_tuple = (
-            e_value,
-            i_value
-        )
+        keys_tuple = (e_value, i_value)
 
         # returns the keys tuple
         return keys_tuple
@@ -523,7 +514,8 @@ class RSAStructure(object):
 
             # in case the q value and the p values
             # are different, breaks the loop
-            if not q_value == p_value: break
+            if not q_value == p_value:
+                break
 
         # creates a tuple with the generated
         # prime numbers
@@ -557,7 +549,8 @@ class RSAStructure(object):
             # using the primality testing strategy, and in case
             # it's breaks the current loop as a prime has been
             # found with the pre-defined number of bits
-            if self._is_prime(integer): break
+            if self._is_prime(integer):
+                break
 
         # returns the (generated) and verified prime integer
         # to the caller method, may be used for exponent
@@ -626,8 +619,10 @@ class RSAStructure(object):
         # in case the j value and the f value are the same,
         # returns invalid as it is not considered to be a valid
         # witness, otherwise returns invalid (is a witness)
-        if j_value == f_value: return False
-        else: return True
+        if j_value == f_value:
+            return False
+        else:
+            return True
 
     def _jacobi(self, a_value, b_value):
         """
@@ -663,7 +658,7 @@ class RSAStructure(object):
                 b_value, a_value = a_value, b_value % a_value
             # otherwise it must be even
             else:
-                if ((b_value ** 2 - 1) >> 3) & 1:
+                if ((b_value**2 - 1) >> 3) & 1:
                     # inverts the result
                     result = -result
 
@@ -696,11 +691,7 @@ class RSAStructure(object):
         # in case the b value is zero
         if b_value == 0:
             # creates a simple common divisor tuple
-            common_divisor_tuple = (
-                a_value,
-                1,
-                0
-            )
+            common_divisor_tuple = (a_value, 1, 0)
 
             # returns the common divisor tuple
             return common_divisor_tuple
@@ -712,14 +703,12 @@ class RSAStructure(object):
         r_value = colony.legacy.LONG(a_value // b_value)
 
         # retrieves the extended euclid greatest common divisor for b value and q value
-        d_value, k_value, l_value = self._extended_euclid_greatest_common_divisor(b_value, q_value)
+        d_value, k_value, l_value = self._extended_euclid_greatest_common_divisor(
+            b_value, q_value
+        )
 
         # creates the common divisor tuple
-        common_divisor_tuple = (
-            d_value,
-            l_value,
-            k_value - l_value * r_value
-        )
+        common_divisor_tuple = (d_value, l_value, k_value - l_value * r_value)
 
         # returns the common divisor tuple
         return common_divisor_tuple
@@ -753,7 +742,7 @@ class RSAStructure(object):
         # returns the integer value
         return integer_value
 
-    def _integer_to_string(self, integer_value, string_length = 0):
+    def _integer_to_string(self, integer_value, string_length=0):
         # creates the characters list that will hold
         # the various characters
         characters_list = []
@@ -765,7 +754,7 @@ class RSAStructure(object):
             # the least significant byte value of
             # the integer and adds that character
             # vale to the list containing the characters
-            character_value = colony.legacy.chr(integer_value & 0xff)
+            character_value = colony.legacy.chr(integer_value & 0xFF)
             characters_list.append(character_value)
 
             # shifts the integer value eight bits
@@ -781,7 +770,8 @@ class RSAStructure(object):
         # so that the requested length is fulfilled
         extra = string_length - characters_list_length
         extra = 0 if extra < 0 else extra
-        for _index in colony.legacy.xrange(extra): characters_list.append(b"\x00")
+        for _index in colony.legacy.xrange(extra):
+            characters_list.append(b"\x00")
 
         # reverses the characters list, because the creation of
         # the string was made in the opposite order (big endian)

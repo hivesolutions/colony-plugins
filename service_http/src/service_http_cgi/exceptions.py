@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPCGIException(colony.ColonyException):
     """
     The service HTTP CGI exception class.
@@ -37,6 +38,7 @@ class ServiceHTTPCGIException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class RequestNotHandled(ServiceHTTPCGIException):
     """
@@ -64,6 +66,7 @@ class RequestNotHandled(ServiceHTTPCGIException):
 
         return "Request Not handled - %s" % self.message
 
+
 class CGIScriptError(ServiceHTTPCGIException):
     """
     The CGI script error class.
@@ -90,6 +93,7 @@ class CGIScriptError(ServiceHTTPCGIException):
 
         return "CGI script error - %s" % self.message
 
+
 class InvalidCGIData(ServiceHTTPCGIException):
     """
     The invalid CGI data class.
@@ -115,6 +119,7 @@ class InvalidCGIData(ServiceHTTPCGIException):
         """
 
         return "Invalid CGI data - %s" % self.message
+
 
 class InvalidCGIHeader(ServiceHTTPCGIException):
     """

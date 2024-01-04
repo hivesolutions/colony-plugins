@@ -36,6 +36,7 @@ import colony
 SLEEP_TIME_VALUE = 1.0
 """ The sleep time value """
 
+
 class ResourcesAutoloader(colony.System):
     """
     The resources autoloader
@@ -66,7 +67,9 @@ class ResourcesAutoloader(colony.System):
         resources_manager_plugin = self.plugin.resources_manager_plugin
 
         # retrieves the configuration paths
-        configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(resources_manager_plugin.id, True)
+        configuration_paths = plugin_manager.get_plugin_configuration_paths_by_id(
+            resources_manager_plugin.id, True
+        )
 
         # retrieves the base resources path from
         # the resources manager
@@ -79,7 +82,9 @@ class ResourcesAutoloader(colony.System):
 
         # retrieve the file path resources list map from the resources manager
         # and then retrieves the keys from the map as the current used file paths
-        file_path_resources_list_map = resources_manager_plugin.get_file_path_resources_list_map()
+        file_path_resources_list_map = (
+            resources_manager_plugin.get_file_path_resources_list_map()
+        )
         file_paths = colony.legacy.keys(file_path_resources_list_map)
 
         # iterates over all the (resource) file paths
@@ -114,15 +119,17 @@ class ResourcesAutoloader(colony.System):
                 for configuration_path in search_paths:
                     # analyzes the current configuration path (directory) to load (new resources)
                     # or reload (updated resources) the resources
-                    self._analyze_resources_directory(configuration_path, verified_resource_paths_list)
+                    self._analyze_resources_directory(
+                        configuration_path, verified_resource_paths_list
+                    )
 
                 # unloads the "pending" resource files for unloading
                 self._unload_pending_resource_files(verified_resource_paths_list)
             except Exception as exception:
                 # prints an error message
                 self.autoloader_plugin.error(
-                    "There was a problem autoloading resources: %s" %\
-                    colony.legacy.UNICODE(exception)
+                    "There was a problem autoloading resources: %s"
+                    % colony.legacy.UNICODE(exception)
                 )
 
             # sleeps for the given sleep time
@@ -136,7 +143,9 @@ class ResourcesAutoloader(colony.System):
         # unsets the continue flag
         self.continue_flag = False
 
-    def _analyze_resources_directory(self, directory_path, verified_resource_paths_list):
+    def _analyze_resources_directory(
+        self, directory_path, verified_resource_paths_list
+    ):
         # in case the directory path does not exists, then returns
         # the control flow immediately
         if not os.path.exists(directory_path):
@@ -146,7 +155,9 @@ class ResourcesAutoloader(colony.System):
         resources_manager_plugin = self.plugin.resources_manager_plugin
 
         # retrieves the file path resources list map from the resources manager
-        file_path_resources_list_map = resources_manager_plugin.get_file_path_resources_list_map()
+        file_path_resources_list_map = (
+            resources_manager_plugin.get_file_path_resources_list_map()
+        )
 
         # retrieves the resources path directory contents
         resources_path_directory_contents = os.listdir(directory_path)
@@ -161,7 +172,9 @@ class ResourcesAutoloader(colony.System):
             # resource name (resource found in path)
             if resources_manager_plugin.is_resource_name(resources_path_item):
                 # normalizes the resources full path (for file verification)
-                resources_full_path_item_normalized = colony.normalize_path(resources_full_path_item)
+                resources_full_path_item_normalized = colony.normalize_path(
+                    resources_full_path_item
+                )
 
                 # adds the resource path to the verified resource paths list
                 # because the resource has been verified as existent
@@ -170,8 +183,12 @@ class ResourcesAutoloader(colony.System):
                 # retrieves the current modified time from the resource and the
                 # modified time currently stored in the internal structure
                 # for later comparison
-                current_modified_time = os.path.getmtime(resources_full_path_item_normalized)
-                modified_time = self.file_path_modified_time_map.get(resources_full_path_item_normalized, None)
+                current_modified_time = os.path.getmtime(
+                    resources_full_path_item_normalized
+                )
+                modified_time = self.file_path_modified_time_map.get(
+                    resources_full_path_item_normalized, None
+                )
 
                 # in case the modified time hasn't changed
                 # the file is considered to be the same
@@ -183,29 +200,45 @@ class ResourcesAutoloader(colony.System):
                 # did not already existed)
                 if modified_time == None:
                     # prints an info message (about the loading)
-                    self.plugin.info("Loading resource file '%s' in resources manager" % resources_full_path_item_normalized)
+                    self.plugin.info(
+                        "Loading resource file '%s' in resources manager"
+                        % resources_full_path_item_normalized
+                    )
                 # otherwise the file already existed but the modified time has
                 # changed (reload case)
                 else:
                     # prints an info message (about the reloading)
-                    self.plugin.info("Reloading resource file '%s' in resources manager" % resources_full_path_item_normalized)
+                    self.plugin.info(
+                        "Reloading resource file '%s' in resources manager"
+                        % resources_full_path_item_normalized
+                    )
 
                     # retrieves the resources list for the resources path and then uses it to
                     # unregister the resources in the resources manager
-                    resources_list = file_path_resources_list_map[resources_full_path_item_normalized]
-                    resources_manager_plugin.unregister_resources(resources_list, resources_full_path_item, directory_path)
+                    resources_list = file_path_resources_list_map[
+                        resources_full_path_item_normalized
+                    ]
+                    resources_manager_plugin.unregister_resources(
+                        resources_list, resources_full_path_item, directory_path
+                    )
 
                 # parses the resources description file
-                resources_manager_plugin.parse_file(resources_full_path_item, directory_path)
+                resources_manager_plugin.parse_file(
+                    resources_full_path_item, directory_path
+                )
 
                 # sets the "new" modified time in the file path modified
                 # time map (updates the modified time)
-                self.file_path_modified_time_map[resources_full_path_item_normalized] = current_modified_time
+                self.file_path_modified_time_map[
+                    resources_full_path_item_normalized
+                ] = current_modified_time
             # otherwise in case the resources full path is a directory
             # path a descent must be done
             elif os.path.isdir(resources_full_path_item):
                 # analyzes the resources for the directory
-                self._analyze_resources_directory(resources_full_path_item, verified_resource_paths_list)
+                self._analyze_resources_directory(
+                    resources_full_path_item, verified_resource_paths_list
+                )
 
     def _unload_pending_resource_files(self, verified_resource_paths_list):
         # retrieves the resources manager plugin
@@ -214,8 +247,12 @@ class ResourcesAutoloader(colony.System):
         # retrieves the file path resources list map and the file path
         # file information map from the resources manager and then retrieves
         # the keys from the map as the current used (resource) file paths
-        file_path_resources_list_map = resources_manager_plugin.get_file_path_resources_list_map()
-        file_path_file_information_map = resources_manager_plugin.get_file_path_file_information_map()
+        file_path_resources_list_map = (
+            resources_manager_plugin.get_file_path_resources_list_map()
+        )
+        file_path_file_information_map = (
+            resources_manager_plugin.get_file_path_file_information_map()
+        )
         resource_file_paths = colony.legacy.keys(file_path_resources_list_map)
 
         # iterates over all the resource file path
@@ -230,15 +267,22 @@ class ResourcesAutoloader(colony.System):
                 continue
 
             # prints an info message (about the unloading)
-            self.plugin.info("Unloading resource file '%s' from resources manager" % resource_file_path)
+            self.plugin.info(
+                "Unloading resource file '%s' from resources manager"
+                % resource_file_path
+            )
 
             # retrieves both the resources list and the file information tuple
             # (file path and full resources path) for the resource file path
             resources_list = file_path_resources_list_map[resource_file_path]
-            file_path, full_resources_path = file_path_file_information_map[resource_file_path]
+            file_path, full_resources_path = file_path_file_information_map[
+                resource_file_path
+            ]
 
             # unregisters the resources for the current resource file in the resources manager
-            resources_manager_plugin.unregister_resources(resources_list, file_path, full_resources_path)
+            resources_manager_plugin.unregister_resources(
+                resources_list, file_path, full_resources_path
+            )
 
             # removes the modified time reference for the resource file
             # in the file path modified time map

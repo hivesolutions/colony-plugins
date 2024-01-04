@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPWebsocketPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Websocket plugin.
@@ -40,22 +41,15 @@ class ServiceHTTPWebsocketPlugin(colony.Plugin):
     description = "The plugin that offers the HTTP service websocket"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "http_service_handler"
-    ]
-    capabilities_allowed = [
-        "websocket_handler"
-    ]
-    main_modules = [
-        "service_http_websocket"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["http_service_handler"]
+    capabilities_allowed = ["websocket_handler"]
+    main_modules = ["service_http_websocket"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_websocket
+
         self.system = service_http_websocket.ServiceHTTPWebsocket(self)
 
     @colony.load_allowed

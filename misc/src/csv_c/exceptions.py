@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class CSVException(colony.ColonyException):
     """
     The CSV exception class.
@@ -37,6 +38,7 @@ class CSVException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class CSVEncodeException(CSVException):
     """
@@ -63,6 +65,7 @@ class CSVEncodeException(CSVException):
         """
 
         return "Object not encodable - %s" % self.object
+
 
 class CSVDecodeException(CSVException):
     """

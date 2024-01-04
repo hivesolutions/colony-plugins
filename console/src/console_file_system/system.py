@@ -38,6 +38,7 @@ CONSOLE_EXTENSION_NAME = "file_system"
 AUTHENTICATION_FAILED_MESSAGE = "authentication failed"
 """ The authentication failed message """
 
+
 class ConsoleFileSystem(colony.System):
     """
     The console base class.
@@ -147,9 +148,7 @@ class ConsoleFileSystem(colony.System):
 
             # sets the path contents as the
             # path base name
-            path_contents = [
-                path_base_name
-            ]
+            path_contents = [path_base_name]
 
         # outputs the items in an ordered fashion (layout)
         console_context.layout_items(path_contents, output_method)
@@ -270,62 +269,62 @@ class ConsoleFileSystem(colony.System):
 
     def __generate_commands_map(self):
         return {
-            "cd" : {
-                "handler" : self.process_cd,
-                "description" : "changes the current directory",
-                "arguments" : [
+            "cd": {
+                "handler": self.process_cd,
+                "description": "changes the current directory",
+                "arguments": [
                     {
-                        "name" : "path",
-                        "description" : "the path to be used for cd",
-                        "values" : self.get_path_names_list,
-                        "mandatory" : True
+                        "name": "path",
+                        "description": "the path to be used for cd",
+                        "values": self.get_path_names_list,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "ls" : {
-                "handler" : self.process_ls,
-                "description" : "list the contents of the current path",
-                "arguments" : [
+            "ls": {
+                "handler": self.process_ls,
+                "description": "list the contents of the current path",
+                "arguments": [
                     {
-                        "name" : "path",
-                        "description" : "the path to be used for ls",
-                        "values" : self.get_path_names_list,
-                        "mandatory" : False
+                        "name": "path",
+                        "description": "the path to be used for ls",
+                        "values": self.get_path_names_list,
+                        "mandatory": False,
                     }
-                ]
+                ],
             },
-            "pwd" : {
-                "handler" : self.process_pwd,
-                "description" : "show the present working directory"
+            "pwd": {
+                "handler": self.process_pwd,
+                "description": "show the present working directory",
             },
-            "cat" : {
-                "handler" : self.process_cat,
-                "description" : "prints the file in the path to the output",
-                "arguments" : [
+            "cat": {
+                "handler": self.process_cat,
+                "description": "prints the file in the path to the output",
+                "arguments": [
                     {
-                        "name" : "path",
-                        "description" : "the path to be used for cat",
-                        "values" : self.get_path_names_list,
-                        "mandatory" : True
+                        "name": "path",
+                        "description": "the path to be used for cat",
+                        "values": self.get_path_names_list,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "su" : {
-                "handler" : self.process_su,
-                "description" : "switches the current user session",
-                "arguments" : [
+            "su": {
+                "handler": self.process_su,
+                "description": "switches the current user session",
+                "arguments": [
                     {
-                        "name" : "username",
-                        "description" : "the username to switch user",
-                        "values" : str,
-                        "mandatory" : False
+                        "name": "username",
+                        "description": "the username to switch user",
+                        "values": str,
+                        "mandatory": False,
                     },
                     {
-                        "name" : "password",
-                        "description" : "the password to switch user",
-                        "values" : str,
-                        "mandatory" : False
-                    }
-                ]
-            }
+                        "name": "password",
+                        "description": "the password to switch user",
+                        "values": str,
+                        "mandatory": False,
+                    },
+                ],
+            },
         }

@@ -66,10 +66,14 @@ BEGIN_PUBLIC_VALUE = "-----BEGIN PUBLIC KEY-----"
 END_PUBLIC_VALUE = "-----END PUBLIC KEY-----"
 """ The end public value """
 
-PRIVATE_KEY_VALUE_REGEX = re.compile(BEGIN_RSA_PRIVATE_VALUE + "\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL)
+PRIVATE_KEY_VALUE_REGEX = re.compile(
+    BEGIN_RSA_PRIVATE_VALUE + "\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL
+)
 """ The private key value regex """
 
-PUBLIC_KEY_VALUE_REGEX = re.compile(BEGIN_PUBLIC_VALUE + "\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL)
+PUBLIC_KEY_VALUE_REGEX = re.compile(
+    BEGIN_PUBLIC_VALUE + "\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL
+)
 """ The public key value regex """
 
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
@@ -94,54 +98,55 @@ SEQUENCE_TYPE = 0x10
 """ The sequence type """
 
 OBJECT_IDENTIFIERS_TUPLES_MAP = {
-    "pkcs1" : (1, 2, 840, 113549, 1, 1),
-    "rsa_encryption" : (1, 2, 840, 113549, 1, 1, 1),
-    "id_rsaes_oaep" : (1, 2, 840, 113549, 1, 1, 7),
-    "id_p_specified" : (1, 2, 840, 113549, 1, 1, 9),
-    "id_rsassa_pss" : (1, 2, 840, 113549, 1, 1, 10),
-    "md2_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 2),
-    "md5_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 4),
-    "sha1_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 5),
-    "sha256_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 11),
-    "sha384_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 12),
-    "sha512_with_rsa_encryption" : (1, 2, 840, 113549, 1, 1, 13)
+    "pkcs1": (1, 2, 840, 113549, 1, 1),
+    "rsa_encryption": (1, 2, 840, 113549, 1, 1, 1),
+    "id_rsaes_oaep": (1, 2, 840, 113549, 1, 1, 7),
+    "id_p_specified": (1, 2, 840, 113549, 1, 1, 9),
+    "id_rsassa_pss": (1, 2, 840, 113549, 1, 1, 10),
+    "md2_with_rsa_encryption": (1, 2, 840, 113549, 1, 1, 2),
+    "md5_with_rsa_encryption": (1, 2, 840, 113549, 1, 1, 4),
+    "sha1_with_rsa_encryption": (1, 2, 840, 113549, 1, 1, 5),
+    "sha256_with_rsa_encryption": (1, 2, 840, 113549, 1, 1, 11),
+    "sha384_with_rsa_encryption": (1, 2, 840, 113549, 1, 1, 12),
+    "sha512_with_rsa_encryption": (1, 2, 840, 113549, 1, 1, 13),
 }
 """ The map associating the object identifiers with the tuples """
 
 TUPLES_OBJECT_IDENTIFIERS_MAP = {
-    (1, 2, 840, 113549, 1, 1) : "pkcs1",
-    (1, 2, 840, 113549, 1, 1, 1) : "rsa_encryption",
-    (1, 2, 840, 113549, 1, 1, 7) : "id_rsaes_oaep",
-    (1, 2, 840, 113549, 1, 1, 9) : "id_p_specified",
-    (1, 2, 840, 113549, 1, 1, 10) : "id_rsassa_pss",
-    (1, 2, 840, 113549, 1, 1, 2) : "md2_with_rsa_encryption",
-    (1, 2, 840, 113549, 1, 1, 4) : "md5_with_rsa_encryption",
-    (1, 2, 840, 113549, 1, 1, 5) : "sha1_with_rsa_encryption",
-    (1, 2, 840, 113549, 1, 1, 11) : "sha256_with_rsa_encryption",
-    (1, 2, 840, 113549, 1, 1, 12) : "sha384_with_rsa_encryption",
-    (1, 2, 840, 113549, 1, 1, 13) : "sha512_with_rsa_encryption"
+    (1, 2, 840, 113549, 1, 1): "pkcs1",
+    (1, 2, 840, 113549, 1, 1, 1): "rsa_encryption",
+    (1, 2, 840, 113549, 1, 1, 7): "id_rsaes_oaep",
+    (1, 2, 840, 113549, 1, 1, 9): "id_p_specified",
+    (1, 2, 840, 113549, 1, 1, 10): "id_rsassa_pss",
+    (1, 2, 840, 113549, 1, 1, 2): "md2_with_rsa_encryption",
+    (1, 2, 840, 113549, 1, 1, 4): "md5_with_rsa_encryption",
+    (1, 2, 840, 113549, 1, 1, 5): "sha1_with_rsa_encryption",
+    (1, 2, 840, 113549, 1, 1, 11): "sha256_with_rsa_encryption",
+    (1, 2, 840, 113549, 1, 1, 12): "sha384_with_rsa_encryption",
+    (1, 2, 840, 113549, 1, 1, 13): "sha512_with_rsa_encryption",
 }
 """ The map associating the tuples with the object identifiers """
 
 HASH_OBJECT_IDENTIFIERS_TUPLES_MAP = {
-    "md2" : (1, 2, 840, 113549, 2, 2),
-    "md5" : (1, 2, 840, 113549, 2, 5),
-    "sha1" : (1, 3, 14, 3, 2, 26),
-    "sha256" : (2, 16, 840, 1, 101, 3, 4, 2, 1),
-    "sha384" : (2, 16, 840, 1, 101, 3, 4, 2, 2),
-    "sha512" : (2, 16, 840, 1, 101, 3, 4, 2, 3)
+    "md2": (1, 2, 840, 113549, 2, 2),
+    "md5": (1, 2, 840, 113549, 2, 5),
+    "sha1": (1, 3, 14, 3, 2, 26),
+    "sha256": (2, 16, 840, 1, 101, 3, 4, 2, 1),
+    "sha384": (2, 16, 840, 1, 101, 3, 4, 2, 2),
+    "sha512": (2, 16, 840, 1, 101, 3, 4, 2, 3),
 }
 """ The map associating the hash object identifiers with the tuples """
 
 TUPLES_HASH_OBJECT_IDENTIFIERS_MAP = {
-    (1, 2, 840, 113549, 2, 2) : "md2",
-    (1, 2, 840, 113549, 2, 5) : "md5",
-    (1, 3, 14, 3, 2, 26) : "sha1",
-    (2, 16, 840, 1, 101, 3, 4, 2, 1) : "sha256",
-    (2, 16, 840, 1, 101, 3, 4, 2, 2) : "sha384",
-    (2, 16, 840, 1, 101, 3, 4, 2, 3) : "sha512"
+    (1, 2, 840, 113549, 2, 2): "md2",
+    (1, 2, 840, 113549, 2, 5): "md5",
+    (1, 3, 14, 3, 2, 26): "sha1",
+    (2, 16, 840, 1, 101, 3, 4, 2, 1): "sha256",
+    (2, 16, 840, 1, 101, 3, 4, 2, 2): "sha384",
+    (2, 16, 840, 1, 101, 3, 4, 2, 3): "sha512",
 }
 """ The map associating the tuples with the hash object identifiers """
+
 
 class PKCS1(colony.System):
     """
@@ -155,6 +160,7 @@ class PKCS1(colony.System):
         ber_plugin = self.plugin.ber_plugin
         pkcs1_structure = PKCS1Structure(ber_plugin)
         return pkcs1_structure
+
 
 class PKCS1Structure:
     """
@@ -175,7 +181,9 @@ class PKCS1Structure:
 
         self.ber_plugin = ber_plugin
 
-    def generate_write_keys_pem(self, keys, private_key_file_path, public_key_file_path, version = 1):
+    def generate_write_keys_pem(
+        self, keys, private_key_file_path, public_key_file_path, version=1
+    ):
         # generates the public and private key pem values
         private_key_pem, public_key_pem = self.generate_keys_pem(keys, version)
 
@@ -188,7 +196,7 @@ class PKCS1Structure:
         self._write_file(private_key_file_path, private_key_pem)
         self._write_file(public_key_file_path, public_key_pem)
 
-    def generate_keys_pem(self, keys, version = 1):
+    def generate_keys_pem(self, keys, version=1):
         # generates the private key pem
         private_key_pem = self.generate_private_key_pem(keys)
 
@@ -196,10 +204,7 @@ class PKCS1Structure:
         public_key_pem = self.generate_public_key_pem(keys)
 
         # creates a tuple with the private key and public key pem
-        keys_pem = (
-            private_key_pem,
-            public_key_pem
-        )
+        keys_pem = (private_key_pem, public_key_pem)
 
         # returns the keys pem
         return keys_pem
@@ -272,7 +277,7 @@ class PKCS1Structure:
         valid = hash_digest == digest_value
         return valid
 
-    def generate_private_key_pem(self, keys, version = 1):
+    def generate_private_key_pem(self, keys, version=1):
         """
         Generates the a private key in pem format, using
         the given keys value.
@@ -363,7 +368,9 @@ class PKCS1Structure:
         # is done raises an exception indicating the problem
         private_key_pem_match = PRIVATE_KEY_VALUE_REGEX.match(private_key_pem)
         if not private_key_pem_match:
-            raise exceptions.InvalidFormatException("private key header/footer not found")
+            raise exceptions.InvalidFormatException(
+                "private key header/footer not found"
+            )
 
         # retrieves the private key pem contents (avoid header and footer)
         # and joins the base 64 value back together removing extra newlines
@@ -373,7 +380,9 @@ class PKCS1Structure:
         # decodes the private key pem from base 64, obtaining
         # private key der in binary format, then loads it retrieving
         # the return tuple to be returned to the caller method
-        private_key_pem_contents_joined = colony.legacy.bytes(private_key_pem_contents_joined)
+        private_key_pem_contents_joined = colony.legacy.bytes(
+            private_key_pem_contents_joined
+        )
         private_key_der = base64.b64decode(private_key_pem_contents_joined)
         private_key_der = colony.legacy.str(private_key_der)
         return_tuple = self.load_private_key_der(private_key_der)
@@ -386,17 +395,23 @@ class PKCS1Structure:
         # is done raises an exception indicating the problem
         public_key_pem_match = PUBLIC_KEY_VALUE_REGEX.match(public_key_pem)
         if not public_key_pem_match:
-            raise exceptions.InvalidFormatException("public key header/footer not found")
+            raise exceptions.InvalidFormatException(
+                "public key header/footer not found"
+            )
 
         # retrieves the public key pem contents (avoid header and footer)
         # and joins the base 64 value back together removing extra newlines
         public_key_pem_match_contents = public_key_pem_match.group("contents")
-        public_key_pem_match_contents_joined = self._join_base_64(public_key_pem_match_contents)
+        public_key_pem_match_contents_joined = self._join_base_64(
+            public_key_pem_match_contents
+        )
 
         # decodes the public key pem from base 64, obtaining
         # public key der in binary format the loads it retrieving
         # the keys tuple to be returned to the caller method
-        public_key_pem_match_contents_joined = colony.legacy.bytes(public_key_pem_match_contents_joined)
+        public_key_pem_match_contents_joined = colony.legacy.bytes(
+            public_key_pem_match_contents_joined
+        )
         public_key_der = base64.b64decode(public_key_pem_match_contents_joined)
         public_key_der = colony.legacy.str(public_key_der)
 
@@ -406,7 +421,7 @@ class PKCS1Structure:
         # returns the keys tuple
         return keys
 
-    def generate_private_key_der(self, keys, version = 1):
+    def generate_private_key_der(self, keys, version=1):
         """
         Generates the a private key in der format, using
         the given keys value.
@@ -441,58 +456,34 @@ class PKCS1Structure:
         ber_structure = self.ber_plugin.create_structure({})
 
         # creates the version value
-        version_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : version
-        }
+        version_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: version}
 
         # creates the modulus value
-        modulus_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : modulus
-        }
+        modulus_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: modulus}
 
         # creates the public exponent value
-        public_exponent_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : public_exponent
-        }
+        public_exponent_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: public_exponent}
 
         # creates the private exponent value
         private_exponent_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : private_exponent
+            TYPE_VALUE: INTEGER_TYPE,
+            VALUE_VALUE: private_exponent,
         }
 
         # creates the prime 1 value
-        prime_1_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : prime_1
-        }
+        prime_1_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: prime_1}
 
         # creates the prime 2 value
-        prime_2_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : prime_2
-        }
+        prime_2_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: prime_2}
 
         # creates the exponent 1 value
-        exponent_1_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : exponent_1
-        }
+        exponent_1_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: exponent_1}
 
         # creates the exponent 2 value
-        exponent_2_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : exponent_2
-        }
+        exponent_2_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: exponent_2}
 
         # creates the coefficient value
-        coefficient_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : coefficient
-        }
+        coefficient_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: coefficient}
 
         # creates the RSA private key contents (list)
         rsa_private_key_contents = [
@@ -504,17 +495,17 @@ class PKCS1Structure:
             prime_2_value,
             exponent_1_value,
             exponent_2_value,
-            coefficient_value
+            coefficient_value,
         ]
 
         # creates the RSA private key
         rsa_private_key = {
-            TYPE_VALUE : {
-                TYPE_CONSTRUCTED_VALUE : 1,
-                TYPE_NUMBER_VALUE : SEQUENCE_TYPE,
-                TYPE_CLASS_VALUE : 0
+            TYPE_VALUE: {
+                TYPE_CONSTRUCTED_VALUE: 1,
+                TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
+                TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE : rsa_private_key_contents
+            VALUE_VALUE: rsa_private_key_contents,
         }
 
         # packs the RSA private key
@@ -543,37 +534,30 @@ class PKCS1Structure:
         public_exponent = public_key["e"]
 
         # retrieves the RSA encryption object identifier
-        rsa_encryption_object_identifier = OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]
+        rsa_encryption_object_identifier = OBJECT_IDENTIFIERS_TUPLES_MAP[
+            "rsa_encryption"
+        ]
 
         # creates the ber structure
         ber_structure = self.ber_plugin.create_structure({})
 
         # creates the modulus value
-        modulus_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : modulus
-        }
+        modulus_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: modulus}
 
         # creates the public exponent value
-        public_exponent_value = {
-            TYPE_VALUE : INTEGER_TYPE,
-            VALUE_VALUE : public_exponent
-        }
+        public_exponent_value = {TYPE_VALUE: INTEGER_TYPE, VALUE_VALUE: public_exponent}
 
         # creates the RSA public key contents (list)
-        rsa_public_key_contents = [
-            modulus_value,
-            public_exponent_value
-        ]
+        rsa_public_key_contents = [modulus_value, public_exponent_value]
 
         # creates the RSA public key
         rsa_public_key = {
-            TYPE_VALUE : {
-                TYPE_CONSTRUCTED_VALUE : 1,
-                TYPE_NUMBER_VALUE : SEQUENCE_TYPE,
-                TYPE_CLASS_VALUE : 0
+            TYPE_VALUE: {
+                TYPE_CONSTRUCTED_VALUE: 1,
+                TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
+                TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE : rsa_public_key_contents
+            VALUE_VALUE: rsa_public_key_contents,
         }
 
         # packs the RSA public key
@@ -581,52 +565,46 @@ class PKCS1Structure:
 
         # creates the algorithm identifier value
         algorithm_value = {
-            TYPE_VALUE : OBJECT_IDENTIFIER_TYPE,
-            VALUE_VALUE : rsa_encryption_object_identifier
+            TYPE_VALUE: OBJECT_IDENTIFIER_TYPE,
+            VALUE_VALUE: rsa_encryption_object_identifier,
         }
 
         # creates the algorithm identifier arguments value
-        arguments_value = {
-            TYPE_VALUE : NULL_TYPE,
-            VALUE_VALUE : None
-        }
+        arguments_value = {TYPE_VALUE: NULL_TYPE, VALUE_VALUE: None}
 
         # creates the algorithm identifier contents (list)
-        algorithm_identifier_contents = [
-            algorithm_value,
-            arguments_value
-        ]
+        algorithm_identifier_contents = [algorithm_value, arguments_value]
 
         # creates the algorithm identifier
         algorithm_identifier = {
-            TYPE_VALUE : {
-                TYPE_CONSTRUCTED_VALUE : 1,
-                TYPE_NUMBER_VALUE : SEQUENCE_TYPE,
-                TYPE_CLASS_VALUE : 0
+            TYPE_VALUE: {
+                TYPE_CONSTRUCTED_VALUE: 1,
+                TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
+                TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE : algorithm_identifier_contents
+            VALUE_VALUE: algorithm_identifier_contents,
         }
 
         # creates the RSA public key packed but value
         rsa_public_key_packed_bit_value = {
-            TYPE_VALUE : BIT_STRING_TYPE,
-            VALUE_VALUE : rsa_public_key_packed
+            TYPE_VALUE: BIT_STRING_TYPE,
+            VALUE_VALUE: rsa_public_key_packed,
         }
 
         # creates the subject public key info contents (list)
         subject_plubic_key_info_contents = [
             algorithm_identifier,
-            rsa_public_key_packed_bit_value
+            rsa_public_key_packed_bit_value,
         ]
 
         # creates the subject public key info
         subject_plubic_key_info = {
-            TYPE_VALUE : {
-                TYPE_CONSTRUCTED_VALUE : 1,
-                TYPE_NUMBER_VALUE : SEQUENCE_TYPE,
-                TYPE_CLASS_VALUE : 0
+            TYPE_VALUE: {
+                TYPE_CONSTRUCTED_VALUE: 1,
+                TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
+                TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE : subject_plubic_key_info_contents
+            VALUE_VALUE: subject_plubic_key_info_contents,
         }
 
         # packs the subject public key info
@@ -682,37 +660,27 @@ class PKCS1Structure:
         coefficient_value = coefficient[VALUE_VALUE]
 
         # creates the public key map
-        public_key = {
-            "n" : modulus_value,
-            "e" : public_exponent_value
-        }
+        public_key = {"n": modulus_value, "e": public_exponent_value}
 
         # creates the private key map
         private_key = {
-            "d" : private_exponent_value,
-            "p" : prime_1_value,
-            "q" : prime_2_value
+            "d": private_exponent_value,
+            "p": prime_1_value,
+            "q": prime_2_value,
         }
 
         # creates the extras map
         extras = {
-            "fe" : exponent_1_value,
-            "se" : exponent_2_value,
-            "c" : coefficient_value
+            "fe": exponent_1_value,
+            "se": exponent_2_value,
+            "c": coefficient_value,
         }
 
         # creates the keys tuple
-        keys = (
-            public_key,
-            private_key,
-            extras
-        )
+        keys = (public_key, private_key, extras)
 
         # creates the return tuple
-        return_tuple = (
-            keys,
-            version_value
-        )
+        return_tuple = (keys, version_value)
 
         # returns the return tuple
         return return_tuple
@@ -761,18 +729,19 @@ class PKCS1Structure:
         # raises an error as the RSA encryption is the only
         # supported encryption type
         if not algorithm_value == OBJECT_IDENTIFIERS_TUPLES_MAP["rsa_encryption"]:
-            raise exceptions.InvalidFormatException("invalid algorithm value: " + str(algorithm_value))
+            raise exceptions.InvalidFormatException(
+                "invalid algorithm value: " + str(algorithm_value)
+            )
 
         # in case the arguments value is not none must raise an exception
         # indicating the problem in the arguments
         if not arguments_value == None:
-            raise exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
+            raise exceptions.InvalidFormatException(
+                "invalid arguments value: " + str(arguments_value)
+            )
 
         # creates the public key map
-        public_key = {
-            "n" : modulus_value,
-            "e" : public_exponent_value
-        }
+        public_key = {"n": modulus_value, "e": public_exponent_value}
 
         # creates the private key map
         private_key = {}
@@ -781,11 +750,7 @@ class PKCS1Structure:
         extras = {}
 
         # creates the keys tuple
-        keys = (
-            public_key,
-            private_key,
-            extras
-        )
+        keys = (public_key, private_key, extras)
 
         # returns the keys tuple
         return keys
@@ -810,7 +775,10 @@ class PKCS1Structure:
         # creates the pad with the required size using just lower cased
         # characters to avoid the zero value and then constructs the final
         # padded message that includes the created padding
-        pad = "".join(random.choice(string.ascii_lowercase) for _value in colony.legacy.xrange(pad_length))
+        pad = "".join(
+            random.choice(string.ascii_lowercase)
+            for _value in colony.legacy.xrange(pad_length)
+        )
         message_pad = b"\x00\x02" + colony.legacy.bytes(pad) + b"\x00" + message
         return message_pad
 
@@ -819,7 +787,8 @@ class PKCS1Structure:
         # padding in case it does not returns the message (no padding)
         # is contained
         is_padded = message_pad.startswith(b"\x00\x02")
-        if not is_padded: return message_pad
+        if not is_padded:
+            return message_pad
 
         # retrieves the remaining part of the message (excludes the
         # padding header) and tries to find the token indicating the
@@ -827,11 +796,12 @@ class PKCS1Structure:
         # indicating the invalid padding
         message_pad = message_pad[2:]
         start_index = message_pad.find(b"\x00")
-        if start_index == -1: raise exceptions.InvalidFormatException("invalid padding")
+        if start_index == -1:
+            raise exceptions.InvalidFormatException("invalid padding")
 
         # retrieve the message itself from the "discovered"
         # start index, this is the message without padding
-        message = message_pad[start_index + 1:]
+        message = message_pad[start_index + 1 :]
         return message
 
     def _sign(self, keys, hash_algorithm_name, digest_value):
@@ -843,52 +813,40 @@ class PKCS1Structure:
 
         # creates the algorithm value
         algorithm_value = {
-            TYPE_VALUE : OBJECT_IDENTIFIER_TYPE,
-            VALUE_VALUE : hash_algorithm_tuple
+            TYPE_VALUE: OBJECT_IDENTIFIER_TYPE,
+            VALUE_VALUE: hash_algorithm_tuple,
         }
 
         # creates the argument value
-        arguments_value = {
-            TYPE_VALUE : NULL_TYPE,
-            VALUE_VALUE : None
-        }
+        arguments_value = {TYPE_VALUE: NULL_TYPE, VALUE_VALUE: None}
 
         # creates the digest algorithm contents (list)
-        digest_algorithm_contents = [
-            algorithm_value,
-            arguments_value
-        ]
+        digest_algorithm_contents = [algorithm_value, arguments_value]
 
         # creates the digest algorithm
         digest_algorithm = {
-            TYPE_VALUE : {
-                TYPE_CONSTRUCTED_VALUE : 1,
-                TYPE_NUMBER_VALUE : SEQUENCE_TYPE,
-                TYPE_CLASS_VALUE : 0
+            TYPE_VALUE: {
+                TYPE_CONSTRUCTED_VALUE: 1,
+                TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
+                TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE : digest_algorithm_contents
+            VALUE_VALUE: digest_algorithm_contents,
         }
 
         # creates the digest value value
-        digest_value_value = {
-            TYPE_VALUE : OCTET_STRING_TYPE,
-            VALUE_VALUE : digest_value
-        }
+        digest_value_value = {TYPE_VALUE: OCTET_STRING_TYPE, VALUE_VALUE: digest_value}
 
         # creates the signature value contents (list)
-        signature_value_contents = [
-            digest_algorithm,
-            digest_value_value
-        ]
+        signature_value_contents = [digest_algorithm, digest_value_value]
 
         # creates the signature value
         signature_value = {
-            TYPE_VALUE : {
-                TYPE_CONSTRUCTED_VALUE : 1,
-                TYPE_NUMBER_VALUE : SEQUENCE_TYPE,
-                TYPE_CLASS_VALUE : 0
+            TYPE_VALUE: {
+                TYPE_CONSTRUCTED_VALUE: 1,
+                TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
+                TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE : signature_value_contents
+            VALUE_VALUE: signature_value_contents,
         }
 
         # packs the signature value
@@ -968,10 +926,11 @@ class PKCS1Structure:
 
             # in case the current character ordinal is zero
             # (end of padding part) must break the loop
-            if current_character_ordinal == 0x00: break
+            if current_character_ordinal == 0x00:
+                break
 
         # retrieves the signature value
-        signature_value = signature_verified[index + 1:]
+        signature_value = signature_verified[index + 1 :]
 
         # unpacks the signature value
         signature_value_unpacked = ber_structure.unpack(signature_value)
@@ -1000,7 +959,9 @@ class PKCS1Structure:
         # in case the arguments value is not none
         # must raise an invalid format exception
         if not arguments_value == None:
-            raise exceptions.InvalidFormatException("invalid arguments value: " + str(arguments_value))
+            raise exceptions.InvalidFormatException(
+                "invalid arguments value: " + str(arguments_value)
+            )
 
         # retrieves the hash algorithm name
         hash_algorithm_name = TUPLES_HASH_OBJECT_IDENTIFIERS_MAP[algorithm_value]
@@ -1027,7 +988,8 @@ class PKCS1Structure:
             # in case the base index is greater or equal
             # to the private key der encoded length the
             # string splitting has reached the end
-            if base_index >= string_value_length: break
+            if base_index >= string_value_length:
+                break
 
             # calculates the end index from the base index
             end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE
@@ -1078,8 +1040,10 @@ class PKCS1Structure:
         # writes the string value to the file and then
         # closes the file to avoid any file structure
         # leaks (may create corruption)
-        try: file.write(string_value)
-        finally: file.close()
+        try:
+            file.write(string_value)
+        finally:
+            file.close()
 
     def _read_file(self, file_path):
         """
@@ -1099,8 +1063,10 @@ class PKCS1Structure:
         # reads the string value from the file and then
         # closes the file to avoid any file structure
         # leaks (may create corruption)
-        try: string_value = file.read()
-        finally: file.close()
+        try:
+            string_value = file.read()
+        finally:
+            file.close()
 
         # returns the string value that was read from
         # the file, this should be byte buffer compliant

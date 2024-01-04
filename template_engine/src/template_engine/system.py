@@ -65,7 +65,7 @@ the complete set of attribute matches """
 QUOTED_SINGLE_REGEX_VALUE = "[a-zA-Z_]+=['][^']+[']"
 """ The attribute quoted single regular expression value """
 
-QUOTED_DOUBLE_REGEX_VALUE = "[a-zA-Z_]+=[\"][^\"]+[\"]"
+QUOTED_DOUBLE_REGEX_VALUE = '[a-zA-Z_]+=["][^"]+["]'
 """ The attribute quoted double regular expression value """
 
 FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
@@ -125,13 +125,27 @@ ATTRIBUTE_REGEX = re.compile(ATTRIBUTE_REGEX_VALUE)
 """ The attribute regular expression """
 
 ATTRIBUTE_LITERAL_REGEX = re.compile(
-    "(?P<quoted_single>" + QUOTED_SINGLE_REGEX_VALUE + ")|" + \
-    "(?P<quoted_double>" + QUOTED_DOUBLE_REGEX_VALUE + ")|" + \
-    "(?P<float>" + FLOAT_REGEX_VALUE + ")|" + \
-    "(?P<integer>" + INTEGER_REGEX_VALUE + ")|" + \
-    "(?P<true_boolean>" + BOOL_TRUE_REGEX_VALUE + ")|" + \
-    "(?P<false_boolean>" + BOOL_FALSE_REGEX_VALUE + ")|" + \
-    "(?P<none>" + NONE_REGEX_VALUE + ")"
+    "(?P<quoted_single>"
+    + QUOTED_SINGLE_REGEX_VALUE
+    + ")|"
+    + "(?P<quoted_double>"
+    + QUOTED_DOUBLE_REGEX_VALUE
+    + ")|"
+    + "(?P<float>"
+    + FLOAT_REGEX_VALUE
+    + ")|"
+    + "(?P<integer>"
+    + INTEGER_REGEX_VALUE
+    + ")|"
+    + "(?P<true_boolean>"
+    + BOOL_TRUE_REGEX_VALUE
+    + ")|"
+    + "(?P<false_boolean>"
+    + BOOL_FALSE_REGEX_VALUE
+    + ")|"
+    + "(?P<none>"
+    + NONE_REGEX_VALUE
+    + ")"
 )
 """ The literal regular expression that matches all the literals, there
 are matching groups for each of the data types """
@@ -143,11 +157,12 @@ ESCAPE_EXTENSIONS = (
     ".liquid",
     ".xml.tpl",
     ".html.tpl",
-    ".xhtml.tpl"
+    ".xhtml.tpl",
 )
 """ The sequence containing the various extensions
 for which the autoescape mode will be enabled  by
 default as expected by the end developer """
+
 
 class TemplateEngine(colony.System):
     """
@@ -160,10 +175,10 @@ class TemplateEngine(colony.System):
     def parse_file_path(
         self,
         file_path,
-        base_path = None,
-        encoding = None,
-        process_methods_list = [],
-        locale_bundles = None
+        base_path=None,
+        encoding=None,
+        process_methods_list=[],
+        locale_bundles=None,
     ):
         # verifies that the template file requested exists in the
         # file system in case it does not raises an exception
@@ -179,11 +194,11 @@ class TemplateEngine(colony.System):
             # that can be used for the execution of it
             template_file = self.parse_file(
                 file,
-                file_path = file_path,
-                base_path = base_path,
-                encoding = encoding,
-                process_methods_list = process_methods_list,
-                locale_bundles = locale_bundles
+                file_path=file_path,
+                base_path=base_path,
+                encoding=encoding,
+                process_methods_list=process_methods_list,
+                locale_bundles=locale_bundles,
             )
         finally:
             # closes the file no further reading operations
@@ -196,11 +211,11 @@ class TemplateEngine(colony.System):
     def parse_file_path_variable_encoding(
         self,
         file_path,
-        base_path = None,
-        encoding = None,
-        variable_encoding = None,
-        process_methods_list = [],
-        locale_bundles = None
+        base_path=None,
+        encoding=None,
+        variable_encoding=None,
+        process_methods_list=[],
+        locale_bundles=None,
     ):
         # parses the file for the given file path with the
         # given encoding retrieving the template file and
@@ -209,10 +224,10 @@ class TemplateEngine(colony.System):
         # caller method (as expected by definition)
         template_file = self.parse_file_path(
             file_path,
-            base_path = base_path,
-            encoding = encoding,
-            process_methods_list = process_methods_list,
-            locale_bundles = locale_bundles
+            base_path=base_path,
+            encoding=encoding,
+            process_methods_list=process_methods_list,
+            locale_bundles=locale_bundles,
         )
         template_file.set_variable_encoding(variable_encoding)
         return template_file
@@ -220,15 +235,16 @@ class TemplateEngine(colony.System):
     def parse_file(
         self,
         file,
-        file_path = None,
-        base_path = None,
-        encoding = None,
-        process_methods_list = [],
-        locale_bundles = None
+        file_path=None,
+        base_path=None,
+        encoding=None,
+        process_methods_list=[],
+        locale_bundles=None,
     ):
         # in case the locale bundles list is not defined must
         # create a new list reference to handle it correctly
-        if locale_bundles == None: locale_bundles = []
+        if locale_bundles == None:
+            locale_bundles = []
 
         # retrieves the proper extension of the template's file
         # path and then uses it to try to determine if the template
@@ -241,7 +257,8 @@ class TemplateEngine(colony.System):
         # using the encoding value (may raise exception)
         file_contents = file.read()
         is_bytes = type(file_contents) == colony.legacy.BYTES
-        if encoding and is_bytes: file_contents = file_contents.decode(encoding)
+        if encoding and is_bytes:
+            file_contents = file_contents.decode(encoding)
 
         # creates the match orderer list, this list will hold the various
         # definitions of matched tokens for the current template, and is
@@ -335,7 +352,7 @@ class TemplateEngine(colony.System):
 
         # orders the match orderer list so that the items are ordered from
         # the beginning to the latest as their are meant to be sorted
-        match_orderer_l.sort(reverse = True)
+        match_orderer_l.sort(reverse=True)
 
         # creates the temporary literal match orderer list
         literal_orderer_l = []
@@ -366,7 +383,9 @@ class TemplateEngine(colony.System):
                 # creates the literal match object with the match start and
                 # and end values and then uses it to create the orderer
                 literal_match = LiteralMatch(match_start, match_end)
-                match_orderer_lit = MatchOrderer(literal_match, LITERAL_VALUE, match_value)
+                match_orderer_lit = MatchOrderer(
+                    literal_match, LITERAL_VALUE, match_value
+                )
 
                 # appends the match orderer object to the list of literal match
                 # orderer list, this list will later be fused with the "normal"
@@ -401,7 +420,7 @@ class TemplateEngine(colony.System):
         # to the match orderer list and then re-sorts the
         # match ordered list one more time in the reverse order
         match_orderer_l += literal_orderer_l
-        match_orderer_l.sort(reverse = True)
+        match_orderer_l.sort(reverse=True)
 
         # creates the root node and starts the stack of tree nodes
         # with the root node inserted in it, the stack will be used
@@ -414,7 +433,6 @@ class TemplateEngine(colony.System):
         # the template that has just been parsed, this same tree
         # may be latter percolated for the generation process
         for match_orderer in match_orderer_l:
-
             # retrieves the match orderer type for the
             # current iteration, this value will condition
             # the way the nodes are going to be created
@@ -422,7 +440,7 @@ class TemplateEngine(colony.System):
 
             if mtype == OUTPUT_VALUE:
                 value = match_orderer.get_value()
-                node = ast.OutputNode(value, xml_escape = xml_escape)
+                node = ast.OutputNode(value, xml_escape=xml_escape)
                 parent_node = stack[-1]
                 parent_node.add_child(node)
 
@@ -437,13 +455,14 @@ class TemplateEngine(colony.System):
                     stack.pop()
                 else:
                     parent_node.add_child(node)
-                    if is_open: stack.append(node)
+                    if is_open:
+                        stack.append(node)
 
             elif mtype == START_VALUE:
                 node = ast.CompositeNode(
                     [match_orderer],
-                    regex = ATTRIBUTE_REGEX,
-                    literal_regex = ATTRIBUTE_LITERAL_REGEX
+                    regex=ATTRIBUTE_REGEX,
+                    literal_regex=ATTRIBUTE_LITERAL_REGEX,
                 )
                 parent_node = stack[-1]
                 parent_node.add_child(node)
@@ -456,8 +475,8 @@ class TemplateEngine(colony.System):
             elif mtype == SINGLE_VALUE:
                 node = ast.SingleNode(
                     match_orderer,
-                    regex = ATTRIBUTE_REGEX,
-                    literal_regex = ATTRIBUTE_LITERAL_REGEX
+                    regex=ATTRIBUTE_REGEX,
+                    literal_regex=ATTRIBUTE_LITERAL_REGEX,
                 )
                 parent_node = stack[-1]
                 parent_node.add_child(node)
@@ -471,11 +490,11 @@ class TemplateEngine(colony.System):
         # used to represent the template in a abstract way this is
         # going to be the interface structure with the end user
         template_file = TemplateFile(
-            manager = self,
-            base_path = base_path,
-            file_path = file_path,
-            encoding = encoding,
-            root_node = root_node
+            manager=self,
+            base_path=base_path,
+            file_path=file_path,
+            encoding=encoding,
+            root_node=root_node,
         )
 
         # attaches the currently given process methods and locale
@@ -501,15 +520,18 @@ class TemplateEngine(colony.System):
     def _extension(self, file_path):
         _head, tail = os.path.split(file_path)
         tail_s = tail.split(".", 1)
-        if len(tail_s) > 1: return "." + tail_s[1]
+        if len(tail_s) > 1:
+            return "." + tail_s[1]
         return None
 
     def _extension_in(self, extension, sequence):
         for item in sequence:
             valid = extension.endswith(item)
-            if not valid: continue
+            if not valid:
+                continue
             return True
         return False
+
 
 class MatchOrderer(object):
     """
@@ -555,8 +577,8 @@ class MatchOrderer(object):
     def set_value(self, value):
         self.value = value
 
-class LiteralMatch(object):
 
+class LiteralMatch(object):
     start_index = None
     """ The start index value, this should be an offset
     position inside the current document's string data value """
@@ -565,7 +587,7 @@ class LiteralMatch(object):
     """ The end index value, that should close the
     current literal value starting in the start index """
 
-    def __init__(self, start_index = None, end_index = None):
+    def __init__(self, start_index=None, end_index=None):
         self.start_index = start_index
         self.end_index = end_index
 
@@ -574,6 +596,7 @@ class LiteralMatch(object):
 
     def end(self):
         return self.end_index
+
 
 class TemplateFile(object):
     """
@@ -630,12 +653,12 @@ class TemplateFile(object):
 
     def __init__(
         self,
-        manager = None,
-        base_path = None,
-        file_path = None,
-        encoding = None,
-        root_node = None,
-        eval = False
+        manager=None,
+        base_path=None,
+        file_path=None,
+        encoding=None,
+        root_node=None,
+        eval=False,
     ):
         """
         Constructor of the class.
@@ -685,8 +708,10 @@ class TemplateFile(object):
         :returns: The "final" formated string value.
         """
 
-        try: return template % args
-        except Exception: return None
+        try:
+            return template % args
+        except Exception:
+            return None
 
     @classmethod
     def convert(cls, value, mode):
@@ -708,9 +733,12 @@ class TemplateFile(object):
         """
 
         conversion_method = visitor.CONVERSION_MAP.get(mode, None)
-        if not conversion_method: return value
-        try: return conversion_method(value)
-        except Exception: return None
+        if not conversion_method:
+            return value
+        try:
+            return conversion_method(value)
+        except Exception:
+            return None
 
     def index_nodes(self):
         """
@@ -807,7 +835,7 @@ class TemplateFile(object):
         self.locale_bundles = locale_bundles
         self.visitor.locale_bundles = locale_bundles
 
-    def load_system_variable(self, name = "_system"):
+    def load_system_variable(self, name="_system"):
         """
         Loads a system information variable to the template
         file. This variable would allow for access to the
@@ -867,7 +895,7 @@ class TemplateFile(object):
         self.visitor.set_variable_encoding(self.variable_encoding)
         self.visitor.set_strict_mode(self.strict_mode)
 
-    def process(self, get_value = True):
+    def process(self, get_value=True):
         """
         Processes the template file running the visitor
         and returning the result value.
@@ -906,14 +934,17 @@ class TemplateFile(object):
         # retrieves the visitor string buffer value, in case
         # the value should be retrieved from the underlying string
         # buffer, otherwise retrieves the string buffer as the value
-        if get_value: value = string_buffer.get_value()
-        else: value = string_buffer
+        if get_value:
+            value = string_buffer.get_value()
+        else:
+            value = string_buffer
 
         # in case the returned value from the string buffer is not
         # a valid unicode string it must be decoded using the currently
         # defined encoding or the default one in case it's not defined
         is_bytes = type(value) == colony.legacy.BYTES
-        if is_bytes: value = value.decode(self.encoding or "utf-8")
+        if is_bytes:
+            value = value.decode(self.encoding or "utf-8")
 
         # returns the final value to the caller method, this may
         # either have the reference to the string buffer of the
@@ -992,5 +1023,7 @@ class TemplateFile(object):
 
         type = node.get_type()
         id = node.get_id()
-        if type == "block": self.nodes[id] = node
-        for node in node.children: self._index_node(node)
+        if type == "block":
+            self.nodes[id] = node
+        for node in node.children:
+            self._index_node(node)

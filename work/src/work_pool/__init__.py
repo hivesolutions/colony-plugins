@@ -29,6 +29,11 @@ from . import algorithms
 from . import exceptions
 from . import system
 
-from .algorithms import WorkPoolAlgorithm, RandomAlgorithm, RoundRobinAlgorithm, SmartBusyAlgorithm
+from .algorithms import (
+    WorkPoolAlgorithm,
+    RandomAlgorithm,
+    RoundRobinAlgorithm,
+    SmartBusyAlgorithm,
+)
 from .exceptions import WorkPoolException, WorkPoolOperationException
 from .system import WorkPool

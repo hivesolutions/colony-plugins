@@ -44,6 +44,7 @@ error should be raised constantly in no blocking connections """
 DEFAULT_MULTICAST_TTL = 255
 """ The default multicast ttl """
 
+
 class DatagramSocket(colony.System):
     """
     The datagram socket (provider) class.
@@ -74,7 +75,7 @@ class DatagramSocket(colony.System):
         # returns the datagram socket
         return datagram_socket
 
-    def provide_socket_parameters(self, parameters = {}):
+    def provide_socket_parameters(self, parameters={}):
         """
         Provides a new socket, configured with
         the given parameters.
@@ -101,7 +102,9 @@ class DatagramSocket(colony.System):
         datagram_socket = socket.socket(socket_family, socket.SOCK_DGRAM)
 
         # wraps the socket for multicast
-        multicast_address and self._wrap_socket_multicast(datagram_socket, multicast_address, multicast_parameters)
+        multicast_address and self._wrap_socket_multicast(
+            datagram_socket, multicast_address, multicast_parameters
+        )
 
         # returns the datagram socket
         return datagram_socket
@@ -125,7 +128,9 @@ class DatagramSocket(colony.System):
 
         return process_exception(socket, exception)
 
-    def _wrap_socket_multicast(self, base_socket, multicast_address, multicast_parameters):
+    def _wrap_socket_multicast(
+        self, base_socket, multicast_address, multicast_parameters
+    ):
         """
         Wraps the given base socket in to a multicast supported layer.
 
@@ -145,10 +150,14 @@ class DatagramSocket(colony.System):
 
         # sets the socket for reuse
         base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        hasattr(socket, "SO_REUSEPORT") and base_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1) #@UndefinedVariable
+        hasattr(socket, "SO_REUSEPORT") and base_socket.setsockopt(
+            socket.SOL_SOCKET, socket.SO_REUSEPORT, 1
+        )  # @UndefinedVariable
 
         # sets the datagram socket options
-        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl)
+        base_socket.setsockopt(
+            socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, multicast_ttl
+        )
         base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
 
         # retrieves the addresses ip4
@@ -159,21 +168,27 @@ class DatagramSocket(colony.System):
         multicast_host_network = socket.inet_aton(multicast_host)
 
         # sets the membership for the multicasting paradigm
-        base_socket.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, address_ip4_network)
-        base_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, multicast_host_network + address_ip4_network)
+        base_socket.setsockopt(
+            socket.SOL_IP, socket.IP_MULTICAST_IF, address_ip4_network
+        )
+        base_socket.setsockopt(
+            socket.IPPROTO_IP,
+            socket.IP_ADD_MEMBERSHIP,
+            multicast_host_network + address_ip4_network,
+        )
+
 
 def process_exception(self, exception):
     # in case the exception is of type socket error and the error
     # value is inside the list of valid error the exception is considered
     # valid and a valid value is returned
-    if isinstance(exception, socket.error) and\
-        exception.args[0] in (
-            errno.EWOULDBLOCK,
-            errno.EAGAIN,
-            errno.EPERM,
-            errno.ENOENT,
-            WSAEWOULDBLOCK
-        ):
+    if isinstance(exception, socket.error) and exception.args[0] in (
+        errno.EWOULDBLOCK,
+        errno.EAGAIN,
+        errno.EPERM,
+        errno.ENOENT,
+        WSAEWOULDBLOCK,
+    ):
         return True
 
     # return false (exception must be processed) as no graceful

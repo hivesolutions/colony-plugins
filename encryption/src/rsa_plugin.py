@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class RSAPlugin(colony.Plugin):
     """
     The main class for the RSA plugin.
@@ -40,21 +41,14 @@ class RSAPlugin(colony.Plugin):
     description = "The plugin that offers the RSA support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "test",
-        "encryption.rsa"
-    ]
-    main_modules = [
-        "rsa_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["test", "encryption.rsa"]
+    main_modules = ["rsa_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import rsa_c
+
         self.system = rsa_c.RSA(self)
         self.test = rsa_c.RSATest(self)
 

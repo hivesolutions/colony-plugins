@@ -70,13 +70,10 @@ DEFAULT_STATUS_CODE = 200
 """ The default status code, by default every request
 is considered to be successful """
 
-TYPES_R = dict(
-    int = int,
-    str = str,
-    regex = str
-)
+TYPES_R = dict(int=int, str=str, regex=str)
 """ Map that resolves a data type from the string representation
 to the proper type value to be used in casting """
+
 
 class MVC(colony.System):
     """
@@ -188,7 +185,8 @@ class MVC(colony.System):
         # started, because if threads are not allowed no process should
         # be started (violates manger rules)
         plugin_manager = self.plugin.manager
-        if plugin_manager.allow_threads: self.mvc_communication_handler.start_processing()
+        if plugin_manager.allow_threads:
+            self.mvc_communication_handler.start_processing()
 
     def stop_system(self):
         """
@@ -201,7 +199,8 @@ class MVC(colony.System):
         # the communication handler in case the handler has been started it
         # must now be stopped to avoid any memory or other resource leak
         plugin_manager = self.plugin.manager
-        if plugin_manager.allow_threads: self.mvc_communication_handler.stop_processing()
+        if plugin_manager.allow_threads:
+            self.mvc_communication_handler.stop_processing()
 
     def get_routes(self):
         """
@@ -213,9 +212,7 @@ class MVC(colony.System):
         to the REST service.
         """
 
-        return [
-            r"^mvc/.*$"
-        ]
+        return [r"^mvc/.*$"]
 
     def handle_rest_request(self, rest_request):
         """
@@ -253,7 +250,8 @@ class MVC(colony.System):
             # tries to math the resource path in case there is no
             # valid resource path match must continue the loop
             resource_path_match = resource_matching_regex.match(resource_path)
-            if not resource_path_match: continue
+            if not resource_path_match:
+                continue
 
             # handles the match using the resource handler, this should update the
             # response object with the proper contents, then runs the post handling
@@ -262,7 +260,7 @@ class MVC(colony.System):
                 rest_request,
                 resource_path,
                 resource_path_match,
-                resource_matching_regex
+                resource_matching_regex,
             )
             self._process_request(rest_request)
 
@@ -277,7 +275,8 @@ class MVC(colony.System):
             # tries to math the communication path in case there is no
             # valid communication path match must continue the loop
             communication_path_match = communication_matching_regex.match(resource_path)
-            if not communication_path_match: continue
+            if not communication_path_match:
+                continue
 
             # handles the match using the communication handler, this should update the
             # response object with the proper contents, then runs the post handling
@@ -286,7 +285,7 @@ class MVC(colony.System):
                 rest_request,
                 resource_path,
                 communication_path_match,
-                communication_matching_regex
+                communication_matching_regex,
             )
             self._process_request(rest_request)
 
@@ -300,7 +299,8 @@ class MVC(colony.System):
             # tries to math the resource path in case there is
             # no valid resource path match must continue the loop
             resource_path_match = matching_regex.match(resource_path)
-            if not resource_path_match: continue
+            if not resource_path_match:
+                continue
 
             # validate the match and retrieves the handle tuple and in
             # case the handle tuple is invalid continues immediately
@@ -308,7 +308,8 @@ class MVC(colony.System):
             handle_tuple = self._validate_match(
                 rest_request, resource_path, resource_path_match, matching_regex
             )
-            if not handle_tuple: continue
+            if not handle_tuple:
+                continue
 
             # handles the match using the (dynamic) handler, this should update the
             # response object with the proper contents, then runs the post handling
@@ -321,7 +322,9 @@ class MVC(colony.System):
 
         # raises the MVC request not handled exception, because no MVC
         # service was found for the current request constraints
-        raise exceptions.MVCRequestNotHandled("no MVC service plugin could handle the request")
+        raise exceptions.MVCRequestNotHandled(
+            "no MVC service plugin could handle the request"
+        )
 
     def load_mvc_service_plugin(self, mvc_service_plugin):
         """
@@ -338,14 +341,22 @@ class MVC(colony.System):
         # that are going to be used fore retrieval of patterns so that only the
         # ones that exist are called and for the others fallback values are used
         has_patterns = hasattr(mvc_service_plugin, "get_patterns")
-        has_communication_patterns = hasattr(mvc_service_plugin, "get_communication_patterns")
+        has_communication_patterns = hasattr(
+            mvc_service_plugin, "get_communication_patterns"
+        )
         has_resource_patterns = hasattr(mvc_service_plugin, "get_resource_patterns")
 
         # retrieves the complete set of patterns from the
         # MVC service plugin to load them into the internal structures
         patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
-        communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
-        resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
+        communication_patterns = (
+            mvc_service_plugin.get_communication_patterns()
+            if has_communication_patterns
+            else ()
+        )
+        resource_patterns = (
+            mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
+        )
 
         # runs the normalization process for the various patterns
         # that have been retrieved so that the patterns are correctly
@@ -353,7 +364,7 @@ class MVC(colony.System):
         # the first set of patters are normalized with some extra operations
         # applied to them meaning that some meta information is also added
         # to each of the pattern tuples (as defined in specification)
-        patterns = self._normalize_patterns(patterns, extra = True)
+        patterns = self._normalize_patterns(patterns, extra=True)
         communication_patterns = self._normalize_patterns(communication_patterns)
         resource_patterns = self._normalize_patterns(resource_patterns)
 
@@ -374,14 +385,13 @@ class MVC(colony.System):
             # pattern compiled map, then in case it's not found compiles
             # it (only one compilation should occur)
             pattern_validation_regex = self.pattern_compiled_map.get(pattern_key, None)
-            pattern_validation_regex = pattern_validation_regex or re.compile(pattern_key)
+            pattern_validation_regex = pattern_validation_regex or re.compile(
+                pattern_key
+            )
 
             # creates the pattern attributes (tuple) with both the validation
             # regex and the value
-            pattern_attributes = (
-                pattern_validation_regex,
-                pattern_value
-            )
+            pattern_attributes = (pattern_validation_regex, pattern_value)
 
             # escapes the pattern key replacing the named
             # group selectors, this is required so that the
@@ -454,14 +464,22 @@ class MVC(colony.System):
         # that are going to be used fore retrieval of patterns so that only the
         # ones that exist are called and for the others fallback values are used
         has_patterns = hasattr(mvc_service_plugin, "get_patterns")
-        has_communication_patterns = hasattr(mvc_service_plugin, "get_communication_patterns")
+        has_communication_patterns = hasattr(
+            mvc_service_plugin, "get_communication_patterns"
+        )
         has_resource_patterns = hasattr(mvc_service_plugin, "get_resource_patterns")
 
         # retrieves the complete set of patterns from the
         # MVC service plugin to unload them from the internal structures
         patterns = mvc_service_plugin.get_patterns() if has_patterns else ()
-        communication_patterns = mvc_service_plugin.get_communication_patterns() if has_communication_patterns else ()
-        resource_patterns = mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
+        communication_patterns = (
+            mvc_service_plugin.get_communication_patterns()
+            if has_communication_patterns
+            else ()
+        )
+        resource_patterns = (
+            mvc_service_plugin.get_resource_patterns() if has_resource_patterns else ()
+        )
 
         # runs the normalization process for the various patterns
         # that have been retrieved so that the patterns are correctly
@@ -469,7 +487,7 @@ class MVC(colony.System):
         # the first set of patters are normalized with some extra operations
         # applied to them meaning that some meta information is also added
         # to each of the pattern tuples (as defined in specification)
-        patterns = self._normalize_patterns(patterns, extra = True)
+        patterns = self._normalize_patterns(patterns, extra=True)
         communication_patterns = self._normalize_patterns(communication_patterns)
         resource_patterns = self._normalize_patterns(resource_patterns)
 
@@ -499,10 +517,7 @@ class MVC(colony.System):
 
                 # creates the pattern attributes (tuple) with both the validation
                 # regex and the value
-                pattern_attributes = (
-                    pattern_validation_regex,
-                    pattern_value
-                )
+                pattern_attributes = (pattern_validation_regex, pattern_value)
 
                 # retrieves the pattern attributes list from the MVC service
                 # patterns map and then removes the pattern attributes
@@ -513,7 +528,8 @@ class MVC(colony.System):
                 # in case the pattern attributes list is not empty, there are
                 # more patterns associated with the pattern key, no need
                 # to remove the patter key references, continues the loop
-                if pattern_attributes_list: continue
+                if pattern_attributes_list:
+                    continue
 
                 # removes the pattern attributes list from the patterns map
                 # and then removes the pattern from the patterns list
@@ -526,7 +542,8 @@ class MVC(colony.System):
             # in case the pattern key exists in the current communication
             # patterns updates both the communication patterns map and
             # list by removing associations
-            if not pattern_key in self.communication_patterns_map: continue
+            if not pattern_key in self.communication_patterns_map:
+                continue
             del self.communication_patterns_map[pattern_key]
             self.communication_patterns_list.remove(pattern_key)
 
@@ -536,7 +553,8 @@ class MVC(colony.System):
             # in case the pattern key exists in the current
             # resource patterns updates both the resource patterns
             # map and list by removing associations
-            if not pattern_key in self.resource_patterns_map: continue
+            if not pattern_key in self.resource_patterns_map:
+                continue
             del self.resource_patterns_map[pattern_key]
             self.resource_patterns_list.remove(pattern_key)
 
@@ -566,19 +584,23 @@ class MVC(colony.System):
         self.mvc_communication_handler.send_broadcast(connection_name, message)
 
     def register_patterns(self, patterns):
-        for pattern in patterns: self.register_pattern(pattern)
+        for pattern in patterns:
+            self.register_pattern(pattern)
 
     def unregister_patterns(self, patterns):
-        for pattern in patterns: self.unregister_pattern(pattern)
+        for pattern in patterns:
+            self.unregister_pattern(pattern)
 
     def register_pattern(self, pattern):
         name = self.pattern_name(pattern)
-        if name in self.patterns_index: return
+        if name in self.patterns_index:
+            return
         self.patterns_index[name] = pattern
 
     def unregister_pattern(self, pattern):
         name = self.pattern_name(pattern)
-        if not name in self.patterns_index: return
+        if not name in self.patterns_index:
+            return
         del self.patterns_index[name]
 
     def pattern_name(self, pattern):
@@ -590,7 +612,8 @@ class MVC(colony.System):
             cls = self.__class__
             cls_name = cls.__name__
             cls_name = colony.to_underscore(cls_name)
-            if cls_name.endswith("_controller"): cls_name = cls_name[:-11]
+            if cls_name.endswith("_controller"):
+                cls_name = cls_name[:-11]
             short_name = self.plugin.short_name
             name = "%s.%s.%s" % (short_name, cls_name, name)
         else:
@@ -612,7 +635,8 @@ class MVC(colony.System):
         # an exception is raised indicating the problem in resolution
         pattern = self.patterns_index.get(name_s, None)
         pattern = self.patterns_index.get(name, pattern)
-        if not pattern: raise exceptions.RuntimeRequestException("unresolved '%s'" % name)
+        if not pattern:
+            raise exceptions.RuntimeRequestException("unresolved '%s'" % name)
 
         # retrieves the patter meta information map from the pattern
         # tuple and uses it to retrieve the original route name and
@@ -631,7 +655,8 @@ class MVC(colony.System):
         # a resolved base route value into a resolved one, provided an extended
         # support for domain and URL resolution during runtime
         has_resolve = hasattr(controller, "resolve")
-        if has_resolve: base = controller.resolve(request, base)
+        if has_resolve:
+            base = controller.resolve(request, base)
 
         # creates the list that will hold the various key to value strings
         # that are going to be used as part of the query string
@@ -643,7 +668,8 @@ class MVC(colony.System):
         for key, value in colony.legacy.iteritems(kwargs):
             value_t = type(value)
             is_string = value_t in colony.legacy.STRINGS
-            if not is_string: value = str(value)
+            if not is_string:
+                value = str(value)
             replacer = names_t.get(key, None)
             if replacer:
                 base = base.replace(replacer, value)
@@ -660,7 +686,9 @@ class MVC(colony.System):
         query_s = "&".join(query)
         return location + "?" + query_s if query_s else location
 
-    def _handle_resource_match(self, rest_request, resource_path, path_match, matching_regex):
+    def _handle_resource_match(
+        self, rest_request, resource_path, path_match, matching_regex
+    ):
         # retrieves the base index (offset index) for the matching regex
         # this is going to be used in the calculus of the service index
         base_index = self.resource_matching_regex_base_map[matching_regex]
@@ -689,16 +717,16 @@ class MVC(colony.System):
         # note that the encoder name is only added in case it's
         # currently defined (as defined in the specification)
         initial_token_l = len(initial_token)
-        file_path = base_path + "/" + resource_path[initial_token_l + 1:]
-        if rest_request.encoder_name: file_path += "." + rest_request.encoder_name
+        file_path = base_path + "/" + resource_path[initial_token_l + 1 :]
+        if rest_request.encoder_name:
+            file_path += "." + rest_request.encoder_name
 
         # handles the given request by the MVC file handler
-        self.mvc_file_handler.handle_request(
-            rest_request.request,
-            file_path
-        )
+        self.mvc_file_handler.handle_request(rest_request.request, file_path)
 
-    def _handle_communication_match(self, rest_request, resource_path, path_match, matching_regex):
+    def _handle_communication_match(
+        self, rest_request, resource_path, path_match, matching_regex
+    ):
         # retrieves the base index (offset index) for the matching regex
         # this is going to be used in the calculus of the service index
         base_index = self.communication_matching_regex_base_map[matching_regex]
@@ -719,9 +747,7 @@ class MVC(colony.System):
 
         # handles the given request by the MVC communication handler
         self.mvc_communication_handler.handle_request(
-            rest_request,
-            delegate,
-            connection_name
+            rest_request, delegate, connection_name
         )
 
     def _validate_match(self, rest_request, resource_path, path_match, matching_regex):
@@ -750,12 +776,15 @@ class MVC(colony.System):
         for handler_attributes in pattern_attributes_list:
             # tries to validation the match using the REST request,
             # handler attributes and the resource path
-            return_value = self.__validate_match(rest_request, handler_attributes, resource_path)
+            return_value = self.__validate_match(
+                rest_request, handler_attributes, resource_path
+            )
 
             # in case the return value is not valid
             # (no success in validation) must continue
             # the loop (keep trying)
-            if not return_value: continue
+            if not return_value:
+                continue
 
             # breaks the loop (valid match)
             break
@@ -795,8 +824,10 @@ class MVC(colony.System):
         # target type as defined in pattern expression
         for name, type_r in colony.legacy.iteritems(names):
             value = pattern_names.get(name, None)
-            try: value = type_r(value)
-            except Exception: value = value
+            try:
+                value = type_r(value)
+            except Exception:
+                value = value
             pattern_names[name] = value
 
         # verifies if the handler method is either a method (received
@@ -844,21 +875,23 @@ class MVC(colony.System):
         # and then uses it to retrieve its default parameters
         # after that uses the default parameters to extend the
         # parameters map of the handler tuple
-        controller = type(handler_method) == types.MethodType and handler_method.__self__
-        default_parameters = controller and\
-            hasattr(controller, GET_DEFAULT_PARAMETERS_VALUE) and\
-            controller.get_default_parameters() or {}
-        colony.map_extend(parameters, default_parameters, copy_base_map = False)
+        controller = (
+            type(handler_method) == types.MethodType and handler_method.__self__
+        )
+        default_parameters = (
+            controller
+            and hasattr(controller, GET_DEFAULT_PARAMETERS_VALUE)
+            and controller.get_default_parameters()
+            or {}
+        )
+        colony.map_extend(parameters, default_parameters, copy_base_map=False)
 
         # handles the MVC request to the handler method (REST
         # request flow) note that the call is done using the safe
         # call method so that only the valid arguments are passed
         # to the handler method (pattern names validation)
         colony.call_safe(
-            handler_method,
-            rest_request,
-            parameters = parameters,
-            **pattern_names
+            handler_method, rest_request, parameters=parameters, **pattern_names
         )
 
     def _process_request(self, rest_request):
@@ -906,8 +939,10 @@ class MVC(colony.System):
         for pattern in self.patterns_list:
             # in case it's not the first iteration adds the
             # or operand to the matching regex value buffer
-            if is_first: is_first = False
-            else: matching_regex_buffer.write("|")
+            if is_first:
+                is_first = False
+            else:
+                matching_regex_buffer.write("|")
 
             # adds the group name part of the regex to the matching
             # regex value buffer
@@ -919,7 +954,8 @@ class MVC(colony.System):
 
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
-            if not index % REGEX_COMPILATION_LIMIT == 0: continue
+            if not index % REGEX_COMPILATION_LIMIT == 0:
+                continue
 
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
@@ -940,7 +976,8 @@ class MVC(colony.System):
         # regex value buffer and in case is not valid returns
         # immediately no further processing
         matching_regex_value = matching_regex_buffer.get_value()
-        if not matching_regex_value: return
+        if not matching_regex_value:
+            return
 
         # compiles the matching regex value and adds it to
         # the matching regex list and base indexes map
@@ -977,8 +1014,10 @@ class MVC(colony.System):
         for pattern in self.communication_patterns_list:
             # in case it's not the first iteration adds the
             # or operand to the matching regex value buffer
-            if is_first: is_first = False
-            else: communication_matching_regex_buffer.write("|")
+            if is_first:
+                is_first = False
+            else:
+                communication_matching_regex_buffer.write("|")
 
             # adds the group name part of the regex to the matching
             # regex value buffer
@@ -990,15 +1029,22 @@ class MVC(colony.System):
 
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
-            if not index % REGEX_COMPILATION_LIMIT == 0: continue
+            if not index % REGEX_COMPILATION_LIMIT == 0:
+                continue
 
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
             # the matching regex list and base indexes map
-            communication_matching_regex_value = communication_matching_regex_buffer.get_value()
-            communication_matching_regex = re.compile(communication_matching_regex_value)
+            communication_matching_regex_value = (
+                communication_matching_regex_buffer.get_value()
+            )
+            communication_matching_regex = re.compile(
+                communication_matching_regex_value
+            )
             self.communication_matching_regex_list.append(communication_matching_regex)
-            self.communication_matching_regex_base_map[communication_matching_regex] = current_base_index
+            self.communication_matching_regex_base_map[
+                communication_matching_regex
+            ] = current_base_index
 
             # re-sets the current matching regex buffer value and
             # then updates the base index to the current index and
@@ -1010,14 +1056,19 @@ class MVC(colony.System):
         # retrieves the (matching) regex value from the matching
         # regex value buffer and in case is not valid returns
         # immediately no further processing
-        communication_matching_regex_value = communication_matching_regex_buffer.get_value()
-        if not communication_matching_regex_value: return
+        communication_matching_regex_value = (
+            communication_matching_regex_buffer.get_value()
+        )
+        if not communication_matching_regex_value:
+            return
 
         # compiles the matching regex value and adds it to
         # the matching regex list and base indexes map
         communication_matching_regex = re.compile(communication_matching_regex_value)
         self.communication_matching_regex_list.append(communication_matching_regex)
-        self.communication_matching_regex_base_map[communication_matching_regex] = current_base_index
+        self.communication_matching_regex_base_map[
+            communication_matching_regex
+        ] = current_base_index
 
     def _update_resource_matching_regex(self):
         """
@@ -1048,8 +1099,10 @@ class MVC(colony.System):
         for pattern in self.resource_patterns_list:
             # in case it's not the first iteration adds the
             # or operand to the matching regex value buffer
-            if is_first: is_first = False
-            else: resource_matching_regex_buffer.write("|")
+            if is_first:
+                is_first = False
+            else:
+                resource_matching_regex_buffer.write("|")
 
             # adds the group name part of the regex to the matching
             # regex value buffer
@@ -1061,7 +1114,8 @@ class MVC(colony.System):
 
             # in case the current index is in the limit of the python
             # regex compilation, must flush regex operation
-            if not index % REGEX_COMPILATION_LIMIT == 0: continue
+            if not index % REGEX_COMPILATION_LIMIT == 0:
+                continue
 
             # retrieves the matching regex value from the matching
             # regex value buffer compiles it and adds it to both
@@ -1069,7 +1123,9 @@ class MVC(colony.System):
             resource_matching_regex_value = resource_matching_regex_buffer.get_value()
             resource_matching_regex = re.compile(resource_matching_regex_value)
             self.resource_matching_regex_list.append(resource_matching_regex)
-            self.resource_matching_regex_base_map[resource_matching_regex] = current_base_index
+            self.resource_matching_regex_base_map[
+                resource_matching_regex
+            ] = current_base_index
 
             # re-sets the current matching regex buffer value and
             # then updates the base index to the current index and
@@ -1082,15 +1138,18 @@ class MVC(colony.System):
         # regex value buffer and in case is not valid returns
         # immediately no further processing
         resource_matching_regex_value = resource_matching_regex_buffer.get_value()
-        if not resource_matching_regex_value: return
+        if not resource_matching_regex_value:
+            return
 
         # compiles the matching regex value and adds it to
         # the matching regex list and base indexes map
         resource_matching_regex = re.compile(resource_matching_regex_value)
         self.resource_matching_regex_list.append(resource_matching_regex)
-        self.resource_matching_regex_base_map[resource_matching_regex] = current_base_index
+        self.resource_matching_regex_base_map[
+            resource_matching_regex
+        ] = current_base_index
 
-    def _normalize_patterns(self, patterns, extra = False):
+    def _normalize_patterns(self, patterns, extra=False):
         # creates the list that will hold the final version
         # of the patterns (after normalization process), this
         # value will contain various list defining the patterns
@@ -1100,7 +1159,7 @@ class MVC(colony.System):
         # normalize each of them and then add the resulting value
         # to the list of "new" patterns
         for pattern in patterns:
-            pattern = self._normalize_pattern(pattern, extra = extra)
+            pattern = self._normalize_pattern(pattern, extra=extra)
             _patterns.append(pattern)
 
         # returns the final (normalized) list of patterns to the
@@ -1108,7 +1167,7 @@ class MVC(colony.System):
         # may contain some extra (meta) information
         return _patterns
 
-    def _normalize_pattern(self, pattern, extra = False):
+    def _normalize_pattern(self, pattern, extra=False):
         # converts the provided pattern (expected to be a tuple) into
         # a list type so that it becomes mutable as required, then gets
         # the length of the pattern to be used ahead and extracts the
@@ -1123,8 +1182,10 @@ class MVC(colony.System):
         # verifies if the start line and end line tokens are defined
         # in the expression and in case they're not adds then to the
         # current expression string as they are mandatory
-        if not expression.startswith("^"): expression = "^" + expression
-        if not expression.endswith("$"): expression = expression + "$"
+        if not expression.startswith("^"):
+            expression = "^" + expression
+        if not expression.endswith("$"):
+            expression = expression + "$"
 
         # runs the regex based replacement chain that should translate
         # the expression from a simplified domain into a regex based domain
@@ -1139,7 +1200,8 @@ class MVC(colony.System):
         # in case no extra normalization operations are requested the method
         # should returns the "new" pattern list immediately to the caller method
         # as this is the specific behavior for such situations
-        if not extra: return pattern
+        if not extra:
+            return pattern
 
         # creates the names dictionary that will hold the association between
         # the name and the data type associated with that name for runtime
@@ -1156,21 +1218,26 @@ class MVC(colony.System):
         for match in iterator:
             _type_s, type_t, _extras, name = match.groups()
             type_r = TYPES_R.get(type_t, str)
-            if type_t: target = "<" + type_t + ":" + name + ">"
-            else: target = "<" + name + ">"
+            if type_t:
+                target = "<" + type_t + ":" + name + ">"
+            else:
+                target = "<" + name + ">"
             names[name] = type_r
             names_t[name] = target
 
         # in case any of the pattern components is missing defaults to the
         # default value for each of them so that the meta field (last one)
         # may be added as it is required by the specification
-        if pattern_l < 3: pattern.append("get")
-        if pattern_l < 4: pattern.append(None)
-        if pattern_l < 5: pattern.append({})
+        if pattern_l < 3:
+            pattern.append("get")
+        if pattern_l < 4:
+            pattern.append(None)
+        if pattern_l < 5:
+            pattern.append({})
 
         # creates the meta dictionary containing the values that will be used
         # for runtime based processing and then adds the value to the pattern
-        meta = dict(names = names, names_t = names_t, original = _expression)
+        meta = dict(names=names, names_t=names_t, original=_expression)
         pattern.append(meta)
 
         # returns the final list based pattern containing the complete set
@@ -1187,7 +1254,9 @@ class MVC(colony.System):
         # raises the runtime request exception
         validation_match = validation_regex.match(resource_path)
         if not validation_match:
-            raise exceptions.RuntimeRequestException("invalid resource path validation match")
+            raise exceptions.RuntimeRequestException(
+                "invalid resource path validation match"
+            )
 
         # retrieves the length of the handler arguments, in order to be able
         # to conditionally validate the various parameters from it
@@ -1196,7 +1265,9 @@ class MVC(colony.System):
         # retrieves the complete set of arguments that were provided
         # to be used as attributes by the handler
         method = arguments_length > 0 and arguments[0] or None
-        operation_types = arguments_length > 1 and arguments[1] or ("get", "put", "post", "delete")
+        operation_types = (
+            arguments_length > 1 and arguments[1] or ("get", "put", "post", "delete")
+        )
         encoders = arguments_length > 2 and arguments[2] or None
         contraints = arguments_length > 3 and arguments[3] or {}
         meta = arguments_length > 4 and arguments[4] or {}
@@ -1220,12 +1291,14 @@ class MVC(colony.System):
         # in case the request operation type does not exists in the
         # operation types, must returns with invalid value (validation
         # of operation type failed)
-        if not operation_type_r in operation_types: return None
+        if not operation_type_r in operation_types:
+            return None
 
         # in case the encoders are defined and the request encoder name
         # does not exists in the encoders set must return with invalid
         # state (validation of encoder failed)
-        if encoders and not encoder_name_r in encoders: return None
+        if encoders and not encoder_name_r in encoders:
+            return None
 
         # iterates over the complete set of constraints to be able to
         # ensure that they are valid for the current execution and if
@@ -1240,12 +1313,15 @@ class MVC(colony.System):
 
             # tries to cast the attribute value using the constraint
             # type in case it fails returns in error
-            try: attribute_value_c = contraint_value_t(attribute_value)
-            except Exception: return None
+            try:
+                attribute_value_c = contraint_value_t(attribute_value)
+            except Exception:
+                return None
 
             # in case the attribute value (casted) is not equals
             # to the handler constraint value must return in error
-            if attribute_value_c == contraint_value: return None
+            if attribute_value_c == contraint_value:
+                return None
 
         # retrieves the (resource path) validation match groups map
         validation_match_groups_map = validation_match.groupdict()
@@ -1253,21 +1329,18 @@ class MVC(colony.System):
         # creates the map containing the various parameters to be
         # "pushed" to the lower layer of the MVC stack
         parameters = dict(
-            file_handler = self.mvc_file_handler,
-            communication_handler = self.mvc_communication_handler,
-            method = operation_type_r,
-            encoder_name = encoder_name_r,
-            pattern_names = validation_match_groups_map,
-            meta = meta
+            file_handler=self.mvc_file_handler,
+            communication_handler=self.mvc_communication_handler,
+            method=operation_type_r,
+            encoder_name=encoder_name_r,
+            pattern_names=validation_match_groups_map,
+            meta=meta,
         )
 
         # creates the handler tuple, containing both the method to
         # be used for handling and the parameters to be passed and
         # returns it to the caller method
-        handler_tuple = (
-            method,
-            parameters
-        )
+        handler_tuple = (method, parameters)
         return handler_tuple
 
     def __cast_tuple(self, value):
@@ -1283,7 +1356,8 @@ class MVC(colony.System):
 
         # in case the value is invalid, returns
         # the value immediately
-        if value == None: return value
+        if value == None:
+            return value
 
         # creates the tuple value from the value and returns
         # the value to the caller method

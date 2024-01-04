@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class BERException(colony.ColonyException):
     """
     The BER exception class.
@@ -37,6 +38,7 @@ class BERException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class PackingError(BERException):
     """
@@ -64,6 +66,7 @@ class PackingError(BERException):
 
         return "Packing error - %s" % self.message
 
+
 class UnpackingError(BERException):
     """
     The unpacking error class.
@@ -89,6 +92,7 @@ class UnpackingError(BERException):
         """
 
         return "Unpacking error - %s" % self.message
+
 
 class OperationNotImplemented(BERException):
     """

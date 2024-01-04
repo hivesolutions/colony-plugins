@@ -60,7 +60,8 @@ LIST_TYPES = (list, tuple, types.GeneratorType, itertools.chain)
 """ A tuple with the various list types considered
 as proper sequences for the current serializer """
 
-def dumps(object, encoding = DEFAULT_ENCODING):
+
+def dumps(object, encoding=DEFAULT_ENCODING):
     # "chunks" the object into a resulting generator
     # object that is going to be used for string
     chunks = _chunk(object)
@@ -69,29 +70,34 @@ def dumps(object, encoding = DEFAULT_ENCODING):
     # and then in case there's an encoding defined
     # encodes the data into the target encoding
     string_value = "".join([chunk for chunk in chunks])
-    if encoding: string_value = string_value.encode(encoding, "ignore")
+    if encoding:
+        string_value = string_value.encode(encoding, "ignore")
 
     # returns the string value as an unicode
     # or a raw/bytes string in case it was
     # properly decoded (using provided encoding)
     return string_value
 
-def dumps_lazy(object, encoding = DEFAULT_ENCODING):
+
+def dumps_lazy(object, encoding=DEFAULT_ENCODING):
     # iterates over the complete set of chunk in the
     # generator encoding the chunk (if required) and
     # the re-yield the value to the upper layers
     for chunk in _chunk(object):
-        if encoding: chunk = chunk.encode(encoding, "ignore")
+        if encoding:
+            chunk = chunk.encode(encoding, "ignore")
         yield chunk
 
-def _chunk(object, flatten = True, empty = True):
+
+def _chunk(object, flatten=True, empty=True):
     # retrieves the object type
     object_type = type(object)
 
     # in case the object type is key to value
     # based (map or dictionary) must convert the
     # object into a list for processing
-    if object_type == dict: object = [object]
+    if object_type == dict:
+        object = [object]
 
     # in case the object type is neither an
     # instance nor a list it's considered not
@@ -101,7 +107,8 @@ def _chunk(object, flatten = True, empty = True):
 
     # in case the object is not set, is invalid
     # or is empty there is no need to codify it
-    if not object: return
+    if not object:
+        return
 
     # sets the "original" and default value for the attribute names
     # so that no local variable is referenced before assignment
@@ -120,14 +127,17 @@ def _chunk(object, flatten = True, empty = True):
     # in case the type of the first object item is a list or a tuple
     # the mode to be used is the simple one not the map mode, otherwise
     # the map mode is used (usable for both object and maps)
-    if _object_item_type in LIST_TYPES: map_mode = False
-    else: map_mode = True
+    if _object_item_type in LIST_TYPES:
+        map_mode = False
+    else:
+        map_mode = True
 
     # in case the flatten mode is set and the current object item is a
     # map it must be first "flattened" so that it can be used with the
     # complete set of relations properly set for it
     flatten = flatten and map_mode
-    if flatten: _object_item = colony.map_flatten(_object_item)
+    if flatten:
+        _object_item = colony.map_flatten(_object_item)
 
     # in case the map mode is enabled the header value must
     # be encoded by retrieving the names of the first object
@@ -138,9 +148,7 @@ def _chunk(object, flatten = True, empty = True):
         # is provided so that it may be used in the proper attribute
         # names retrieval as new names may become available for flat
         attribute_names = _attribute_names(
-            _object_item,
-            object = [] if is_generator else object,
-            flatten = flatten
+            _object_item, object=[] if is_generator else object, flatten=flatten
         )
         header_value = SEPARATOR_CHARACTER.join(attribute_names) + NEWLINE_CHARACTER
 
@@ -148,7 +156,8 @@ def _chunk(object, flatten = True, empty = True):
         # if that's not the case it must be converted into an
         # unicode string using the default encoding for writing
         is_unicode = type(header_value) == colony.legacy.UNICODE
-        if not is_unicode: header_value = header_value.decode("utf-8")
+        if not is_unicode:
+            header_value = header_value.decode("utf-8")
 
         # yields the header value into current generator, note that
         # this value is defined as an unicode based string
@@ -160,34 +169,35 @@ def _chunk(object, flatten = True, empty = True):
     if is_generator:
         chunks = _chunk_line(
             _object_item,
-            attribute_names = attribute_names,
-            empty = empty,
-            map_mode = map_mode
+            attribute_names=attribute_names,
+            empty=empty,
+            map_mode=map_mode,
         )
-        for chunk in chunks: yield chunk
+        for chunk in chunks:
+            yield chunk
 
     # iterates over all the object (items) in the object list for
     # serialization so that it's able to chunk (serialize) each item
     for object_item in object:
-        if flatten: object_item = colony.map_flatten(object_item)
+        if flatten:
+            object_item = colony.map_flatten(object_item)
         chunks = _chunk_line(
-            object_item,
-            attribute_names = attribute_names,
-            empty = empty,
-            map_mode = map_mode
+            object_item, attribute_names=attribute_names, empty=empty, map_mode=map_mode
         )
-        for chunk in chunks: yield chunk
+        for chunk in chunks:
+            yield chunk
 
-def _chunk_line(object_item, attribute_names = None, empty = True, map_mode = False):
+
+def _chunk_line(object_item, attribute_names=None, empty=True, map_mode=False):
     # retrieves the various object items attribute values
     # (from the previously calculated attribute names) in
     # case the simple mode is used there is no need to retrieve
     # them using the header name
-    attribute_values = map_mode and colony.object_attribute_values(
-        object_item,
-        attribute_names,
-        strict = False
-    ) or object_item
+    attribute_values = (
+        map_mode
+        and colony.object_attribute_values(object_item, attribute_names, strict=False)
+        or object_item
+    )
 
     # retrieves the attribute values length
     attribute_values_length = len(attribute_values)
@@ -221,12 +231,14 @@ def _chunk_line(object_item, attribute_names = None, empty = True, map_mode = Fa
 
         # yields the (decoded) attribute value, in case
         # the value is valid (avoiding invalid values)
-        if attribute_value: yield attribute_value
+        if attribute_value:
+            yield attribute_value
 
         # in case the current index represents the last
         # attribute must continue the loop as the the
         # separator character is not required in this case
-        if index == attribute_values_length - 1: continue
+        if index == attribute_values_length - 1:
+            continue
 
         # yields the separator character and then increments
         # the current index so that it's possible to count values
@@ -239,7 +251,8 @@ def _chunk_line(object_item, attribute_names = None, empty = True, map_mode = Fa
     newline = colony.legacy.u(NEWLINE_CHARACTER)
     yield newline
 
-def _attribute_names(object_item, object = [], sort = True, flatten = True):
+
+def _attribute_names(object_item, object=[], sort=True, flatten=True):
     # creates the first and initial set of attribute names
     # from the first object item, this is considered to be
     # the default one from which all the other will intersect
@@ -252,19 +265,19 @@ def _attribute_names(object_item, object = [], sort = True, flatten = True):
         # retrieves the object attribute names for the current
         # object item value and then intersects the current
         # names list with the new one (avoiding duplicates)
-        if flatten: object_item = colony.map_flatten(object_item)
+        if flatten:
+            object_item = colony.map_flatten(object_item)
         object_attribute_names = colony.object_attribute_names(object_item)
-        attribute_names = colony.list_intersect(
-            attribute_names,
-            object_attribute_names
-        )
+        attribute_names = colony.list_intersect(attribute_names, object_attribute_names)
 
     # in case the sort flag is set sorts the gathered attribute
     # names and then returns them to the caller method
-    if sort: attribute_names.sort()
+    if sort:
+        attribute_names.sort()
     return attribute_names
 
-def loads(data, header = True):
+
+def loads(data, header=True):
     # strips the data from extra lines
     # (avoids possible problems)
     data = data.strip()
@@ -276,6 +289,7 @@ def loads(data, header = True):
     # the "loaded" object to the caller method (result value)
     object = _dechunk(chunks, header)
     return object
+
 
 def _dechunk(chunks, header):
     # creates the object list
@@ -303,7 +317,9 @@ def _dechunk(chunks, header):
         object = {}
 
         # retrieves the various object attributes
-        object_attributes = [value.strip() for value in content.split(SEPARATOR_CHARACTER)]
+        object_attributes = [
+            value.strip() for value in content.split(SEPARATOR_CHARACTER)
+        ]
 
         # starts the index value
         index = 0

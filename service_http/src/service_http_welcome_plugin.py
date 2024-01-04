@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPWelcomePlugin(colony.Plugin):
     """
     The main class for the HTTP Service Welcome plugin.
@@ -43,13 +44,12 @@ class ServiceHTTPWelcomePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    main_modules = [
-        "service_http_welcome"
-    ]
+    main_modules = ["service_http_welcome"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_welcome
+
         self.system = service_http_welcome.ServiceHTTPWelcome(self)

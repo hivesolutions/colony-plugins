@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ConsoleException(colony.ColonyException):
     """
     The console exception class.
@@ -37,6 +38,7 @@ class ConsoleException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class MissingProperty(ConsoleException):
     """
@@ -63,6 +65,7 @@ class MissingProperty(ConsoleException):
         """
 
         return "Missing property - %s" % self.message
+
 
 class AuthenticationFailed(ConsoleException):
     """

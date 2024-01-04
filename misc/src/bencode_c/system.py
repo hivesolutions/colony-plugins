@@ -38,6 +38,7 @@ DEFAULT_ENCODING = "utf-8"
 MIME_TYPE = "application/x-bencode"
 """ The mime type """
 
+
 class Bencode(colony.System):
     """
     Provides functions to interact with bencode,
@@ -51,7 +52,7 @@ class Bencode(colony.System):
     def loads(self, bencode_string):
         return serializer.loads(bencode_string)
 
-    def load_file(self, bencode_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, bencode_file, encoding=DEFAULT_ENCODING):
         # reads the bencode file
         bencode_file_contents = bencode_file.read()
 

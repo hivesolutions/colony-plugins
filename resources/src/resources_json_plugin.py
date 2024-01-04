@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ResourcesJSONPlugin(colony.Plugin):
     """
     The main class for the Resources JSON plugin.
@@ -40,22 +41,15 @@ class ResourcesJSONPlugin(colony.Plugin):
     description = "A plugin to parse JSON resources"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "resources_parser"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
-    ]
-    main_modules = [
-        "resources_json"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["resources_parser"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.misc.json")]
+    main_modules = ["resources_json"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import resources_json
+
         self.system = resources_json.ResourcesJSON(self)
 
     def get_resources_parser_name(self):

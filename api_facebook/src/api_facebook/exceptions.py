@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIFacebookException(colony.ColonyException):
     """
     The API Facebook exception class.
@@ -37,6 +38,7 @@ class APIFacebookException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class FacebookAPIError(APIFacebookException):
     """

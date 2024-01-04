@@ -38,6 +38,7 @@ RESOURCES_PARSER_NAME = "python"
 CONFIGURATION_VALUE = "configuration"
 """ The configuration value """
 
+
 class ResourcesPython(colony.System):
     """
     The resources python (parser) class.

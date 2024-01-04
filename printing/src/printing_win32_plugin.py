@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PrintingWin32Plugin(colony.Plugin):
     """
     The main class for the Printing Win32 plugin.
@@ -40,23 +41,18 @@ class PrintingWin32Plugin(colony.Plugin):
     description = "Printing Win32 Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "printing"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["printing"]
     dependencies = [
         colony.PackageDependency("Win32 Extensions for Python", "win32print"),
-        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
+        colony.PackageDependency("Python Imaging Library (PIL)", "PIL"),
     ]
-    main_modules = [
-        "printing_win32"
-    ]
+    main_modules = ["printing_win32"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import printing_win32
+
         self.system = printing_win32.PrintingWin32(self)
 
     def get_printing_name(self):

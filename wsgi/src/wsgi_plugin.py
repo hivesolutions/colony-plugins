@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class WSGIPlugin(colony.Plugin):
     """
     The main class for the WSGI plugin.
@@ -44,21 +45,16 @@ class WSGIPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "wsgi"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.rest")
-    ]
-    main_modules = [
-        "wsgi"
-    ]
+    capabilities = ["wsgi"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.rest")]
+    main_modules = ["wsgi"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import wsgi
+
         self.system = wsgi.WSGI(self)
 
     def handle(self, environ, start_response, prefix, alias, rewrite):

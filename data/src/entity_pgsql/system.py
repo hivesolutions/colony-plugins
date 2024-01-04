@@ -32,10 +32,17 @@ import time
 
 import colony
 
-try: import pgdb
+try:
+    import pgdb
 except ImportError:
-    try: import psycopg2; pgdb = psycopg2
-    except ImportError: import psycopg2cffi; pgdb = psycopg2cffi
+    try:
+        import psycopg2
+
+        pgdb = psycopg2
+    except ImportError:
+        import psycopg2cffi
+
+        pgdb = psycopg2cffi
 
 ENGINE_NAME = "pgsql"
 """ The name of the engine currently in execution
@@ -53,11 +60,10 @@ SLOW_QUERY_TIME = 25
 considered to be slow and a warning message should be logger
 into the currently attached logger (for debugging) """
 
-OPERATORS_MAP = dict(
-    length = "char_length"
-)
+OPERATORS_MAP = dict(length="char_length")
 """ The map that resolves the various specific operator
 for the PgSQL implementation from the generic ones """
+
 
 class EntityPgSQL(colony.System):
     """
@@ -73,8 +79,8 @@ class EntityPgSQL(colony.System):
     def create_engine(self, entity_manager):
         return PgSQLEngine(self, entity_manager)
 
-class PgSQLEngine(object):
 
+class PgSQLEngine(object):
     pgsql_system = None
     """ The reference to the "owning" system entity """
 
@@ -89,8 +95,10 @@ class PgSQLEngine(object):
         return ENGINE_NAME
 
     def get_internal_version(self):
-        if hasattr(pgdb, "version"): return pgdb.version
-        if hasattr(pgdb, "__version__"): return pgdb.__version__
+        if hasattr(pgdb, "version"):
+            return pgdb.version
+        if hasattr(pgdb, "__version__"):
+            return pgdb.__version__
         return None
 
     def get_host(self):
@@ -109,8 +117,10 @@ class PgSQLEngine(object):
         connection = self.entity_manager.get_connection()
         query = self._database_size_query(connection._database)
         cursor = self.execute_query(query)
-        try: result = self._database_size_result(cursor)
-        finally: cursor.close()
+        try:
+            result = self._database_size_result(cursor)
+        finally:
+            cursor.close()
         return result
 
     def get_database_encoding(self):
@@ -119,7 +129,7 @@ class PgSQLEngine(object):
         encoding = _connection.get_database_encoding()
         return encoding
 
-    def connect(self, connection, parameters = {}):
+    def connect(self, connection, parameters={}):
         db_prefix = parameters.get("db_prefix", "")
         db_suffix = parameters.get("db_suffix", "default")
         db_prefix = colony.conf("DB_PREFIX", db_prefix)
@@ -135,14 +145,14 @@ class PgSQLEngine(object):
         password = colony.conf("DB_PASSWORD", password)
         database = colony.conf("DB_NAME", database)
         isolation = colony.conf("DB_ISOLATION", isolation)
-        show_sql = colony.conf("SHOW_SQL", False, cast = bool)
-        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast = bool)
+        show_sql = colony.conf("SHOW_SQL", False, cast=bool)
+        show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast=bool)
         connection._connection = PgSQLConnection(
-            host = host,
-            user = user,
-            password = password,
-            database = database,
-            isolation = isolation
+            host=host,
+            user=user,
+            password=password,
+            database=database,
+            isolation=isolation,
         )
         connection._transaction_level = 0
         connection._user = user
@@ -191,7 +201,8 @@ class PgSQLEngine(object):
         # not a valid situation as not transaction is open, must
         # raise an exception alerting for the situation
         is_empty_transaction = _connection.is_empty_transaction()
-        if is_empty_transaction: raise RuntimeError("invalid transaction level, commit without begin")
+        if is_empty_transaction:
+            raise RuntimeError("invalid transaction level, commit without begin")
 
         # pops the current transaction, decrementing the current
         # transaction level by one, this will release a transaction
@@ -199,7 +210,8 @@ class PgSQLEngine(object):
         _connection.pop_transaction()
 
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return False
+        if not is_empty_transaction:
+            return False
         self._commit()
         return True
 
@@ -214,13 +226,15 @@ class PgSQLEngine(object):
         # for such situation the current method should return, it's not
         # possible to perform the rollback operation
         is_close = _connection.is_close()
-        if is_close: return False
+        if is_close:
+            return False
 
         # in case the current transaction level is zero it's
         # not a valid situation as not transaction is open, must
         # raise an exception alerting for the situation
         is_empty_transaction = _connection.is_empty_transaction()
-        if is_empty_transaction: raise RuntimeError("invalid transaction level, rollback without begin")
+        if is_empty_transaction:
+            raise RuntimeError("invalid transaction level, rollback without begin")
 
         # pops the current transaction, decrementing the current
         # transaction level by one, this will release a transaction
@@ -231,14 +245,15 @@ class PgSQLEngine(object):
         # it's not empty there is no need to rollback the transaction
         # because it's an inner level and no effect should be made
         is_empty_transaction = _connection.is_empty_transaction()
-        if not is_empty_transaction: return False
+        if not is_empty_transaction:
+            return False
 
         # runs the "rollback" command in the underlying data base
         # layer, executes the "rollback" operation
         self._rollback()
         return True
 
-    def lock(self, entity_class, id_value = None, lock_parents = True):
+    def lock(self, entity_class, id_value=None, lock_parents=True):
         # retrieves the table name and id associated
         # with the entity class to be locked, these
         # values are going to be used to set the appropriate
@@ -253,12 +268,15 @@ class PgSQLEngine(object):
 
         # validates that the id value is valid as an id
         # attribute, type validation (security consideration)
-        if id_value_valid: entity_class._validate_value(table_id, id_value)
+        if id_value_valid:
+            entity_class._validate_value(table_id, id_value)
 
         # converts the table id value into the appropriate
         # SQL representation for query usage (casting) this
         # is only done in case the id value is considered valid
-        id_sql_value = id_value_valid and entity_class._get_sql_value(table_id, id_value) or None
+        id_sql_value = (
+            id_value_valid and entity_class._get_sql_value(table_id, id_value) or None
+        )
 
         # retrieves the complete set of parents from the entity class
         # and default to an empty sequence in case the lock parents flag
@@ -273,18 +291,16 @@ class PgSQLEngine(object):
             # the lock may be row level or table level (depending on
             # the definition or not of the id value)
             parent_table_name = parent.get_name()
-            self.lock_table(parent_table_name, {
-                "field_name" : table_id,
-                "field_value" : id_sql_value
-            })
+            self.lock_table(
+                parent_table_name, {"field_name": table_id, "field_value": id_sql_value}
+            )
 
         # locks the table associated with the current entity class
         # the lock may be row level or table level (depending on
         # the definition or not of the id value)
-        self.lock_table(table_name, {
-            "field_name" : table_id,
-            "field_value" : id_sql_value
-        })
+        self.lock_table(
+            table_name, {"field_name": table_id, "field_value": id_sql_value}
+        )
 
     def lock_table(self, table_name, parameters):
         query = self._lock_table_query(table_name, parameters)
@@ -293,18 +309,22 @@ class PgSQLEngine(object):
     def has_definition(self, entity_class):
         query = self._has_definition_query(entity_class)
         cursor = self.execute_query(query)
-        try: result = self._has_definition_result(entity_class, cursor)
-        finally: cursor.close()
+        try:
+            result = self._has_definition_result(entity_class, cursor)
+        finally:
+            cursor.close()
         return result
 
     def has_table_definition(self, table_name):
         query = self._has_table_definition_query(table_name)
         cursor = self.execute_query(query)
-        try: result = self._has_table_definition_result(table_name, cursor)
-        finally: cursor.close()
+        try:
+            result = self._has_table_definition_result(table_name, cursor)
+        finally:
+            cursor.close()
         return result
 
-    def execute_query(self, query, cursor = None):
+    def execute_query(self, query, cursor=None):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
@@ -344,7 +364,8 @@ class PgSQLEngine(object):
 
             # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly
-            if connection._show_sql: self.pgsql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
+            if connection._show_sql:
+                self.pgsql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
@@ -354,8 +375,13 @@ class PgSQLEngine(object):
             # executes the query in the current cursor context
             # for the engine, in case there's an exception during
             # the execution of the query the query is logged
-            try: cursor.execute(query)
-            except Exception: self.pgsql_system.info("[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query)); raise
+            try:
+                cursor.execute(query)
+            except Exception:
+                self.pgsql_system.info(
+                    "[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query)
+                )
+                raise
             final = time.time()
 
             # verifies if the timing for the current executing query
@@ -364,7 +390,9 @@ class PgSQLEngine(object):
             delta = int((final - initial) * 1000)
             is_slow = delta > SLOW_QUERY_TIME
             if is_slow and connection._show_slow_sql:
-                self.pgsql_system.info("[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query))
+                self.pgsql_system.info(
+                    "[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query)
+                )
 
             # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)
@@ -430,7 +458,7 @@ class PgSQLEngine(object):
         connection.call_rollback_handlers()
         connection.reset_handlers()
 
-    def _execute_query_t(self, query, cursor = None):
+    def _execute_query_t(self, query, cursor=None):
         """
         Executes the given query using the provided cursor
         or "inside" a new cursor context in case none is
@@ -489,8 +517,10 @@ class PgSQLEngine(object):
         # selects all the elements from the cursor the
         # database size should be the first element, then
         # closes the cursor
-        try: counts = cursor.fetchall()
-        finally: cursor.close()
+        try:
+            counts = cursor.fetchall()
+        finally:
+            cursor.close()
 
         # retrieves the database size as the first element
         # of the first retrieved row
@@ -500,7 +530,7 @@ class PgSQLEngine(object):
         # size from the data source
         return database_size
 
-    def _index_query(self, entity_class, attribute_name, index_type = "hash"):
+    def _index_query(self, entity_class, attribute_name, index_type="hash"):
         # retrieves the associated table name
         # as the "name" of the entity class
         table_name = entity_class.get_name()
@@ -512,7 +542,7 @@ class PgSQLEngine(object):
         # returns the generated "index" query
         return query
 
-    def _table_index_query(self, table_name, attribute_name, index_type = "hash"):
+    def _table_index_query(self, table_name, attribute_name, index_type="hash"):
         # constructs the index name from the various components of it, note
         # that the value is truncated to the maximum length possible, this
         # may create problem with duplicated index naming (requires caution)
@@ -522,7 +552,10 @@ class PgSQLEngine(object):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base index of the table)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("create index %s on %s using %s (%s)" % (index_name, table_name, index_type, attribute_name))
+        query_buffer.write(
+            "create index %s on %s using %s (%s)"
+            % (index_name, table_name, index_type, attribute_name)
+        )
 
         # retrieves the "final" query value from
         # the query (string) buffer
@@ -571,7 +604,9 @@ class PgSQLEngine(object):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("select count(*) from pg_tables where tablename = '%s'" % table_name)
+        query_buffer.write(
+            "select count(*) from pg_tables where tablename = '%s'" % table_name
+        )
 
         # retrieves the "final" query value from
         # the query (string) buffer
@@ -601,7 +636,9 @@ class PgSQLEngine(object):
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base definition of the table)
         query_buffer = colony.StringBuffer()
-        query_buffer.write("select count(*) from pg_tables where tablename = '%s'" % table_name)
+        query_buffer.write(
+            "select count(*) from pg_tables where tablename = '%s'" % table_name
+        )
 
         # retrieves the "final" query value from
         # the query (string) buffer
@@ -613,8 +650,10 @@ class PgSQLEngine(object):
     def _has_table_definition_result(self, table_name, cursor):
         # selects all the counts for the table in the database
         # this values should be an integer, then closes the cursor
-        try: counts = cursor.fetchall()
-        finally: cursor.close()
+        try:
+            counts = cursor.fetchall()
+        finally:
+            cursor.close()
 
         # checks if there is at least one count records
         # for the table definition
@@ -647,6 +686,7 @@ class PgSQLEngine(object):
         # the selected rows, making the for update support not reliable
         # this is considered a major drawback towards PgSQL usage
         return False
+
 
 class PgSQLConnection(object):
     """
@@ -686,11 +726,11 @@ class PgSQLConnection(object):
 
     def __init__(
         self,
-        host = "localhost",
-        user = "root",
-        password = "root",
-        database = "default",
-        isolation = ISOLATION_LEVEL
+        host="localhost",
+        user="root",
+        password="root",
+        database="default",
+        isolation=ISOLATION_LEVEL,
     ):
         self.host = host
         self.user = user
@@ -701,27 +741,30 @@ class PgSQLConnection(object):
         self.connection = None
         self.transaction_level = 0
 
-    def get_connection(self, create = True):
+    def get_connection(self, create=True):
         # in case there's a connection already defined (and open)
         # for the current logical connection returns it to the
         # proper caller method, otherwise goes for creation
-        if self.connection: return self.connection
-        if not create: return None
+        if self.connection:
+            return self.connection
+        if not create:
+            return None
 
         # creates a new connection and sets it in the current
         # instance so that it may be properly re-used latter
         self.connection = pgdb.connect(
-            host = self.host,
-            user = self.user,
-            password = self.password,
-            database = self.database
+            host=self.host,
+            user=self.user,
+            password=self.password,
+            database=self.database,
         )
         self.transaction_level = 0
 
         # sets the isolation level for the connection as the one
         # defined to be the default one by the "driver"
         self._execute_query(
-            "set session characteristics as transaction isolation level %s" % self.isolation
+            "set session characteristics as transaction isolation level %s"
+            % self.isolation
         ).close()
 
         # returns the correct connection that has been created
@@ -736,7 +779,8 @@ class PgSQLConnection(object):
     def close(self):
         # verifies if there's an open and valid "physical" connection
         # and if taht's the case closes it and unsets the value
-        if not self.connection: return
+        if not self.connection:
+            return
         self.connection.close()
         self.connection = None
         self.transaction_level = 0
@@ -784,7 +828,7 @@ class PgSQLConnection(object):
         self._execute_query("set transaction isolation level %s" % self.isolation)
 
     def is_close(self):
-        connection = self.get_connection(create = False)
+        connection = self.get_connection(create=False)
         is_close = connection == None
         return is_close
 
@@ -802,15 +846,18 @@ class PgSQLConnection(object):
     def get_database_encoding(self):
         # checks if the current object already contains the encoding
         # attribute set for such cases the retrieval is immediate
-        if hasattr(self, "_encoding"): return self._encoding
+        if hasattr(self, "_encoding"):
+            return self._encoding
 
         # retrieves the query to be used in the retrieval of the
         # database encoding and executes it retrieving the encoding
         # used in the current database
         query = self._database_encoding_query(self.database)
         cursor = self._execute_query(query)
-        try: result = self._database_encoding_result(cursor)
-        finally: cursor.close()
+        try:
+            result = self._database_encoding_result(cursor)
+        finally:
+            cursor.close()
 
         # caches the database encoding into the current
         # connection object (no need to retrieve it again
@@ -819,15 +866,20 @@ class PgSQLConnection(object):
         return result
 
     def _database_encoding_query(self, database_name):
-        query = "select pg_encoding_to_char(encoding) from pg_database where datname = '%s';" % database_name
+        query = (
+            "select pg_encoding_to_char(encoding) from pg_database where datname = '%s';"
+            % database_name
+        )
         return query
 
     def _database_encoding_result(self, cursor):
         # selects all the elements from the cursor the
         # database encoding should be the first element,
         # then closes the cursor
-        try: counts = cursor.fetchall()
-        finally: cursor.close()
+        try:
+            counts = cursor.fetchall()
+        finally:
+            cursor.close()
 
         # retrieves the database encoding as the first element
         # of the first retrieved row
@@ -837,7 +889,7 @@ class PgSQLConnection(object):
         # encoding from the data source
         return database_encoding
 
-    def _execute_query(self, query, connection = None):
+    def _execute_query(self, query, connection=None):
         # retrieves the current connection and creates
         # a new cursor object for query execution
         connection = connection or self.get_connection()
@@ -846,12 +898,16 @@ class PgSQLConnection(object):
         # executes the query using the current cursor
         # then closes the cursor avoid the leak of
         # cursor objects (memory reference leaking)
-        try: cursor.execute(query)
-        except: cursor.close(); raise
+        try:
+            cursor.execute(query)
+        except:
+            cursor.close()
+            raise
 
         # returns the cursor that has just been created for
         # the execution of the requested query
         return cursor
+
 
 class IntegrityError(RuntimeError):
     pass

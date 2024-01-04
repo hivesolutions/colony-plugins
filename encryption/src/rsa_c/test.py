@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class RSATest(colony.Test):
     """
     The RSA infra-structure test class, responsible
@@ -37,9 +38,7 @@ class RSATest(colony.Test):
     """
 
     def get_bundle(self):
-        return (
-            RSABaseTestCase,
-        )
+        return (RSABaseTestCase,)
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -47,8 +46,8 @@ class RSATest(colony.Test):
         system = self.plugin.system
         test_case.rsa = system.create_structure({})
 
-class RSABaseTestCase(colony.ColonyTestCase):
 
+class RSABaseTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
         return "RSA Base test case"
@@ -58,14 +57,12 @@ class RSABaseTestCase(colony.ColonyTestCase):
         self.assertEqual(result, True)
 
         result = self.rsa._relatively_prime(
-            1303455847,
-            80677199572618450341522439921473626971
+            1303455847, 80677199572618450341522439921473626971
         )
         self.assertEqual(result, True)
 
         result = self.rsa._relatively_prime(
-            130347,
-            80677199572618450341522439921472697123
+            130347, 80677199572618450341522439921472697123
         )
         self.assertEqual(result, False)
 
@@ -76,7 +73,9 @@ class RSABaseTestCase(colony.ColonyTestCase):
         result = self.rsa._extended_euclid_greatest_common_divisor(418297, 225168)
         self.assertEqual(result, (1, -22391, 41596))
 
-        result = self.rsa._extended_euclid_greatest_common_divisor(35713992551911994100259367902610573100, 1585944697)
+        result = self.rsa._extended_euclid_greatest_common_divisor(
+            35713992551911994100259367902610573100, 1585944697
+        )
         self.assertEqual(result, (1, -157708412, 3551446063785330185006617352461492633))
 
     def test__string_to_integer(self):

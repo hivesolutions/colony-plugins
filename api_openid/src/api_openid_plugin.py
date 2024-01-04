@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIOpenIDPlugin(colony.Plugin):
     """
     The main class for the OpenID API plugin.
@@ -40,25 +41,20 @@ class APIOpenIDPlugin(colony.Plugin):
     description = "The plugin that offers the OpenID API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.openid"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.openid"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
         colony.PluginDependency("pt.hive.colony.plugins.api.yadis"),
         colony.PluginDependency("pt.hive.colony.plugins.encryption.diffie_hellman"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.random")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
     ]
-    main_modules = [
-        "api_openid"
-    ]
+    main_modules = ["api_openid"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_openid
+
         self.system = api_openid.APIOpenID(self)
 
     def create_server(self, api_attributes):

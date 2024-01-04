@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class WorkPoolException(colony.ColonyException):
     """
     The work pool exception class.
@@ -37,6 +38,7 @@ class WorkPoolException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class WorkPoolOperationException(WorkPoolException):
     """

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class BERPlugin(colony.Plugin):
     """
     The main class for the BER plugin.
@@ -43,18 +44,15 @@ class BERPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "format.ber"
-    ]
-    main_modules = [
-        "ber_c"
-    ]
+    capabilities = ["format.ber"]
+    main_modules = ["ber_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import ber_c
+
         self.system = ber_c.BER(self)
 
     def create_structure(self, parameters):

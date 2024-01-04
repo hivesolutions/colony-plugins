@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPAuthenticationPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Authentication plugin.
@@ -40,23 +41,15 @@ class ServiceHTTPAuthenticationPlugin(colony.Plugin):
     description = "The plugin that offers the HTTP service authentication"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "http_service_authentication_handler"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.authentication")
-    ]
-    main_modules = [
-        "service_http_authentication"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["http_service_authentication_handler"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.authentication")]
+    main_modules = ["service_http_authentication"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_authentication
+
         self.system = service_http_authentication.ServiceHTTPAuthentication(self)
 
     def get_handler_name(self):

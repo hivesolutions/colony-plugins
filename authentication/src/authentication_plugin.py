@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class AuthenticationPlugin(colony.Plugin):
     """
     The main class for the Authentication plugin.
@@ -40,27 +41,21 @@ class AuthenticationPlugin(colony.Plugin):
     description = "Plugin that provides the authentication front-end mechanisms"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "authentication"
-    ]
-    capabilities_allowed = [
-        "authentication_handler"
-    ]
-    main_modules = [
-        "authentication"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["authentication"]
+    capabilities_allowed = ["authentication_handler"]
+    main_modules = ["authentication"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import authentication
+
         self.system = authentication.Authentication(self)
 
     def authenticate_user(self, username, password, authentication_handler, arguments):
-        return self.system.authenticate_user(username, password, authentication_handler, arguments)
+        return self.system.authenticate_user(
+            username, password, authentication_handler, arguments
+        )
 
     def process_authentication_string(self, authentication_string):
         return self.system.process_authentication_string(authentication_string)

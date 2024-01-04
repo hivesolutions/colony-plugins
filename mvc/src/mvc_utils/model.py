@@ -58,15 +58,15 @@ TO_MANY_RELATION = "to-many"
 """ The string value of a "to-many" relation """
 
 DATA_TYPE_CAST_TYPES_MAP = dict(
-    text = colony.legacy.UNICODE,
-    string = colony.legacy.UNICODE,
-    integer = int,
-    float = float,
-    decimal = colony.Decimal,
-    date = colony.timestamp_datetime,
-    data = colony.legacy.UNICODE,
-    metadata = dict,
-    relation = None
+    text=colony.legacy.UNICODE,
+    string=colony.legacy.UNICODE,
+    integer=int,
+    float=float,
+    decimal=colony.Decimal,
+    date=colony.timestamp_datetime,
+    data=colony.legacy.UNICODE,
+    metadata=dict,
+    relation=None,
 )
 """ The map associating the data types with the cast types,
 this is going to be used in the apply operation """
@@ -75,10 +75,11 @@ METHOD_TYPES = (
     types.MethodType,
     types.FunctionType,
     types.BuiltinMethodType,
-    types.BuiltinFunctionType
+    types.BuiltinFunctionType,
 )
 """ The tuple containing the various types considered to be
 functions or methods """
+
 
 def _start_model(self):
     """
@@ -91,7 +92,8 @@ def _start_model(self):
     # checks if the model has been already started,
     # (avoids duplicate initialization, in case of
     # sub-classing) returning immediately if so
-    if hasattr(self, "model_started"): return
+    if hasattr(self, "model_started"):
+        return
 
     # starts the underlying request reference as unset,
     # should be set after the start operation if access
@@ -118,13 +120,15 @@ def _start_model(self):
 
     # in case the model has the start method, must call
     # it as this provides a start endpoint for extension
-    if hasattr(self, "start"): self.start()
+    if hasattr(self, "start"):
+        self.start()
 
     # sets the model started flag as true, avoiding further
     # calls to this method to proceed further
     self.model_started = True
 
-def _class_new(cls, request = None, map = None, permissive = False, apply = True):
+
+def _class_new(cls, request=None, map=None, permissive=False, apply=True):
     """
     Creates a new model instance, applying the given map
     of "form" options to the created model.
@@ -174,31 +178,35 @@ def _class_new(cls, request = None, map = None, permissive = False, apply = True
     # in case a map is provided, must apply the contents of it
     # to the model, note that this is performed event if the (auto)
     # apply flag is not set (required operation if defined)
-    if map: model.apply(map, permissive = permissive)
+    if map:
+        model.apply(map, permissive=permissive)
 
     # in case the apply flag is currently not set, nothing
     # else should be done in the new model and it should be
     # returned immediately to the caller method
-    if not apply: return model
+    if not apply:
+        return model
 
     # tries to retrieve the controller using the current request
     # as reference and in case the returned model is not valid returns
     # the model immediately to the caller method (silent failure)
     controller = cls.get_controller_g(request)
-    if not controller: return model
+    if not controller:
+        return model
 
     # retrieves the name of the model's class (underscore notation) and
     # then uses it to retrieve the context field of the same name and
     # applies the data from the field to the model (apply operation)
     name = model._get_model_class_name()
     data = controller.get_field(request, name, {})
-    model.apply(data, permissive = permissive)
+    model.apply(data, permissive=permissive)
 
     # returns the newly created model with the data from the associated
     # field from the request applied to it
     return model
 
-def _class_niw(cls, request = None, map = None, permissive = False):
+
+def _class_niw(cls, request=None, map=None, permissive=False):
     """
     Utility method to be used instead of the typical new method for
     situations where the apply operation is not required/needed/wanted.
@@ -220,7 +228,8 @@ def _class_niw(cls, request = None, map = None, permissive = False):
     "populated" with the map contents.
     """
 
-    return cls.new(request = request, map = map, permissive = permissive, apply = False)
+    return cls.new(request=request, map=map, permissive=permissive, apply=False)
+
 
 def _class_get_system(cls):
     """
@@ -237,6 +246,7 @@ def _class_get_system(cls):
 
     return cls._system_instance
 
+
 def _class_get_plugin(cls):
     """
     Class method that retrieves the plugin instance associated
@@ -251,6 +261,7 @@ def _class_get_plugin(cls):
     """
 
     return cls._system_instance.plugin
+
 
 def _class_get_controller_g(cls, request):
     """
@@ -271,10 +282,12 @@ def _class_get_controller_g(cls, request):
     the controller from the current environment/context.
     """
 
-    if not hasattr(request, "controller"): return None
+    if not hasattr(request, "controller"):
+        return None
     return getattr(request, "controller")
 
-def _class_get_context_attribute_g(cls, name, context_request, namespace_name = None):
+
+def _class_get_context_attribute_g(cls, name, context_request, namespace_name=None):
     """
     Retrieves a context attribute with the provided name using the
     provided context request as the source for the retrieval.
@@ -311,6 +324,7 @@ def _class_get_context_attribute_g(cls, name, context_request, namespace_name = 
     attribute = context and context.get(name, None) or None
     return attribute
 
+
 def _class_get_resource_path(cls, resource_path):
     """
     Retrieves the complete and absolute path to the resource
@@ -341,14 +355,11 @@ def _class_get_resource_path(cls, resource_path):
     # creates the full absolute resource path from the plugin path,
     # the current resources path and the resource path, then returns
     # it to the caller method
-    resource_path = os.path.join(
-        plugin_path,
-        cls._resources_path,
-        resource_path
-    )
+    resource_path = os.path.join(plugin_path, cls._resources_path, resource_path)
     return resource_path
 
-def apply(self, map, permissive = False):
+
+def apply(self, map, permissive=False):
     """
     "Applies" the given map of "form" values into the current
     model (setting of attributes).
@@ -374,12 +385,13 @@ def apply(self, map, permissive = False):
 
     # tries to call the pre apply method, in order to notify the
     # current instance about the starting of the apply procedure
-    if hasattr(self, "pre_apply"): self.pre_apply()
+    if hasattr(self, "pre_apply"):
+        self.pre_apply()
 
     # detaches the current model, to avoid any possible
     # undesired loading of relations, this could cause
     # an infinite loop in latter persistence
-    self.detach(force = False)
+    self.detach(force=False)
 
     try:
         # retrieves the class of the model as the reference
@@ -418,7 +430,8 @@ def apply(self, map, permissive = False):
             # be ignored as it's just a stub value, note that if a
             # calculate attribute is also a "regular" attribute it's
             # considered as a non attr method and proper setting done
-            if item_name in attr_methods and not item_name in names_map: continue
+            if item_name in attr_methods and not item_name in names_map:
+                continue
 
             # verifies if the current item name in iteration is defined
             # in the current class (definition present)
@@ -427,7 +440,8 @@ def apply(self, map, permissive = False):
             # in case there's no definition but the current execution
             # mode is permissive (allows undefined values) the current
             # iteration should be skipped
-            if not has_definition and permissive: continue
+            if not has_definition and permissive:
+                continue
 
             # in case the item name is not defined in the class
             # reference an exception should be raised, impossible
@@ -435,8 +449,8 @@ def apply(self, map, permissive = False):
             # exception indicating the problem
             if not has_definition:
                 raise exceptions.ModelApplyException(
-                    "item name '%s' not found in model class '%s'" %
-                    (item_name, cls.__name__)
+                    "item name '%s' not found in model class '%s'"
+                    % (item_name, cls.__name__)
                 )
 
             # retrieves the class value and retrieves
@@ -449,8 +463,8 @@ def apply(self, map, permissive = False):
             # information, must raise an exception
             if not class_value_type == dict:
                 raise exceptions.ModelApplyException(
-                    "item name '%s' not defined in model class '%s'" %
-                    (item_name, cls.__name__)
+                    "item name '%s' not defined in model class '%s'"
+                    % (item_name, cls.__name__)
                 )
 
             # retrieves the value data type and secure
@@ -461,7 +475,8 @@ def apply(self, map, permissive = False):
             # in case the value is a secure attribute
             # (cannot change it automatically), continues
             # the loop cannot change the value
-            if value_secure: continue
+            if value_secure:
+                continue
 
             # in case the data type of the field is relation
             # (presence of an object relation)
@@ -489,9 +504,7 @@ def apply(self, map, permissive = False):
                         # the required model and sets the retrieved (target) entity
                         # in the current model instance
                         target_entity = self.resolve_to_one(
-                            item_value,
-                            target_model,
-                            permissive
+                            item_value, target_model, permissive
                         )
                         setattr(self, item_name, target_entity)
 
@@ -501,10 +514,7 @@ def apply(self, map, permissive = False):
                     else:
                         # updates the item in the entity with
                         # the map containing the value
-                        target_entity.apply(
-                            item_value,
-                            permissive = permissive
-                        )
+                        target_entity.apply(item_value, permissive=permissive)
 
                 # in case the relation is of type "to-many"
                 elif relation_type == TO_MANY_RELATION:
@@ -512,9 +522,7 @@ def apply(self, map, permissive = False):
                     # creating the required models and sets the target entities
                     # list in the current model instance
                     target_entitites_list = self.resolve_to_many(
-                        item_value,
-                        target_model,
-                        permissive
+                        item_value, target_model, permissive
                     )
                     setattr(self, item_name, target_entitites_list)
 
@@ -526,7 +534,8 @@ def apply(self, map, permissive = False):
     except BaseException as exception:
         # tries to call the fail apply method, in order to notify the
         # current instance about the failure of the apply procedure
-        if hasattr(self, "fail_apply"): self.fail_apply(exception)
+        if hasattr(self, "fail_apply"):
+            self.fail_apply(exception)
 
         # re-raises the exception back in the stack so that it can
         # be properly handled by the upper layers
@@ -534,11 +543,13 @@ def apply(self, map, permissive = False):
     finally:
         # attaches the entity back to the data source
         # for correct persistence structures
-        self.attach(force = False)
+        self.attach(force=False)
 
     # tries to call the post apply method, in order to notify the
     # current instance about the finishing of the apply procedure
-    if hasattr(self, "post_apply"): self.post_apply()
+    if hasattr(self, "post_apply"):
+        self.post_apply()
+
 
 def get_system(self):
     """
@@ -553,6 +564,7 @@ def get_system(self):
 
     return self._system_instance
 
+
 def get_plugin(self):
     """
     Retrieves the current (associated) plugin instance
@@ -565,6 +577,7 @@ def get_plugin(self):
     """
 
     return self._system_instance.plugin
+
 
 def get_attribute_name(self, attribute_name):
     """
@@ -594,6 +607,7 @@ def get_attribute_name(self, attribute_name):
     # returns the current attribute
     return current_attribute
 
+
 def dumps(self, serializer):
     """
     Serializes (dumps) the current object with
@@ -611,6 +625,7 @@ def dumps(self, serializer):
 
     # returns the serialized value (data)
     return data
+
 
 def loads(self, serializer, data):
     """
@@ -634,6 +649,7 @@ def loads(self, serializer, data):
         # loads the given value in the current object
         self._load_value(key, value)
 
+
 def _load_value(self, key, value):
     """
     Loads the value with the given key in the
@@ -649,10 +665,12 @@ def _load_value(self, key, value):
     # in case the current object does not contain
     # an attribute with the key name must return
     # immediately, nothing to be set
-    if not hasattr(self, key): return
+    if not hasattr(self, key):
+        return
 
     # sets the value in the current object
     setattr(self, key, value)
+
 
 def is_lazy_loaded(self, attribute_name):
     """
@@ -671,6 +689,7 @@ def is_lazy_loaded(self, attribute_name):
 
     # returns the lazy loaded flag
     return lazy_loaded
+
 
 def lock_session(self):
     """
@@ -694,6 +713,7 @@ def lock_session(self):
     # session (blocks it)
     request_session.lock()
 
+
 def release_session(self):
     """
     Releases the session associated with the current request,
@@ -705,17 +725,16 @@ def release_session(self):
 
     # in case the request session is invalid
     # an exception should be raised (invalid situation)
-    if not request_session: raise RuntimeError("problem releasing session, no session available")
+    if not request_session:
+        raise RuntimeError("problem releasing session, no session available")
 
     # releases the "just" retrieved request
     # session (unblocks it)
     request_session.release()
 
+
 def get_session_attribute(
-    self,
-    session_attribute_name,
-    namespace_name = None,
-    unset_session_attribute = False
+    self, session_attribute_name, namespace_name=None, unset_session_attribute=False
 ):
     """
     Retrieves the session attribute from the current request
@@ -741,7 +760,8 @@ def get_session_attribute(
 
     # in case the request session
     # is invalid, must return invalid
-    if not request_session: return None
+    if not request_session:
+        return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_name(session_attribute_name, namespace_name)
@@ -756,11 +776,9 @@ def get_session_attribute(
     # returns the session attribute
     return session_attribute
 
+
 def set_session_attribute(
-    self,
-    session_attribute_name,
-    session_attribute_value,
-    namespace_name = None
+    self, session_attribute_name, session_attribute_value, namespace_name=None
 ):
     """
     Sets the session attribute in the current request
@@ -799,7 +817,8 @@ def set_session_attribute(
     # sets the attribute in the session
     request_session.set_attribute(session_attribute_name, session_attribute_value)
 
-def unset_session_attribute(self, session_attribute_name, namespace_name = None):
+
+def unset_session_attribute(self, session_attribute_name, namespace_name=None):
     """
     Unsets the session attribute from the current request
     with the given name and for the given namespace.
@@ -821,13 +840,15 @@ def unset_session_attribute(self, session_attribute_name, namespace_name = None)
 
     # in case the request session is invalid,
     # must return and invalid to the caller method
-    if not request_session: return None
+    if not request_session:
+        return None
 
     # resolves the complete session attribute name
     session_attribute_name = _get_complete_name(session_attribute_name, namespace_name)
 
     # unsets the attribute from the session
     request_session.unset_attribute(session_attribute_name)
+
 
 def get_controller(self, request):
     """
@@ -845,10 +866,12 @@ def get_controller(self, request):
     the controller from the current environment/context.
     """
 
-    if not hasattr(request, "controller"): return None
+    if not hasattr(request, "controller"):
+        return None
     return getattr(request, "controller")
 
-def get_context_attribute(self, context_name, namespace_name = None):
+
+def get_context_attribute(self, context_name, namespace_name=None):
     """
     Retrieves the value of the context attribute with the
     provided name.
@@ -868,13 +891,17 @@ def get_context_attribute(self, context_name, namespace_name = None):
     # retrieves the context defaulting to a new and empty map
     # in case an invalid session attribute is returned
     context = self.get_session_attribute("_context", namespace_name)
-    if context == None: context = {}
+    if context == None:
+        context = {}
 
     # returns the retrieves attribute value, defaulting to none
     # in case it's not present in the context map
     return context.get(context_name, None)
 
-def set_context_attribute(self, context_name, context_value, override = True, namespace_name = None):
+
+def set_context_attribute(
+    self, context_name, context_value, override=True, namespace_name=None
+):
     """
     Sets the context attribute with the provided name with
     the provided value.
@@ -896,15 +923,18 @@ def set_context_attribute(self, context_name, context_value, override = True, na
     # retrieves the context defaulting to a new and empty map
     # in case an invalid session attribute is returned
     context = self.get_session_attribute("_context", namespace_name)
-    if context == None: context = {}
+    if context == None:
+        context = {}
 
     # updates the context with the provided attribute, overriding
     # the already present value in case the flag is set and then
     # sets the context map "back" in the session
-    if override or not context_name in context: context[context_name] = context_value
+    if override or not context_name in context:
+        context[context_name] = context_value
     self.set_session_attribute("_context", context, namespace_name)
 
-def unset_context_attribute(self, context_name, namespace_name = None):
+
+def unset_context_attribute(self, context_name, namespace_name=None):
     """
     Unsets the context attribute with the provided name.
 
@@ -922,21 +952,24 @@ def unset_context_attribute(self, context_name, namespace_name = None):
     # retrieves the context defaulting to a new and empty map
     # in case an invalid session attribute is returned
     context = self.get_session_attribute("_context", namespace_name)
-    if context == None: context = {}
+    if context == None:
+        context = {}
 
     # updates the context with the provided attribute, removing
     # the already present value and then sets the context map
     # "back" in the session
-    if context_name in context: del context[context_name]
+    if context_name in context:
+        del context[context_name]
     self.set_session_attribute("_context", context, namespace_name)
+
 
 def add_validation(
     self,
     attribute_name,
     validation_method_name,
-    validate_null = False,
-    properties = {},
-    contexts = ("default",),
+    validate_null=False,
+    properties={},
+    contexts=("default",),
     **kwargs
 ):
     """
@@ -973,8 +1006,7 @@ def add_validation(
     # object raises an invalid validation method exception
     if not hasattr(self, validation_method_name):
         raise exceptions.InvalidValidationMethod(
-            "the current validation method does not exist: " +\
-            validation_method_name
+            "the current validation method does not exist: " + validation_method_name
         )
 
     # retrieves the validation method
@@ -984,18 +1016,19 @@ def add_validation(
     self.add_custom_validation(
         attribute_name,
         validation_method,
-        validate_null = validate_null,
-        properties = properties,
-        contexts = contexts
+        validate_null=validate_null,
+        properties=properties,
+        contexts=contexts,
     )
+
 
 def add_custom_validation(
     self,
     attribute_name,
     validation_method,
-    validate_null = False,
-    properties = {},
-    contexts = ("default",)
+    validate_null=False,
+    properties={},
+    contexts=("default",),
 ):
     """
     Adds a "custom" validation method to the attribute with the given name.
@@ -1020,11 +1053,7 @@ def add_custom_validation(
 
     # creates the validation tuple as the set of the validation
     # method and the properties
-    validation_tuple = (
-        validation_method,
-        validate_null,
-        properties
-    )
+    validation_tuple = (validation_method, validate_null, properties)
 
     # iterates over all the defined contexts to update
     # the appropriate internal structures
@@ -1045,11 +1074,9 @@ def add_custom_validation(
         context_validation_map[attribute_name] = attribute_validation_list
         self.validation_map[context] = context_validation_map
 
+
 def remove_validation(
-    self,
-    attribute_name,
-    validation_method_name,
-    contexts = ("default",)
+    self, attribute_name, validation_method_name, contexts=("default",)
 ):
     """
     Removes a named based validation method from the current entity
@@ -1077,17 +1104,11 @@ def remove_validation(
     # method to process the validation removal from the attribute
     validation_method_name = validation_method_name + "_validate"
     validation_method = getattr(self, validation_method_name)
-    self.remove_custom_validation(
-        attribute_name,
-        validation_method,
-        contexts = contexts
-    )
+    self.remove_custom_validation(attribute_name, validation_method, contexts=contexts)
+
 
 def remove_custom_validation(
-    self,
-    attribute_name,
-    validation_method,
-    contexts = ("default",)
+    self, attribute_name, validation_method, contexts=("default",)
 ):
     """
     Removes a previously added "custom" validation method from a certain
@@ -1120,7 +1141,8 @@ def remove_custom_validation(
         # iterates over the complete set of validation tuples in the
         # attribute validation list trying to find the valid ones
         for validation_tuple in attribute_validation_list:
-            if not validation_tuple[0] == validation_method: continue
+            if not validation_tuple[0] == validation_method:
+                continue
             validation_tuples.append(validation_tuple)
 
         # iterates over the complete set of (valid) validation tuples
@@ -1128,7 +1150,8 @@ def remove_custom_validation(
         for validation_tuple in validation_tuples:
             attribute_validation_list.remove(validation_tuple)
 
-def add_error(self, attribute_name, error_message, avoid_duplicates = True):
+
+def add_error(self, attribute_name, error_message, avoid_duplicates=True):
     """
     Adds an error to the validation error map.
     This error may be used latter for "verbosity" purposes.
@@ -1159,11 +1182,13 @@ def add_error(self, attribute_name, error_message, avoid_duplicates = True):
     # avoid duplicates flag is set and the error message is
     # already present in the validation errors list
     validation_errors = self.validation_errors_map[attribute_name]
-    if avoid_duplicates and error_message in validation_errors: return
+    if avoid_duplicates and error_message in validation_errors:
+        return
 
     # adds the validation error to the validation error
     # list for the attribute name
     validation_errors.append(error_message)
+
 
 def clear_errors(self):
     """
@@ -1179,6 +1204,7 @@ def clear_errors(self):
     # a new map to hold the values (clear process)
     self.validation_errors_map = {}
 
+
 def init_validate(self):
     """
     Initializes the validation system for the current
@@ -1191,18 +1217,21 @@ def init_validate(self):
 
     # checks if the validation has been already started,
     # (avoids duplicated validation starting)
-    if hasattr(self, "validation_started"): return
+    if hasattr(self, "validation_started"):
+        return
 
     # in case the model has the set validation method
     # the control flow must call it so that extra validation
     # methods may be included in the model
-    if hasattr(self, "set_validation"): self.set_validation()
+    if hasattr(self, "set_validation"):
+        self.set_validation()
 
     # sets the starting of the validation avoiding any
     # further calls to this method (performance issue)
     self.validation_started = True
 
-def validate(self, checker = None, context = None):
+
+def validate(self, checker=None, context=None):
     """
     Validates all the attributes in the current object.
     This method returns if the validation was successful or not.
@@ -1225,7 +1254,8 @@ def validate(self, checker = None, context = None):
     # checks if the current model contains the pre validate
     # method, in such case the method is called to signal
     # the start of the validation process
-    if hasattr(self, "pre_validate"): self.pre_validate()
+    if hasattr(self, "pre_validate"):
+        self.pre_validate()
 
     # initializes the validation structures so that it's possible
     # and guaranteed to be able to properly execute validation on
@@ -1247,34 +1277,34 @@ def validate(self, checker = None, context = None):
     # verifies if the current context is the default one and in case
     # it's not runs the default context validation (as an extra) then
     # runs the validation for the selected context
-    if not is_default: self.validate_run(
-        checker = checker,
-        context_validation_map = default_validation_map
-    )
-    self.validate_run(
-        checker = checker,
-        context_validation_map = context_validation_map
-    )
+    if not is_default:
+        self.validate_run(
+            checker=checker, context_validation_map=default_validation_map
+        )
+    self.validate_run(checker=checker, context_validation_map=context_validation_map)
 
     # checks if the current validation process has success
     # running (all the validation tests passed)
-    is_valid = self.is_valid(recursive = True)
+    is_valid = self.is_valid(recursive=True)
 
     # in case the validation was not successful and the current
     # model contains the fail validate method defined it's called
     # to signal the failure of the validation process
-    if not is_valid and hasattr(self, "fail_validate"): self.fail_validate()
+    if not is_valid and hasattr(self, "fail_validate"):
+        self.fail_validate()
 
     # checks if the current model contains the post validate
     # method, in such case the method is called to signal
     # the end of the validation process
-    if hasattr(self, "post_validate"): self.post_validate()
+    if hasattr(self, "post_validate"):
+        self.post_validate()
 
     # returns if the structure is valid, all tests passed
     # with expected success
     return is_valid
 
-def validate_run(self, checker = None, context_validation_map = {}):
+
+def validate_run(self, checker=None, context_validation_map={}):
     """
     Underlying method that runs the sequence of validation methods
     defined in the provided context validation map.
@@ -1296,18 +1326,22 @@ def validate_run(self, checker = None, context_validation_map = {}):
     # iterates over all the items in the context validation map
     # so that it's possible to validate all of the attributes
     # for the current model instance (as requested)
-    for attribute_name, validation_tuple_list in colony.legacy.iteritems(context_validation_map):
+    for attribute_name, validation_tuple_list in colony.legacy.iteritems(
+        context_validation_map
+    ):
         # in case the current model is already stored no need to
         # to validate a non existent attribute (it's not going to be
         # persisted and the value in the data source was already validated)
         # the data model remains consistent for sure
-        if self.is_stored() and not self.has_value(attribute_name): continue
+        if self.is_stored() and not self.has_value(attribute_name):
+            continue
 
         # in case there's a checker method method that will verify if the
         # attribute qualifies for validation then runs it and verifies if
         # the result is negative, if that's the case skips the validation
         # for the current attribute name (validation not required)
-        if checker and not checker(attribute_name): continue
+        if checker and not checker(attribute_name):
+            continue
 
         # retrieves the attribute value, this is the value that is going
         # to be "fed" into the various validation methods registered for it
@@ -1322,13 +1356,17 @@ def validate_run(self, checker = None, context_validation_map = {}):
 
             # in case the validate null is not set and the
             # attribute value is none (skips the current loop)
-            if not validate_null and attribute_value == None: continue
+            if not validate_null and attribute_value == None:
+                continue
 
             # calls the validation method for validation on the
             # given attribute from the model (performs the validation)
             validation_method(attribute_name, attribute_value, properties)
 
-def validate_exception(self, exception_message = "validation failed", error_description = True):
+
+def validate_exception(
+    self, exception_message="validation failed", error_description=True
+):
     """
     Validates all the attributes in the current object.
     This method raises an exception in case an error occurs.
@@ -1347,14 +1385,18 @@ def validate_exception(self, exception_message = "validation failed", error_desc
 
     # in case the model is valid nothing is required to be done
     # and so it returns immediately
-    if model_valid: return
+    if model_valid:
+        return
 
     # retrieves the model validation errors map
     # and uses them to raise the appropriate exception
     model_validation_errors_map = self.validation_errors_map
-    raise exceptions.ModelValidationError(exception_message + ": " + str(model_validation_errors_map), self)
+    raise exceptions.ModelValidationError(
+        exception_message + ": " + str(model_validation_errors_map), self
+    )
 
-def is_valid(self, recursive = True):
+
+def is_valid(self, recursive=True):
     """
     Retrieves if the current structure is valid. The strategy
     for this evaluation may be either linear or recursive,
@@ -1381,34 +1423,41 @@ def is_valid(self, recursive = True):
     has_relations = hasattr(self, "get_relation_names")
     relation_names = self.get_relation_names() if recursive and has_relations else []
     for relation_name in relation_names:
-
         # retrieves the value of the current relation in iteration
         # and verifies that it's valid and not lazy loaded
         relation_value = self.get_value(relation_name)
-        if relation_value == None: continue
-        if self.is_lazy_loaded(relation_name): continue
+        if relation_value == None:
+            continue
+        if self.is_lazy_loaded(relation_name):
+            continue
 
         # verifies if the current instance contains the is related
         # method that should verify of the current relation in iteration
         # is somehow related with the model instance
         has_method = hasattr(self, "is_related")
         is_related = self.is_related(relation_name) if has_method else True
-        if not is_related: continue
+        if not is_related:
+            continue
 
         # verifies if the relation is of type to many and in case it's
         # not encapsulates the current relation in a sequence value,
         # iterating then over these values for proper validation
         is_to_many = self.is_to_many(relation_name)
-        if not is_to_many: relation_value = [relation_value]
+        if not is_to_many:
+            relation_value = [relation_value]
         for value in relation_value:
-            if value.is_valid(recursive = recursive): continue
+            if value.is_valid(recursive=recursive):
+                continue
             return False
 
     # verifies if the validation errors map contains any
     # value in it, if that's the case the current model
     # is considered to be invalid otherwise it's valid
-    if self.validation_errors_map: return False
-    else: return True
+    if self.validation_errors_map:
+        return False
+    else:
+        return True
+
 
 def is_stored(self):
     """
@@ -1428,8 +1477,10 @@ def is_stored(self):
     # be used to check if the model is stored in a secondary
     # storage systems otherwise it's always considered to be
     # a transient model (default case)
-    if hasattr(self, "is_persisted"): return self.is_persisted()
+    if hasattr(self, "is_persisted"):
+        return self.is_persisted()
     return False
+
 
 def set_request(self, request):
     """
@@ -1445,8 +1496,11 @@ def set_request(self, request):
     # in case the current model contains the scope map defined
     # the request is sent there for scope wide usage, otherwise the
     # "normal" request variable is used
-    if hasattr(self, "_scope"): self._scope["request"] = request
-    else: self.request = request
+    if hasattr(self, "_scope"):
+        self._scope["request"] = request
+    else:
+        self.request = request
+
 
 def get_request(self):
     """
@@ -1460,9 +1514,12 @@ def get_request(self):
     # in case the current model contains the scope map defined the request
     # is retrieved from there, otherwise the "normal" request variable
     # is used for the retrieval
-    if hasattr(self, "_scope"): request = self._scope.get("request", self.request)
-    else: request = self.request
+    if hasattr(self, "_scope"):
+        request = self._scope.get("request", self.request)
+    else:
+        request = self.request
     return request
+
 
 def get_validation_context(self):
     """
@@ -1474,6 +1531,7 @@ def get_validation_context(self):
 
     return self.validation_context
 
+
 def set_validation_context(self, validation_context):
     """
     Sets the validation context.
@@ -1483,6 +1541,7 @@ def set_validation_context(self, validation_context):
     """
 
     self.validation_context = validation_context
+
 
 def not_unset_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1501,6 +1560,7 @@ def not_unset_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is unset")
 
+
 def not_none_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is not none.
@@ -1518,6 +1578,7 @@ def not_none_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is none")
 
+
 def not_empty_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is not empty.
@@ -1534,6 +1595,7 @@ def not_empty_validate(self, attribute_name, attribute_value, properties):
     if len(attribute_value) == 0:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is empty")
+
 
 def is_stripped_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1555,6 +1617,7 @@ def is_stripped_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value has extraneous whitespaces")
 
+
 def length_equal_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that its length is equal to the target.
@@ -1573,7 +1636,11 @@ def length_equal_validate(self, attribute_name, attribute_value, properties):
     # in case the attribute value is not equal to the target value
     if not len(attribute_value) == target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("length of value is not equal to %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple("length of value is not equal to %s", target_value),
+        )
+
 
 def length_less_than_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1594,9 +1661,17 @@ def length_less_than_validate(self, attribute_name, attribute_value, properties)
     # the target value
     if not len(attribute_value) < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("length of value is greater than or equal to %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple(
+                "length of value is greater than or equal to %s", target_value
+            ),
+        )
 
-def length_less_than_or_equal_validate(self, attribute_name, attribute_value, properties):
+
+def length_less_than_or_equal_validate(
+    self, attribute_name, attribute_value, properties
+):
     """
     Validates an attribute to ensure that its length is less than or equal to the target.
 
@@ -1615,7 +1690,11 @@ def length_less_than_or_equal_validate(self, attribute_name, attribute_value, pr
     # or equal to the target value
     if not len(attribute_value) <= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("length of value is greater than %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple("length of value is greater than %s", target_value),
+        )
+
 
 def length_greater_than_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1636,9 +1715,17 @@ def length_greater_than_validate(self, attribute_name, attribute_value, properti
     # the target value
     if not len(attribute_value) > target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("length of value is less than or equal to %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple(
+                "length of value is less than or equal to %s", target_value
+            ),
+        )
 
-def length_greater_than_or_equal_validate(self, attribute_name, attribute_value, properties):
+
+def length_greater_than_or_equal_validate(
+    self, attribute_name, attribute_value, properties
+):
     """
     Validates an attribute to ensure that its length is greater than or equal to the target.
 
@@ -1657,7 +1744,11 @@ def length_greater_than_or_equal_validate(self, attribute_name, attribute_value,
     # or equal to the target value
     if not len(attribute_value) >= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("length of value is less than %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple("length of value is less than %s", target_value),
+        )
+
 
 def in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1680,6 +1771,7 @@ def in_enumeration_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not in enumeration")
 
+
 def not_in_enumeration_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that its value is not in the
@@ -1700,6 +1792,7 @@ def not_in_enumeration_validate(self, attribute_name, attribute_value, propertie
     if attribute_value in values:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is in enumeration")
+
 
 def is_equal_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1722,6 +1815,7 @@ def is_equal_validate(self, attribute_name, attribute_value, properties):
         # adds the error to the given attribute name
         self.add_error(attribute_name, "value is different")
 
+
 def is_different_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that its value is different
@@ -1743,6 +1837,7 @@ def is_different_validate(self, attribute_name, attribute_value, properties):
         # adds the error to the given attribute name
         self.add_error(attribute_name, "value is the same")
 
+
 def greater_than_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it is greater than the target value.
@@ -1762,7 +1857,11 @@ def greater_than_validate(self, attribute_name, attribute_value, properties):
     # greater than the target value
     if not attribute_value > target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("value is less than or equal to %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple("value is less than or equal to %s", target_value),
+        )
+
 
 def greater_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1780,6 +1879,7 @@ def greater_than_zero_validate(self, attribute_name, attribute_value, properties
     if not attribute_value > 0:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is less than or equal to zero")
+
 
 def greater_than_or_equal_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1800,9 +1900,14 @@ def greater_than_or_equal_validate(self, attribute_name, attribute_value, proper
     # than or equal to the target value
     if not attribute_value >= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("value is less than %s", target_value))
+        self.add_error(
+            attribute_name, colony.FormatTuple("value is less than %s", target_value)
+        )
 
-def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
+
+def greater_than_or_equal_to_zero_validate(
+    self, attribute_name, attribute_value, properties
+):
     """
     Validates an attribute to ensure that it is greater than or equal to zero.
 
@@ -1818,6 +1923,7 @@ def greater_than_or_equal_to_zero_validate(self, attribute_name, attribute_value
     if not attribute_value >= 0:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is less than zero")
+
 
 def less_than_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1838,7 +1944,11 @@ def less_than_validate(self, attribute_name, attribute_value, properties):
     # less than the target value
     if not attribute_value < target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("value is greater than or equal to %s", target_value))
+        self.add_error(
+            attribute_name,
+            colony.FormatTuple("value is greater than or equal to %s", target_value),
+        )
+
 
 def less_than_zero_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1856,6 +1966,7 @@ def less_than_zero_validate(self, attribute_name, attribute_value, properties):
     if not attribute_value < 0:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is greater than or equal to zero")
+
 
 def less_than_or_equal_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1876,9 +1987,14 @@ def less_than_or_equal_validate(self, attribute_name, attribute_value, propertie
     # than or equal to the target value
     if not attribute_value <= target_value:
         # adds an error to the given attribute name
-        self.add_error(attribute_name, colony.FormatTuple("value is greater than %s", target_value))
+        self.add_error(
+            attribute_name, colony.FormatTuple("value is greater than %s", target_value)
+        )
 
-def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, properties):
+
+def less_than_or_equal_to_zero_validate(
+    self, attribute_name, attribute_value, properties
+):
     """
     Validates an attribute to ensure that it is less than or equal to zero.
 
@@ -1894,6 +2010,7 @@ def less_than_or_equal_to_zero_validate(self, attribute_name, attribute_value, p
     if not attribute_value <= 0:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is greater than zero")
+
 
 def is_url_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1918,6 +2035,7 @@ def is_url_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not an URL")
 
+
 def is_email_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is an email.
@@ -1937,6 +2055,7 @@ def is_email_validate(self, attribute_name, attribute_value, properties):
     if not match:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not an email")
+
 
 def is_country_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1960,6 +2079,7 @@ def is_country_validate(self, attribute_name, attribute_value, properties):
     if not match:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not a country")
+
 
 def is_id_number_validate(self, attribute_name, attribute_value, properties):
     """
@@ -1987,6 +2107,7 @@ def is_id_number_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not a valid id number")
 
+
 def is_tax_number_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that the value is a tax number.
@@ -2013,6 +2134,7 @@ def is_tax_number_validate(self, attribute_name, attribute_value, properties):
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value is not a valid tax number")
 
+
 def matches_regex_validate(self, attribute_name, attribute_value, properties):
     """
     Validates an attribute to ensure that it matches the provided regular expression.
@@ -2038,6 +2160,7 @@ def matches_regex_validate(self, attribute_name, attribute_value, properties):
     if not match:
         # adds an error to the given attribute name
         self.add_error(attribute_name, "value has incorrect format")
+
 
 def all_different_validate(self, attribute_name, attribute_value, properties):
     """
@@ -2096,8 +2219,11 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
 
     # retrieves the allocated entities lists that have more
     # than one model and are therefore invalid
-    allocated_entities_lists = [allocated_entities for allocated_entities in\
-        colony.legacy.itervalues(allocated_entities_map) if len(allocated_entities) > 1]
+    allocated_entities_lists = [
+        allocated_entities
+        for allocated_entities in colony.legacy.itervalues(allocated_entities_map)
+        if len(allocated_entities) > 1
+    ]
 
     # removes the last target token since this
     # list is going to be used to retrieve the
@@ -2129,7 +2255,9 @@ def all_different_validate(self, attribute_name, attribute_value, properties):
             model and model.add_error(model_attribute_name, "value has duplicate")
 
     # in case the validation failed adds an error to the attribute
-    if validation_failed: self.add_error(attribute_name, "value has duplicates")
+    if validation_failed:
+        self.add_error(attribute_name, "value has duplicates")
+
 
 def password_strength_validate(self, attribute_name, attribute_value, properties):
     """
@@ -2155,7 +2283,8 @@ def password_strength_validate(self, attribute_name, attribute_value, properties
         # adds an error to the given attribute name
         self.add_error(attribute_name, "password is not safe")
 
-def _set_attribute(self, attribute_key, attribute_value, nullify = True):
+
+def _set_attribute(self, attribute_key, attribute_value, nullify=True):
     """
     Sets the given model attribute for the given attribute key and value.
     This method is used in order to create a safe way of setting attributes
@@ -2194,17 +2323,20 @@ def _set_attribute(self, attribute_key, attribute_value, nullify = True):
 
     # in case no cast type is defined it's impossible to convert the data
     # and so must return immediately (without proper value setting)
-    if not cast_type: return
+    if not cast_type:
+        return
 
     # in case the nullify option is set and the attribute value
     # is an empty string sets the attribute value to none (null)
-    if nullify and attribute_value == "": attribute_value = None
+    if nullify and attribute_value == "":
+        attribute_value = None
 
     # casts the attribute value using the safe mode
     attribute_value_casted = self._cast_safe(attribute_value, cast_type)
 
     # sets the attribute value casted in the model
     setattr(self, attribute_key, attribute_value_casted)
+
 
 def _get_model_class_name(self):
     """
@@ -2232,7 +2364,8 @@ def _get_model_class_name(self):
     # name value to the caller method
     return model_class_name
 
-def _cast_safe(self, value, cast_type = str, default_value = None):
+
+def _cast_safe(self, value, cast_type=str, default_value=None):
     """
     Casts the given value to the given type.
     The cast is made in safe mode, if an exception
@@ -2252,7 +2385,8 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
 
     # in case the value is none it's a considered special case
     # and the value should be returned immediately to caller
-    if value == None: return value
+    if value == None:
+        return value
 
     try:
         # retrieves the value type
@@ -2274,7 +2408,8 @@ def _cast_safe(self, value, cast_type = str, default_value = None):
         # returns the default value
         return default_value
 
-def _get_complete_name(name, namespace_name = None):
+
+def _get_complete_name(name, namespace_name=None):
     """
     Retrieves the complete (session attribute) name from the session
     attribute name and the namespace name.
@@ -2294,26 +2429,57 @@ def _get_complete_name(name, namespace_name = None):
     # in case the namespace name is not set
     # no need to proceed with the prefix strategy
     # the name is the "original" name
-    if not namespace_name: return name
+    if not namespace_name:
+        return name
 
     # creates the complete (session attribute) name by prepending the namespace
     # name to the (session attribute) name and returns it
     complete_name = namespace_name + "." + name
     return complete_name
 
+
 # creates the various methods that are going to be used for
 # the logging capabilities, this methods are "just" pipelined
 # calls the to the plugin instance associated with the model
-def debug(self, message): self._system_instance.plugin.debug(message)
-def info(self, message): self._system_instance.plugin.info(message)
-def warning(self, message): self._system_instance.plugin.warning(message)
-def error(self, message): self._system_instance.plugin.error(message)
-def critical(self, message): self._system_instance.plugin.critical(message)
-def _class_debug(cls, message): cls._system_instance.plugin.debug(message)
-def _class_info(cls, message): cls._system_instance.plugin.info(message)
-def _class_warning(cls, message): cls._system_instance.plugin.warning(message)
-def _class_error(cls, message): cls._system_instance.plugin.error(message)
-def _class_critical(cls, message): cls._system_instance.plugin.critical(message)
+def debug(self, message):
+    self._system_instance.plugin.debug(message)
+
+
+def info(self, message):
+    self._system_instance.plugin.info(message)
+
+
+def warning(self, message):
+    self._system_instance.plugin.warning(message)
+
+
+def error(self, message):
+    self._system_instance.plugin.error(message)
+
+
+def critical(self, message):
+    self._system_instance.plugin.critical(message)
+
+
+def _class_debug(cls, message):
+    cls._system_instance.plugin.debug(message)
+
+
+def _class_info(cls, message):
+    cls._system_instance.plugin.info(message)
+
+
+def _class_warning(cls, message):
+    cls._system_instance.plugin.warning(message)
+
+
+def _class_error(cls, message):
+    cls._system_instance.plugin.error(message)
+
+
+def _class_critical(cls, message):
+    cls._system_instance.plugin.critical(message)
+
 
 class ModelProxy(list):
     """
@@ -2361,7 +2527,8 @@ class ModelProxy(list):
             value = getattr(first, name)
             value_type = type(value)
 
-            if not value_type in METHOD_TYPES: return value
+            if not value_type in METHOD_TYPES:
+                return value
 
         def proxy_method(*args, **kwargs):
             for model in self.models:
@@ -2384,10 +2551,11 @@ class ModelProxy(list):
         current proxy object.
         """
 
-        if not self.models: return None
+        if not self.models:
+            return None
         return self.models[0]
 
-    def apply(self, map, permissive = False):
+    def apply(self, map, permissive=False):
         """
         Pipes the apply method of the model into
         each of the models contained in the proxy.
@@ -2402,7 +2570,7 @@ class ModelProxy(list):
         """
 
         for model, _map in zip(self.models, map):
-            model.apply(_map, permissive = permissive)
+            model.apply(_map, permissive=permissive)
 
     @utils.transaction_m
     def store(self, *args, **kwargs):

@@ -55,6 +55,7 @@ RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
 """ The relative paths regex """
 
+
 class MVCFileHandler(object):
     """
     The MVC file handler class, responsible for the low level
@@ -108,7 +109,9 @@ class MVCFileHandler(object):
 
         # verifies that the resource has been modified and in case it's
         # not returns immediately changing the request to not modified
-        is_modified = request.verify_resource_modification(modified_timestamp, etag_value)
+        is_modified = request.verify_resource_modification(
+            modified_timestamp, etag_value
+        )
         if not is_modified:
             # sets the request mime type and the not modified status
             # code indicating that the resource is the same and there's
@@ -151,8 +154,10 @@ class MVCFileHandler(object):
             # reads the complete set of file contents closing
             # the file afterwards to avoid any problem, then
             # writes those same contents to the request
-            try: file_contents = file.read()
-            finally: file.close()
+            try:
+                file_contents = file.read()
+            finally:
+                file.close()
             request.write(file_contents, 1, False)
 
         return True
@@ -206,6 +211,7 @@ class MVCFileHandler(object):
 
         # returns the escaped path
         return escaped_path
+
 
 class ChunkHandler(object):
     """
@@ -277,7 +283,7 @@ class ChunkHandler(object):
 
         return self.file_size
 
-    def get_chunk(self, chunk_size = CHUNK_SIZE):
+    def get_chunk(self, chunk_size=CHUNK_SIZE):
         """
         Retrieves the a chunk with the given size.
 
@@ -303,7 +309,8 @@ class ChunkHandler(object):
 
         # in case the chunk handler is already closed
         # returns immediately, no need to re-close it
-        if self._closed: return
+        if self._closed:
+            return
 
         # sets the closed flag
         self._closed = True

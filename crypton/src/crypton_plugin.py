@@ -41,25 +41,19 @@ class CryptonPlugin(colony.Plugin):
     description = "The plugin that offers the Crypton base infrastructure"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "mvc_service",
-        "controller_access"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["mvc_service", "controller_access"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
-        colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl")
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl"),
     ]
-    main_modules = [
-        "crypton"
-    ]
+    main_modules = ["crypton"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import crypton
+
         self.system = crypton.Crypton(self)
 
     def end_load_plugin(self):

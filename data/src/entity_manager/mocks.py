@@ -30,27 +30,20 @@ __license__ = "Apache License, Version 2.0"
 
 from . import structures
 
+
 class RootEntity(structures.EntityClass):
     """
     The root entity class, this class represents
     a typical base class for a model hierarchy.
     """
 
-    object_id = dict(
-        id = True,
-        type = "integer",
-        generated = True
-    )
+    object_id = dict(id=True, type="integer", generated=True)
     """ The object id of the root entity """
 
-    status = dict(
-        type = "integer"
-    )
+    status = dict(type="integer")
     """ The status of the entity (1-enabled, 2-disabled) """
 
-    metadata = dict(
-        type = "metadata"
-    )
+    metadata = dict(type="metadata")
     """ Simple metadata value that is going to be used
     for storage of structured data (maps and lists) """
 
@@ -61,6 +54,7 @@ class RootEntity(structures.EntityClass):
 
         self.object_id = None
         self.status = 1
+
 
 class RootEntityAbstract(structures.EntityClass):
     """
@@ -75,16 +69,10 @@ class RootEntityAbstract(structures.EntityClass):
     """ Abstract class flag, indicating that this class is not
     meant to be stored in the data source """
 
-    object_id = dict(
-        id = True,
-        type = "integer",
-        generated = True
-    )
+    object_id = dict(id=True, type="integer", generated=True)
     """ The object id of the root entity abstract """
 
-    status = dict(
-        type = "integer"
-    )
+    status = dict(type="integer")
     """ The status of the entity (1-enabled, 2-disabled) """
 
     def __init__(self):
@@ -95,30 +83,25 @@ class RootEntityAbstract(structures.EntityClass):
         self.object_id = None
         self.status = 1
 
+
 class Loggable(structures.EntityClass):
     """
     The (interface) class that decorates an entity with
     the "loggable" attribute for polymorphic retrieval.
     """
 
-    object_id = dict(
-        id = True,
-        type = "integer",
-        generated = True
-    )
+    object_id = dict(id=True, type="integer", generated=True)
     """ The object id of the "loggable" """
 
     log_id = dict(
-        type = "integer",
-        generated = True,
-        generator_type = "table",
-        generator_field_name = "logable_log_id"
+        type="integer",
+        generated=True,
+        generator_type="table",
+        generator_field_name="logable_log_id",
     )
     """ The id of the log entry (primary identifier) """
 
-    log_number = dict(
-        type = "integer"
-    )
+    log_number = dict(type="integer")
     """ The log number of the taxable """
 
     def __init__(self):
@@ -131,19 +114,19 @@ class Loggable(structures.EntityClass):
         self.log_id = None
         self.log_number = 1009
 
+
 class Taxable(RootEntity):
     """
     The (interface) class that decorates an entity with
     the taxable attribute for polymorphic retrieval.
     """
 
-    tax_number = dict(
-        type = "integer"
-    )
+    tax_number = dict(type="integer")
     """ The tax number of the taxable """
 
     def __init__(self):
         RootEntity.__init__(self)
+
 
 class Person(RootEntity):
     """
@@ -151,49 +134,31 @@ class Person(RootEntity):
     attributes of a person.
     """
 
-    name = dict(
-        type = "text"
-    )
+    name = dict(type="text")
     """ The name of the person """
 
-    age = dict(
-        type = "integer"
-    )
+    age = dict(type="integer")
     """ The age of the person """
 
-    weight = dict(
-        type = "decimal"
-    )
+    weight = dict(type="decimal")
     """ The weight of the person """
 
-    parent = dict(
-        type = "relation"
-    )
+    parent = dict(type="relation")
     """ The parent for the current person """
 
-    children = dict(
-        type = "relation"
-    )
+    children = dict(type="relation")
     """ The children of the current person """
 
-    dogs = dict(
-        type = "relation"
-    )
+    dogs = dict(type="relation")
     """ The dogs "owned" by the person """
 
-    cars = dict(
-        type = "relation"
-    )
+    cars = dict(type="relation")
     """ The cars "owned" by the person """
 
-    employees = dict(
-        type = "relation"
-    )
+    employees = dict(type="relation")
     """ The employees associated with the person """
 
-    address = dict(
-        type = "relation"
-    )
+    address = dict(type="relation")
     """ The address associated with the person """
 
     def __init__(self):
@@ -207,57 +172,32 @@ class Person(RootEntity):
 
     @staticmethod
     def _relation_parent():
-        return dict(
-            type = "to-one",
-            target = Person,
-            reverse = "children",
-            is_mapper = True
-        )
+        return dict(type="to-one", target=Person, reverse="children", is_mapper=True)
 
     @staticmethod
     def _relation_children():
-        return dict(
-            type = "to-many",
-            target = Person,
-            reverse = "parent"
-        )
+        return dict(type="to-many", target=Person, reverse="parent")
 
     @staticmethod
     def _relation_dogs():
-        return dict(
-            type = "to-many",
-            target = Dog,
-            reverse = "owner"
-        )
+        return dict(type="to-many", target=Dog, reverse="owner")
 
     @staticmethod
     def _relation_cars():
-        return dict(
-            type = "to-many",
-            target = Car,
-            reverse = "owners"
-        )
+        return dict(type="to-many", target=Car, reverse="owners")
 
     @staticmethod
     def _relation_employees():
-        return dict(
-            type = "to-many",
-            target = Employee,
-            reverse = "boss"
-        )
+        return dict(type="to-many", target=Employee, reverse="boss")
 
     @staticmethod
     def _relation_address():
-        return dict(
-            type = "to-one",
-            target = Address,
-            reverse = "person",
-            is_mapper = True
-        )
+        return dict(type="to-one", target=Address, reverse="person", is_mapper=True)
 
     @classmethod
     def _attr_double_age(cls, instance):
         return cls._attr(instance, "age") * 2
+
 
 class Employee(Person, Loggable, Taxable):
     """
@@ -266,14 +206,10 @@ class Employee(Person, Loggable, Taxable):
     an employee in a typical enterprise system.
     """
 
-    salary = dict(
-        type = "integer"
-    )
+    salary = dict(type="integer")
     """ The salary of the employee """
 
-    boss = dict(
-        type = "relation"
-    )
+    boss = dict(type="relation")
     """ The boss of the employee (only one is allowed) """
 
     def __init__(self):
@@ -288,12 +224,8 @@ class Employee(Person, Loggable, Taxable):
 
     @staticmethod
     def _relation_boss():
-        return dict(
-            type = "to-one",
-            target = Person,
-            reverse = "employees",
-            is_mapper = True
-        )
+        return dict(type="to-one", target=Person, reverse="employees", is_mapper=True)
+
 
 class Breeder(Person):
     """
@@ -301,19 +233,14 @@ class Breeder(Person):
     professional/specialized dog or cat.
     """
 
-    license_number = dict(
-        type = "text"
-    )
+    license_number = dict(type="text")
     """ The license number as a set of characters for the
     breeder that is going to identify him professionally """
 
     @staticmethod
     def _relation_dogs():
-        return dict(
-            type = "to-many",
-            target = BreedDog,
-            reverse = "owner"
-        )
+        return dict(type="to-many", target=BreedDog, reverse="owner")
+
 
 class Address(RootEntity):
     """
@@ -321,24 +248,16 @@ class Address(RootEntity):
     set of attributes for a postal address.
     """
 
-    street = dict(
-        type = "text"
-    )
+    street = dict(type="text")
     """ The street of the address """
 
-    number = dict(
-        type = "integer"
-    )
+    number = dict(type="integer")
     """ The door number of the address """
 
-    country = dict(
-        type = "text"
-    )
+    country = dict(type="text")
     """ The country of the address """
 
-    person = dict(
-        type = "relation"
-    )
+    person = dict(type="relation")
     """ The person associated with the address """
 
     def __init__(self):
@@ -353,11 +272,8 @@ class Address(RootEntity):
 
     @staticmethod
     def _relation_person():
-        return dict(
-            type = "to-one",
-            target = Person,
-            reverse = "address"
-        )
+        return dict(type="to-one", target=Person, reverse="address")
+
 
 class Dog(RootEntity):
     """
@@ -366,19 +282,13 @@ class Dog(RootEntity):
     of a dog.
     """
 
-    name = dict(
-        type = "text"
-    )
+    name = dict(type="text")
     """ The name of the dog """
 
-    owner = dict(
-        type = "relation"
-    )
+    owner = dict(type="relation")
     """ The owner of the dog """
 
-    enemy = dict(
-        type = "relation"
-    )
+    enemy = dict(type="relation")
     """ The enemy of the dog """
 
     def __init__(self):
@@ -391,20 +301,12 @@ class Dog(RootEntity):
 
     @staticmethod
     def _relation_owner():
-        return dict(
-            type = "to-one",
-            target = Person,
-            reverse = "dogs",
-            is_mapper = True
-        )
+        return dict(type="to-one", target=Person, reverse="dogs", is_mapper=True)
 
     @staticmethod
     def _relation_enemy():
-        return dict(
-            type = "to-one",
-            target = Cat,
-            is_mapper = True
-        )
+        return dict(type="to-one", target=Cat, is_mapper=True)
+
 
 class BreedDog(Dog):
     """
@@ -413,20 +315,14 @@ class BreedDog(Dog):
     like the digital tag.
     """
 
-    digital_tag = dict(
-        type = "text"
-    )
+    digital_tag = dict(type="text")
     """ The digital tag of the dog, meant to identify
     it in any intervention """
 
     @staticmethod
     def _relation_owner():
-        return dict(
-            type = "to-one",
-            target = Breeder,
-            reverse = "dogs",
-            is_mapper = True
-        )
+        return dict(type="to-one", target=Breeder, reverse="dogs", is_mapper=True)
+
 
 class Cat(RootEntity):
     """
@@ -435,9 +331,7 @@ class Cat(RootEntity):
     of a cat.
     """
 
-    name = dict(
-        type = "text"
-    )
+    name = dict(type="text")
     """ The name of the cat """
 
     def __init__(self):
@@ -448,30 +342,23 @@ class Cat(RootEntity):
         RootEntity.__init__(self)
         self.name = "Anonymous"
 
+
 class Car(RootEntity):
     """
     The car entity class, representing the car vehicle
     typical attributes.
     """
 
-    tires = dict(
-        type = "integer"
-    )
+    tires = dict(type="integer")
     """ The salary of the cat """
 
-    owners = dict(
-        type = "relation"
-    )
+    owners = dict(type="relation")
     """ The owner of the car """
 
-    suppliers = dict(
-        type = "relation"
-    )
+    suppliers = dict(type="relation")
     """ The suppliers of spare parts to the car """
 
-    mechanic = dict(
-        type = "relation"
-    )
+    mechanic = dict(type="relation")
     """ The mechanic (person) to be used to repair the car """
 
     def __init__(self):
@@ -484,25 +371,16 @@ class Car(RootEntity):
 
     @staticmethod
     def _relation_owners():
-        return dict(
-            type = "to-many",
-            target = Person,
-            reverse = "cars"
-        )
+        return dict(type="to-many", target=Person, reverse="cars")
 
     @staticmethod
     def _relation_suppliers():
-        return dict(
-            type = "to-many",
-            target = Supplier
-        )
+        return dict(type="to-many", target=Supplier)
 
     @staticmethod
     def _relation_mechanic():
-        return dict(
-            type = "to-one",
-            target = Person
-        )
+        return dict(type="to-one", target=Person)
+
 
 class Supplier(RootEntity):
     """
@@ -517,15 +395,14 @@ class Supplier(RootEntity):
 
         pass
 
+
 class Operation(Loggable):
     """
     The operation entity class, representing a logical
     operation and attributes.
     """
 
-    name = dict(
-        type = "text"
-    )
+    name = dict(type="text")
     """ The name of the operation """
 
     def __init__(self):
@@ -535,15 +412,14 @@ class Operation(Loggable):
 
         self.name = "Transaction"
 
+
 class Chair(RootEntityAbstract):
     """
     The chair entity class, representing the chair (furniture)
     typical attributes.
     """
 
-    legs = dict(
-        type = "integer"
-    )
+    legs = dict(type="integer")
     """ The salary of the cat """
 
     def __init__(self):
@@ -554,20 +430,17 @@ class Chair(RootEntityAbstract):
         RootEntityAbstract.__init__(self)
         self.legs = 4
 
+
 class File(RootEntity):
     """
     The file entity class, that represent a typical file
     in the normal computer file system.
     """
 
-    filename = dict(
-        type = "text"
-    )
+    filename = dict(type="text")
     """ The name (representation) of the file """
 
-    data = dict(
-        type = "data"
-    )
+    data = dict(type="data")
     """ The (binary) data of the file """
 
     def __init__(self):

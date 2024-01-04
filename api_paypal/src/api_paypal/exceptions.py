@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIPaypalException(colony.ColonyException):
     """
     The API PayPal exception class.
@@ -37,6 +38,7 @@ class APIPaypalException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class PaypalAPIError(APIPaypalException):
     """

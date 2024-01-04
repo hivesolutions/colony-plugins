@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class FormcodePlugin(colony.Plugin):
     """
     The main class for the Formcode plugin.
@@ -40,19 +41,14 @@ class FormcodePlugin(colony.Plugin):
     description = "A plugin to serialize and unserialize formcode files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "serializer.formcode"
-    ]
-    main_modules = [
-        "formcode_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["serializer.formcode"]
+    main_modules = ["formcode_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import formcode_c
+
         self.system = formcode_c.Formcode(self)
 
     def dumps(self, object):

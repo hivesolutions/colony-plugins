@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class JinjaPlugin(colony.Plugin):
     """
     The main class for the Jinja plugin responsible for
@@ -45,26 +46,19 @@ class JinjaPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "template_engine"
-    ]
-    dependencies = [
-        colony.PackageDependency("Jinja template engine", "jinja2")
-    ]
-    main_modules = [
-        "jinja"
-    ]
+    capabilities = ["template_engine"]
+    dependencies = [colony.PackageDependency("Jinja template engine", "jinja2")]
+    main_modules = ["jinja"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import jinja
+
         self.jinja = jinja.Jinja(self)
 
-    def parse_template(self, file_path, base_path = ".", encoding = "utf-8"):
+    def parse_template(self, file_path, base_path=".", encoding="utf-8"):
         return self.jinja.parse_file_path(
-            file_path,
-            base_path = base_path,
-            encoding = encoding
+            file_path, base_path=base_path, encoding=encoding
         )

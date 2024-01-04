@@ -32,6 +32,7 @@ import colony
 
 from . import mocks
 
+
 class CSVTest(colony.Test):
     """
     The CSV serializer class, responsible for the
@@ -39,27 +40,25 @@ class CSVTest(colony.Test):
     """
 
     def get_bundle(self):
-        return (
-            CSVBaseTestCase,
-        )
+        return (CSVBaseTestCase,)
+
 
 class CSVBaseTestCase(colony.ColonyTestCase):
-
     @staticmethod
     def get_description():
         return "CSV Base test case"
 
     def test_dumps(self):
-        result = self.system.dumps(mocks.SIMPLE_OBJECT, encoding = None)
+        result = self.system.dumps(mocks.SIMPLE_OBJECT, encoding=None)
         self.assertEqual(result, mocks.SIMPLE_CSV)
 
-        result = self.system.dumps(mocks.SIMPLE_RAW, encoding = None)
+        result = self.system.dumps(mocks.SIMPLE_RAW, encoding=None)
         self.assertEqual(result, mocks.SIMPLE_CSV)
 
-        result = self.system.dumps(mocks.COMPLEX_OBJECT, encoding = None)
+        result = self.system.dumps(mocks.COMPLEX_OBJECT, encoding=None)
         self.assertEqual(result, mocks.COMPLEX_CSV)
 
-        result = self.system.dumps(mocks.COMPLEX_RAW, encoding = None)
+        result = self.system.dumps(mocks.COMPLEX_RAW, encoding=None)
         self.assertEqual(result, mocks.COMPLEX_CSV)
 
     def test_loads(self):

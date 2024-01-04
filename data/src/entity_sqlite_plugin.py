@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class EntitySQLitePlugin(colony.Plugin):
     """
     The main class for the Entity SQLite plugin.
@@ -40,19 +41,14 @@ class EntitySQLitePlugin(colony.Plugin):
     description = "The plugin that manages the SQLite adaptation structures for the entity manager"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "entity_engine"
-    ]
-    main_modules = [
-        "entity_sqlite"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["entity_engine"]
+    main_modules = ["entity_sqlite"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import entity_sqlite
+
         self.system = entity_sqlite.EntitySQLite(self)
 
     def get_engine_name(self):

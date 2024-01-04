@@ -47,12 +47,13 @@ PNG_VALUE = "png"
 MAXIMUM_SIZE = 2147483647
 """ The maximum size value """
 
+
 class ImageTreatment(colony.System):
     """
     The image treatment class.
     """
 
-    def resize_image(self, image_path, width, height, image_type = JPEG_VALUE):
+    def resize_image(self, image_path, width, height, image_type=JPEG_VALUE):
         """
         Resizes the image in the given file path (or buffer)
         to the target width and height.
@@ -79,8 +80,11 @@ class ImageTreatment(colony.System):
         # ands saves it into an in memory buffer
         # setting the offset position to the initial one
         image = PIL.Image.open(image_path)
-        algorithm = PIL.Image.ANTIALIAS if hasattr(PIL.Image, "ANTIALIAS") else\
-            (PIL.Image.LANCZOS if hasattr(PIL.Image, "LANCZOS") else None)
+        algorithm = (
+            PIL.Image.ANTIALIAS
+            if hasattr(PIL.Image, "ANTIALIAS")
+            else (PIL.Image.LANCZOS if hasattr(PIL.Image, "LANCZOS") else None)
+        )
         image_resize = image.resize((width, height), algorithm)
         string_buffer = colony.StringBuffer(False)
         image_resize.save(string_buffer, image_type)
@@ -89,7 +93,7 @@ class ImageTreatment(colony.System):
         # returns the string buffer
         return string_buffer
 
-    def resize_image_aspect(self, image_path, width, height, image_type = PNG_VALUE):
+    def resize_image_aspect(self, image_path, width, height, image_type=PNG_VALUE):
         """
         Resizes the image in the given file path (or buffer)
         to the target width and height.
@@ -136,7 +140,9 @@ class ImageTreatment(colony.System):
         # returns the resized image
         return self.resize_image(image_path, resize_width, resize_height, image_type)
 
-    def resize_image_aspect_background(self, image_path, width, height, image_type = PNG_VALUE):
+    def resize_image_aspect_background(
+        self, image_path, width, height, image_type=PNG_VALUE
+    ):
         """
         Resizes the image in the given file path (or buffer)
         to the target width and height.
@@ -178,8 +184,8 @@ class ImageTreatment(colony.System):
             resized_image,
             (
                 int((width - resized_image_width) / 2),
-                int((height - resized_image_height) / 2)
-            )
+                int((height - resized_image_height) / 2),
+            ),
         )
 
         # creates a new string buffer for the image
@@ -210,10 +216,14 @@ class ImageTreatment(colony.System):
         string of binary data.
         """
 
-        if data[:4] == b"\xff\xd8\xff\xe0" and data[6:11] == b"JFIF\0": return "image/jpeg"
-        elif data[1:4] == b"PNG": return "image/png"
-        elif data[:2] == b"BM": return "image/x-ms-bmp"
-        else: return "image/unknown-type"
+        if data[:4] == b"\xff\xd8\xff\xe0" and data[6:11] == b"JFIF\0":
+            return "image/jpeg"
+        elif data[1:4] == b"PNG":
+            return "image/png"
+        elif data[:2] == b"BM":
+            return "image/x-ms-bmp"
+        else:
+            return "image/unknown-type"
 
     def _reset_image_path(self, image_path):
         """

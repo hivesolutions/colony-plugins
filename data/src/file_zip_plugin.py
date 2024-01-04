@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class FileZipPlugin(colony.Plugin):
     """
     The main class for the File Zip Engine plugin.
@@ -40,19 +41,14 @@ class FileZipPlugin(colony.Plugin):
     description = "File Zip Engine Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "file_engine"
-    ]
-    main_modules = [
-        "file_zip"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["file_engine"]
+    main_modules = ["file_zip"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import file_zip
+
         self.system = file_zip.FileZip(self)
 
     def get_engine_name(self):

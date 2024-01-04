@@ -40,6 +40,7 @@ MIME_TYPE = "text/csv"
 """ The mime type for the CSV format as defined
 by the proper ISO organizations  """
 
+
 class CSV(colony.System):
     """
     Provides functions to interact with CSV.
@@ -47,16 +48,16 @@ class CSV(colony.System):
     the dumping and loading of CSV.
     """
 
-    def dumps(self, object, encoding = DEFAULT_ENCODING):
-        return serializer.dumps(object, encoding = encoding)
+    def dumps(self, object, encoding=DEFAULT_ENCODING):
+        return serializer.dumps(object, encoding=encoding)
 
-    def dumps_lazy(self, object, encoding = DEFAULT_ENCODING):
-        return serializer.dumps_lazy(object, encoding = encoding)
+    def dumps_lazy(self, object, encoding=DEFAULT_ENCODING):
+        return serializer.dumps_lazy(object, encoding=encoding)
 
-    def loads(self, csv_string, header = True):
+    def loads(self, csv_string, header=True):
         return serializer.loads(csv_string, header)
 
-    def load_file(self, csv_file, encoding = DEFAULT_ENCODING):
+    def load_file(self, csv_file, encoding=DEFAULT_ENCODING):
         # reads the CSV file and decodes the file using
         # the defined (by parameter encoding) then runs
         # the load process for the CSV bytes buffer,

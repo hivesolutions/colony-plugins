@@ -46,6 +46,7 @@ DEFAULT_PROTOCOL_VALUE = "http://"
 DEFAULT_PORT_VALUE = None
 """ The default port value """
 
+
 class URLParser(colony.System):
     """
     The URL parser class.
@@ -78,6 +79,7 @@ class URLParser(colony.System):
 
         # returns the URL
         return url
+
 
 class URL(object):
     """
@@ -119,15 +121,15 @@ class URL(object):
 
     def __init__(
         self,
-        protocol = DEFAULT_PROTOCOL_VALUE,
-        username = None,
-        password = None,
-        base_name = None,
-        port = DEFAULT_PORT_VALUE,
-        resource_reference = None,
-        options = None,
-        location = None,
-        base_url = None
+        protocol=DEFAULT_PROTOCOL_VALUE,
+        username=None,
+        password=None,
+        base_name=None,
+        port=DEFAULT_PORT_VALUE,
+        resource_reference=None,
+        options=None,
+        location=None,
+        base_url=None,
     ):
         """
         Constructor of the class.
@@ -180,7 +182,10 @@ class URL(object):
         url = self.protocol + self.base_name
 
         # in case the protocol port is not the default one
-        if not self.protocol == DEFAULT_PROTOCOL_VALUE or not self.port == DEFAULT_PORT_VALUE:
+        if (
+            not self.protocol == DEFAULT_PROTOCOL_VALUE
+            or not self.port == DEFAULT_PORT_VALUE
+        ):
             url += ":" + str(self.port)
 
         # adds the resource reference to the URL
@@ -279,7 +284,12 @@ class URL(object):
             self.location = location
 
         # creates the base URL from the protocol, authentication, base name and port
-        self.base_url = (protocol or "") + (authentication and authentication + "@" or "") + (base_name or "") + (port and ":" + port or "")
+        self.base_url = (
+            (protocol or "")
+            + (authentication and authentication + "@" or "")
+            + (base_name or "")
+            + (port and ":" + port or "")
+        )
 
     def add_resource_reference_item(self, resource_reference_item):
         """
@@ -509,7 +519,9 @@ class URL(object):
             # returns immediately
             return
 
-        self.options = "&".join([key + "=" + value for key, value in colony.legacy.items(self.options_map)])
+        self.options = "&".join(
+            [key + "=" + value for key, value in colony.legacy.items(self.options_map)]
+        )
 
     def _generate_resource_reference_list(self):
         """

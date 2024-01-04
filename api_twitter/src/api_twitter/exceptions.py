@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APITwitterException(colony.ColonyException):
     """
     The API Titter exception class.
@@ -37,6 +38,7 @@ class APITwitterException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class InvalidAuthentication(APITwitterException):
     """
@@ -63,6 +65,7 @@ class InvalidAuthentication(APITwitterException):
         """
 
         return "Invalid authentication - %s" % self.message
+
 
 class StatusUpdateProblem(APITwitterException):
     """

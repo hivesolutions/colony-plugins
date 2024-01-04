@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class SchedulerException(colony.ColonyException):
     """
     The scheduler exception class.
@@ -37,6 +38,7 @@ class SchedulerException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class SchedulerCancel(SchedulerException):
     """

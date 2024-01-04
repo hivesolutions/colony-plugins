@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class BencodeException(colony.ColonyException):
     """
     The bencode exception class.
@@ -37,6 +38,7 @@ class BencodeException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class BencodeEncodeException(BencodeException):
     """
@@ -63,6 +65,7 @@ class BencodeEncodeException(BencodeException):
         """
 
         return "Object not encodable - %s" % self.object
+
 
 class BencodeDecodeException(BencodeException):
     """

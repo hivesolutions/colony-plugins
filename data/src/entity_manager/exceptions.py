@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class EntityManagerException(colony.ColonyException):
     """
     The entity manager exception class.
@@ -37,6 +38,7 @@ class EntityManagerException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class RuntimeError(EntityManagerException):
     """
@@ -64,6 +66,7 @@ class RuntimeError(EntityManagerException):
 
         return "Runtime error - %s" % self.message
 
+
 class EntityManagerEngineNotFound(EntityManagerException):
     """
     The entity manager engine not found class.
@@ -89,6 +92,7 @@ class EntityManagerEngineNotFound(EntityManagerException):
         """
 
         return "Engine not found - %s" % self.message
+
 
 class MissingRelationMethod(EntityManagerException):
     """
@@ -116,6 +120,7 @@ class MissingRelationMethod(EntityManagerException):
 
         return "Missing relation method - %s" % self.message
 
+
 class ValidationError(EntityManagerException):
     """
     The entity manager validation error class.
@@ -125,7 +130,7 @@ class ValidationError(EntityManagerException):
     """ The context in which the validation issue has been
     generated, provides extra debug support """
 
-    def __init__(self, message, context = None):
+    def __init__(self, message, context=None):
         """
         Constructor of the class.
 
@@ -152,9 +157,12 @@ class ValidationError(EntityManagerException):
         return "Validation error - %s" % self._get_message()
 
     def _get_message(self):
-        if not self.message: return self.message
-        if not self.context: return self.message
+        if not self.message:
+            return self.message
+        if not self.context:
+            return self.message
         return "(%s) %s" % (self.context, self.message)
+
 
 class RelationValidationError(ValidationError):
     """
@@ -170,6 +178,7 @@ class RelationValidationError(ValidationError):
         """
 
         return "Relation validation error - %s" % self._get_message()
+
 
 class InvalidSerializerError(ValidationError):
     """

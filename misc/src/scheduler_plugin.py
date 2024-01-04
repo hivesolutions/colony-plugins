@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class SchedulerPlugin(colony.Plugin):
     """
     The main class for the Scheduler plugin.
@@ -40,25 +41,18 @@ class SchedulerPlugin(colony.Plugin):
     description = "A plugin to manage the scheduling of tasks"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "main",
-        "scheduler",
-        "console_command_extension"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["main", "scheduler", "console_command_extension"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.misc.guid"),
-        colony.PluginDependency("pt.hive.colony.plugins.console")
+        colony.PluginDependency("pt.hive.colony.plugins.console"),
     ]
-    main_modules = [
-        "scheduler_c"
-    ]
+    main_modules = ["scheduler_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import scheduler_c
+
         self.system = scheduler_c.Scheduler(self)
         self.console = scheduler_c.ConsoleScheduler(self)
         self.release_ready_semaphore()
@@ -106,13 +100,21 @@ class SchedulerPlugin(colony.Plugin):
         return self.system.register_task_recursive(task, time, recursion_list)
 
     def register_task_absolute_recursive(self, task, absolute_time, recursion_list):
-        return self.system.register_task_absolute_recursive(task, absolute_time, recursion_list)
+        return self.system.register_task_absolute_recursive(
+            task, absolute_time, recursion_list
+        )
 
     def register_task_date_time_recursive(self, task, date_time, recursion_list):
-        return self.system.register_task_date_time_recursive(task, date_time, recursion_list)
+        return self.system.register_task_date_time_recursive(
+            task, date_time, recursion_list
+        )
 
-    def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
-        return self.system.register_task_date_time_absolute_recursive(task, absolute_date_time, recursion_list)
+    def register_task_date_time_absolute_recursive(
+        self, task, absolute_date_time, recursion_list
+    ):
+        return self.system.register_task_date_time_absolute_recursive(
+            task, absolute_date_time, recursion_list
+        )
 
     def unregister_task(self, task):
         return self.system.unregister_task(task)

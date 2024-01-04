@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIYadisPlugin(colony.Plugin):
     """
     The main class for the Yadis API plugin.
@@ -40,22 +41,15 @@ class APIYadisPlugin(colony.Plugin):
     description = "The plugin that offers the Yadis API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "api.yadis"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.client.http")
-    ]
-    main_modules = [
-        "api_yadis"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.yadis"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.client.http")]
+    main_modules = ["api_yadis"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import api_yadis
+
         self.system = api_yadis.APIYadis(self)
 
     def create_client(self, api_attributes):

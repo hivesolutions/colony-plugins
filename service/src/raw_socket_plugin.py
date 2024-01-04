@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class RawSocketPlugin(colony.Plugin):
     """
     The main class for the Raw Socket plugin.
@@ -43,18 +44,15 @@ class RawSocketPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "socket_provider"
-    ]
-    main_modules = [
-        "raw_socket"
-    ]
+    capabilities = ["socket_provider"]
+    main_modules = ["raw_socket"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import raw_socket
+
         self.system = raw_socket.RawSocket(self)
 
     def get_provider_name(self):

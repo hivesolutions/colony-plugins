@@ -33,6 +33,7 @@ import colony
 HANDLER_NAME = "openid"
 """ The handler name """
 
+
 class AuthenticationOpenID(colony.System):
     """
     The authentication OpenID class.

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ResourcesPythonPlugin(colony.Plugin):
     """
     The main class for the Resources Python plugin.
@@ -43,18 +44,15 @@ class ResourcesPythonPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "resources_parser"
-    ]
-    main_modules = [
-        "resources_python"
-    ]
+    capabilities = ["resources_parser"]
+    main_modules = ["resources_python"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import resources_python
+
         self.system = resources_python.ResourcesPython(self)
 
     def get_resources_parser_name(self):

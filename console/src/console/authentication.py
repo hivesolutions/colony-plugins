@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 from . import exceptions
 
+
 class ConsoleAuthentication(object):
     """
     The console authentication class.
@@ -48,7 +49,7 @@ class ConsoleAuthentication(object):
 
         self.console_plugin = console_plugin
 
-    def handle_authentication(self, username, password, properties = {}):
+    def handle_authentication(self, username, password, properties={}):
         """
         Handles the given console authentication.
 
@@ -81,7 +82,9 @@ class ConsoleAuthentication(object):
         # retrieves the authentication plugin and uses it to try
         # to authenticate the current user retrieving the result
         authentication_plugin = self.console_plugin.authentication_plugin
-        authentication_result = authentication_plugin.authenticate_user(username, password, authentication_handler, arguments)
+        authentication_result = authentication_plugin.authenticate_user(
+            username, password, authentication_handler, arguments
+        )
 
         # returns the authentication result
         return authentication_result

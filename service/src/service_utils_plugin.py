@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceUtilsPlugin(colony.Plugin):
     """
     The main class for the Service Utils plugin.
@@ -43,23 +44,16 @@ class ServiceUtilsPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities_allowed = [
-        "threads",
-        "socket_provider",
-        "socket_upgrader"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.work.pool")
-    ]
-    main_modules = [
-        "service_utils"
-    ]
+    capabilities_allowed = ["threads", "socket_provider", "socket_upgrader"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.work.pool")]
+    main_modules = ["service_utils"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_utils
+
         self.system = service_utils.ServiceUtils(self)
 
     @colony.load_allowed

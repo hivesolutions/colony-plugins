@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPProxyException(colony.ColonyException):
     """
     The service HTTP proxy exception class.
@@ -37,6 +38,7 @@ class ServiceHTTPProxyException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class HTTPProxyRuntimeException(ServiceHTTPProxyException):
     """
@@ -63,6 +65,7 @@ class HTTPProxyRuntimeException(ServiceHTTPProxyException):
         """
 
         return "HTTP proxy runtime - %s" % self.message
+
 
 class HTTPClientUnavailableException(ServiceHTTPProxyException):
     """

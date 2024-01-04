@@ -33,6 +33,7 @@ import sys
 
 import colony
 
+
 class BusinessHelper(colony.System):
     """
     The business helper class.
@@ -51,9 +52,9 @@ class BusinessHelper(colony.System):
         locals,
         global_values,
         base_directory_path,
-        target_module_name = "helper_module",
-        extra_symbols_map = {},
-        extra_globals_map = {}
+        target_module_name="helper_module",
+        extra_symbols_map={},
+        extra_globals_map={},
     ):
         """
         Imports the class module using the globals and locals from the current target,
@@ -90,7 +91,8 @@ class BusinessHelper(colony.System):
 
         # in case the target module already existed
         # no need to reload it, returns the reference immediately
-        if exists_target_module: return target_module
+        if exists_target_module:
+            return target_module
 
         # sets the target module dictionary as the target map
         target_map = target_module.__dict__
@@ -105,13 +107,17 @@ class BusinessHelper(colony.System):
 
         # iterates over all the extra symbols (in map)
         # to set then "under" the base entity
-        for extra_symbol_name, extra_symbol_value in colony.legacy.items(extra_symbols_map):
+        for extra_symbol_name, extra_symbol_value in colony.legacy.items(
+            extra_symbols_map
+        ):
             # sets the extra symbol in the base entity module (for the class name)
             base_entity_module.__dict__[extra_symbol_name] = extra_symbol_value
 
         # iterates over all the extra globals (in map)
         # to set them as global symbols of the module
-        for extra_global_name, extra_global_value in colony.legacy.items(extra_globals_map):
+        for extra_global_name, extra_global_value in colony.legacy.items(
+            extra_globals_map
+        ):
             # sets the extra global value (symbol) in the globals
             # map for the module
             globals[extra_global_name] = extra_global_value
@@ -177,7 +183,9 @@ class BusinessHelper(colony.System):
         # iterates over all the namespaces
         for namespace in namespaces:
             # retrieves the list of entity classes for the namespace
-            entity_classes_namespace = self.namespace_entity_classes_map.get(namespace, [])
+            entity_classes_namespace = self.namespace_entity_classes_map.get(
+                namespace, []
+            )
 
             # extends the list of entity classes for the namespaces
             # with the entity classes for the namespace
@@ -194,7 +202,9 @@ class BusinessHelper(colony.System):
         # iterates over all the namespaces
         for namespace in namespaces:
             # retrieves the list of business logic classes for the namespace
-            business_logic_classes_namespace = self.namespace_business_logic_classes_map.get(namespace, [])
+            business_logic_classes_namespace = (
+                self.namespace_business_logic_classes_map.get(namespace, [])
+            )
 
             # extends the list of business logic classes for the namespaces
             # with the business logic classes for the namespace
@@ -226,7 +236,8 @@ class BusinessHelper(colony.System):
 
         # in case no data namespaces are found, must return
         # immediately as there's nothing to be done
-        if not data_namespaces: return
+        if not data_namespaces:
+            return
 
         # retrieves the entity class from the entity plugin
         entity_class = entity_plugin.get_entity_class()
@@ -278,7 +289,9 @@ class BusinessHelper(colony.System):
 
     def business_logic_load(self, business_logic_plugin):
         # tries to retrieve the data namespaces value
-        business_logic_namespaces = business_logic_plugin.get_attribute("business_logic_namespaces")
+        business_logic_namespaces = business_logic_plugin.get_attribute(
+            "business_logic_namespaces"
+        )
 
         # in case no business logic namespaces are found
         if not business_logic_namespaces:
@@ -291,11 +304,15 @@ class BusinessHelper(colony.System):
         # iterates over all the business logic namespaces
         for business_logic_namespace in business_logic_namespaces:
             # loads the business logic class for the namespace
-            self._load_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+            self._load_business_logic_class_namespace(
+                business_logic_namespace, business_logic_class
+            )
 
     def business_logic_unload(self, business_logic_plugin):
         # tries to retrieve the data namespaces value
-        business_logic_namespaces = business_logic_plugin.get_attribute("business_logic_namespaces")
+        business_logic_namespaces = business_logic_plugin.get_attribute(
+            "business_logic_namespaces"
+        )
 
         # in case no business logic namespaces are found
         if not business_logic_namespaces:
@@ -308,11 +325,15 @@ class BusinessHelper(colony.System):
         # iterates over all the business logic namespaces
         for business_logic_namespace in business_logic_namespaces:
             # unloads the business logic class from the namespace
-            self._unload_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+            self._unload_business_logic_class_namespace(
+                business_logic_namespace, business_logic_class
+            )
 
     def business_logic_bundle_load(self, business_logic_bundle_plugin):
         # tries to retrieve the business logic namespaces value
-        business_logic_namespaces = business_logic_bundle_plugin.get_attribute("business_logic_namespaces")
+        business_logic_namespaces = business_logic_bundle_plugin.get_attribute(
+            "business_logic_namespaces"
+        )
 
         # in case no business logic namespaces are found
         if not business_logic_namespaces:
@@ -328,11 +349,15 @@ class BusinessHelper(colony.System):
             # business logic bundle
             for business_logic_class in business_logic_bundle:
                 # loads the business logic class for the namespace
-                self._load_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+                self._load_business_logic_class_namespace(
+                    business_logic_namespace, business_logic_class
+                )
 
     def business_logic_bundle_unload(self, business_logic_bundle_plugin):
         # tries to retrieve the business logic namespaces value
-        business_logic_namespaces = business_logic_bundle_plugin.get_attribute("business_logic_namespaces")
+        business_logic_namespaces = business_logic_bundle_plugin.get_attribute(
+            "business_logic_namespaces"
+        )
 
         # in case no business logic namespaces are found
         if not business_logic_namespaces:
@@ -348,7 +373,9 @@ class BusinessHelper(colony.System):
             # business logic bundle
             for business_logic_class in business_logic_bundle:
                 # unloads the business logic class from the namespace
-                self._unload_business_logic_class_namespace(business_logic_namespace, business_logic_class)
+                self._unload_business_logic_class_namespace(
+                    business_logic_namespace, business_logic_class
+                )
 
     def _load_entity_class_namespace(self, namespace, entity_class):
         # in case the namespace does not exist in the namespace
@@ -390,7 +417,9 @@ class BusinessHelper(colony.System):
             self.namespace_business_logic_classes_map[namespace] = []
 
         # retrieves the business logic classes list
-        business_logic_classes_list = self.namespace_business_logic_classes_map[namespace]
+        business_logic_classes_list = self.namespace_business_logic_classes_map[
+            namespace
+        ]
 
         # adds the business logic class to the business logic classes list
         business_logic_classes_list.append(business_logic_class)
@@ -403,7 +432,9 @@ class BusinessHelper(colony.System):
             return
 
         # retrieves the business logic classes list
-        business_logic_classes_list = self.namespace_business_logic_classes_map[namespace]
+        business_logic_classes_list = self.namespace_business_logic_classes_map[
+            namespace
+        ]
 
         # in case the business logic class does not
         # exist in the business logic classes list
@@ -417,7 +448,9 @@ class BusinessHelper(colony.System):
     def _exists_target_module(self, target_module_name, globals):
         # checks if the target target module already exists
         # in the globals or in the  "system modules"
-        exists_target_module = target_module_name in globals or target_module_name in sys.modules
+        exists_target_module = (
+            target_module_name in globals or target_module_name in sys.modules
+        )
 
         # returns the result of the existence test
         return exists_target_module
@@ -425,7 +458,9 @@ class BusinessHelper(colony.System):
     def _get_target_module(self, target_module_name, globals):
         # tries to retrieve the target module from the
         # globals or from the "system modules"
-        target_module = globals.get(target_module_name, None) or sys.modules.get(target_module_name, None)
+        target_module = globals.get(target_module_name, None) or sys.modules.get(
+            target_module_name, None
+        )
 
         # in case the target module is not defined,
         # need to create a new one

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ImageTreatmentPlugin(colony.Plugin):
     """
     The main class for the Image Treatment plugin.
@@ -40,22 +41,15 @@ class ImageTreatmentPlugin(colony.Plugin):
     description = "Image Treatment Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "image_treatment"
-    ]
-    dependencies = [
-        colony.PackageDependency("Python Imaging Library (PIL)", "PIL")
-    ]
-    main_modules = [
-        "image_treatment_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["image_treatment"]
+    dependencies = [colony.PackageDependency("Python Imaging Library (PIL)", "PIL")]
+    main_modules = ["image_treatment_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import image_treatment_c
+
         self.system = image_treatment_c.ImageTreatment(self)
 
     def resize_image(self, image_path, width, height):

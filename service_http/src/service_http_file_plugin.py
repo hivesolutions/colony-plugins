@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPFilePlugin(colony.Plugin):
     """
     The main class for the HTTP Service File plugin.
@@ -43,25 +44,20 @@ class ServiceHTTPFilePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "http_service_handler"
-    ]
-    capabilities_allowed = [
-        "directory_handler"
-    ]
+    capabilities = ["http_service_handler"]
+    capabilities_allowed = ["directory_handler"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
-        colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
+        colony.PluginDependency("pt.hive.colony.plugins.resources.manager"),
     ]
-    main_modules = [
-        "service_http_file"
-    ]
+    main_modules = ["service_http_file"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_file
+
         self.system = service_http_file.ServiceHTTPFile(self)
 
     @colony.load_allowed

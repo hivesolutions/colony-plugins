@@ -53,6 +53,7 @@ VALID_VALUE = "valid"
 AUTHENTICATION_CONFIGURATION_VALUE = "authentication_configuration"
 """ The authentication configuration value """
 
+
 class AuthenticationPython(colony.System):
     """
     The authentication python class.
@@ -95,7 +96,9 @@ class AuthenticationPython(colony.System):
         # in case the username or password are not defined
         if not username or not password:
             # raises an authentication error
-            raise exceptions.AuthenticationError("an username and a password must be provided")
+            raise exceptions.AuthenticationError(
+                "an username and a password must be provided"
+            )
 
         # in case the file path in not defined in arguments
         if not FILE_PATH_VALUE in arguments:
@@ -116,10 +119,14 @@ class AuthenticationPython(colony.System):
         colony.legacy.execfile(file_path, symbols_map, symbols_map)
 
         # tries to retrieve the authentication configuration
-        authentication_configuration = symbols_map.get(AUTHENTICATION_CONFIGURATION_VALUE, {})
+        authentication_configuration = symbols_map.get(
+            AUTHENTICATION_CONFIGURATION_VALUE, {}
+        )
 
         # retrieves the user authentication configuration
-        user_authentication_configuration = authentication_configuration.get(username, None)
+        user_authentication_configuration = authentication_configuration.get(
+            username, None
+        )
 
         # in case no user authentication configuration is defined
         if not user_authentication_configuration:
@@ -137,10 +144,7 @@ class AuthenticationPython(colony.System):
             raise exceptions.AuthenticationError("password mismatch")
 
         # creates the return value
-        return_value = {
-            VALID_VALUE : True,
-            USERNAME_VALUE : username
-        }
+        return_value = {VALID_VALUE: True, USERNAME_VALUE: username}
 
         # returns the return value
         return return_value
@@ -158,13 +162,19 @@ class AuthenticationPython(colony.System):
         plugin_id = self.plugin.id
 
         # resolves the configuration file path
-        configuration_file_path = plugin_manager.resolve_file_path("%configuration:" + plugin_id + "%/authentication.py", True)
+        configuration_file_path = plugin_manager.resolve_file_path(
+            "%configuration:" + plugin_id + "%/authentication.py", True
+        )
 
         # retrieves the authentication plugin path
         plugin_path = plugin_manager.get_plugin_path_by_id(plugin_id)
 
         # creates the authentication configuration file path
-        authentication_configuration_file_path = plugin_path + "/" + CONFIGURATION_PATH + "/authentication_configuration.py"
+        authentication_configuration_file_path = (
+            plugin_path + "/" + CONFIGURATION_PATH + "/authentication_configuration.py"
+        )
 
         # ensures that the configuration file path exists and contains the default contents
-        colony.ensure_file_path(configuration_file_path, authentication_configuration_file_path)
+        colony.ensure_file_path(
+            configuration_file_path, authentication_configuration_file_path
+        )

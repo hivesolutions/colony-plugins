@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class DiagnosticsPlugin(colony.Plugin):
     """
     The main class for plugin responsible for the gathering
@@ -45,18 +46,15 @@ class DiagnosticsPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "diagnostics"
-    ]
-    main_modules = [
-        "diagnostics"
-    ]
+    capabilities = ["diagnostics"]
+    main_modules = ["diagnostics"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import diagnostics
+
         self.diagnostics = diagnostics.Diagnostics(self)
         self.diagnostics.start()
 

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class YadisHTMLParser(colony.legacy.HTMLParser.HTMLParser):
     """
     The Yadis HTML parser, used to retrieve the Yadis

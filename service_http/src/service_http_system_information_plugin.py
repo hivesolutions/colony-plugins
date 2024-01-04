@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPSystemInformationPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Main System Information Handler plugin.
@@ -43,24 +44,17 @@ class ServiceHTTPSystemInformationPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "http_service_handler"
-    ]
-    capabilities_allowed = [
-        "system_information"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.template_engine")
-    ]
-    main_modules = [
-        "service_http_system_information"
-    ]
+    capabilities = ["http_service_handler"]
+    capabilities_allowed = ["system_information"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.template_engine")]
+    main_modules = ["service_http_system_information"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_system_information
+
         self.system = service_http_system_information.ServiceHTTPSystemInformation(self)
 
     def get_handler_name(self):

@@ -28,7 +28,17 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import system
 
-from .exceptions import ServiceException, ServiceRequestNotTranslatable, BadServiceRequest,\
-    InvalidNumberArguments, InvalidMethod, InvalidEncoder, RESTRequestError, RESTRequestNotHandled,\
-    InvalidPath, InvalidSession, InvalidCookie
+from .exceptions import (
+    ServiceException,
+    ServiceRequestNotTranslatable,
+    BadServiceRequest,
+    InvalidNumberArguments,
+    InvalidMethod,
+    InvalidEncoder,
+    RESTRequestError,
+    RESTRequestNotHandled,
+    InvalidPath,
+    InvalidSession,
+    InvalidCookie,
+)
 from .system import REST

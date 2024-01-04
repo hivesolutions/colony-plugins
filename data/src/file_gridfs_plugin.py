@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class FileGridFSPlugin(colony.Plugin):
     """
     The main class for the File GridFS plugin.
@@ -40,24 +41,18 @@ class FileGridFSPlugin(colony.Plugin):
     description = "File GridFS Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "threads",
-        "file_engine"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["threads", "file_engine"]
     dependencies = [
         colony.PackageDependency("MongoDB python bindings", "pymongo"),
-        colony.PackageDependency("MongoDB GridFS python bindings", "gridfs")
+        colony.PackageDependency("MongoDB GridFS python bindings", "gridfs"),
     ]
-    main_modules = [
-        "file_gridfs"
-    ]
+    main_modules = ["file_gridfs"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import file_gridfs
+
         self.system = file_gridfs.FileGridFS(self)
 
     def get_engine_name(self):

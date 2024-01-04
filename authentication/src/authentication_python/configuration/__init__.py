@@ -27,4 +27,6 @@ __license__ = "Apache License, Version 2.0"
 
 from . import authentication_configuration
 
-from .authentication_configuration import authentication_configuration as _authentication_configuration
+from .authentication_configuration import (
+    authentication_configuration as _authentication_configuration,
+)

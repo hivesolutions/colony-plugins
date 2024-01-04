@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPFastCGIException(colony.ColonyException):
     """
     The service HTTP FastCGI exception class.
@@ -37,6 +38,7 @@ class ServiceHTTPFastCGIException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class RequestNotHandled(ServiceHTTPFastCGIException):
     """
@@ -64,6 +66,7 @@ class RequestNotHandled(ServiceHTTPFastCGIException):
 
         return "Request Not handled - %s" % self.message
 
+
 class InvalidFastCGIData(ServiceHTTPFastCGIException):
     """
     The invalid FastCGI data class.
@@ -89,6 +92,7 @@ class InvalidFastCGIData(ServiceHTTPFastCGIException):
         """
 
         return "Invalid FastCGI data - %s" % self.message
+
 
 class InvalidFastCGIHeader(ServiceHTTPFastCGIException):
     """

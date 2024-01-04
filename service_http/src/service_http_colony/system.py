@@ -43,6 +43,7 @@ DEFAULT_ERROR_STATUS_CODE = 500
 is going to be set in the request in case no
 valid status code is set in it """
 
+
 class ServiceHTTPColony(colony.System):
     """
     The service HTTP colony (handler) class.
@@ -80,7 +81,9 @@ class ServiceHTTPColony(colony.System):
             plugin_handler_id = request.properties[PLUGIN_HANDLER_VALUE]
 
             # retrieves the HTTP handler plugin
-            http_handler_plugin = self.http_handler_plugin_map.get(plugin_handler_id, None)
+            http_handler_plugin = self.http_handler_plugin_map.get(
+                plugin_handler_id, None
+            )
 
             # handles the request by the HTTP handler plugin and
             # retrieves the return value
@@ -101,7 +104,8 @@ class ServiceHTTPColony(colony.System):
 
                 # in case it's not the request handler, must continue
                 # the current loop, nothing to handler
-                if not is_request_handler: continue
+                if not is_request_handler:
+                    continue
 
                 # handles the request by the HTTP handler plugin and
                 # retrieves the return value then sets the status code in
@@ -115,7 +119,9 @@ class ServiceHTTPColony(colony.System):
                 return
 
         # raises the request not handled exception
-        raise exceptions.RequestNotHandled("no python handler plugin could handle the request")
+        raise exceptions.RequestNotHandled(
+            "no python handler plugin could handle the request"
+        )
 
     def http_handler_load(self, http_handler_plugin):
         # retrieves the plugin id

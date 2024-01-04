@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class URLParserException(colony.ColonyException):
     """
     The URL parser exception class.
@@ -37,6 +38,7 @@ class URLParserException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class ParsingException(URLParserException):
     """

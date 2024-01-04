@@ -36,17 +36,15 @@ from . import synchronous
 from . import asynchronous
 from . import exceptions
 
-PORT_RANGES = (
-    (38001, 39999),
-    (40001, 42999)
-)
+PORT_RANGES = ((38001, 39999), (40001, 42999))
 """ The ranges of port available for services """
 
 SERVICE_CLASSES_MAP = {
-    "sync" : synchronous.AbstractService,
-    "async" : asynchronous.AbstractService
+    "sync": synchronous.AbstractService,
+    "async": asynchronous.AbstractService,
 }
 """ The map containing the various abstract service types """
+
 
 class ServiceUtils(colony.System):
     """
@@ -92,7 +90,9 @@ class ServiceUtils(colony.System):
         # retrieves the service type from the parameters in order
         # to retrieve the proper (abstract) service class
         service_type = parameters.get("service_type", "sync")
-        service_class = SERVICE_CLASSES_MAP.get(service_type, synchronous.AbstractService)
+        service_class = SERVICE_CLASSES_MAP.get(
+            service_type, synchronous.AbstractService
+        )
 
         # creates the service "instance" using the abstract service class
         service_instance = service_class(self, self.plugin, parameters)

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class WorkPoolPlugin(colony.Plugin):
     """
     The main class for the Work Pool plugin
@@ -43,22 +44,16 @@ class WorkPoolPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "work_pool",
-        "system_information"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.threads.pool")
-    ]
-    main_modules = [
-        "work_pool"
-    ]
+    capabilities = ["work_pool", "system_information"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.threads.pool")]
+    main_modules = ["work_pool"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import work_pool
+
         self.system = work_pool.WorkPool(self)
 
     def unload_plugin(self):
@@ -71,10 +66,11 @@ class WorkPoolPlugin(colony.Plugin):
         description,
         work_processing_task_class,
         work_processing_task_arguments,
-        number_threads, scheduling_algorithm,
+        number_threads,
+        scheduling_algorithm,
         maximum_number_threads,
         maximum_number_works_thread,
-        work_scheduling_algorithm
+        work_scheduling_algorithm,
     ):
         return self.system.create_new_work_pool(
             name,
@@ -85,7 +81,7 @@ class WorkPoolPlugin(colony.Plugin):
             scheduling_algorithm,
             maximum_number_threads,
             maximum_number_works_thread,
-            work_scheduling_algorithm
+            work_scheduling_algorithm,
         )
 
     def get_system_information(self):

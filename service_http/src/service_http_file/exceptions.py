@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPFileException(colony.ColonyException):
     """
     The service HTTP file exception class.
@@ -37,6 +38,7 @@ class ServiceHTTPFileException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class FileNotFoundException(ServiceHTTPFileException):
     """
@@ -69,6 +71,7 @@ class FileNotFoundException(ServiceHTTPFileException):
         """
 
         return "File not found - %s" % self.message
+
 
 class NotImplementedException(ServiceHTTPFileException):
     """

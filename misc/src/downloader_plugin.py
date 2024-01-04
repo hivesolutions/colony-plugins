@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class DownloaderPlugin(colony.Plugin):
     """
     The main class for the Downloader plugin.
@@ -40,23 +41,15 @@ class DownloaderPlugin(colony.Plugin):
     description = "Downloader Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "download",
-        "console_command_extension"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.client.http")
-    ]
-    main_modules = [
-        "downloader_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["download", "console_command_extension"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.client.http")]
+    main_modules = ["downloader_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import downloader_c
+
         self.system = downloader_c.Downloader(self)
         self.console = downloader_c.ConsoleDownloader(self)
 

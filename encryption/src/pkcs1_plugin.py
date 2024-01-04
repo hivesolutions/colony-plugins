@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class PKCS1Plugin(colony.Plugin):
     """
     The main class for the PKCS1 plugin.
@@ -40,23 +41,15 @@ class PKCS1Plugin(colony.Plugin):
     description = "The plugin that offers the PKCS1 support"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "encryption.pkcs1"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.format.ber")
-    ]
-    main_modules = [
-        "pkcs1_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["encryption.pkcs1"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.format.ber")]
+    main_modules = ["pkcs1_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import pkcs1_c
+
         self.system = pkcs1_c.PKCS1(self)
 
     def create_structure(self, parameters):

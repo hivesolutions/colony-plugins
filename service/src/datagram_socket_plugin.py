@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class DatagramSocketPlugin(colony.Plugin):
     """
     The main class for the Datagram Socket plugin.
@@ -43,18 +44,15 @@ class DatagramSocketPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "socket_provider"
-    ]
-    main_modules = [
-        "datagram_socket"
-    ]
+    capabilities = ["socket_provider"]
+    main_modules = ["datagram_socket"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import datagram_socket
+
         self.system = datagram_socket.DatagramSocket(self)
 
     def get_provider_name(self):

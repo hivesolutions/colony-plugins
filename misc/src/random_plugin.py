@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class RandomPlugin(colony.Plugin):
     """
     The main class for the Random plugin.
@@ -40,20 +41,14 @@ class RandomPlugin(colony.Plugin):
     description = "A plugin to generate random numbers"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "random"
-    ]
-    main_modules = [
-        "random_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["random"]
+    main_modules = ["random_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import random_c
+
         self.system = random_c.Random(self)
 
     def generate_random(self):

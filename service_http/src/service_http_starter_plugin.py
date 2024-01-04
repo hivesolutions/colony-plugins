@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPStarterPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Starter plugin.
@@ -43,17 +44,11 @@ class ServiceHTTPStarterPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "main"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.service.http")
-    ]
-    main_modules = [
-        "service_http_starter"
-    ]
+    capabilities = ["main"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.service.http")]
+    main_modules = ["service_http_starter"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
@@ -65,10 +60,7 @@ class ServiceHTTPStarterPlugin(colony.Plugin):
 
         # defines the parameters and starts the service with
         # this map as the configuration
-        parameters = dict(
-            socket_provider = "normal",
-            port = 8080
-        )
+        parameters = dict(socket_provider="normal", port=8080)
         self.service_http_plugin.start_service(parameters)
 
     def unload_plugin(self):

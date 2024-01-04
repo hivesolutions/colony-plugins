@@ -32,17 +32,14 @@ import colony
 
 models = colony.__import__("models")
 
+
 class CryptonRoot(models.EntityModel):
     """
     The Crypton root entity class, inherited by other entities
     in order for them to have a global unique identifier.
     """
 
-    object_id = dict(
-        id = True,
-        type = "integer",
-        generated = True
-    )
+    object_id = dict(id=True, type="integer", generated=True)
     """ The object id of the Crypton root entity, this should
     be the main identifier of an object in the data source """
 

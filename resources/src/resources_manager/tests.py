@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ResourcesManagerTestCase(colony.ColonyTestCase):
     """
     The resources manager test case class.
@@ -108,21 +109,29 @@ class ResourcesManagerTestCase(colony.ColonyTestCase):
         self.assertTrue(resource.get_data() == "data4")
         self.assertTrue(resource.get_namespace().get_list_value() == ["namespace2"])
 
-        self.assertTrue(self.plugin.is_resource_registered("namespace2.something.name1"))
+        self.assertTrue(
+            self.plugin.is_resource_registered("namespace2.something.name1")
+        )
         resource = self.plugin.get_resource("namespace2.something.name1")
         self.assertTrue(not resource == None)
         self.assertTrue(resource.get_name() == "name1")
         self.assertTrue(resource.get_type() == "type1")
         self.assertTrue(resource.get_data() == "data3")
-        self.assertTrue(resource.get_namespace().get_list_value() == ["namespace2","something"])
+        self.assertTrue(
+            resource.get_namespace().get_list_value() == ["namespace2", "something"]
+        )
 
-        self.assertTrue(self.plugin.is_resource_registered("namespace2.something.name2"))
+        self.assertTrue(
+            self.plugin.is_resource_registered("namespace2.something.name2")
+        )
         resource = self.plugin.get_resource("namespace2.something.name2")
         self.assertTrue(not resource == None)
         self.assertTrue(resource.get_name() == "name2")
         self.assertTrue(resource.get_type() == "type2")
         self.assertTrue(resource.get_data() == "data4")
-        self.assertTrue(resource.get_namespace().get_list_value() == ["namespace2","something"])
+        self.assertTrue(
+            resource.get_namespace().get_list_value() == ["namespace2", "something"]
+        )
 
     def test_unregistering_resources(self):
         self.assertTrue(self.plugin.is_resource_registered("namespace1.name1"))
@@ -141,10 +150,18 @@ class ResourcesManagerTestCase(colony.ColonyTestCase):
         self.plugin.unregister_resource("namespace2.name2")
         self.assertFalse(self.plugin.is_resource_registered("namespace2.name2"))
 
-        self.assertTrue(self.plugin.is_resource_registered("namespace2.something.name1"))
+        self.assertTrue(
+            self.plugin.is_resource_registered("namespace2.something.name1")
+        )
         self.plugin.unregister_resource("namespace2.something.name1")
-        self.assertFalse(self.plugin.is_resource_registered("namespace2.something.name1"))
+        self.assertFalse(
+            self.plugin.is_resource_registered("namespace2.something.name1")
+        )
 
-        self.assertTrue(self.plugin.is_resource_registered("namespace2.something.name2"))
+        self.assertTrue(
+            self.plugin.is_resource_registered("namespace2.something.name2")
+        )
         self.plugin.unregister_resource("namespace2.something.name2")
-        self.assertFalse(self.plugin.is_resource_registered("namespace2.something.name2"))
+        self.assertFalse(
+            self.plugin.is_resource_registered("namespace2.something.name2")
+        )

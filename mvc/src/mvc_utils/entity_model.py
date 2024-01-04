@@ -69,31 +69,26 @@ REMOVED_STATE_VALUE = 3
 PLURALIZATION_SUFFIX_VALUE = "s"
 """ The pluralization suffix value """
 
-TO_ONE_RELATIONS = (
-    "one-to-one",
-    "many-to-one"
-)
+TO_ONE_RELATIONS = ("one-to-one", "many-to-one")
 """ The tuple containing the "to-one" relations """
 
-TO_MANY_RELATIONS = (
-    "one-to-many",
-    "many-to-many"
-)
+TO_MANY_RELATIONS = ("one-to-many", "many-to-many")
 """ The tuple containing the "to-many" relations """
 
 DATA_TYPE_CAST_TYPES_MAP = dict(
-    text = colony.legacy.UNICODE,
-    string = colony.legacy.UNICODE,
-    integer = int,
-    float = float,
-    decimal = colony.Decimal,
-    date = colony.timestamp_datetime,
-    data = colony.legacy.UNICODE,
-    metadata = dict,
-    relation = None
+    text=colony.legacy.UNICODE,
+    string=colony.legacy.UNICODE,
+    integer=int,
+    float=float,
+    decimal=colony.Decimal,
+    date=colony.timestamp_datetime,
+    data=colony.legacy.UNICODE,
+    metadata=dict,
+    relation=None,
 )
 """ The map associating the data types with the cast types
 so that they may be used for default and fallback casting """
+
 
 def _class_get_class_name(cls):
     """
@@ -114,7 +109,8 @@ def _class_get_class_name(cls):
     class_name = colony.to_underscore(class_name)
     return class_name
 
-def _class_get_entity(cls, entity_name, entity_manager = None):
+
+def _class_get_entity(cls, entity_name, entity_manager=None):
     """
     Class method that retrieves the reference to an entity
     class that is registered in the entity manager from the
@@ -140,7 +136,8 @@ def _class_get_entity(cls, entity_name, entity_manager = None):
     entity_manager = entity_manager or cls._entity_manager
     return entity_manager.get_entity(entity_name)
 
-def _class_reload_many(cls, models, options = {}, entity_manager = None):
+
+def _class_reload_many(cls, models, options={}, entity_manager=None):
     """
     Class method that reloads a sequence of entity models
     retrieving the new data from the data source.
@@ -166,16 +163,17 @@ def _class_reload_many(cls, models, options = {}, entity_manager = None):
     # provided (entity) models with the provided options
     entity_manager.reload_many(models, options)
 
+
 def _class_get(
     cls,
     id_value,
-    options = {},
-    apply = False,
-    apply_name = None,
-    context = None,
-    namespace = None,
-    entity_manager = None,
-    raise_e = True,
+    options={},
+    apply=False,
+    apply_name=None,
+    context=None,
+    namespace=None,
+    entity_manager=None,
+    raise_e=True,
     **kwargs
 ):
     """
@@ -238,10 +236,7 @@ def _class_get(
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
     options = cls.apply_context(
-        options,
-        context,
-        namespace_name = namespace,
-        entity_manager = entity_manager
+        options, context, namespace_name=namespace, entity_manager=entity_manager
     )
 
     # verifies if the model that is going to be retrieved should be
@@ -259,28 +254,33 @@ def _class_get(
     # in case no entity model was not found for the requested parameters
     # an error must be raised indicating such problems as the retrieval
     # of a related entity is considered to be of mandatory value
-    if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
+    if raise_e and not entity_model:
+        raise exceptions.NotFoundError("model entity not found")
 
     # in case the currently retrieved entity model is not defined or
     # is invalid, it must be returned immediately to the caller method
     # to avoid any problem in the apply operation to it (cannot apply)
-    if not entity_model: return entity_model
+    if not entity_model:
+        return entity_model
 
     # in case the requested model is supposed to be retrieved using a map
     # based strategy no apply operation should be performed (as it is not
     # possible) and so the entity model should be returned immediately
-    if is_map: return entity_model
+    if is_map:
+        return entity_model
 
     # verifies if the the model is meant to have the map attribute of
     # the same name (from the context) applied to it if that's not the
     # case returns the (entity) model immediately to the caller method
-    if not apply: return entity_model
+    if not apply:
+        return entity_model
 
     # tries to retrieve the controller using the current context as reference
     # and in case the returned model is not valid returns the model
     # immediately to the caller method (silent failure)
     controller = cls.get_controller_g(context)
-    if not controller: return entity_model
+    if not controller:
+        return entity_model
 
     # verifies if the apply name value has been defined for the field or
     # retrieves the name of the model entitie's class (underscore notation) and
@@ -294,13 +294,9 @@ def _class_get(
     # case a valid values was retrieved from the data source
     return entity_model
 
+
 def _class_count(
-    cls,
-    options = {},
-    context = None,
-    namespace = None,
-    entity_manager = None,
-    **kwargs
+    cls, options={}, context=None, namespace=None, entity_manager=None, **kwargs
 ):
     """
     Class method that retrieves the number of entity models
@@ -336,10 +332,7 @@ def _class_count(
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
     options = cls.apply_context(
-        options,
-        context,
-        namespace_name = namespace,
-        entity_manager = entity_manager
+        options, context, namespace_name=namespace, entity_manager=entity_manager
     )
 
     # retrieves the count (number of entities) for the given
@@ -350,13 +343,9 @@ def _class_count(
     # (number of entity results in the data source)
     return result
 
+
 def _class_find(
-    cls,
-    options = {},
-    context = None,
-    namespace = None,
-    entity_manager = None,
-    **kwargs
+    cls, options={}, context=None, namespace=None, entity_manager=None, **kwargs
 ):
     """
     Class method that retrieves a set of entity models
@@ -390,47 +379,51 @@ def _class_find(
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
     options = cls.apply_context(
-        options,
-        context,
-        namespace_name = namespace,
-        entity_manager = entity_manager
+        options, context, namespace_name=namespace, entity_manager=entity_manager
     )
 
     # checks if the class reference is valid for the current
     # context in case it's not a default value is returned
-    if not cls.valid(): return []
+    if not cls.valid():
+        return []
 
     # finds the entity models for the given class and using
     # the given options, returning the values immediately in
     # case they are considered to be invalid (or empty)
     entity_models = entity_manager.find(cls, options, **kwargs)
-    if not entity_models: return entity_models
+    if not entity_models:
+        return entity_models
 
     # verifies the data type of the entity models sequence and
     # taking that into account determines the proper strategy
     # to retrieve the first element of the sequence for operations
     is_generator = colony.legacy.is_generator(entity_models)
-    if is_generator: entity_model = next(entity_models)
-    else: entity_model = entity_models[0]
+    if is_generator:
+        entity_model = next(entity_models)
+    else:
+        entity_model = entity_models[0]
 
     # runs the proper set request method in the first entity model
     # in case that's applicable and then in case the data structure
     # is generator based recreates a sequence where the first element
     # of it is the originally peaked entity model (generation re-creation)
-    if hasattr(entity_model, "set_request"): entity_model.set_request(context)
-    if is_generator: entity_models = itertools.chain([entity_model], entity_models)
+    if hasattr(entity_model, "set_request"):
+        entity_model.set_request(context)
+    if is_generator:
+        entity_models = itertools.chain([entity_model], entity_models)
 
     # returns the retrieved/recreated entity models to the caller
     # method so that they may be used for data model operations
     return entity_models
 
+
 def _class_find_one(
     cls,
-    options = {},
-    context = None,
-    namespace = None,
-    entity_manager = None,
-    raise_e = False,
+    options={},
+    context=None,
+    namespace=None,
+    entity_manager=None,
+    raise_e=False,
     **kwargs
 ):
     """
@@ -468,10 +461,7 @@ def _class_find_one(
     # will be extracted, after this application the filter query
     # should be modified to reflect the context based filtering
     options = cls.apply_context(
-        options,
-        context,
-        namespace_name = namespace,
-        entity_manager = entity_manager
+        options, context, namespace_name=namespace, entity_manager=entity_manager
     )
 
     # finds the entity models for the given class and using
@@ -487,12 +477,14 @@ def _class_find_one(
     # in case no entity model was not found for the requested parameters
     # an error must be raised indicating such problems as the retrieval
     # of a related entity is considered to be of mandatory value
-    if raise_e and not entity_model: raise exceptions.NotFoundError("model entity not found")
+    if raise_e and not entity_model:
+        raise exceptions.NotFoundError("model entity not found")
 
     # returns the retrieved entity model
     return entity_model
 
-def _class_execute(cls, query, entity_manager = None):
+
+def _class_execute(cls, query, entity_manager=None):
     """
     Class method that executes a sql query "directly" in
     the data source and retrieves the resulting data set.
@@ -521,7 +513,8 @@ def _class_execute(cls, query, entity_manager = None):
     # returns the retrieved result set
     return result_set
 
-def _class_lock_g(cls, id_value, entity_manager = None):
+
+def _class_lock_g(cls, id_value, entity_manager=None):
     """
     Class method that locks the entity manager data source
     for the entity model with the given id value.
@@ -544,7 +537,8 @@ def _class_lock_g(cls, id_value, entity_manager = None):
     # class and the given id value
     entity_manager.lock(cls, id_value)
 
-def _class_lock_table_g(cls, parameters, entity_manager = None):
+
+def _class_lock_table_g(cls, parameters, entity_manager=None):
     """
     Class method that locks the entity manager data source
     for the table associated with the current entity class.
@@ -571,7 +565,8 @@ def _class_lock_table_g(cls, parameters, entity_manager = None):
     # parameters (provided from the signature)
     entity_manager.lock_table(table_name, parameters)
 
-def _class_lock_row_g(cls, name, value, entity_manager = None):
+
+def _class_lock_row_g(cls, name, value, entity_manager=None):
     """
     Class method that locks the entity manager data source
     for the row defined by the name/value filter in the table
@@ -603,16 +598,14 @@ def _class_lock_row_g(cls, name, value, entity_manager = None):
     # containing the definition of the field for locking
     table_name = cls.get_name()
     sql_value = cls._get_sql_value(name, value)
-    parameters = dict(
-        field_name = name,
-        field_value = sql_value
-    )
+    parameters = dict(field_name=name, field_value=sql_value)
 
     # locks the entity manager (table) data source for the given
     # parameters (field definition)
     entity_manager.lock_table(table_name, parameters)
 
-def _class_valid(cls, entity_manager = None):
+
+def _class_valid(cls, entity_manager=None):
     """
     Checks if the current model class reference is valid, according
     to the currently defined data reference model.
@@ -642,11 +635,13 @@ def _class_valid(cls, entity_manager = None):
 
     # in case the entity class was correctly found, the class
     # is considered to be valid
-    if entity_class: return True
+    if entity_class:
+        return True
 
     # returns false (invalid), this is the
     # default return value
     return False
+
 
 def _class_is_reference(cls):
     """
@@ -672,6 +667,7 @@ def _class_is_reference(cls):
     # a data reference)
     return False
 
+
 def _class_filter(cls, context, *args, **kwargs):
     """
     Simplified filter method that creates an initial filter object
@@ -693,7 +689,8 @@ def _class_filter(cls, context, *args, **kwargs):
     form_data_map = controller.process_form_data(context)
     return cls.create_filter(form_data_map, *args, **kwargs)
 
-def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
+
+def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     """
     Class method that creates a filter map from the provided
     (form) data map and using the provided map of default
@@ -765,14 +762,17 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
 
     # tries to retrieve the proper value for the paged element
     # taking into account a possible boolean approach
-    if paged_s: paged = True if paged_s == "1" else False
+    if paged_s:
+        paged = True if paged_s == "1" else False
 
     def eager_r(eager_s):
         # in case the eager sequence is not valid or empty
         # or if the data type of the eager structure is not
         # dictionary/map based returns immediately
-        if not eager_s: return
-        if not type(eager) == dict: return
+        if not eager_s:
+            return
+        if not type(eager) == dict:
+            return
 
         # re-calculates the eager sequence, filtering the values
         # that are not allowed (security validation)
@@ -792,9 +792,11 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
             # relation names to update the map structure
             for _name in names:
                 is_new = not _name in _eager
-                if is_new: _eager[_name] = dict(eager = dict())
+                if is_new:
+                    _eager[_name] = dict(eager=dict())
                 _partial = _eager[_name]
-                if not "eager" in _partial: _partial["eager"] = dict()
+                if not "eager" in _partial:
+                    _partial["eager"] = dict()
                 _eager = _partial["eager"]
 
     def resolve(cls, eager, path):
@@ -806,14 +808,16 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # in case the base value is not present
         # in the eager map returns immediately with
         # an invalid value
-        if not base in eager: return None, None
+        if not base in eager:
+            return None, None
 
         # retrieves the base (name) value from the eager
         # map and then in case there are no more names
         # remaining returns this map (end of recursion)
         map = eager[base]
         target = cls.get_target(base)
-        if not remaining: return map, target
+        if not remaining:
+            return map, target
 
         # retrieves the eager (loaded) relations map
         # from the current map and runs the resolve
@@ -835,7 +839,8 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
             # base value in case the returned relation is invalid
             # skips the current filter (invalid)
             relation, target = resolve(cls, eager, base)
-            if relation == None: return None, None, None
+            if relation == None:
+                return None, None, None
 
             # retrieves the filters map and sets it in the relation map
             # (for cases where it does not already exists)
@@ -856,7 +861,8 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
 
     # runs the resolution process for the eager sequence, meaning
     # that allowed relations will be set of the eager structure
-    if eager_s: eager_r(eager_s)
+    if eager_s:
+        eager_r(eager_s)
 
     # in case the name is defined the "special" wildcard filter
     # is added to the list of filters to be used in the query
@@ -867,7 +873,8 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # case it's not a sequence converts it to a immutable
         # sequence (tuple) for iteration
         name_type = type(name)
-        if not name_type in (list, tuple): name = (name,)
+        if not name_type in (list, tuple):
+            name = (name,)
 
         # retrieves the first name element from the sequence and uses
         # it to resolver the value, retrieving the filter structure
@@ -886,9 +893,7 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # (empty map) that is populated with the various field names
         # contained in the name sequence
         _filter = dict(
-            type = "like" if is_like else "equals",
-            like_type = type_s,
-            fields = dict()
+            type="like" if is_like else "equals", like_type=type_s, fields=dict()
         )
 
         # retrieves the fields part of the filter and adds the various
@@ -916,7 +921,8 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # by the various relations and the name of the "trailing"
         # attribute (the last result of the split)
         _filters, target, name = resolve_s(attribute)
-        if _filters == None: continue
+        if _filters == None:
+            continue
 
         # casts the value for the current name using the target
         # class resulting from the resolution of the base and then
@@ -927,33 +933,29 @@ def _class_create_filter(cls, data, defaults = {}, entity_manager = None):
         # ensures automatic handling of sequence "typed" filters
         _value = [target._cast_value(name, value) for value in value.split(";")]
         _value = None if len(_value) == 0 else _value[0] if len(_value) == 1 else _value
-        _filter = dict(
-            type = operation,
-            fields = {
-                name : _value
-            }
-        )
+        _filter = dict(type=operation, fields={name: _value})
         _filters.append(_filter)
 
     # creates the complete filter value according to the provided
     # specification and returns it to the caller method
     filter = dict(
-        range = (start_record, number_records),
-        order_by = order_by or (),
-        paged = paged,
-        eager = eager,
-        filters = filters,
-        map = map
+        range=(start_record, number_records),
+        order_by=order_by or (),
+        paged=paged,
+        eager=eager,
+        filters=filters,
+        map=map,
     )
     return filter
 
+
 def _class_apply_context(
     cls,
-    options = {},
-    context_request = None,
-    context = None,
-    namespace_name = None,
-    entity_manager = None
+    options={},
+    context_request=None,
+    context=None,
+    namespace_name=None,
+    entity_manager=None,
 ):
     """
     Applies the context information to the retrieval operation,
@@ -983,12 +985,14 @@ def _class_apply_context(
     # is returned immediately to the caller, it's not
     # possible to apply the context without the context
     # request set
-    if not context_request: return options
+    if not context_request:
+        return options
 
     # tries to retrieve the context request session if
     # it fails control is returned immediately
     request_session = context_request.get_session()
-    if not request_session: return options
+    if not request_session:
+        return options
 
     # retrieves the complete (attribute name) for the context
     # taking into account the namespace name (prefix)
@@ -999,7 +1003,8 @@ def _class_apply_context(
     # after that in case no valid context is found returns
     # the control immediately
     context = context or request_session.get_attribute(attribute_name)
-    if not context: return options
+    if not context:
+        return options
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
@@ -1026,16 +1031,13 @@ def _class_apply_context(
         # adds the context value filtering part to the initial
         # options map provided, this is an extension to the
         # existing filters
-        filters.append(dict(
-            type = context_value == None and "is_null" or "equals",
-            fields = (
-                dict(
-                    name = context_name,
-                    value = context_value
-                ),
-            ),
-            post = True
-        ))
+        filters.append(
+            dict(
+                type=context_value == None and "is_null" or "equals",
+                fields=(dict(name=context_name, value=context_value),),
+                post=True,
+            )
+        )
 
     # sets the appropriate set of filters in the options
     # to be able to retrieve the a match on the context
@@ -1047,12 +1049,9 @@ def _class_apply_context(
     # already containing the "context filters"
     return options
 
+
 @utils.transaction_m
-def delete(
-    self,
-    persist_type = PERSIST_UPDATE | PERSIST_SAVE,
-    entity_manager = None
-):
+def delete(self, persist_type=PERSIST_UPDATE | PERSIST_SAVE, entity_manager=None):
     """
     "Transactional" method to be used as the main entry
     point of removal in the model structure.
@@ -1069,24 +1068,30 @@ def delete(
 
     # tries to call the pre delete method, in order to notify the
     # current instance about the starting of the delete procedure
-    if hasattr(self, "pre_delete") and persist_type & PERSIST_UPDATE: self.pre_delete(persist_type)
-    if hasattr(self, "pre_remove") and persist_type & PERSIST_UPDATE: self.pre_remove(persist_type)
+    if hasattr(self, "pre_delete") and persist_type & PERSIST_UPDATE:
+        self.pre_delete(persist_type)
+    if hasattr(self, "pre_remove") and persist_type & PERSIST_UPDATE:
+        self.pre_remove(persist_type)
 
     try:
         # tries to call the on delete method, in order to notify the
         # current instance about the starting of the delete procedure
-        if hasattr(self, "on_delete") and persist_type & PERSIST_UPDATE: self.on_store(persist_type)
-        if hasattr(self, "on_remove") and persist_type & PERSIST_SAVE: self.on_save(persist_type)
+        if hasattr(self, "on_delete") and persist_type & PERSIST_UPDATE:
+            self.on_store(persist_type)
+        if hasattr(self, "on_remove") and persist_type & PERSIST_SAVE:
+            self.on_save(persist_type)
 
         # removes the current entity from the data source defined in
         # the provided entity manager, this is a non reversible and
         # final operation from the data source point of view
-        self.remove(entity_manager = entity_manager)
+        self.remove(entity_manager=entity_manager)
     except BaseException as exception:
         # tries to call the fail store method, in order to notify the
         # current instance about the failure of the store procedure
-        if hasattr(self, "fail_delete"): self.fail_delete(persist_type, exception)
-        if hasattr(self, "fail_remove"): self.fail_remove(persist_type, exception)
+        if hasattr(self, "fail_delete"):
+            self.fail_delete(persist_type, exception)
+        if hasattr(self, "fail_remove"):
+            self.fail_remove(persist_type, exception)
 
         # re-raises the exception to the upper levels, no need to
         # to except at this level
@@ -1094,19 +1099,22 @@ def delete(
 
     # tries to call the post delete method, in order to notify the
     # current instance about the finishing of the delete procedure
-    if hasattr(self, "post_delete") and persist_type & PERSIST_UPDATE: self.post_delete(persist_type)
-    if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE: self.post_remove(persist_type)
+    if hasattr(self, "post_delete") and persist_type & PERSIST_UPDATE:
+        self.post_delete(persist_type)
+    if hasattr(self, "post_remove") and persist_type & PERSIST_UPDATE:
+        self.post_remove(persist_type)
+
 
 @utils.transaction_m
 def store(
     self,
-    persist_type = PERSIST_UPDATE | PERSIST_SAVE,
-    validate = True,
-    immutable = True,
-    force_persist = False,
-    raise_exception = False,
-    store_relations = True,
-    entity_manager = None
+    persist_type=PERSIST_UPDATE | PERSIST_SAVE,
+    validate=True,
+    immutable=True,
+    force_persist=False,
+    raise_exception=False,
+    store_relations=True,
+    entity_manager=None,
 ):
     """
     "Transactional" method to be used as the main entry
@@ -1146,7 +1154,8 @@ def store(
     # in case the current instance is already in the storing
     # procedure (cycle detected) it must return immediately to
     # avoid stack overflowing
-    if hasattr(self, "_storing") and self._storing == True: return
+    if hasattr(self, "_storing") and self._storing == True:
+        return
 
     # checks if the current instance is already persisted in the
     # data source, this value will be useful for the conditional
@@ -1155,9 +1164,12 @@ def store(
 
     # tries to call the pre store method, in order to notify the
     # current instance about the starting of the store procedure
-    if hasattr(self, "pre_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE): self.pre_store(persist_type)
-    if hasattr(self, "pre_save") and not is_persisted and persist_type & PERSIST_SAVE: self.pre_save(persist_type)
-    if hasattr(self, "pre_update") and is_persisted and persist_type & PERSIST_UPDATE: self.pre_update(persist_type)
+    if hasattr(self, "pre_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
+        self.pre_store(persist_type)
+    if hasattr(self, "pre_save") and not is_persisted and persist_type & PERSIST_SAVE:
+        self.pre_save(persist_type)
+    if hasattr(self, "pre_update") and is_persisted and persist_type & PERSIST_UPDATE:
+        self.pre_update(persist_type)
 
     # sets the current entity in the storing operation, this flag
     # should be able to avoid unnecessary recursion
@@ -1169,48 +1181,62 @@ def store(
         # with validation in the saving process that will imply the
         # "rollback" of the transaction and the consequent invalidation
         # of the data (this process is recursive on model's relations)
-        if validate: self.preemptive_validate(persist_type)
+        if validate:
+            self.preemptive_validate(persist_type)
 
         # tries to call the on store method, in order to notify the
         # current instance about the starting of the store procedure
         # (this event is called after the preemptive validation process)
-        if hasattr(self, "on_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE): self.on_store(persist_type)
-        if hasattr(self, "on_save") and not is_persisted and persist_type & PERSIST_SAVE: self.on_save(persist_type)
-        if hasattr(self, "on_update") and is_persisted and persist_type & PERSIST_UPDATE: self.on_update(persist_type)
+        if hasattr(self, "on_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
+            self.on_store(persist_type)
+        if (
+            hasattr(self, "on_save")
+            and not is_persisted
+            and persist_type & PERSIST_SAVE
+        ):
+            self.on_save(persist_type)
+        if (
+            hasattr(self, "on_update")
+            and is_persisted
+            and persist_type & PERSIST_UPDATE
+        ):
+            self.on_update(persist_type)
 
         # detaches the current entity model in order
         # to avoid any possible loading of relations
-        self.detach_l(force = False)
+        self.detach_l(force=False)
 
         try:
             # stores the various relations of the entity model persisting
             # them into the data source and then persists the entity model
             # itself (names persistence), note that this operation may be
             # prevent using the proper flag (store relations flag)
-            if store_relations: self.store_relations(
-                persist_type,
-                validate = validate,
-                force_persist = force_persist,
-                raise_exception = raise_exception,
-                store_relations = store_relations,
-                entity_manager = entity_manager
-            )
+            if store_relations:
+                self.store_relations(
+                    persist_type,
+                    validate=validate,
+                    force_persist=force_persist,
+                    raise_exception=raise_exception,
+                    store_relations=store_relations,
+                    entity_manager=entity_manager,
+                )
             self.persist(
-                persist_type,
-                immutable = immutable,
-                entity_manager = entity_manager
+                persist_type, immutable=immutable, entity_manager=entity_manager
             )
         finally:
             # attaches the current entity model back
             # enabling it to communicate with the data
             # source for loading of relations
-            self.attach_l(force = False)
+            self.attach_l(force=False)
     except BaseException as exception:
         # tries to call the fail store method, in order to notify the
         # current instance about the failure of the store procedure
-        if hasattr(self, "fail_store"): self.fail_store(persist_type, exception)
-        if hasattr(self, "fail_save") and not is_persisted: self.fail_save(persist_type, exception)
-        if hasattr(self, "fail_update") and is_persisted: self.fail_update(persist_type, exception)
+        if hasattr(self, "fail_store"):
+            self.fail_store(persist_type, exception)
+        if hasattr(self, "fail_save") and not is_persisted:
+            self.fail_save(persist_type, exception)
+        if hasattr(self, "fail_update") and is_persisted:
+            self.fail_update(persist_type, exception)
 
         # re-raises the exception to the upper levels, no need to
         # to except at this level
@@ -1222,16 +1248,20 @@ def store(
 
     # tries to call the post store method, in order to notify the
     # current instance about the finishing of the store procedure
-    if hasattr(self, "post_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE): self.post_store(persist_type)
-    if hasattr(self, "post_save") and not is_persisted and persist_type & PERSIST_SAVE: self.post_save(persist_type)
-    if hasattr(self, "post_update") and is_persisted and persist_type & PERSIST_UPDATE: self.post_update(persist_type)
+    if hasattr(self, "post_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
+        self.post_store(persist_type)
+    if hasattr(self, "post_save") and not is_persisted and persist_type & PERSIST_SAVE:
+        self.post_save(persist_type)
+    if hasattr(self, "post_update") and is_persisted and persist_type & PERSIST_UPDATE:
+        self.post_update(persist_type)
+
 
 def store_f(
     self,
-    validate = True,
-    raise_exception = False,
-    store_relations = True,
-    entity_manager = None
+    validate=True,
+    raise_exception=False,
+    store_relations=True,
+    entity_manager=None,
 ):
     """
     Utility method, that may be used as a shorthand if
@@ -1261,12 +1291,13 @@ def store_f(
     # the storage procedure is forced into the data source
     self.store(
         None,
-        validate = validate,
-        force_persist = True,
-        raise_exception = raise_exception,
-        store_relations = store_relations,
-        entity_manager = entity_manager
+        validate=validate,
+        force_persist=True,
+        raise_exception=raise_exception,
+        store_relations=store_relations,
+        entity_manager=entity_manager,
     )
+
 
 def preemptive_validate(self, persist_type):
     """
@@ -1295,20 +1326,24 @@ def preemptive_validate(self, persist_type):
     # entity model retrieve the result, in case the result is
     # valid returns immediately without raising the exception
     result = self._validate(persist_type)
-    if result: return
+    if result:
+        return
 
     # raises a model validation exception because the preemptive
     # validation process failed for the current model
-    raise exceptions.ModelValidationError("preemptive validation of entity model failed", self)
+    raise exceptions.ModelValidationError(
+        "preemptive validation of entity model failed", self
+    )
+
 
 def store_relations(
     self,
     persist_type,
-    validate = False,
-    force_persist = False,
-    raise_exception = False,
-    store_relations = True,
-    entity_manager = None
+    validate=False,
+    force_persist=False,
+    raise_exception=False,
+    store_relations=True,
+    entity_manager=None,
 ):
     """
     Stores all the relations of the current entity according to the
@@ -1361,12 +1396,20 @@ def store_relations(
         # retrieves the attributes of the model for the current relation
         # in order to retrieve the appropriate persist type
         model_attributes = getattr(self.__class__, relation_name)
-        relation_persist_type = force_persist and PERSIST_ALL or model_attributes.get("persist_type", PERSIST_NONE)
+        relation_persist_type = (
+            force_persist
+            and PERSIST_ALL
+            or model_attributes.get("persist_type", PERSIST_NONE)
+        )
 
         # recalculates the new persist type for the relation storing based on the
         # relation persist type and the current model persist type (associate type
         # in considered to be always present in the persist type)
-        _persist_type = force_persist and PERSIST_ALL or relation_persist_type & (persist_type | PERSIST_ASSOCIATE)
+        _persist_type = (
+            force_persist
+            and PERSIST_ALL
+            or relation_persist_type & (persist_type | PERSIST_ASSOCIATE)
+        )
 
         # stores the relation combining the persist type given and the current
         # model persist type in the meta information
@@ -1374,23 +1417,24 @@ def store_relations(
             relation_name,
             _persist_type,
             relation_persist_type,
-            validate = validate,
-            force_persist = force_persist,
-            raise_exception = raise_exception,
-            store_relations = store_relations,
-            entity_manager = entity_manager
+            validate=validate,
+            force_persist=force_persist,
+            raise_exception=raise_exception,
+            store_relations=store_relations,
+            entity_manager=entity_manager,
         )
+
 
 def store_relation(
     self,
     relation_name,
     persist_type,
     relation_persist_type,
-    validate = False,
-    force_persist = False,
-    raise_exception = False,
-    store_relations = True,
-    entity_manager = None
+    validate=False,
+    force_persist=False,
+    raise_exception=False,
+    store_relations=True,
+    entity_manager=None,
 ):
     """
     Stores a relation with the given name in the entity
@@ -1432,7 +1476,8 @@ def store_relation(
     # in case the relation is lazy loaded in the
     # current entity no need to store it and so the
     # control flow should be returned immediately
-    if self.is_lazy_loaded(relation_name): return
+    if self.is_lazy_loaded(relation_name):
+        return
 
     # starts the flag that controls in case
     # an error is set
@@ -1474,7 +1519,9 @@ def store_relation(
                 if _relation_value:
                     # validate the given entity for relation with the relation
                     # value in the attribute of name relation name
-                    relation_valid = self.validate_relation(id_attribute_value, relation_name)
+                    relation_valid = self.validate_relation(
+                        id_attribute_value, relation_name
+                    )
                 # otherwise the validation is not required
                 # the value is not valid, not set
                 else:
@@ -1500,28 +1547,35 @@ def store_relation(
             # case the associate "permission" is set in the persist type or in
             # case the relation was previously (other transaction) set in the
             # entity (relation validation)
-            is_associable = relation_valid or id_attribute_value == None or\
-                _relation_value.is_saved() or relation_persist_type & PERSIST_ASSOCIATE
+            is_associable = (
+                relation_valid
+                or id_attribute_value == None
+                or _relation_value.is_saved()
+                or relation_persist_type & PERSIST_ASSOCIATE
+            )
 
             # stores the relation value in the data source
             # using the "propagated" persist type (only in
             # case the relation is "storable")
-            if is_storable: _relation_value.store(
-                persist_type,
-                validate,
-                force_persist = force_persist,
-                store_relations = store_relations,
-                entity_manager = entity_manager
-            )
+            if is_storable:
+                _relation_value.store(
+                    persist_type,
+                    validate,
+                    force_persist=force_persist,
+                    store_relations=store_relations,
+                    entity_manager=entity_manager,
+                )
 
             # in case the relation is not valid it must be removed
             # from the entity to avoid "malicious" association to be set
             # on the data source (corrupting data from a security point)
-            if not is_associable: remove_relations.append(_relation_value)
+            if not is_associable:
+                remove_relations.append(_relation_value)
         except exceptions.ModelValidationError:
             # in case the raise exception flag is set
             # the exception must be "raised again"
-            if raise_exception: raise
+            if raise_exception:
+                raise
 
             # sets the error set flag, to trigger
             # the add error action at the end of
@@ -1532,11 +1586,14 @@ def store_relation(
     # that is considered not valid (to be removed) the relation
     # is considered invalid and is removed from the entity
     # model (provides the main data model security measure)
-    if remove_relations: self.delete_value(relation_name)
+    if remove_relations:
+        self.delete_value(relation_name)
 
     # adds an error to the entity on the relation
     # for latter usage and presentation to user
-    if error_set: self.add_error(relation_name, "relation validation failed")
+    if error_set:
+        self.add_error(relation_name, "relation validation failed")
+
 
 def create(self, *args, **kwargs):
     """
@@ -1551,8 +1608,10 @@ def create(self, *args, **kwargs):
     """
 
     is_persisted = self.is_persisted()
-    if is_persisted: raise RuntimeError("instance is already persisted")
+    if is_persisted:
+        raise RuntimeError("instance is already persisted")
     self.store(*args, **kwargs)
+
 
 def change(self, *args, **kwargs):
     """
@@ -1569,10 +1628,12 @@ def change(self, *args, **kwargs):
     """
 
     is_persisted = self.is_persisted()
-    if not is_persisted: raise RuntimeError("instance is not persisted")
+    if not is_persisted:
+        raise RuntimeError("instance is not persisted")
     self.store(*args, **kwargs)
 
-def save(self, entity_manager = None):
+
+def save(self, entity_manager=None):
     """
     Saves the current instance into the data source
     described in the current entity manager.
@@ -1591,12 +1652,13 @@ def save(self, entity_manager = None):
     # sets the context information in the current instance
     # this should change the instance to reflect the current
     # context values (only change it in case context exists)
-    self.set_context(entity_manager = entity_manager)
+    self.set_context(entity_manager=entity_manager)
 
     # saves the entity using the entity manager
     entity_manager.save(self)
 
-def update(self, immutable = True, entity_manager = None):
+
+def update(self, immutable=True, entity_manager=None):
     """
     Updates the current instance in the data source
     described in the current entity manager.
@@ -1618,12 +1680,13 @@ def update(self, immutable = True, entity_manager = None):
     # sets the context information in the current instance
     # this should change the instance to reflect the current
     # context values (only change it in case context exists)
-    self.set_context(entity_manager = entity_manager)
+    self.set_context(entity_manager=entity_manager)
 
     # updates the entity using the entity manager
-    entity_manager.update(self, immutable = immutable)
+    entity_manager.update(self, immutable=immutable)
 
-def remove(self, entity_manager = None):
+
+def remove(self, entity_manager=None):
     """
     Removes the current instance from the data source
     described in the current entity manager.
@@ -1642,7 +1705,8 @@ def remove(self, entity_manager = None):
     # removes the entity using the entity manager
     entity_manager.remove(self)
 
-def reload(self, options = {}, entity_manager = None):
+
+def reload(self, options={}, entity_manager=None):
     """
     Reloads the current instance in the data source
     described in the current entity manager.
@@ -1664,7 +1728,8 @@ def reload(self, options = {}, entity_manager = None):
     # reloads the entity using the entity manager
     entity_manager.reload(self, options)
 
-def relation(self, name, options = {}, force = True, entity_manager = None):
+
+def relation(self, name, options={}, force=True, entity_manager=None):
     """
     Loads a relation for the current instance in the
     data source described in the current entity manager.
@@ -1694,13 +1759,15 @@ def relation(self, name, options = {}, force = True, entity_manager = None):
     # flag is not set and there's a valid value returns
     # immediately avoiding a reloading of the relation
     value = self.get_value(name)
-    if not force and value: return
+    if not force and value:
+        return
 
     # loads a relation with the provided options (partial
     # loading) using the entity manager
     entity_manager.relation(self, name, options)
 
-def save_update(self, entity_manager = None):
+
+def save_update(self, entity_manager=None):
     """
     Saves or updates the current instance into the data source
     described in the current entity manager.
@@ -1719,18 +1786,13 @@ def save_update(self, entity_manager = None):
     # sets the context information in the current instance
     # this should change the instance to reflect the current
     # context values (only change it in case context exists)
-    self.set_context(entity_manager = entity_manager)
+    self.set_context(entity_manager=entity_manager)
 
     # saves or updates the entity using the entity manager
     entity_manager.save_update(self)
 
-def persist(
-    self,
-    persist_type,
-    validate = False,
-    immutable = True,
-    entity_manager = None
-):
+
+def persist(self, persist_type, validate=False, immutable=True, entity_manager=None):
     """
     Persists the current instance into the data source
     described in the current entity manager.
@@ -1759,7 +1821,8 @@ def persist(
 
     # in case the validate flag is set the validation
     # process is run in the current model
-    if validate: self.validate_exception()
+    if validate:
+        self.validate_exception()
 
     # checks if the entity is persisted
     is_persisted = self.is_persisted()
@@ -1770,10 +1833,7 @@ def persist(
         # updates the entity using the entity manager
         # this operation must change and persist the
         # values of the entity in the data source
-        self.update(
-            entity_manager = entity_manager,
-            immutable = immutable
-        )
+        self.update(entity_manager=entity_manager, immutable=immutable)
 
     # in case the entity is not persisted and the persist
     # type allows saving, then save is performed
@@ -1781,9 +1841,10 @@ def persist(
         # saves the entity using the entity manager
         # this operation must set and persist the
         # values of the entity in the data source
-        self.save(entity_manager = entity_manager)
+        self.save(entity_manager=entity_manager)
 
-def lock(self, reload = False, entity_manager = None):
+
+def lock(self, reload=False, entity_manager=None):
     """
     Locks the entity reference in the current data source
     to avoid possible persistence in the data reference.
@@ -1820,23 +1881,27 @@ def lock(self, reload = False, entity_manager = None):
     # in case the reload flag is set the entity must be
     # reloaded retrieving the must updated contents for
     # the entity from the data source
-    if reload: self.reload()
+    if reload:
+        self.reload()
 
-def after_commit(self, callable, entity_manager = None):
+
+def after_commit(self, callable, entity_manager=None):
     # obtains the reference to the entity manager and registers
     # the provided callable to be called after the commit of the
     # currently open data transaction
     entity_manager = entity_manager or self._entity_manager
     entity_manager.after_commit(callable)
 
-def after_rollback(self, callable, entity_manager = None):
+
+def after_rollback(self, callable, entity_manager=None):
     # obtains the reference to the entity manager and registers
     # the provided callable to be called after the rollback of the
     # currently open data transaction
     entity_manager = entity_manager or self._entity_manager
     entity_manager.after_rollback(callable)
 
-def validate_relation(self, id_attribute_value, relation_name, entity_manager = None):
+
+def validate_relation(self, id_attribute_value, relation_name, entity_manager=None):
     """
     Validates a relation of the current entity, checking if was already
     associated with the entity in a previous transaction context.
@@ -1864,6 +1929,7 @@ def validate_relation(self, id_attribute_value, relation_name, entity_manager = 
 
     # returns the result of the relation validation
     return relation_valid
+
 
 def get_relation_names(self):
     """
@@ -1894,6 +1960,7 @@ def get_relation_names(self):
     # this may be used for relation access
     return relation_names
 
+
 def get_id_attribute_name(self):
     """
     Retrieves the name of the attribute considered to be
@@ -1915,6 +1982,7 @@ def get_id_attribute_name(self):
     # returns the id attribute name
     return id_attribute_name
 
+
 def get_id_attribute_value(self):
     """
     Retrieves the value of the attribute considered to be
@@ -1933,7 +2001,8 @@ def get_id_attribute_value(self):
     # returns the id attribute value
     return id_attribute_value
 
-def get_attribute_data_type(self, attribute_name, resolve_relations = False):
+
+def get_attribute_data_type(self, attribute_name, resolve_relations=False):
     # retrieves the entity class for the current model
     entity_class = self.__class__
 
@@ -1942,12 +2011,12 @@ def get_attribute_data_type(self, attribute_name, resolve_relations = False):
     # an optional argument is sent to set if the relation should be
     # resolved (type of the id attribute is resolved or not)
     attribute_data_type = entity_class._get_data_type(
-        attribute_name,
-        resolve_relations = resolve_relations
+        attribute_name, resolve_relations=resolve_relations
     )
 
     # returns the (real) data type of the attribute
     return attribute_data_type
+
 
 def get_relation_entity_class(self, relation_name):
     # retrieves the entity class
@@ -1959,6 +2028,7 @@ def get_relation_entity_class(self, relation_name):
 
     # returns the relation entity class
     return relation_entity_class
+
 
 def get_resource_path(self):
     # retrieves the id attribute value
@@ -1973,6 +2043,7 @@ def get_resource_path(self):
 
     # creates and returns the target request
     return entity_class_pluralized + "/" + id_attribute_value_string
+
 
 def is_persisted(self):
     """
@@ -2001,6 +2072,7 @@ def is_persisted(self):
     # returns the is persisted value
     return is_persisted
 
+
 def is_saved(self):
     """
     Checks the internal structure of the entity
@@ -2024,6 +2096,7 @@ def is_saved(self):
 
     # returns the saved value
     return saved
+
 
 def is_updated(self):
     """
@@ -2049,6 +2122,7 @@ def is_updated(self):
     # returns the updated value
     return updated
 
+
 def is_removed(self):
     """
     Checks the internal structure of the entity
@@ -2073,6 +2147,7 @@ def is_removed(self):
     # returns the removed value
     return removed
 
+
 def is_related(self, name):
     """
     Verifies if the relation with the provided name is somehow
@@ -2095,6 +2170,7 @@ def is_related(self, name):
     attributes = getattr(self.__class__, name)
     persist_type = attributes.get("persist_type", PERSIST_NONE)
     return persist_type & (PERSIST_SAVE | PERSIST_UPDATE)
+
 
 def resolve_to_one(self, map, model_class, permissive):
     """
@@ -2137,7 +2213,8 @@ def resolve_to_one(self, map, model_class, permissive):
 
     # in case the id value is an empty value, the entity
     # is set as invalid (unset value)
-    if id_value == "": entity = None
+    if id_value == "":
+        entity = None
 
     # otherwise in case the the id value is set must try
     # to get it from the data source (load action)
@@ -2145,23 +2222,23 @@ def resolve_to_one(self, map, model_class, permissive):
         # creates the map of options so that the diffusion
         # scope is the same as the current entity in order
         # to re-use existent entities in the scope
-        options = dict(
-            entities = self._entities,
-            scope = self._scope
-        )
+        options = dict(entities=self._entities, scope=self._scope)
 
         # casts the id value into the appropriate data type
         # and uses it to retrieve the appropriate entity value
         # from the data source (load operation)
         id_value = self._cast_safe(id_value, id_cast_type)
-        entity = model_class.get(id_value, options, context = request)
+        entity = model_class.get(id_value, options, context=request)
 
         # in case the entity was successfully retrieve applies
         # the map to it and then sets the request on the
         # entity, otherwise raises a runtime error because
         # there was a problem in retrieval (invalid)
-        if entity: entity.apply(map, permissive = permissive); entity.set_request(request)
-        else: raise RuntimeError("no such model, invalid identifier value")
+        if entity:
+            entity.apply(map, permissive=permissive)
+            entity.set_request(request)
+        else:
+            raise RuntimeError("no such model, invalid identifier value")
 
     # otherwise there is no id value set and a new entity
     # must be created (create action)
@@ -2170,15 +2247,18 @@ def resolve_to_one(self, map, model_class, permissive):
         # the provided relation map, in such case the model class
         # to be used must be retrieved from the entity manager
         class_name = map.get("_class", None)
-        _model_class = class_name and self._entity_manager.get_entity(class_name) or model_class
+        _model_class = (
+            class_name and self._entity_manager.get_entity(class_name) or model_class
+        )
 
         # creates the "new" entity (model)
         # and sets it in the current entity
-        entity = _model_class.new(request, map, permissive = permissive)
+        entity = _model_class.new(request, map, permissive=permissive)
 
     # retrieves the loaded or created entity, this
     # entity is considered to be resolved
     return entity
+
 
 def resolve_to_many(self, maps_list, model_class, permissive):
     """
@@ -2212,7 +2292,8 @@ def resolve_to_many(self, maps_list, model_class, permissive):
     # in case the received maps list is an empty
     # sequence symbol, (the relation is meant to be set
     # as empty) returns immediately (empty entities list)
-    if maps_list == [""]: return entities_list
+    if maps_list == [""]:
+        return entities_list
 
     # retrieves the request associated with the current model, this
     # is going to be use to propagate its setting to the created or loaded
@@ -2229,27 +2310,24 @@ def resolve_to_many(self, maps_list, model_class, permissive):
     # gathers all the identifiers (values) from the maps that contain
     # (and define) an identifier, then casts them into the appropriate data type
     id_values_list = [map[id_name] for map in maps_list if id_name in map]
-    id_values_list = [self._cast_safe(id_value, id_cast_type) for id_value in id_values_list]
+    id_values_list = [
+        self._cast_safe(id_value, id_cast_type) for id_value in id_values_list
+    ]
 
     # creates the options map that retrieves all the entity models
     # in the referred identifiers list and using the current diffusion
     # scope, this should retrieve all the associated entities from the
     # current data source
     options = dict(
-        filters = dict(
-            type = "in",
-            fields = {
-                id_name : id_values_list
-            }
-        ),
-        entities = self._entities,
-        scope = self._scope
+        filters=dict(type="in", fields={id_name: id_values_list}),
+        entities=self._entities,
+        scope=self._scope,
     )
 
     # retrieves all the entity models from the data source that are contained
     # in the range of defined identifiers, avoids retrieving the entity models
     # in case the id values list is empty (performance oriented)
-    _entities = id_values_list and model_class.find(options, context = request) or []
+    _entities = id_values_list and model_class.find(options, context=request) or []
 
     # creates a list containing a series of tuples associating the entity
     # ids with their respective entity and the uses the list of tuples to create
@@ -2273,20 +2351,26 @@ def resolve_to_many(self, maps_list, model_class, permissive):
         # the provided relation map, in such case the model class
         # to be used must be retrieved from the entity manager
         class_name = map.get("_class", None)
-        _model_class = class_name and self._entity_manager.get_entity(class_name) or model_class
+        _model_class = (
+            class_name and self._entity_manager.get_entity(class_name) or model_class
+        )
 
         # in case the entity is valid applies the current item value (data map) to
         # it otherwise creates a "new" entity with the provided model, in both cases
         # the created entity is added to the list of entities for the relations
-        if entity: entity.apply(map, permissive = permissive); entity.set_request(request)
-        else: entity = _model_class.new(request, map, permissive = permissive)
+        if entity:
+            entity.apply(map, permissive=permissive)
+            entity.set_request(request)
+        else:
+            entity = _model_class.new(request, map, permissive=permissive)
         entities_list.append(entity)
 
     # returns the list of entities that were loaded or created for the
     # requested to-many relation
     return entities_list
 
-def set_context(self, context = None, namespace_name = None, entity_manager = None):
+
+def set_context(self, context=None, namespace_name=None, entity_manager=None):
     """
     Sets the current context attributes in the current model
     this provides a transparent process for context attributes
@@ -2309,12 +2393,14 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
 
     # in case the request is not currently set in the
     # model the control should be returned immediately
-    if not request: return
+    if not request:
+        return
 
     # tries to retrieve the request session if
     # it fails control is returned immediately
     request_session = request.get_session()
-    if not request_session: return
+    if not request_session:
+        return
 
     # retrieves the complete (attribute name) for the context
     # taking into account the namespace name (prefix)
@@ -2325,7 +2411,8 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
     # after that in case no valid context is found returns
     # the control immediately
     context = context or request_session.get_attribute(attribute_name)
-    if not context: return
+    if not context:
+        return
 
     # retrieves the entity manager to be used or the
     # default "embedded" entity manager
@@ -2341,15 +2428,18 @@ def set_context(self, context = None, namespace_name = None, entity_manager = No
     for context_name, context_value in colony.legacy.items(context):
         # in case the current context item name does not exists
         # in the model definition, continues the loop
-        if not entity_class.has_name(context_name): continue
+        if not entity_class.has_name(context_name):
+            continue
 
         # in case the entity already contains a value for the
         # context attribute, no need to set it
-        if self.has_value(context_name): continue
+        if self.has_value(context_name):
+            continue
 
         # sets the context value in the model this will provide
         # a transparent process for context value saving
         setattr(self, context_name, context_value)
+
 
 def clear_errors_r(self):
     """
@@ -2378,7 +2468,8 @@ def clear_errors_r(self):
 
         # in case the relation value is not set or in case it's
         # lazy loaded no error clear should occur
-        if relation_value == None or self.is_lazy_loaded(relation_name): continue
+        if relation_value == None or self.is_lazy_loaded(relation_name):
+            continue
 
         # retrieves the relation value from the entity and then
         # converts it to an enumerable type for compatibility
@@ -2389,7 +2480,9 @@ def clear_errors_r(self):
 
         # clears the error structures in all of the relations
         # values using the recursive approach (recursive step)
-        for _relation_value in relation_value: _relation_value.clear_errors_r()
+        for _relation_value in relation_value:
+            _relation_value.clear_errors_r()
+
 
 def _get_entity_class_name(self):
     """
@@ -2417,7 +2510,8 @@ def _get_entity_class_name(self):
     # name value to the caller method
     return entity_class_name
 
-def _get_entity_class_pluralized(self, entity_class = None):
+
+def _get_entity_class_pluralized(self, entity_class=None):
     """
     Converts the name of the current entity instance
     class to a pluralized form.
@@ -2455,6 +2549,7 @@ def _get_entity_class_pluralized(self, entity_class = None):
     # pluralized value to the caller method
     return entity_class_pluralized
 
+
 def _load_value(self, key, value):
     """
     Loads the value with the given key in the
@@ -2472,7 +2567,8 @@ def _load_value(self, key, value):
     # in case the current object does not contain
     # an attribute with the key name must return
     # immediately cannot load inexistent value
-    if not hasattr(self, key): return
+    if not hasattr(self, key):
+        return
 
     # retrieves the entity class for the current object
     entity_class = self.__class__
@@ -2480,7 +2576,8 @@ def _load_value(self, key, value):
     # in case the entity class does not contain an
     # attribute with the key name must returns
     # immediately cannot load inexistent value
-    if not hasattr(entity_class, key): return
+    if not hasattr(entity_class, key):
+        return
 
     # retrieves the class value and retrieves
     # the type associated with the value
@@ -2489,7 +2586,8 @@ def _load_value(self, key, value):
 
     # in case the class value type is not
     # dictionary, must return immediately
-    if not class_value_type == dict: return
+    if not class_value_type == dict:
+        return
 
     # retrieves the value data type
     value_data_type = class_value.get("type", None)
@@ -2545,7 +2643,8 @@ def _load_value(self, key, value):
                     # in case the type of the value item is
                     # not dictionary (not valid) continues the
                     # current loop
-                    if not value_item_type == dict: continue
+                    if not value_item_type == dict:
+                        continue
 
                     # creates a new target entity instance
                     target_entity_instance = target_entity()
@@ -2578,6 +2677,7 @@ def _load_value(self, key, value):
     else:
         # sets the value in the current object
         setattr(self, key, value)
+
 
 def unique_validate(self, attribute_name, attribute_value, properties):
     """
@@ -2619,13 +2719,11 @@ def unique_validate(self, attribute_name, attribute_value, properties):
 
     # creates the filter that will be used
     # to attempt retrieving a duplicate entity
-    filter = {
-        attribute_name : attribute_value
-    }
+    filter = {attribute_name: attribute_value}
 
     # attempts to retrieve an entity that has the specified
     # attribute value for the specified attribute name
-    duplicate_entity = target_class.find_one(filter, context = context)
+    duplicate_entity = target_class.find_one(filter, context=context)
 
     # in case an entity with the specified attribute value already
     # exists and it is not the same as this instance, then a
@@ -2633,11 +2731,13 @@ def unique_validate(self, attribute_name, attribute_value, properties):
     if duplicate_entity and not duplicate_entity.object_id == self.object_id:
         self.add_error(attribute_name, "duplicate attribute")
 
-def _validate(self, persist_type, strict = True):
+
+def _validate(self, persist_type, strict=True):
     # in case the current instance is already in the validating
     # procedure (cycle detected) it must return immediately to
     # avoid stack overflowing (returns as valid to avoid exception)
-    if hasattr(self, "_validating") and self._validating == True: return True
+    if hasattr(self, "_validating") and self._validating == True:
+        return True
 
     # verifies if the validation is required taking into account the
     # current persistence state of the entity and both of the persist
@@ -2645,7 +2745,8 @@ def _validate(self, persist_type, strict = True):
     # is required the current process returns in success (valid)
     is_valid_save = (persist_type & PERSIST_SAVE) and not self.is_persisted()
     is_valid_update = (persist_type & PERSIST_UPDATE) and self.is_persisted()
-    if not is_valid_save and not is_valid_update: return True
+    if not is_valid_save and not is_valid_update:
+        return True
 
     # creates the method that will be run for the execution of the
     # validation process of each of the model's attributes, so that
@@ -2658,19 +2759,22 @@ def _validate(self, persist_type, strict = True):
         # retrieves the target attribute data type for the model and in
         # case it's not a relation the validation is considered valid
         model_type = model_attributes.get("type", None)
-        if not model_type == "relation": return True
+        if not model_type == "relation":
+            return True
 
         # assuming that the attribute refers a relation at least one persist
         # type must be valid according to the current persist type of validation
         model_persist_type = model_attributes.get("persist_type", PERSIST_NONE)
         relation_persist_type = model_persist_type & (persist_type | PERSIST_ASSOCIATE)
-        if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE): return False
+        if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
+            return False
 
         # retrieves the value of the relation for the current entity and in case
         # the value is not defined the validation is performed (fallback behavior)
         # note that this case "covers": none, empty and invalid cases
         relation_value = self.get_value(name)
-        if not relation_value: return True
+        if not relation_value:
+            return True
 
         # retrieves the relation value from the entity and then converts it to an
         # enumerable type for compatibility (if required by the relation type)
@@ -2683,15 +2787,21 @@ def _validate(self, persist_type, strict = True):
         for _relation_value in relation_value:
             # in case the (current) relation value is not set must
             # continue the loop for more relation validation check
-            if _relation_value == None: continue
+            if _relation_value == None:
+                continue
 
             # verifies that at least one of the possible persist modes
             # is valid for the current relation value and if that's the
             # case returns a valid value meaning that the validation
             # process is going to be processed for such value
-            is_valid_save = (relation_persist_type & PERSIST_SAVE) and not _relation_value.is_persisted()
-            is_valid_update = (relation_persist_type & PERSIST_UPDATE) and _relation_value.is_persisted()
-            if not is_valid_save and not is_valid_update: continue
+            is_valid_save = (
+                relation_persist_type & PERSIST_SAVE
+            ) and not _relation_value.is_persisted()
+            is_valid_update = (
+                relation_persist_type & PERSIST_UPDATE
+            ) and _relation_value.is_persisted()
+            if not is_valid_save and not is_valid_update:
+                continue
             return True
 
         # fallback value meaning that no validation will be performed for the
@@ -2710,7 +2820,7 @@ def _validate(self, persist_type, strict = True):
         # function is only used in non strict environment as it's
         # considered dangerous to use it for defaulting storage
         relations_result_value = self._validate_relations(persist_type)
-        result_value = self.validate(checker = None if strict else checker)
+        result_value = self.validate(checker=None if strict else checker)
     finally:
         # restores the validating variable to the original invalid
         # state (avoids possible misbehavior)
@@ -2720,6 +2830,7 @@ def _validate(self, persist_type, strict = True):
     # validation (relations and proper entity model) only
     # returns true in case both are valid
     return relations_result_value and result_value
+
 
 def _validate_relations(self, persist_type):
     # retrieves the relation names from the current entity
@@ -2741,8 +2852,10 @@ def _validate_relations(self, persist_type):
         # in case the relation value is not set or in case it's
         # lazy loaded no validation should occur, must continue
         # the loop, for more relation persistence
-        if relation_value == None: continue
-        if self.is_lazy_loaded(relation_name): continue
+        if relation_value == None:
+            continue
+        if self.is_lazy_loaded(relation_name):
+            continue
 
         # retrieves the attributes of the model for the re current relation
         # in order to retrieve the appropriate persist type, then re-calculate
@@ -2754,7 +2867,8 @@ def _validate_relations(self, persist_type):
         # checks if the relation persist type is enough to allow the current
         # relation to be persisted in the data source, in case it's not the
         # relations is not validated
-        if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE): continue
+        if not relation_persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
+            continue
 
         # starts the flag that controls in case
         # an error is set
@@ -2772,13 +2886,15 @@ def _validate_relations(self, persist_type):
         for _relation_value in relation_value:
             # in case the (current) relation value is not set must
             # continue the loop for more relation persistence
-            if _relation_value == None: continue
+            if _relation_value == None:
+                continue
 
             # validates the relation value, retrieving the result of
             # such validation in case it't valid there's no data
             # structures to be updated, continues loop
             result = _relation_value._validate(relation_persist_type)
-            if result: continue
+            if result:
+                continue
 
             # updates the error set flag so that the relation validation
             # failed error is set and update the is valid flag so that the
@@ -2788,14 +2904,16 @@ def _validate_relations(self, persist_type):
 
         # adds an error to the entity on the relation
         # for latter usage
-        if error_set: self.add_error(relation_name, "relation validation failed")
+        if error_set:
+            self.add_error(relation_name, "relation validation failed")
 
     # returns the relations is/are valid result,
     # this value may be used to infer if the parent
     # object should be considered to be valid
     return is_valid
 
-def _get_complete_name(name, namespace_name = None):
+
+def _get_complete_name(name, namespace_name=None):
     """
     Retrieves the complete (session attribute) name from the session
     attribute name and the namespace name.
@@ -2815,12 +2933,14 @@ def _get_complete_name(name, namespace_name = None):
     # in case the namespace name is not set
     # no need to proceed with the prefix strategy
     # the name is the "original" name
-    if not namespace_name: return name
+    if not namespace_name:
+        return name
 
     # creates the complete (session attribute) name by prepending the namespace
     # name to the (session attribute) name and returns it
     complete_name = namespace_name + "." + name
     return complete_name
+
 
 # saves an additional reference to the retrieval of the entity
 # class in a pluralized version to be used as fallback

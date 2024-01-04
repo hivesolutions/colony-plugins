@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class BencodePlugin(colony.Plugin):
     """
     The main class for the Bencode plugin.
@@ -40,19 +41,14 @@ class BencodePlugin(colony.Plugin):
     description = "A plugin to serialize and unserialize bencode files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "serializer.bencode"
-    ]
-    main_modules = [
-        "bencode_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["serializer.bencode"]
+    main_modules = ["bencode_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import bencode_c
+
         self.system = bencode_c.Bencode(self)
 
     def dumps(self, object):

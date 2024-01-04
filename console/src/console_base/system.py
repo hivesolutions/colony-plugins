@@ -55,6 +55,7 @@ COLUMN_SPACING = 8
 ID_REGEX = "[0-9]+"
 """ The regular expression to retrieve the id of the plugin """
 
+
 class ConsoleBase(colony.System):
     """
     The console base class.
@@ -107,7 +108,9 @@ class ConsoleBase(colony.System):
 
         raise colony.PluginSystemException("not implemented")
 
-    def process_extensions(self, arguments, arguments_map, output_method, console_context):
+    def process_extensions(
+        self, arguments, arguments_map, output_method, console_context
+    ):
         """
         Processes the extensions command, with the given
         arguments and output method.
@@ -159,13 +162,17 @@ class ConsoleBase(colony.System):
         uptime = current_time - plugin_manager_timestamp
 
         # creates the uptime string
-        uptime_string = colony.format_seconds_smart(uptime, "basic", ("day", "hour", "minute", "second"))
+        uptime_string = colony.format_seconds_smart(
+            uptime, "basic", ("day", "hour", "minute", "second")
+        )
 
         # retrieves the plugin manager instances
         plugin_manager_instances = plugin_manager.plugin_instances
 
         # retrieves the plugin strings from the plugin manager instances
-        plugins_string, replicas_string, instances_string = self.get_plugin_strings(plugin_manager_instances)
+        plugins_string, replicas_string, instances_string = self.get_plugin_strings(
+            plugin_manager_instances
+        )
 
         # prints the status values
         output_method("uid:          " + plugin_manager_uid)
@@ -205,11 +212,8 @@ class ConsoleBase(colony.System):
         # then creates the python console and starts running it
         # with the interact operation, this should begin a loop
         # that will only end at the exit call
-        locals = {
-            "manager" : plugin_manager,
-            "plugin_manager" : plugin_manager
-        }
-        python_console = code.InteractiveConsole(locals = locals)
+        locals = {"manager": plugin_manager, "plugin_manager": plugin_manager}
+        python_console = code.InteractiveConsole(locals=locals)
         python_console.interact()
 
     def process_show(self, arguments, arguments_map, output_method, console_context):
@@ -260,11 +264,15 @@ class ConsoleBase(colony.System):
         # iterates over all the plugin instances
         for plugin_instance in plugin_instances:
             # retrieves the current id for the current plugin instance
-            plugin_instance_current_id = plugin_manager.loaded_plugins_id_map[plugin_instance.id]
+            plugin_instance_current_id = plugin_manager.loaded_plugins_id_map[
+                plugin_instance.id
+            ]
             plugin_instance_current_id_str = str(plugin_instance_current_id)
 
             output_method(plugin_instance_current_id_str, False)
-            for _index in colony.legacy.xrange(COLUMN_SPACING - len(plugin_instance_current_id_str)):
+            for _index in colony.legacy.xrange(
+                COLUMN_SPACING - len(plugin_instance_current_id_str)
+            ):
                 output_method(" ", False)
             if plugin_instance.is_loaded():
                 output_method("ACTIVE" + "      ", False)
@@ -462,7 +470,9 @@ class ConsoleBase(colony.System):
         for plugin_id in plugin_manager.plugin_instances_map:
             plugin_manager.load_plugin(plugin_id)
 
-    def process_unloadall(self, arguments, arguments_map, output_method, console_context):
+    def process_unloadall(
+        self, arguments, arguments_map, output_method, console_context
+    ):
         """
         Processes the unloadall command, with the given
         arguments and output method.
@@ -712,20 +722,13 @@ class ConsoleBase(colony.System):
 
         # creates the plugins tuple from the plugins string, the replicas
         # string and the instances string
-        plugins_tuple = (
-            plugins_string,
-            replicas_string,
-            instances_string
-        )
+        plugins_tuple = (plugins_string, replicas_string, instances_string)
 
         # returns the plugins tuple
         return plugins_tuple
 
     def get_extension_id_list(self, argument, console_context):
-        return [
-            "rabeton",
-            "tobias"
-        ]
+        return ["rabeton", "tobias"]
 
     def get_plugin_id_list(self, argument, console_context):
         # retrieves the plugin manager
@@ -739,148 +742,142 @@ class ConsoleBase(colony.System):
 
     def __generate_commands_map(self):
         return {
-            "help" : {
-                "handler" : self.process_help,
-                "description" : "shows this message or the referred console extension help message",
-                "arguments" : [
+            "help": {
+                "handler": self.process_help,
+                "description": "shows this message or the referred console extension help message",
+                "arguments": [
                     {
-                        "name" : "extension_id",
-                        "description" : "the id of the extension to be loaded",
-                        "values" : self.get_extension_id_list,
-                        "mandatory" : False
+                        "name": "extension_id",
+                        "description": "the id of the extension to be loaded",
+                        "values": self.get_extension_id_list,
+                        "mandatory": False,
                     }
-                ]
+                ],
             },
-            "helpall" : {
-                "handler" : self.process_helpall,
-                "description" : "shows the help message of all the loaded console extensions"
+            "helpall": {
+                "handler": self.process_helpall,
+                "description": "shows the help message of all the loaded console extensions",
             },
-            "extensions" : {
-                "handler" : self.process_extensions,
-                "description" : "shows the help message of all the loaded console extensions"
+            "extensions": {
+                "handler": self.process_extensions,
+                "description": "shows the help message of all the loaded console extensions",
             },
-            "status" : {
-                "handler" : self.process_status,
-                "description" : "shows the current status of the system"
+            "status": {
+                "handler": self.process_status,
+                "description": "shows the current status of the system",
             },
-            "python" : {
-                "handler" : self.process_python,
-                "description" : "starts the python interpreter cli with the current context",
+            "python": {
+                "handler": self.process_python,
+                "description": "starts the python interpreter cli with the current context",
             },
-            "show" : {
-                "handler" : self.process_show,
-                "description" : "shows the status of the plugin with the defined id",
-                "arguments" : [
+            "show": {
+                "handler": self.process_show,
+                "description": "shows the status of the plugin with the defined id",
+                "arguments": [
                     {
-                        "name" : "plugin_id",
-                        "description" : "the id of the plugin to be shown",
-                        "values" : self.get_plugin_id_list,
-                        "mandatory" : False
+                        "name": "plugin_id",
+                        "description": "the id of the plugin to be shown",
+                        "values": self.get_plugin_id_list,
+                        "mandatory": False,
                     }
-                ]
+                ],
             },
-            "info" : {
-                "handler" : self.process_info,
-                "help" : "shows the status about a plugin",
-                "arguments" : [
+            "info": {
+                "handler": self.process_info,
+                "help": "shows the status about a plugin",
+                "arguments": [
                     {
-                        "name" : "plugin_id",
-                        "description" : "the id of the plugin to show the information",
-                        "values" : self.get_plugin_id_list,
-                        "mandatory" : False
+                        "name": "plugin_id",
+                        "description": "the id of the plugin to show the information",
+                        "values": self.get_plugin_id_list,
+                        "mandatory": False,
                     }
-                ]
+                ],
             },
-            "infoall" : {
-                "handler" : self.process_infoall,
-                "help" : "shows information about all the loaded plugins"
+            "infoall": {
+                "handler": self.process_infoall,
+                "help": "shows information about all the loaded plugins",
             },
-            "add" : {
-                "handler" : self.process_add,
-                "help" : "adds a new plugin to the system",
-                "arguments" : [
+            "add": {
+                "handler": self.process_add,
+                "help": "adds a new plugin to the system",
+                "arguments": [
                     {
-                        "name" : "plugin_path",
-                        "description" : "the path of the plugin to be added",
-                        "values" : str,
-                        "mandatory" : True
+                        "name": "plugin_path",
+                        "description": "the path of the plugin to be added",
+                        "values": str,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "remove" : {
-                "handler" : self.process_remove,
-                "help" : "removes plugin from the system",
-                "arguments" : [
+            "remove": {
+                "handler": self.process_remove,
+                "help": "removes plugin from the system",
+                "arguments": [
                     {
-                        "name" : "plugin_id",
-                        "description" : "the id of the plugin to be removed",
-                        "values" : str,
-                        "mandatory" : True
+                        "name": "plugin_id",
+                        "description": "the id of the plugin to be removed",
+                        "values": str,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "load" : {
-                "handler" : self.process_load,
-                "help" : "loads a plugin",
-                "arguments" : [
+            "load": {
+                "handler": self.process_load,
+                "help": "loads a plugin",
+                "arguments": [
                     {
-                        "name" : "plugin_id",
-                        "description" : "the id of the plugin to be loaded",
-                        "values" : self.get_plugin_id_list,
-                        "mandatory" : True
+                        "name": "plugin_id",
+                        "description": "the id of the plugin to be loaded",
+                        "values": self.get_plugin_id_list,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "unload" : {
-                "handler" : self.process_unload,
-                "help" : "unloads a plugin",
-                "arguments" : [
+            "unload": {
+                "handler": self.process_unload,
+                "help": "unloads a plugin",
+                "arguments": [
                     {
-                        "name" : "plugin_id",
-                        "description" : "the id of the plugin to be unloaded",
-                        "values" : self.get_plugin_id_list,
-                        "mandatory" : True
+                        "name": "plugin_id",
+                        "description": "the id of the plugin to be unloaded",
+                        "values": self.get_plugin_id_list,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "loadall" : {
-                "handler" : self.process_loadall,
-                "help" : "loads all the available plugins"
+            "loadall": {
+                "handler": self.process_loadall,
+                "help": "loads all the available plugins",
             },
-            "unloadall" : {
-                "handler" : self.process_unloadall,
-                "help" : "unloads all the available plugins"
+            "unloadall": {
+                "handler": self.process_unloadall,
+                "help": "unloads all the available plugins",
             },
-            "exec" : {
-                "handler" : self.process_exec,
-                "help" : "executes the given hcs script",
-                "arguments" : [
+            "exec": {
+                "handler": self.process_exec,
+                "help": "executes the given hcs script",
+                "arguments": [
                     {
-                        "name" : "file_path",
-                        "description" : "the path of the file to be executed",
-                        "values" : str,
-                        "mandatory" : True
+                        "name": "file_path",
+                        "description": "the path of the file to be executed",
+                        "values": str,
+                        "mandatory": True,
                     }
-                ]
+                ],
             },
-            "restart" : {
-                "handler" : self.process_restart,
-                "help" : "restarts the system"
-            },
-            "exit" : {
-                "handler" : self.process_exit,
-                "help" : "exits the system"
-            },
-            "echo" : {
-                "handler" : self.process_echo,
-                "help" : "prints the given value",
-                "arguments" : [
+            "restart": {"handler": self.process_restart, "help": "restarts the system"},
+            "exit": {"handler": self.process_exit, "help": "exits the system"},
+            "echo": {
+                "handler": self.process_echo,
+                "help": "prints the given value",
+                "arguments": [
                     {
-                        "name" : "echo_value",
-                        "description" : "the value to be echoed",
-                        "values" : str,
-                        "mandatory" : True
+                        "name": "echo_value",
+                        "description": "the value to be echoed",
+                        "values": str,
+                        "mandatory": True,
                     }
-                ]
-            }
+                ],
+            },
         }

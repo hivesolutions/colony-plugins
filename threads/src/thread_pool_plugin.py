@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ThreadPoolPlugin(colony.Plugin):
     """
     The main class for the Thread Pool plugin
@@ -43,28 +44,36 @@ class ThreadPoolPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "threads",
-        "thread_pool",
-        "system_information"
-    ]
-    main_modules = [
-        "thread_pool"
-    ]
+    capabilities = ["threads", "thread_pool", "system_information"]
+    main_modules = ["thread_pool"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import thread_pool
+
         self.system = thread_pool.ThreadPool(self)
 
     def unload_plugin(self):
         colony.Plugin.unload_plugin(self)
         self.system.unload()
 
-    def create_new_thread_pool(self, name, description, number_threads, scheduling_algorithm, maximum_number_threads):
-        return self.system.create_new_thread_pool(name, description, number_threads, scheduling_algorithm, maximum_number_threads)
+    def create_new_thread_pool(
+        self,
+        name,
+        description,
+        number_threads,
+        scheduling_algorithm,
+        maximum_number_threads,
+    ):
+        return self.system.create_new_thread_pool(
+            name,
+            description,
+            number_threads,
+            scheduling_algorithm,
+            maximum_number_threads,
+        )
 
     def get_thread_task_descriptor_class(self):
         return self.system.get_thread_task_descriptor_class()

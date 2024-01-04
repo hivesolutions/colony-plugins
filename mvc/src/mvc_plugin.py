@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class MVCPlugin(colony.Plugin):
     """
     The main class for the MVC plugin.
@@ -40,36 +41,27 @@ class MVCPlugin(colony.Plugin):
     description = "The plugin that offers a strategy abstraction for MVC management"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "mvc",
-        "rest_service"
-    ]
-    capabilities_allowed = [
-        "mvc_service"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["mvc", "rest_service"]
+    capabilities_allowed = ["mvc_service"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.csv"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.json")
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
     events_handled = [
         "mvc.patterns_reload",
         "mvc.patterns_load",
         "mvc.patterns_unload",
-        "mvc.communication"
+        "mvc.communication",
     ]
-    main_modules = [
-        "mvc"
-    ]
+    main_modules = ["mvc"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mvc
+
         self.system = mvc.MVC(self)
 
     def end_load_plugin(self):

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class AuthenticationLDAPPlugin(colony.Plugin):
     """
     The main class for the Authentication LDAP plugin.
@@ -40,22 +41,15 @@ class AuthenticationLDAPPlugin(colony.Plugin):
     description = "Authentication LDAP Plugin"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "authentication_handler"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.main.client.ldap")
-    ]
-    main_modules = [
-        "authentication_ldap"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["authentication_handler"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.main.client.ldap")]
+    main_modules = ["authentication_ldap"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import authentication_ldap
+
         self.system = authentication_ldap.AuthenticationLDAP(self)
 
     def get_handler_name(self):

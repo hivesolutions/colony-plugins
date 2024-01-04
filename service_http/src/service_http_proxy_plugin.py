@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPProxyPlugin(colony.Plugin):
     """
     The main class for the HTTP Service Main Proxy plugin.
@@ -43,26 +44,23 @@ class ServiceHTTPProxyPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "http_service_handler"
-    ]
-    capabilities_allowed = [
-        "directory_handler"
-    ]
+    capabilities = ["http_service_handler"]
+    capabilities_allowed = ["directory_handler"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
-        colony.PluginDependency("pt.hive.colony.plugins.main.pool.element_pool_manager"),
-        colony.PluginDependency("pt.hive.colony.plugins.misc.url_parser")
+        colony.PluginDependency(
+            "pt.hive.colony.plugins.main.pool.element_pool_manager"
+        ),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.url_parser"),
     ]
-    main_modules = [
-        "service_http_proxy"
-    ]
+    main_modules = ["service_http_proxy"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import service_http_proxy
+
         self.system = service_http_proxy.ServiceHTTPProxy(self)
 
     def end_load_plugin(self):

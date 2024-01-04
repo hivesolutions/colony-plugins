@@ -46,20 +46,20 @@ of variable names/parts should comply with both the name of the variable,
 possible filtering pipeline and method calls """
 
 LITERAL_REGEX = re.compile(
-    "(?P<quoted_single>['][^']+['])|" + \
-    "(?P<quoted_double>[\"][^\"]+[\"])|" + \
-    "(?P<float>-?[0-9]+\.[0-9]*)|" + \
-    "(?P<integer>-?[0-9]+)|" + \
-    "(?P<true_boolean>True)|" + \
-    "(?P<false_boolean>False)|" + \
-    "(?P<none>None)"
+    "(?P<quoted_single>['][^']+['])|"
+    + '(?P<quoted_double>["][^"]+["])|'
+    + "(?P<float>-?[0-9]+\.[0-9]*)|"
+    + "(?P<integer>-?[0-9]+)|"
+    + "(?P<true_boolean>True)|"
+    + "(?P<false_boolean>False)|"
+    + "(?P<none>None)"
 )
 """ Regular expression to be used in the parsing of literal values, named
 groups are used for the conditional retrieval of each of the types """
 
 IF_REGEX = re.compile(
-    "(?P<complex>(not\s+)?(.+)\s+(in|<|>|<=|>=|==)\s+(.+))|" + \
-    "(?P<simple>(not\s+)?(.+))"
+    "(?P<complex>(not\s+)?(.+)\s+(in|<|>|<=|>=|==)\s+(.+))|"
+    + "(?P<simple>(not\s+)?(.+))"
 )
 """ The regular expression that is going to be used for the extraction of the
 various parts of an if statement note that there are two forms of an if
@@ -67,23 +67,20 @@ statement one complex and one simple, this is required so that all forms
 of partial expression may be matched for variables """
 
 FOR_REGEX = re.compile(
-    "(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + \
-    "(?P<simple>(.+)\s+in\s+(.+))"
+    "(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + "(?P<simple>(.+)\s+in\s+(.+))"
 )
 """ Regular expression used for the mating of the various parts of the for
 expression the expression defines two modes one simple with just the key
 definition and one more complex with both key and value definitions """
 
-SET_REGEX = re.compile(
-    "(.+)\s+=\s+(.+)"
-)
+SET_REGEX = re.compile("(.+)\s+=\s+(.+)")
 """ The regular expression that is going to be used for the match operation
 in the payload of the set operation """
 
 OPERATORS = {
-    "in" : "in",
-    "==" : "eq",
-    ">=" : "gte",
+    "in": "in",
+    "==": "eq",
+    ">=": "gte",
     ">": "gt",
     "<=": "lte",
     "<": "lt",
@@ -92,6 +89,7 @@ OPERATORS = {
 internal template way of representing them, the internal representation is
 purely textual and a convention defines that if it starts with an 'n' character
 a negation should be done in the final boolean evaluation (not) """
+
 
 class AstNode(object):
     """
@@ -132,7 +130,8 @@ class AstNode(object):
     def accept(self, visitor):
         visitor.visit(self)
 
-        if not visitor.visit_childs: return
+        if not visitor.visit_childs:
+            return
 
         for child in self.children:
             child.accept(visitor)
@@ -164,6 +163,7 @@ class AstNode(object):
         node.parent = None
         self.children.remove(node)
 
+
 class RootNode(AstNode):
     """
     The root node class, this should be used only for
@@ -176,22 +176,27 @@ class RootNode(AstNode):
     def accept(self, visitor):
         visitor.visit(self)
 
-        if not visitor.visit_childs: return
+        if not visitor.visit_childs:
+            return
 
         while True:
-            if not self.children: break
+            if not self.children:
+                break
             child = self.children[0]
             type = child.get_type()
-            if not type == "extends": break
+            if not type == "extends":
+                break
             child.accept(visitor)
 
         for child in self.children:
             type = child.get_type()
-            if type == "extends": continue
+            if type == "extends":
+                continue
             child.accept(visitor)
 
     def get_type(self):
         return "root"
+
 
 class LiteralNode(AstNode):
     """
@@ -201,16 +206,16 @@ class LiteralNode(AstNode):
     must be visited with a simple printing operation.
     """
 
-    def __init__(self, value = None):
+    def __init__(self, value=None):
         AstNode.__init__(self)
         self.value = value
 
     def get_type(self):
         return "literal"
 
-class SimpleNode(AstNode):
 
-    def __init__(self, value = None, type = "out"):
+class SimpleNode(AstNode):
+    def __init__(self, value=None, type="out"):
         AstNode.__init__(self)
         self.value = value
         self.type = type
@@ -231,7 +236,8 @@ class SimpleNode(AstNode):
         visitor.process_accept(self, self.type)
 
     def parse(self, value):
-        if not value: return value
+        if not value:
+            return value
 
         original = value
 
@@ -240,13 +246,20 @@ class SimpleNode(AstNode):
             value = match.group()
             index = match.lastindex
 
-            if index == QUOTED_SINGLE: value = value.strip("'")
-            elif index == QUOTED_DOUBLE: value = value.strip("\"")
-            elif index == FLOAT: value = float(value)
-            elif index == INTEGER: value = int(value)
-            elif index == BOOL_TRUE: value = True
-            elif index == BOOL_FALSE: value = False
-            elif index == NONE: value = None
+            if index == QUOTED_SINGLE:
+                value = value.strip("'")
+            elif index == QUOTED_DOUBLE:
+                value = value.strip('"')
+            elif index == FLOAT:
+                value = float(value)
+            elif index == INTEGER:
+                value = int(value)
+            elif index == BOOL_TRUE:
+                value = True
+            elif index == BOOL_FALSE:
+                value = False
+            elif index == NONE:
+                value = None
 
             return self.literal(value, original)
 
@@ -255,21 +268,16 @@ class SimpleNode(AstNode):
             value = match.group().strip()
             return self.variable(value, original)
 
-    def variable(self, value, original = None):
-        if original == None: original = value
-        return dict(
-            value = value,
-            original = original,
-            type = "variable"
-        )
+    def variable(self, value, original=None):
+        if original == None:
+            original = value
+        return dict(value=value, original=original, type="variable")
 
-    def literal(self, value, original = None):
-        if original == None: original = value
-        return dict(
-            value = value,
-            original = original,
-            type = "literal"
-        )
+    def literal(self, value, original=None):
+        if original == None:
+            original = value
+        return dict(value=value, original=original, type="literal")
+
 
 class OutputNode(SimpleNode):
     """
@@ -281,8 +289,8 @@ class OutputNode(SimpleNode):
     configured as an out operation.
     """
 
-    def __init__(self, value = None, type = "out", xml_escape = True):
-        SimpleNode.__init__(self, value = value, type = type)
+    def __init__(self, value=None, type="out", xml_escape=True):
+        SimpleNode.__init__(self, value=value, type=type)
         self.attributes["xml_escape"] = xml_escape
 
     def process_value(self):
@@ -290,43 +298,59 @@ class OutputNode(SimpleNode):
         value = value.strip()
         self.attributes["value"] = self.parse(value)
 
-class EvalNode(SimpleNode):
 
+class EvalNode(SimpleNode):
     def process_value(self):
         value = self.value[2:-2]
         value = value.strip()
         value_s = value.split(" ", 1)
         self.type = value_s[0]
 
-        if len(value_s) > 1: contents = value_s[1].strip()
-        else: contents = None
+        if len(value_s) > 1:
+            contents = value_s[1].strip()
+        else:
+            contents = None
 
-        if self.type == "if": self._process_if(contents)
-        elif self.type == "else": pass
-        elif self.type == "elif": self._process_if(contents)
-        elif self.type == "for": self._process_for(contents)
-        elif self.type == "set": self._process_set(contents)
-        elif self.type == "block": self._process_block(contents)
-        elif self.type == "include": self._process_include(contents)
-        elif self.type == "extends": self._process_extends(contents)
-        elif self.type.startswith("end"): pass
-        else: raise exceptions.RuntimeError("invalid tag '%s'" % self.type)
+        if self.type == "if":
+            self._process_if(contents)
+        elif self.type == "else":
+            pass
+        elif self.type == "elif":
+            self._process_if(contents)
+        elif self.type == "for":
+            self._process_for(contents)
+        elif self.type == "set":
+            self._process_set(contents)
+        elif self.type == "block":
+            self._process_block(contents)
+        elif self.type == "include":
+            self._process_include(contents)
+        elif self.type == "extends":
+            self._process_extends(contents)
+        elif self.type.startswith("end"):
+            pass
+        else:
+            raise exceptions.RuntimeError("invalid tag '%s'" % self.type)
 
     def is_end(self):
-        if not self.type: return False
+        if not self.type:
+            return False
         return self.type.startswith("end")
 
     def is_open(self):
-        if not self.type: return False
+        if not self.type:
+            return False
         return self.type in ("if", "for", "block")
 
     def assert_end(self, type):
-        if type == self.type[3:]: return
+        if type == self.type[3:]:
+            return
         raise RuntimeError("Invalid end tag")
 
     def _process_if(self, contents):
         match = IF_REGEX.match(contents)
-        if not match: raise exceptions.RuntimeError("malformed if expression")
+        if not match:
+            raise exceptions.RuntimeError("malformed if expression")
 
         not_oper = False
         oper = None
@@ -343,11 +367,14 @@ class EvalNode(SimpleNode):
             not_oper = match.group(7)
             item = match.group(8)
 
-        if item: item = item.strip()
-        if value: value = value.strip()
+        if item:
+            item = item.strip()
+        if value:
+            value = value.strip()
 
         oper = OPERATORS.get(oper, oper)
-        if not_oper: oper = "n" + oper if oper else "not"
+        if not_oper:
+            oper = "n" + oper if oper else "not"
 
         self.attributes["item"] = self.parse(item)
         self.attributes["value"] = self.parse(value)
@@ -355,7 +382,8 @@ class EvalNode(SimpleNode):
 
     def _process_for(self, contents):
         match = FOR_REGEX.match(contents)
-        if not match: raise exceptions.RuntimeError("malformed for expression")
+        if not match:
+            raise exceptions.RuntimeError("malformed for expression")
 
         key = None
         _from = False
@@ -370,8 +398,10 @@ class EvalNode(SimpleNode):
             key = match.group(6)
             _from = match.group(7)
 
-        if item: item = item.strip()
-        if key: key = key.strip()
+        if item:
+            item = item.strip()
+        if key:
+            key = key.strip()
 
         self.attributes["item"] = self.literal(item)
         self.attributes["from"] = self.parse(_from)
@@ -379,7 +409,8 @@ class EvalNode(SimpleNode):
 
     def _process_set(self, contents):
         match = SET_REGEX.match(contents)
-        if not match: raise exceptions.RuntimeError("malformed for expression")
+        if not match:
+            raise exceptions.RuntimeError("malformed for expression")
 
         item = match.group(1)
         value = match.group(2)
@@ -398,6 +429,7 @@ class EvalNode(SimpleNode):
 
     def _process_extends(self, contents):
         self.attributes["file_value"] = self.parse(contents)
+
 
 class MatchNode(AstNode):
     """
@@ -425,7 +457,7 @@ class MatchNode(AstNode):
     """ The attribute literal regular expression, this value
     is going to be used in the matching of literal attributes """
 
-    def __init__(self, value = None, regex = None, literal_regex = None):
+    def __init__(self, value=None, regex=None, literal_regex=None):
         AstNode.__init__(self)
 
         self.value = value
@@ -466,11 +498,7 @@ class MatchNode(AstNode):
             # that represents the attribute setting it on the map
             attribute = match.group()
             name, value = attribute.split("=")
-            self.attributes[name] = dict(
-                value = value,
-                original = value,
-                type = "variable"
-            )
+            self.attributes[name] = dict(value=value, original=value, type="variable")
 
         # iterates over the complete set of literal matches to create
         # the attribute structure for each of them the data type for
@@ -482,19 +510,22 @@ class MatchNode(AstNode):
             index = match.lastindex
             original = value
 
-            if index == QUOTED_SINGLE: value = value.strip("'")
-            elif index == QUOTED_DOUBLE: value = value.strip("\"")
-            elif index == FLOAT: value = float(value)
-            elif index == INTEGER: value = int(value)
-            elif index == BOOL_TRUE: value = True
-            elif index == BOOL_FALSE: value = False
-            elif index == NONE: value = None
+            if index == QUOTED_SINGLE:
+                value = value.strip("'")
+            elif index == QUOTED_DOUBLE:
+                value = value.strip('"')
+            elif index == FLOAT:
+                value = float(value)
+            elif index == INTEGER:
+                value = int(value)
+            elif index == BOOL_TRUE:
+                value = True
+            elif index == BOOL_FALSE:
+                value = False
+            elif index == NONE:
+                value = None
 
-            self.attributes[name] = dict(
-                value = value,
-                original = original,
-                type = "literal"
-            )
+            self.attributes[name] = dict(value=value, original=original, type="literal")
 
     def get_type(self):
         return self.type
@@ -512,13 +543,14 @@ class MatchNode(AstNode):
     def set_attributes(self, attributes):
         self.attributes = attributes
 
+
 class SingleNode(MatchNode):
     """
     The single node class, that contains a single value
     and that should have a simple visiting operation.
     """
 
-    def __init__(self, value = None, regex = None, literal_regex = None):
+    def __init__(self, value=None, regex=None, literal_regex=None):
         MatchNode.__init__(self, value, regex, literal_regex)
 
     def get_start_match(self):
@@ -528,6 +560,7 @@ class SingleNode(MatchNode):
         type = self.get_type()
         visitor.process_accept(self, type)
 
+
 class CompositeNode(MatchNode):
     """
     The composite node class, that represents a node that contains
@@ -535,7 +568,7 @@ class CompositeNode(MatchNode):
     task of visiting multiple nodes.
     """
 
-    def __init__(self, value = None, regex = None, literal_regex = None):
+    def __init__(self, value=None, regex=None, literal_regex=None):
         MatchNode.__init__(self, value, regex, literal_regex)
 
     def get_start_match(self):

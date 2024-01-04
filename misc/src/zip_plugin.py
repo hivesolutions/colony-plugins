@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ZipPlugin(colony.Plugin):
     """
     The main class for the Zip plugin.
@@ -40,22 +41,17 @@ class ZipPlugin(colony.Plugin):
     description = "A plugin to manage zip files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "zip"
-    ]
-    main_modules = [
-        "zip_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["zip"]
+    main_modules = ["zip_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import zip_c
+
         self.system = zip_c.Zip(self)
 
-    def zip(self, zip_file_path, input_directory, file_path_list = None):
+    def zip(self, zip_file_path, input_directory, file_path_list=None):
         """
         Compresses the contents of the provided directory into a zip file.
 

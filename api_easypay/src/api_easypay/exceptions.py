@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIEasypayException(colony.ColonyException):
     """
     The API Easypay exception class.
@@ -37,6 +38,7 @@ class APIEasypayException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class EasypayAPIError(APIEasypayException):
     """

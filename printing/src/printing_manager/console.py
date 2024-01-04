@@ -33,6 +33,7 @@ import colony
 CONSOLE_EXTENSION_NAME = "printing"
 """ The console extension name """
 
+
 class ConsolePrintingManager(colony.System):
     """
     The console printing manager class, responsible
@@ -50,40 +51,29 @@ class ConsolePrintingManager(colony.System):
         return self.commands_map
 
     def process_print_test(
-        self,
-        arguments,
-        arguments_map,
-        output_method,
-        console_context
+        self, arguments, arguments_map, output_method, console_context
     ):
         printing_manager = self.plugin.system
         printing_manager.print_test()
 
     def process_print_test_image(
-        self,
-        arguments,
-        arguments_map,
-        output_method,
-        console_context
+        self, arguments, arguments_map, output_method, console_context
     ):
         printing_manager = self.plugin.system
         printing_manager.print_test_image()
 
     def process_print_printing_language(
-        self,
-        arguments,
-        arguments_map,
-        output_method,
-        console_context,
-        file_path
+        self, arguments, arguments_map, output_method, console_context, file_path
     ):
         # retrieves the provided file path value and reads it's contents
         # then closes the file, these contents are the ones that are going
         # to be used for the printing process of the file
         file_path = arguments_map.get("file_path", None)
         file = open(file_path, "r")
-        try: contents = file.read()
-        finally: file.close()
+        try:
+            contents = file.read()
+        finally:
+            file.close()
 
         # retrieves the reference to the printing manager instance
         # and runs the printing process for the provided contents
@@ -92,24 +82,24 @@ class ConsolePrintingManager(colony.System):
 
     def __generate_commands_map(self):
         return {
-            "print_test" : {
-                "handler" : self.process_print_test,
-                "description" : "prints a test page"
+            "print_test": {
+                "handler": self.process_print_test,
+                "description": "prints a test page",
             },
-            "print_image" : {
-                "handler" : self.process_print_test_image,
-                "description" : "prints a test page with an image"
+            "print_image": {
+                "handler": self.process_print_test_image,
+                "description": "prints a test page with an image",
             },
-            "print_language" : {
-                "handler" : self.process_print_test_image,
-                "description" : "prints the page described in the file of the given file path",
-                "arguments" : [
+            "print_language": {
+                "handler": self.process_print_test_image,
+                "description": "prints the page described in the file of the given file path",
+                "arguments": [
                     {
-                        "name" : "file_path",
-                        "description" : "path to the file name to be printed",
-                        "values" : str,
-                        "mandatory" : False
+                        "name": "file_path",
+                        "description": "path to the file name to be printed",
+                        "values": str,
+                        "mandatory": False,
                     }
-                ]
-            }
+                ],
+            },
         }

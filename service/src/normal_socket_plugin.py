@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class NormalSocketPlugin(colony.Plugin):
     """
     The main class for the Normal Socket plugin.
@@ -43,18 +44,15 @@ class NormalSocketPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "socket_provider"
-    ]
-    main_modules = [
-        "normal_socket"
-    ]
+    capabilities = ["socket_provider"]
+    main_modules = ["normal_socket"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import normal_socket
+
         self.system = normal_socket.NormalSocket(self)
 
     def get_provider_name(self):

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class EntityManagerAnalyser(object):
     """
     Entity manager analyser class responsible for the
@@ -59,7 +60,12 @@ class EntityManagerAnalyser(object):
         self.analyse_definition(entity_class)
 
     def analyse_definition(self, entity_class):
-        if entity_class.is_abstract(): return
-        if not entity_class.is_ready(): return
-        if self.entity_manager.exists(entity_class): return
-        self.plugin.warning("No definition for class '%s' exists" % entity_class.__name__)
+        if entity_class.is_abstract():
+            return
+        if not entity_class.is_ready():
+            return
+        if self.entity_manager.exists(entity_class):
+            return
+        self.plugin.warning(
+            "No definition for class '%s' exists" % entity_class.__name__
+        )

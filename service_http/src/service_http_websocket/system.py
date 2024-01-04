@@ -81,6 +81,7 @@ DIGITS_REGEX = re.compile(DIGITS_REGEX_VALUE)
 SPACE_REGEX = re.compile(SPACE_REGEX_VALUE)
 """ The spaces regex """
 
+
 class ServiceHTTPWebsocket(colony.System):
     """
     The service HTTP websocket (handler) class.
@@ -131,6 +132,7 @@ class ServiceHTTPWebsocket(colony.System):
         handler_name = websocket_handler_plugin.get_handler_name()
 
         del self.websocket_handler_plugins_map[handler_name]
+
 
 class WebSocketConnection(object):
     """
@@ -252,7 +254,9 @@ class WebSocketConnection(object):
 
         # sets the request handler for the service
         # this step upgrades the protocol interpretation
-        self.service.set_service_connection_request_handler(self.service_connection, service_connection_handler)
+        self.service.set_service_connection_request_handler(
+            self.service_connection, service_connection_handler
+        )
 
         # sets the websocket connection values
         self.protocol = protocol
@@ -294,7 +298,9 @@ class WebSocketConnection(object):
 
     def _get_service_connection_handler(self, protocol):
         # retrieves the websocket handler plugins map
-        websocket_handler_plugins_map = self.service_http_websocket_handler.websocket_handler_plugins_map
+        websocket_handler_plugins_map = (
+            self.service_http_websocket_handler.websocket_handler_plugins_map
+        )
 
         # in case the protocol is the default one
         if protocol == DEFAULT_WEB_SOCKET_PROTOCOL:
@@ -312,7 +318,9 @@ class WebSocketConnection(object):
 
             # sets the service connection handler as the handle service connection
             # method of the websocket handler plugins
-            service_connection_handler = websocket_handler_plugin.handle_service_connection
+            service_connection_handler = (
+                websocket_handler_plugin.handle_service_connection
+            )
 
         # returns the service connection handler
         return service_connection_handler

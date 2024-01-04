@@ -37,38 +37,42 @@ DEFAULT_ALGORITHM_NAME = "sha1"
 
 models = colony.__import__("models")
 
-class MainController(BaseController):
 
+class MainController(BaseController):
     def encrypt(self, request):
         signature_controller = self.system.signature_controller
         api_key = request.form("api_key", None)
-        key_name = request.form("key_name", required = True)
-        message = request.form("message", required = True)
+        key_name = request.form("key_name", required=True)
+        message = request.form("message", required=True)
         message_e = signature_controller.encrypt(request, api_key, key_name, message)
         self.set_contents(request, message_e, "text/plain")
 
     def decrypt(self, request):
         signature_controller = self.system.signature_controller
         api_key = request.form("api_key", None)
-        key_name = request.form("key_name", required = True)
-        message_e = request.form("message_e", required = True)
+        key_name = request.form("key_name", required=True)
+        message_e = request.form("message_e", required=True)
         message = signature_controller.decrypt(request, api_key, key_name, message_e)
         self.set_contents(request, message, "text/plain")
 
     def sign(self, request):
         signature_controller = self.system.signature_controller
         api_key = request.form("api_key", None)
-        key_name = request.form("key_name", required = True)
-        message = request.form("message", required = True)
+        key_name = request.form("key_name", required=True)
+        message = request.form("message", required=True)
         algorithm_name = request.form("algorithm_name", DEFAULT_ALGORITHM_NAME)
-        signature = signature_controller.sign(request, api_key, key_name, message, algorithm_name)
+        signature = signature_controller.sign(
+            request, api_key, key_name, message, algorithm_name
+        )
         self.set_contents(request, signature, "text/plain")
 
     def verify(self, request):
         signature_controller = self.system.signature_controller
         api_key = request.form("api_key", None)
-        key_name = request.form("key_name", required = True)
-        signature = request.form("signature", required = True)
-        message = request.form("message", required = True)
-        result = signature_controller.verify(request, api_key, key_name, signature, message)
+        key_name = request.form("key_name", required=True)
+        signature = request.form("signature", required=True)
+        message = request.form("message", required=True)
+        result = signature_controller.verify(
+            request, api_key, key_name, signature, message
+        )
         self.set_contents(request, result, "text/plain")

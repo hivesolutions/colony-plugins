@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class DownloaderException(colony.ColonyException):
     """
     The downloader exception class.
@@ -37,6 +38,7 @@ class DownloaderException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class InvalidStatusCodeException(DownloaderException):
     """

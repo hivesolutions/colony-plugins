@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ConsoleInterfacePlugin(colony.Plugin):
     """
     The main class for the Console Interface plugin.
@@ -43,21 +44,16 @@ class ConsoleInterfacePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "main"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.console")
-    ]
-    main_modules = [
-        "console_interface"
-    ]
+    capabilities = ["main"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.console")]
+    main_modules = ["console_interface"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import console_interface
+
         self.system = console_interface.ConsoleInterface(self)
         self.release_ready_semaphore()
 

@@ -74,6 +74,7 @@ SLEEP_STEP_VALUE = "sleep_step"
 DEFAULT_SLEEP_STEP = 1.0
 """ The default sleep step value used in sleep function """
 
+
 class Scheduler(colony.System):
     """
     The scheduler class.
@@ -144,13 +145,16 @@ class Scheduler(colony.System):
 
             # in case the continue flag is disabled
             # breaks the cycle
-            if not self.continue_flag: break
+            if not self.continue_flag:
+                break
 
             # runs the scheduler, a cancel operation
             # is triggered in the scheduler the cycle
             # is broken (breaks the loop)
-            try: self.scheduler.run()
-            except exceptions.SchedulerCancel: break
+            try:
+                self.scheduler.run()
+            except exceptions.SchedulerCancel:
+                break
 
     def unload_scheduler(self):
         """
@@ -167,7 +171,8 @@ class Scheduler(colony.System):
 
         # in case the scheduler lock is locked
         # releases the lock (avoids dead lock)
-        if self.scheduler_lock.locked(): self.scheduler_lock.release()
+        if self.scheduler_lock.locked():
+            self.scheduler_lock.release()
 
     def register_task(self, task, time):
         """
@@ -288,7 +293,9 @@ class Scheduler(colony.System):
             method_arguments = task_arguments[METHOD_ARGUMENTS_VALUE]
 
             # creates a new scheduler item
-            scheduler_item = self.create_scheduler_item(method, method_arguments, absolute_time, recursion_list, task)
+            scheduler_item = self.create_scheduler_item(
+                method, method_arguments, absolute_time, recursion_list, task
+            )
         # in case the task is of type console_command
         elif task_type == CONSOLE_COMMAND_TYPE:
             # retrieves the console command
@@ -305,7 +312,7 @@ class Scheduler(colony.System):
                 [console_command, default_console_output_method],
                 absolute_time,
                 recursion_list,
-                task
+                task,
             )
         # otherwise it's an invalid task type
         else:
@@ -341,7 +348,9 @@ class Scheduler(colony.System):
         # registers the task
         self.register_task_absolute_recursive(task, new_timestamp, recursion_list)
 
-    def register_task_date_time_absolute_recursive(self, task, absolute_date_time, recursion_list):
+    def register_task_date_time_absolute_recursive(
+        self, task, absolute_date_time, recursion_list
+    ):
         """
         Registers the given task for a recursive usage starting from
         the given absolute date time value.
@@ -401,7 +410,9 @@ class Scheduler(colony.System):
         # cleans the startup configuration
         colony.map_clean(self.startup_configuration)
 
-    def create_scheduler_item(self, task_method, task_method_arguments, absolute_time, recursion_list, task):
+    def create_scheduler_item(
+        self, task_method, task_method_arguments, absolute_time, recursion_list, task
+    ):
         # retrieves the guid plugin
         guid_plugin = self.plugin.guid_plugin
 
@@ -409,7 +420,14 @@ class Scheduler(colony.System):
         item_id = guid_plugin.generate_guid()
 
         # creates the new scheduler item instance
-        scheduler_item = SchedulerItem(item_id, task_method, task_method_arguments, absolute_time, recursion_list, task)
+        scheduler_item = SchedulerItem(
+            item_id,
+            task_method,
+            task_method_arguments,
+            absolute_time,
+            recursion_list,
+            task,
+        )
 
         # sets the scheduler item in the task
         task.scheduler_item = scheduler_item
@@ -424,19 +442,23 @@ class Scheduler(colony.System):
             self.scheduler_items.append(scheduler_item)
 
         # creates the new scheduler task
-        current_event = self.scheduler.enterabs(scheduler_item.absolute_time, 1, self.task_hander, [scheduler_item])
+        current_event = self.scheduler.enterabs(
+            scheduler_item.absolute_time, 1, self.task_hander, [scheduler_item]
+        )
 
         # sets the current event for the scheduler item
         scheduler_item.current_event = current_event
 
         # in case the scheduler lock is locked
         # must release it (releases the lock)
-        if self.scheduler_lock.locked(): self.scheduler_lock.release()
+        if self.scheduler_lock.locked():
+            self.scheduler_lock.release()
 
     def remove_scheduler_item(self, scheduler_item):
         # in case the scheduler item is not currently
         # present in the scheduler items, returns immediately
-        if not scheduler_item in self.scheduler_items: return
+        if not scheduler_item in self.scheduler_items:
+            return
 
         # removes the scheduler item from the list of scheduler items
         self.scheduler_items.remove(scheduler_item)
@@ -449,11 +471,13 @@ class Scheduler(colony.System):
 
             # cancels the current event, and in case a value
             # error occurs prints a warning message
-            try: self.scheduler.cancel(current_event)
-            except ValueError as exception: self.plugin.warning(
-                "Problem canceling the current event: %s" %\
-                colony.legacy.UNICODE(exception)
-            )
+            try:
+                self.scheduler.cancel(current_event)
+            except ValueError as exception:
+                self.plugin.warning(
+                    "Problem canceling the current event: %s"
+                    % colony.legacy.UNICODE(exception)
+                )
 
         # cancels the scheduler item
         scheduler_item.canceled = True
@@ -489,7 +513,12 @@ class Scheduler(colony.System):
         self.plugin.info("Starting execution of task: " + item_id_string)
 
         # prints a debug message
-        self.plugin.debug("Calling task method: " + item_task_method_name + " with arguments: " + task_method_arguments_string)
+        self.plugin.debug(
+            "Calling task method: "
+            + item_task_method_name
+            + " with arguments: "
+            + task_method_arguments_string
+        )
 
         try:
             # calls the task method with the task method arguments, this
@@ -498,8 +527,12 @@ class Scheduler(colony.System):
         except Exception as exception:
             # prints an error message
             self.plugin.error(
-                "Problem executing scheduler task: " + item_id_string +\
-                " (" + item_task_method_name + ") with error: " + colony.legacy.UNICODE(exception)
+                "Problem executing scheduler task: "
+                + item_id_string
+                + " ("
+                + item_task_method_name
+                + ") with error: "
+                + colony.legacy.UNICODE(exception)
             )
 
         # in case the continue flag is not set
@@ -522,7 +555,13 @@ class Scheduler(colony.System):
             current_date_time = datetime.datetime.utcnow()
 
             # create the delta date time object
-            delta_date_time = datetime.timedelta(days = recursion_list[0], hours = recursion_list[1], minutes = recursion_list[2], seconds = recursion_list[3], microseconds = recursion_list[4])
+            delta_date_time = datetime.timedelta(
+                days=recursion_list[0],
+                hours=recursion_list[1],
+                minutes=recursion_list[2],
+                seconds=recursion_list[3],
+                microseconds=recursion_list[4],
+            )
 
             # creates the new date time object
             new_date_time = current_date_time + delta_date_time
@@ -571,7 +610,9 @@ class Scheduler(colony.System):
         """
 
         # retrieves the sleep step from the startup configuration map
-        self.sleep_step = self.startup_configuration.get(SLEEP_STEP_VALUE, DEFAULT_SLEEP_STEP)
+        self.sleep_step = self.startup_configuration.get(
+            SLEEP_STEP_VALUE, DEFAULT_SLEEP_STEP
+        )
 
     def _load_startup_tasks(self):
         """
@@ -599,7 +640,9 @@ class Scheduler(colony.System):
             recursion_list = startup_task[RECURSION_LIST_VALUE]
 
             # retrieves the plugin
-            plugin = plugin_manager.get_plugin_by_id_and_version(plugin_id, plugin_version)
+            plugin = plugin_manager.get_plugin_by_id_and_version(
+                plugin_id, plugin_version
+            )
 
             # retrieves the plugin method
             plugin_method = getattr(plugin, method)
@@ -608,7 +651,13 @@ class Scheduler(colony.System):
             startup_task_reference = SchedulerTask(METHOD_CALL_TYPE)
 
             # creates the scheduler item from the plugin method and the arguments
-            scheduler_item = self.create_scheduler_item(plugin_method, arguments, current_time, recursion_list, startup_task_reference)
+            scheduler_item = self.create_scheduler_item(
+                plugin_method,
+                arguments,
+                current_time,
+                recursion_list,
+                startup_task_reference,
+            )
 
             # adds the scheduler item
             self.add_scheduler_item(scheduler_item)
@@ -638,10 +687,12 @@ class Scheduler(colony.System):
             # in case the continue flag is not set must
             # return immediately raising a scheduler
             # cancel exception (will stop the scheduler)
-            if not self.continue_flag: exceptions.SchedulerCancel("continue flag is not set")
+            if not self.continue_flag:
+                exceptions.SchedulerCancel("continue flag is not set")
 
         # sleeps the extra sleep time
         time.sleep(extra_sleep_time)
+
 
 class SchedulerTask(object):
     """
@@ -657,7 +708,7 @@ class SchedulerTask(object):
     scheduler_item = None
     """ The scheduler item """
 
-    def __init__(self, task_type, task_arguments = {}, scheduler_item = None):
+    def __init__(self, task_type, task_arguments={}, scheduler_item=None):
         """
         Constructor of the class.
 
@@ -672,6 +723,7 @@ class SchedulerTask(object):
         self.task_type = task_type
         self.task_arguments = task_arguments
         self.scheduler_item = scheduler_item
+
 
 class SchedulerItem(object):
     """
@@ -704,7 +756,17 @@ class SchedulerItem(object):
     canceled = False
     """ The canceled flag """
 
-    def __init__(self, item_id, task_method, task_method_arguments, absolute_time, recursion_list = None, scheduler_task = None, current_event = None, canceled = False):
+    def __init__(
+        self,
+        item_id,
+        task_method,
+        task_method_arguments,
+        absolute_time,
+        recursion_list=None,
+        scheduler_task=None,
+        current_event=None,
+        canceled=False,
+    ):
         """
         Constructor of the class.
 

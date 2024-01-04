@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ResourcesManagerException(colony.ColonyException):
     """
     The resources manager exception class.

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ResourcesAutoloaderPlugin(colony.Plugin):
     """
     The main class for the Resources Autoloader plugin.
@@ -37,28 +38,24 @@ class ResourcesAutoloaderPlugin(colony.Plugin):
 
     id = "pt.hive.colony.plugins.resources.autoloader"
     name = "Resources Autoloader"
-    description = "A plugin to automatically loads and reloads resources in the plugin system"
+    description = (
+        "A plugin to automatically loads and reloads resources in the plugin system"
+    )
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "main",
-        "resources_autoloader"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.resources.manager")
-    ]
-    main_modules = [
-        "resources_autoloader"
-    ]
+    capabilities = ["main", "resources_autoloader"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.resources.manager")]
+    main_modules = ["resources_autoloader"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import resources_autoloader
+
         self.system = resources_autoloader.ResourcesAutoloader(self)
         self.release_ready_semaphore()
 

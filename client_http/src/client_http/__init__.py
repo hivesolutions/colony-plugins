@@ -29,7 +29,11 @@ from . import exceptions
 from . import system
 from . import test
 
-from .exceptions import ClientHTTPException, HTTPInvalidURLData, HTTPRuntimeException,\
-    HTTPInvalidDataException
+from .exceptions import (
+    ClientHTTPException,
+    HTTPInvalidURLData,
+    HTTPRuntimeException,
+    HTTPInvalidDataException,
+)
 from .system import ClientHTTP
 from .test import ClientHTTPTest, ClientHTTPTestCase

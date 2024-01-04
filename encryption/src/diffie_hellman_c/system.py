@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class DiffieHellman(colony.System):
     """
     The diffie hellman class, responsible for the management
@@ -45,6 +46,7 @@ class DiffieHellman(colony.System):
         base_value = parameters.get("base_value", None)
         diffie_hellman_structure = DiffieHellmanStructure(prime_value, base_value)
         return diffie_hellman_structure
+
 
 class DiffieHellmanStructure(object):
     """
@@ -70,7 +72,7 @@ class DiffieHellmanStructure(object):
     g_value = None
     """ The "g" (base) value """
 
-    def __init__(self, p_value = None, g_value = None):
+    def __init__(self, p_value=None, g_value=None):
         """
         Constructor of the class.
 

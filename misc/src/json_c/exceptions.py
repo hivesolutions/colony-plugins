@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class JSONException(colony.ColonyException):
     """
     The JSON exception class.
@@ -37,6 +38,7 @@ class JSONException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class JSONEncodeException(JSONException):
     """
@@ -63,6 +65,7 @@ class JSONEncodeException(JSONException):
         """
 
         return "Object not encodable - %s" % self.object
+
 
 class JSONDecodeException(JSONException):
     """

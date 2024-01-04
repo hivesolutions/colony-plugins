@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ServiceHTTPColonyException(colony.ColonyException):
     """
     The service HTTP colony exception class.
@@ -38,12 +39,13 @@ class ServiceHTTPColonyException(colony.ColonyException):
     message = None
     """ The exception's message """
 
+
 class RequestNotHandled(ServiceHTTPColonyException):
     """
     The request not handled class.
     """
 
-    def __init__(self, message, status_code = 404):
+    def __init__(self, message, status_code=404):
         """
         Constructor of the class.
 

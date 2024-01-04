@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class GzipPlugin(colony.Plugin):
     """
     The main class for the Gzip plugin.
@@ -40,20 +41,14 @@ class GzipPlugin(colony.Plugin):
     description = "A plugin to manage gzip files"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT
-    ]
-    capabilities = [
-        "zip"
-    ]
-    main_modules = [
-        "gzip_c"
-    ]
+    platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
+    capabilities = ["zip"]
+    main_modules = ["gzip_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import gzip_c
+
         self.system = gzip_c.Gzip(self)
 
     def gzip_contents(self, contents_string):

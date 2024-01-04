@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class FormcodeException(colony.ColonyException):
     """
     The formcode exception class.
@@ -37,6 +38,7 @@ class FormcodeException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class FormcodeEncodeException(FormcodeException):
     """
@@ -63,6 +65,7 @@ class FormcodeEncodeException(FormcodeException):
         """
 
         return "Object not encodable - %s" % self.object
+
 
 class FormcodeDecodeException(FormcodeException):
     """

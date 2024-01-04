@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ConsoleFileSystemPlugin(colony.Plugin):
     """
     The main class for the Console File System plugin.
@@ -43,18 +44,15 @@ class ConsoleFileSystemPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "console_command_extension"
-    ]
-    main_modules = [
-        "console_file_system"
-    ]
+    capabilities = ["console_command_extension"]
+    main_modules = ["console_file_system"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import console_file_system
+
         self.system = console_file_system.ConsoleFileSystem(self)
 
     def get_console_extension_name(self):

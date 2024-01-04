@@ -40,6 +40,7 @@ BUFFER_LENGTH = 4096
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding """
 
+
 class Zip(colony.System):
     """
     Provides functions to interact with zip files.
@@ -332,7 +333,7 @@ class Zip(colony.System):
         # returns the file contents
         return file_contents
 
-    def zip(self, zip_file_path, input_directory, file_path_list = None):
+    def zip(self, zip_file_path, input_directory, file_path_list=None):
         """
         Compresses the contents of the provided directory into a zip file.
 
@@ -357,10 +358,7 @@ class Zip(colony.System):
 
         # creates a new zip file for writing in DEFALATED mode
         zip_file = zipfile.ZipFile(
-            zip_file_path,
-            model = "w",
-            compression = zipfile.ZIP_DEFLATED,
-            allowZip64 = True
+            zip_file_path, model="w", compression=zipfile.ZIP_DEFLATED, allowZip64=True
         )
 
         try:
@@ -377,7 +375,7 @@ class Zip(colony.System):
                 file_path = os.path.join(input_directory, file_path)
 
                 # retrieves the output file path
-                output_file_path = file_path[len(input_directory):len(file_path)]
+                output_file_path = file_path[len(input_directory) : len(file_path)]
 
                 # retrieves the output file path type
                 output_file_path_type = type(output_file_path)
@@ -448,7 +446,8 @@ class Zip(colony.System):
         # returns the zip file names
         return zip_file_names
 
-def get_file_paths(path, returned_path_list = None):
+
+def get_file_paths(path, returned_path_list=None):
     """
     Returns a list with full paths to all files contained within the specified directory.
 

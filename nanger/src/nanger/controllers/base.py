@@ -32,7 +32,7 @@ import colony
 
 controllers = colony.__import__("controllers")
 
-class BaseController(controllers.Controller):
 
+class BaseController(controllers.Controller):
     def __init__(self, plugin, system):
         controllers.Controller.__init__(self, plugin, system)

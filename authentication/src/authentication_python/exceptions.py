@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class AuthenticationPythonHandlerException(colony.ColonyException):
     """
     The authentication python handler exception class.
@@ -37,6 +38,7 @@ class AuthenticationPythonHandlerException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class MissingArgument(AuthenticationPythonHandlerException):
     """
@@ -63,6 +65,7 @@ class MissingArgument(AuthenticationPythonHandlerException):
         """
 
         return "Missing argument - %s" % self.message
+
 
 class AuthenticationError(AuthenticationPythonHandlerException):
     """

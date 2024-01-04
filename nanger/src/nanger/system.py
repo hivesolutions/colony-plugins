@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class Nanger(colony.System):
     """
     The nanger class.
@@ -76,17 +77,49 @@ class Nanger(colony.System):
             (r"nanger/log", self.main_controller.log, "get"),
             (r"nanger/diagnostics", self.main_controller.diagnostics, "get"),
             (r"nanger/about", self.main_controller.about, "get"),
-            (r"nanger/diagnostics/requests", self.diagnostics_controller.requests, "get"),
-            (r"nanger/diagnostics/requests/list", self.diagnostics_controller.requests_list, "get"),
-            (r"nanger/diagnostics/requests/<int:request_id>", self.diagnostics_controller.requests_show, "get"),
+            (
+                r"nanger/diagnostics/requests",
+                self.diagnostics_controller.requests,
+                "get",
+            ),
+            (
+                r"nanger/diagnostics/requests/list",
+                self.diagnostics_controller.requests_list,
+                "get",
+            ),
+            (
+                r"nanger/diagnostics/requests/<int:request_id>",
+                self.diagnostics_controller.requests_show,
+                "get",
+            ),
             (r"nanger/plugins/list", self.plugin_controller.list, "get"),
             (r"nanger/plugins/<str:plugin_id>", self.plugin_controller.show, "get"),
-            (r"nanger/plugins/<str:plugin_id>/load", self.plugin_controller.load, "get"),
-            (r"nanger/plugins/<str:plugin_id>/unload", self.plugin_controller.unload, "get"),
-            (r"nanger/plugins/<str:plugin_id>/reload", self.plugin_controller.reload, "get"),
+            (
+                r"nanger/plugins/<str:plugin_id>/load",
+                self.plugin_controller.load,
+                "get",
+            ),
+            (
+                r"nanger/plugins/<str:plugin_id>/unload",
+                self.plugin_controller.unload,
+                "get",
+            ),
+            (
+                r"nanger/plugins/<str:plugin_id>/reload",
+                self.plugin_controller.reload,
+                "get",
+            ),
             (r"nanger/console/init", self.console_controller.init, ("get", "post")),
-            (r"nanger/console/execute", self.console_controller.execute, ("get", "post")),
-            (r"nanger/console/autocomplete", self.console_controller.autocomplete, ("get", "post"))
+            (
+                r"nanger/console/execute",
+                self.console_controller.execute,
+                ("get", "post"),
+            ),
+            (
+                r"nanger/console/autocomplete",
+                self.console_controller.autocomplete,
+                ("get", "post"),
+            ),
         )
 
     def get_resource_patterns(self):
@@ -106,5 +139,8 @@ class Nanger(colony.System):
         plugin_path = plugin_manager.get_plugin_path_by_id(self.plugin.id)
 
         return (
-            (r"nanger/resources/.+", (plugin_path + "/nanger/resources/extras", "nanger/resources")),
+            (
+                r"nanger/resources/.+",
+                (plugin_path + "/nanger/resources/extras", "nanger/resources"),
+            ),
         )

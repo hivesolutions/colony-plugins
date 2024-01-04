@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ConsoleInterfaceException(colony.ColonyException):
     """
     The console interface exception class.
@@ -37,6 +38,7 @@ class ConsoleInterfaceException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class UndefinedConsoleInterface(ConsoleInterfaceException):
     """
@@ -63,6 +65,7 @@ class UndefinedConsoleInterface(ConsoleInterfaceException):
         """
 
         return "Undefined console interface - %s" % self.message
+
 
 class IncompatibleConsoleInterface(ConsoleInterfaceException):
     """

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class Crypton(colony.System):
     """
     The crypton class, responsible for the coordination of
@@ -58,10 +59,9 @@ class Crypton(colony.System):
         mvc_utils_plugin = self.plugin.mvc_utils_plugin
         self.arguments = mvc_utils_plugin.manager_arguments(
             self.plugin,
-            parameters = dict(
-                id = "pt.hive.colony.crypton.database",
-                database_prefix = "crypton_"
-            )
+            parameters=dict(
+                id="pt.hive.colony.crypton.database", database_prefix="crypton_"
+            ),
         )
 
         # creates the entity models classes by creating the entity manager
@@ -98,7 +98,7 @@ class Crypton(colony.System):
             (r"crypton/decrypt", self.main_controller.decrypt, "get"),
             (r"crypton/sign", self.main_controller.sign, "get"),
             (r"crypton/verify", self.main_controller.verify, "get"),
-            (r"crypton/consumers", self.consumer_controller.create, "post")
+            (r"crypton/consumers", self.consumer_controller.create, "post"),
         )
 
     def get_controller(self, name):

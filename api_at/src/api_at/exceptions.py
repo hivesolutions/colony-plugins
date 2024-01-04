@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class APIATException(colony.ColonyException):
     """
     The API AT exception class.
@@ -37,6 +38,7 @@ class APIATException(colony.ColonyException):
 
     message = None
     """ The exception's message """
+
 
 class ATAPIError(APIATException):
     """
@@ -53,7 +55,7 @@ class ATAPIError(APIATException):
     describe the issue in detail, the data type of this
     attribute is dynamic and can be a dictionary or a string """
 
-    def __init__(self, message, error_code = None, details = None):
+    def __init__(self, message, error_code=None, details=None):
         """
         Constructor of the class.
 
@@ -80,12 +82,15 @@ class ATAPIError(APIATException):
         :return: The string representation of the class.
         """
 
-        return "AT API error (%d) - %s" % (self.error_code, self.message) if\
-            self.error_code else "AT API error - %s" % self.message
+        return (
+            "AT API error (%d) - %s" % (self.error_code, self.message)
+            if self.error_code
+            else "AT API error - %s" % self.message
+        )
+
 
 class ATVersionError(APIATException):
-
-    def __init__(self, version = None):
+    def __init__(self, version=None):
         """
         Constructor of the class.
 
@@ -105,5 +110,8 @@ class ATVersionError(APIATException):
         :return: The string representation of the class.
         """
 
-        return "AT Version error - %d" % self.version if\
-            self.version else "AT Version error"
+        return (
+            "AT Version error - %d" % self.version
+            if self.version
+            else "AT Version error"
+        )

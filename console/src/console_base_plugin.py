@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class ConsoleBasePlugin(colony.Plugin):
     """
     The main class for the Console Base plugin.
@@ -43,21 +44,16 @@ class ConsoleBasePlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "console_command_extension"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.console")
-    ]
-    main_modules = [
-        "console_base"
-    ]
+    capabilities = ["console_command_extension"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.console")]
+    main_modules = ["console_base"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import console_base
+
         self.system = console_base.ConsoleBase(self)
 
     def get_console_extension_name(self):

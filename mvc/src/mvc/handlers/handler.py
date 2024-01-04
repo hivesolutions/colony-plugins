@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2023 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+
 class Handler(object):
     """
     The abstract handler class to be used for handlers that
@@ -49,12 +50,14 @@ class Handler(object):
         # in case it's not a map returns immediately, plain messages
         # are not "filterable"
         message_t = type(message)
-        if not message_t == dict: return message
+        if not message_t == dict:
+            return message
 
         # iterates over the complete set of filters registered in the
         # handler and runs them in the message, retrieving the filtered
         # message as the new message
-        for filter in self.filters: message = filter(message)
+        for filter in self.filters:
+            message = filter(message)
         return message
 
     def plain_filter(self, message):

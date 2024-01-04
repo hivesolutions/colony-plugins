@@ -39,6 +39,7 @@ DEFAULT_NUMBER_BITS = 1024
 """ The default number of bits to be used in the generation
 of the private key """
 
+
 class SSL(colony.System):
     """
     The SSL class, responsible for the creation of
@@ -55,6 +56,7 @@ class SSL(colony.System):
         # and then returns it to the caller method
         ssl_structure = SSLStructure(rsa_plugin, pkcs1_plugin)
         return ssl_structure
+
 
 class SSLStructure(object):
     """
@@ -84,7 +86,9 @@ class SSLStructure(object):
         self.rsa_plugin = rsa_plugin
         self.pkcs1_plugin = pkcs1_plugin
 
-    def generate_keys(self, private_key_path, public_key_path, number_bits = DEFAULT_NUMBER_BITS):
+    def generate_keys(
+        self, private_key_path, public_key_path, number_bits=DEFAULT_NUMBER_BITS
+    ):
         # creates both structures that are required for
         # the generation of the keys an packing of them
         rsa_structure = self.rsa_plugin.create_structure({})
@@ -221,7 +225,9 @@ class SSLStructure(object):
         # algorithm name and then used the resulting string
         # value to sign (encrypt) it under RSA using the
         # private key
-        signature_verified = pkcs1_structure.sign(keys, hash_algorithm_name, base_string_value)
+        signature_verified = pkcs1_structure.sign(
+            keys, hash_algorithm_name, base_string_value
+        )
         signature = rsa_structure.sign(signature_verified)
 
         # returns the resulting signature value as a plain
@@ -265,7 +271,8 @@ class SSLStructure(object):
             # in case the base index is greater or equal
             # to the private key der encoded length must
             # break the loop (end of iteration)
-            if base_index >= string_value_length: break
+            if base_index >= string_value_length:
+                break
 
             # calculates the end index from the base index
             end_index = base_index + BASE_64_ENCODED_MAXIMUM_SIZE

@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+
 class MimeUtilsPlugin(colony.Plugin):
     """
     The main class for the Mime Format Utils plugin.
@@ -43,31 +44,34 @@ class MimeUtilsPlugin(colony.Plugin):
     platforms = [
         colony.CPYTHON_ENVIRONMENT,
         colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT
+        colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = [
-        "format.mime.utils"
-    ]
-    dependencies = [
-        colony.PluginDependency("pt.hive.colony.plugins.format.mime")
-    ]
-    main_modules = [
-        "mime_utils_c"
-    ]
+    capabilities = ["format.mime.utils"]
+    dependencies = [colony.PluginDependency("pt.hive.colony.plugins.format.mime")]
+    main_modules = ["mime_utils_c"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
         import mime_utils_c
+
         self.system = mime_utils_c.MimeUtils(self)
 
     def add_attachment_contents(self, mime_message, contents, file_name):
         return self.system.add_attachment_contents(mime_message, contents, file_name)
 
-    def add_attachment_contents_mime_type(self, mime_message, contents, file_name, mime_type):
-        return self.system.add_attachment_contents(mime_message, contents, file_name, mime_type)
+    def add_attachment_contents_mime_type(
+        self, mime_message, contents, file_name, mime_type
+    ):
+        return self.system.add_attachment_contents(
+            mime_message, contents, file_name, mime_type
+        )
 
     def add_contents(self, mime_message, contents_path, content_extensions):
         return self.system.add_contents(mime_message, contents_path, content_extensions)
 
-    def add_contents_non_recursive(self, mime_message, contents_path, content_extensions):
-        return self.system.add_contents(mime_message, contents_path, content_extensions, False)
+    def add_contents_non_recursive(
+        self, mime_message, contents_path, content_extensions
+    ):
+        return self.system.add_contents(
+            mime_message, contents_path, content_extensions, False
+        )

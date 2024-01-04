@@ -39,6 +39,7 @@ ENGINE_NAME = "zip"
 ZIP_FILE_EXTENSION = ".zip"
 """ The zip file extension value """
 
+
 class FileZip(colony.System):
     """
     The file zip class.
@@ -72,7 +73,9 @@ class FileZip(colony.System):
 
         # retrieves the connection parameters
         context_name = connection_parameters.get("context_name", "default")
-        base_path = connection_parameters.get("base_path", "%configuration:" + self.plugin.id + "%")
+        base_path = connection_parameters.get(
+            "base_path", "%configuration:" + self.plugin.id + "%"
+        )
 
         # creates the zip file name from the context name
         zip_file_name = context_name + ZIP_FILE_EXTENSION
@@ -102,7 +105,7 @@ class FileZip(colony.System):
         file_name = file_name.lstrip("/")
 
         # opens the zip file for reading
-        zip_file = zipfile.ZipFile(base_path, mode = "r")
+        zip_file = zipfile.ZipFile(base_path, mode="r")
 
         try:
             # reads the target file data from
@@ -130,11 +133,7 @@ class FileZip(colony.System):
         file_name = file_name.lstrip("/")
 
         # opens the zip file for appending
-        zip_file = zipfile.ZipFile(
-            base_path,
-            mode = "a",
-            allowZip64 = True
-        )
+        zip_file = zipfile.ZipFile(base_path, mode="a", allowZip64=True)
 
         try:
             # writes the file in the given file path
@@ -158,11 +157,7 @@ class FileZip(colony.System):
         source_contents = file.read()
 
         # opens the zip file for appending
-        zip_file = zipfile.ZipFile(
-            base_path,
-            mode = "a",
-            allowZip64 = True
-        )
+        zip_file = zipfile.ZipFile(base_path, mode="a", allowZip64=True)
 
         try:
             # writes the source contents read from the
@@ -182,11 +177,7 @@ class FileZip(colony.System):
         file_name = file_name.lstrip("/")
 
         # opens the zip file for appending
-        zip_file = zipfile.ZipFile(
-            base_path,
-            mode = "a",
-            allowZip64 = True
-        )
+        zip_file = zipfile.ZipFile(base_path, mode="a", allowZip64=True)
 
         try:
             # writes the (received) data
@@ -207,6 +198,7 @@ class FileZip(colony.System):
 
     def mtime(self, connection, file_name):
         pass
+
 
 class ZipConnection(object):
     """

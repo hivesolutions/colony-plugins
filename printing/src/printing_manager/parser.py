@@ -37,6 +37,7 @@ from . import ast
 DEFAULT_CHARSET = "utf-8"
 """ The default charset """
 
+
 class Parser(object):
     """
     The abstract parser class
@@ -75,6 +76,7 @@ class Parser(object):
             attribute_node_value = attribute_node.value
             setattr(element, attribute_node_name, attribute_node_value)
 
+
 class PrintingLanguageParser(Parser):
     """
     The printing language parser class.
@@ -89,7 +91,7 @@ class PrintingLanguageParser(Parser):
     printing_document = None
     """ The printing document """
 
-    def __init__(self, file = None, string = "none"):
+    def __init__(self, file=None, string="none"):
         Parser.__init__(self)
         self.file = file
         self.string = string
@@ -115,7 +117,11 @@ class PrintingLanguageParser(Parser):
     def load_printing_language_string(self, string):
         # creates the XML document DOM object, the provided
         # string is encoded to avoid possible parsing problems
-        string = type(string) == colony.legacy.UNICODE and string.encode(DEFAULT_CHARSET) or string
+        string = (
+            type(string) == colony.legacy.UNICODE
+            and string.encode(DEFAULT_CHARSET)
+            or string
+        )
         xml_document = xml.dom.minidom.parseString(string)
 
         self.load_printing_language(xml_document)
@@ -136,24 +142,38 @@ class PrintingLanguageParser(Parser):
 
         for child_node in child_nodes:
             if valid_node(child_node):
-                self.parse_printing_document_element(child_node, printing_document_structure)
+                self.parse_printing_document_element(
+                    child_node, printing_document_structure
+                )
 
         return printing_document_structure
 
-    def parse_printing_document_element(self, printing_document_element, printing_document):
+    def parse_printing_document_element(
+        self, printing_document_element, printing_document
+    ):
         node_name = printing_document_element.nodeName
         printing_document_child_nodes = printing_document.child_nodes
 
         if node_name == "block":
-            printing_document_child_nodes.append(self.parse_block(printing_document_element))
+            printing_document_child_nodes.append(
+                self.parse_block(printing_document_element)
+            )
         elif node_name == "paragraph":
-            printing_document_child_nodes.append(self.parse_paragraph(printing_document_element))
+            printing_document_child_nodes.append(
+                self.parse_paragraph(printing_document_element)
+            )
         elif node_name == "line":
-            printing_document_child_nodes.append(self.parse_line(printing_document_element))
+            printing_document_child_nodes.append(
+                self.parse_line(printing_document_element)
+            )
         elif node_name == "text":
-            printing_document_child_nodes.append(self.parse_text(printing_document_element))
+            printing_document_child_nodes.append(
+                self.parse_text(printing_document_element)
+            )
         elif node_name == "image":
-            printing_document_child_nodes.append(self.parse_image(printing_document_element))
+            printing_document_child_nodes.append(
+                self.parse_image(printing_document_element)
+            )
 
     def parse_block(self, block):
         block_structure = ast.Block()
@@ -243,6 +263,7 @@ class PrintingLanguageParser(Parser):
         self.parse_element_attributes(image, image_structure)
 
         return image_structure
+
 
 def valid_node(node):
     """

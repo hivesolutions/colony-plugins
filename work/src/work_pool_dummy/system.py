@@ -32,6 +32,7 @@ import threading
 
 import colony
 
+
 class WorkPoolDummy(colony.System):
     """
     The work pool dummy class.
@@ -53,7 +54,12 @@ class WorkPoolDummy(colony.System):
             "dummy work pool",
             "dummy work pool",
             ProcessingClass,
-            [self], 3, 1, 5, 10, 1
+            [self],
+            3,
+            1,
+            5,
+            10,
+            1,
         )
 
         # start the (dummy) work pool
@@ -75,6 +81,7 @@ class WorkPoolDummy(colony.System):
 
         # stops the (dummy) work pool
         self.work_pool.stop_pool()
+
 
 class ProcessingClass(object):
     """
