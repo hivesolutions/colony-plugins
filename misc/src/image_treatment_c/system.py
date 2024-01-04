@@ -89,7 +89,7 @@ class ImageTreatment(colony.System):
         # setting the offset position to the initial one
         image = PIL.Image.open(image_path)
         algorithm = PIL.Image.ANTIALIAS if hasattr(PIL.Image, "ANTIALIAS") else\
-            PIL.Image.LANCZOS
+            (PIL.Image.LANCZOS if hasattr(PIL.Image, "LANCZOS") else None)
         image_resize = image.resize((width, height), algorithm)
         string_buffer = colony.StringBuffer(False)
         image_resize.save(string_buffer, image_type)
