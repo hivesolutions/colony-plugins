@@ -513,6 +513,11 @@ def serialized(serialization_parameters = None, default_success = True):
                 status_code = exception.status_code if\
                     has_status_code else ERROR_STATUS_CODE
 
+                # tries to cast the status code as an integer defaulting
+                # in case it fails to the default error status code
+                try: status_code = int(status_code)
+                except Exception: status_code = ERROR_STATUS_CODE
+
                 # sets the error status code in the current request indicating
                 # that a problem has occurred (default behavior)
                 self.set_status_code(request, status_code)
