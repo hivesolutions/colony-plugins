@@ -69,10 +69,10 @@ MD5_CRYPT_VALUE = "crypt"
 SSHA_VALUE = "ssha"
 """ The SSHA value """
 
-PASSWORD_VALUE_REGEX_VALUE = "\{(?P<hash>\w+)\}(?P<value>.+)"
+PASSWORD_VALUE_REGEX_VALUE = r"\{(?P<hash>\w+)\}(?P<value>.+)"
 """ The password value regex value """
 
-MD5_CRYPT_SALT_VALUE_REGEX_VALUE = "\$1\$(?P<salt>.+)\$.+"
+MD5_CRYPT_SALT_VALUE_REGEX_VALUE = r"\$1\$(?P<salt>.+)\$.+"
 """ The MD5 crypt salt value regex value """
 
 PASSWORD_VALUE_REGEX = re.compile(PASSWORD_VALUE_REGEX_VALUE)

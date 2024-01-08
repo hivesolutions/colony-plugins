@@ -376,7 +376,7 @@ class ResourcesManager(colony.System):
         self.pending_plugin_resources_map = pending_plugin_resources_map
 
     def register_resources(self, resources_list, file_path, full_resources_path):
-        # acquires the resources lcok
+        # acquires the resources lock
         self.resources_lock.acquire()
 
         try:
@@ -513,7 +513,7 @@ class ResourcesManager(colony.System):
             self.resources_lock.release()
 
     def unregister_resources(self, resources_list, file_path, full_resources_path):
-        # acquires the resources lcok
+        # acquires the resources lock
         self.resources_lock.acquire()
 
         try:
@@ -573,9 +573,13 @@ class ResourcesManager(colony.System):
 
                 # unsets the plugin configuration resources list from
                 # the plugin id configuration resources list map
-                del self.plugin_id_configuration_resources_list_map[
+                if (
                     plugin_configuration_plugin_id
-                ]
+                    in self.plugin_id_configuration_resources_list_map
+                ):
+                    del self.plugin_id_configuration_resources_list_map[
+                        plugin_configuration_plugin_id
+                    ]
 
                 # iterates over all the plugin configuration resources to remove them
                 # from the pending plugin resources map
