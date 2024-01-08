@@ -600,6 +600,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -1473,6 +1474,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -1718,6 +1720,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -1796,6 +1799,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -1849,6 +1853,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -1908,6 +1913,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -1967,6 +1973,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -2026,6 +2033,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
@@ -3400,6 +3408,7 @@ class EntityClass(object):
                 types.MethodType,
                 staticmethod,
                 classmethod,
+                property,
             ):
                 continue
 
