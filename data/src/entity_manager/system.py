@@ -323,7 +323,7 @@ class EntityManager(object):
 
     commit_callbacks = []
     """ The list of callback functions (callables) that are going
-    to be called once the transaction level is effectively commited """
+    to be called once the transaction level is effectively committed """
 
     rollback_callbacks = []
     """ The list of callback functions (callables) that are going
@@ -601,7 +601,7 @@ class EntityManager(object):
 
         The serializer attribute controls the kind of serializer
         that is going to be used in the data (JSON or BSON are
-        the recommended formats)
+        the recommended formats).
 
         :type serializer: Serializer
         :param serializer: The serializer object to be used to
@@ -1017,7 +1017,8 @@ class EntityManager(object):
         # starts the current entity manager initializing
         # all the current internal and external data structure
         # this will imply data source access (slow operation)
-        start and self.start()
+        if start:
+            self.start()
 
     def close(self):
         self.stop()
@@ -2076,7 +2077,7 @@ class EntityManager(object):
         # map of values (this only happens in case the options
         # are already defined), then sets the scope as the scope
         # defined in the current entity
-        options = options and self.normalize_options(options) or {}
+        options = self.normalize_options(options) if options else {}
         options["scope"] = entity._scope
 
         # retrieves the entity class associated with
@@ -2140,7 +2141,7 @@ class EntityManager(object):
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
         # are already defined)
-        options = options and self.normalize_options(options) or {}
+        options = self.normalize_options(options) if options else {}
 
         # in case the provided sequence of entities is not valid
         # or it's empty must returns immediately not possible to
@@ -2242,7 +2243,7 @@ class EntityManager(object):
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
         # are already defined)
-        options = options and self.normalize_options(options) or {}
+        options = self.normalize_options(options) if options else {}
 
         # retrieves the entity class associated with
         # the entity to retrieve the relation
@@ -2340,7 +2341,7 @@ class EntityManager(object):
             # map of values (this only happens in case the options
             # are already defined) and the runs the processing of
             # the provided keyword arguments (options expansion)
-            options = options and self.normalize_options(options) or {}
+            options = self.normalize_options(options) if options else {}
             self.process_kwargs(options, kwargs)
 
             # retrieves the table id field, to be used
@@ -2399,7 +2400,7 @@ class EntityManager(object):
             # map of values (this only happens in case the options
             # are already defined) and the runs the processing of
             # the provided keyword arguments (options expansion)
-            options = options and self.normalize_options(options) or {}
+            options = self.normalize_options(options) if options else {}
             self.process_kwargs(options, kwargs)
 
             # sets the count flag in the options as true this
@@ -2455,7 +2456,7 @@ class EntityManager(object):
             # map of values (this only happens in case the options
             # are already defined) and the runs the processing of
             # the provided keyword arguments (options expansion)
-            options = options and self.normalize_options(options) or {}
+            options = self.normalize_options(options) if options else {}
             self.process_kwargs(options, kwargs)
 
             # creates the proper find query for the entity class and

@@ -396,7 +396,7 @@ class MVCUtils(colony.System):
             extra_globals_map,
         )
 
-        # retrieves all the entity (and non entity) classes from the base entity models module
+        # retrieves all the entity (and non-entity) classes from the base entity models module
         # the entity class is used as reference (all entity classes must inherit from that class)
         base_entity_models = self._get_entity_classes(
             base_entity_models_module, entity_class
@@ -531,7 +531,7 @@ class MVCUtils(colony.System):
         if os.path.isdir(test_directory_path):
             # imports the package module for back reference in the
             # internal importing of modules inside the modules (this is a mandatory
-            # operation to avoid problems with the python interpreter), the custom
+            # operation to avoid problems with the Python interpreter), the custom
             # importer does not provide recursive import by default
             __import__(package_path)
 

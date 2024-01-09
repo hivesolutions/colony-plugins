@@ -377,7 +377,7 @@ def _class_find(
     # request, note that the (request) context is passed as simply
     # context in fact it represents the request from which context
     # will be extracted, after this application the filter query
-    # should be modified to reflect the context based filtering
+    # should be modified to reflect the context-based filtering
     options = cls.apply_context(
         options, context, namespace_name=namespace, entity_manager=entity_manager
     )
