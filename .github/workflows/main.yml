@@ -31,6 +31,10 @@ jobs:
         if: matrix.python-version != '2.7'
       - run: pip install -r requirements.py2.txt
         if: matrix.python-version == '2.7'
+      - run: |
+          pip install black
+          black . --check
+        if: matrix.python-version == '3.12'
       - run: python setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com
@@ -50,6 +54,10 @@ jobs:
         if: matrix.python-version != '2.7'
       - run: pip install -r requirements.py2.txt
         if: matrix.python-version == '2.7'
+      - run: |
+          pip install black
+          black . --check
+        if: matrix.python-version == '3.12'
       - run: pypy setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com
