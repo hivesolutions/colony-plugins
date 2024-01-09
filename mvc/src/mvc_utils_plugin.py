@@ -97,9 +97,11 @@ class MVCUtilsPlugin(colony.Plugin):
             plugin_instance,
             entity_manager_arguments=entity_manager_arguments,
         )
+        self.system.register_models(system_instance)
         return True
 
     def unassign_models_controllers(self, system_instance, entity_manager_arguments={}):
+        self.system.unregister_models(system_instance)
         self.system.destroy_models(
             system_instance, entity_manager_arguments=entity_manager_arguments
         )

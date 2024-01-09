@@ -128,6 +128,28 @@ def _start_model(self):
     self.model_started = True
 
 
+def _class_registered(cls):
+    """
+    Callback method called upon the global registration of
+    a model class.
+    A model class is considered to be registered when all of
+    its dependencies has also been loaded.
+    After this callback method is called the model class is
+    ready to be used in the system.
+    """
+
+    pass
+
+
+def _class_unregistered(cls):
+    """
+    Callback method called when the model class is no longer
+    safely usable in the system.
+    """
+
+    pass
+
+
 def _class_new(cls, request=None, map=None, permissive=False, apply=True):
     """
     Creates a new model instance, applying the given map

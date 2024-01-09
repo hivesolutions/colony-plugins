@@ -1086,6 +1086,54 @@ class MVCUtils(colony.System):
         # path controllers map
         del self.package_path_controllers_map[package_path]
 
+    def register_models(self, system_instance, package_path=None):
+        # retrieves the "complete" module name for the system
+        # instance to be used as target for the model destruction
+        module_name = system_instance.__module__
+
+        # splits the system instance module name into the package and
+        # base module name parts then uses it to create the default
+        # package path in case it's necessary
+        package_name, _module_name = module_name.rsplit(".", 1)
+        package_path = package_path or package_name + "." + "models"
+
+        # reloads the module associated with the given package
+        # path to provide flushing of the contents
+        colony.reload_import(package_path)
+
+        # retrieves the entity models and the models from the package
+        # path models map (one package path may contain various models)
+        entity_models, models = self.package_path_models_map.get(package_path, ([], []))
+
+        # iterates over all the entity models and models to call
+        # the registered method on them
+        for model in entity_models + models:
+            model.registered()
+
+    def unregister_models(self, system_instance, package_path=None):
+        # retrieves the "complete" module name for the system
+        # instance to be used as target for the model destruction
+        module_name = system_instance.__module__
+
+        # splits the system instance module name into the package and
+        # base module name parts then uses it to create the default
+        # package path in case it's necessary
+        package_name, _module_name = module_name.rsplit(".", 1)
+        package_path = package_path or package_name + "." + "models"
+
+        # reloads the module associated with the given package
+        # path to provide flushing of the contents
+        colony.reload_import(package_path)
+
+        # retrieves the entity models and the models from the package
+        # path models map (one package path may contain various models)
+        entity_models, models = self.package_path_models_map.get(package_path, ([], []))
+
+        # iterates over all the entity models and models to call
+        # the unregistered method on them
+        for model in entity_models + models:
+            model.unregistered()
+
     def create_file_manager(self, engine_name, connection_parameters={}):
         """
         Creates a new file manager reference, to manage files
