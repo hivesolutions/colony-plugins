@@ -2635,7 +2635,8 @@ class EntityManager(object):
 
         # in case the close cursor flag is set
         # the cursor must be closed (avoiding leaks)
-        close_cursor and cursor and cursor.close()
+        if close_cursor and cursor:
+            cursor.close()
 
         # returns the cursor to be used in the query
         # execution, for data retrieval
