@@ -2376,7 +2376,7 @@ class EntityManager(object):
             # one values or a none value and so the value must be
             # processes to the appropriate single value
             result = self.find(entity_class, options)
-            result = result and result[0] or None
+            result = result[0] if result else None
         finally:
             # notifies the colony infra-structure about the ending of the
             # current data (orm) operation in stack (includes result count)
@@ -2591,6 +2591,16 @@ class EntityManager(object):
                 query = self.engine._table_index_query(table_name, _indexed, index_type)
                 self.execute_query(query)
 
+    def sql(self, query, close_cursor=True, fetchall=True):
+        cursor = self.execute_query(query, close_cursor=close_cursor)
+        if not fetchall:
+            return cursor
+        try:
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        return result_set
+
     def execute_query(self, query, close_cursor=True):
         # checks if the current engine requires the
         # the query to have its slash characters escaped
@@ -2614,11 +2624,13 @@ class EntityManager(object):
             for _query in query:
                 # in case the cursor is already defined
                 # need to close it to avoid leaks
-                cursor and cursor.close()
+                if cursor:
+                    cursor.close()
 
                 # in case the current engine requires the slash characters
                 # in the query to be escaped, escapes them accordingly
-                _query = escape_slash and _query.replace("\\", "\\\\") or _query
+                if escape_slash:
+                    _query = _query.replace("\\", "\\\\")
 
                 # executes (one more) query using the engine
                 cursor = self.engine.execute_query(_query)
@@ -2627,7 +2639,8 @@ class EntityManager(object):
         else:
             # in case the current engine requires the slash characters
             # in the query to be escaped, escapes them accordingly
-            query = escape_slash and query.replace("\\", "\\\\") or query
+            if escape_slash:
+                query = query.replace("\\", "\\\\")
 
             # executes the query in the engine and retrieves
             # the resulting cursor for execution
