@@ -487,11 +487,13 @@ class EntityClass(object):
     def __getstate__(self, depth=None, detach=True):
         depth = depth or self._depth() or 0
         is_attached = self.is_attached()
-        detach and is_attached and self.detach()
+        if detach and is_attached:
+            self.detach()
         try:
             state = self.to_map(depth=depth)
         finally:
-            detach and is_attached and self.attach()
+            if detach and is_attached:
+                self.attach()
         return state
 
     def __setstate__(self, state):
@@ -4831,7 +4833,7 @@ class EntityClass(object):
         :type force: bool
         :param force: If the setting of attributes should be forced
         meaning that attributes that are already set in the entity
-        may be overriden by new values from data source, this is
+        may be overridden by new values from data source, this is
         valid for the upper layers of the class hierarchy.
         :rtype: Object
         :return: The value for the attribute that triggered the concrete
