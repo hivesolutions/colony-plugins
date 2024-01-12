@@ -317,7 +317,8 @@ class Connection(object):
                 # is set adds the commit handler tuple to the
                 # proper removal list
                 commit_handler(self)
-                one_time and removal_list.append(commit_handler_tuple)
+                if one_time:
+                    removal_list.append(commit_handler_tuple)
 
             # removes all the elements currently present in the
             # removal list (items pending removal)
@@ -363,7 +364,8 @@ class Connection(object):
                 # is set adds the rollback handler tuple to the
                 # proper removal list
                 rollback_handler(self)
-                one_time and removal_list.append(rollback_handler_tuple)
+                if one_time:
+                    removal_list.append(rollback_handler_tuple)
 
             # removes all the elements currently present in the
             # removal list (items pending removal)
@@ -3109,7 +3111,8 @@ class EntityClass(object):
         # resets the current structure, this operation removes
         # all the current relations, useful in order to avoid
         # mixed scopes in relations
-        reset and self.reset()
+        if reset:
+            self.reset()
 
     def attach_l(self, force=True):
         """
@@ -3186,7 +3189,8 @@ class EntityClass(object):
         # resets the current structure, this operation removes
         # all the current relations, useful in order to avoid
         # mixed scopes in relations
-        reset and self.reset()
+        if reset:
+            self.reset()
 
     def is_attached(self):
         """
