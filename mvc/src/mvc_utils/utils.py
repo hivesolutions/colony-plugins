@@ -110,14 +110,14 @@ def validated(
             # retrieves the value for the serializer attribute, if this
             # value is defined it must contain a callable object that is
             # able to serialize any dictionary oriented value
-            seralizer = parameters.get("serializer", None)
+            serializer = parameters.get("serializer", None)
 
             # in case the call validation flag is not defined the value
             # of the should call (validation) flag must be inferred from
             # the existence or not of the serializer, because serialized
             # methods are not considered to be validated
             if call_validation_failed == None:
-                should_call = False if seralizer else True
+                should_call = False if serializer else True
 
             # otherwise simply use the call validation failed value as the
             # value for the should call boolean flag (transition of value)

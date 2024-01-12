@@ -855,7 +855,7 @@ class MVC(colony.System):
         # in case there's an encoder name defined and the current (MVC)
         # plugin references an encoding plugin that candidates for that
         # type of encoding it's set as the current serialized, this is
-        # used as the default serialization process and may be overriden
+        # used as the default serialization process and may be overridden
         # if there's a plugin in the controller that is better suited
         if encoder and hasattr(self.plugin, encoder + "_plugin"):
             encoder_plugin = getattr(self.plugin, encoder + "_plugin")

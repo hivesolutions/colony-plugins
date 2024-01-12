@@ -423,7 +423,7 @@ class Visitor(object):
             self.ensure_font(font_name_c)
 
             # sets the complete computed font in the current canvas context
-            # note that the leading value is overriden to avoid font sizing
+            # note that the leading value is overridden to avoid font sizing
             # problems in accordance with the printing language specification,
             # this is the "first" font setting and ensures that the measuring
             # of the font size is the correct one (required by algorithm)
@@ -479,7 +479,7 @@ class Visitor(object):
             self.canvas.setFillColorRGB(0, 0, 0)
 
             # sets the complete computed font in the current canvas context
-            # note that the leading value is overriden to avoid font sizing
+            # note that the leading value is overridden to avoid font sizing
             # problems in accordance with the printing language specification,
             # the font must be set after the ensure vertical operation so that
             # in case a new page is created the new font is set correctly in it

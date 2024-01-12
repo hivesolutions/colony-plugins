@@ -603,7 +603,7 @@ class ServiceHTTP(colony.System):
         connection_s = "ssl" if ssl else "normal"
         end_point = (connection_s, bind_host, port, {})
 
-        # verifies if the configuration endpoint should be overriden,
+        # verifies if the configuration endpoint should be overridden,
         # this should happen when at least one global wide configuration
         # value is defined, if that's the case the end points are re-written
         override = True if colony.conf("SERVER_HOST") else False

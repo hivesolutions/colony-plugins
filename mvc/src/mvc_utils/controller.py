@@ -3084,7 +3084,7 @@ def retrieve_template_file(
 
     # retrieves the reference to the engine object/plugin that is
     # going to be used for the parsing and rendering of the target
-    # template file to be used (this call may be overriden to be
+    # template file to be used (this call may be overridden to be
     # able to select the best template engine)
     engine = self.get_template_engine_plugin()
 
