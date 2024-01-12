@@ -306,6 +306,12 @@ class SQLiteEngine(object):
         return cursor
 
     @property
+    def connection(self):
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        return _connection.connection
+
+    @property
     def transaction_level(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
@@ -689,6 +695,10 @@ class SQLiteConnection(object):
         # returns the cursor that has just been created for
         # the execution of the requested query
         return cursor
+
+    @property
+    def connection(self):
+        return self.get_connection()
 
     @property
     def transaction_level(self):

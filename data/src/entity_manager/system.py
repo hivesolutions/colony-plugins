@@ -282,8 +282,16 @@ class EntityManager(object):
     of entities and coordination of the underlying engines.
     This class represents the overall front-end to the usage of
     the persistence layer.
-    A single entity manager should be able to manage multiple
+
+    A single entity manager should be able to handle multiple
     connections to the data source at the same time (connection pool).
+    The management  of the connection pool across multiple threads
+    is managed not by the entity manager itself but by each of the
+    engines it makes use.
+
+    It's critical to take into consideration that an entity manager
+    may be shared among multiple threads and as such careful attention
+    should be taken when using it in a multi-threaded environment.
     """
 
     entity_manager_plugin = None
@@ -321,13 +329,15 @@ class EntityManager(object):
     """ The map containing the set of parameters to be passed
     to the underlying engine upon the connection creation """
 
-    commit_callbacks = []
-    """ The list of callback functions (callables) that are going
-    to be called once the transaction level is effectively committed """
+    commit_callbacks = {}
+    """ Map associating a connection with a list of callback
+    functions (callables) that are going to be called once the
+    transaction level is effectively committed """
 
-    rollback_callbacks = []
-    """ The list of callback functions (callables) that are going
-    to be called in case the transaction level is "rollbacked" """
+    rollback_callbacks = {}
+    """ Map associating a connection (engine level) with a list
+    of callback functions (callables) that are going to be called
+    in case the transaction level is "rollbacked" """
 
     _exists = {}
     """ Map for indexing of the classes that have already been persisted """
@@ -362,8 +372,8 @@ class EntityManager(object):
 
         self.types_map = copy.copy(SQL_TYPES_MAP)
         self.connection_parameters = {}
-        self.commit_callbacks = []
-        self.rollback_callbacks = []
+        self.commit_callbacks = {}
+        self.rollback_callbacks = {}
         self._exists = {}
 
         self.apply_types()
@@ -1087,12 +1097,20 @@ class EntityManager(object):
     def after_commit(self, callable):
         if self.engine.is_empty:
             raise exceptions.RuntimeError("not inside a transaction")
-        self.commit_callbacks.append((callable, self.engine.transaction_level))
+
+        connection = self.engine.connection
+        commit_callbacks_l = self.commit_callbacks.get(connection, [])
+        commit_callbacks_l.append((callable, self.engine.transaction_level))
+        self.commit_callbacks[connection] = commit_callbacks_l
 
     def after_rollback(self, callable):
         if self.engine.is_empty:
             raise exceptions.RuntimeError("not inside a transaction")
-        self.rollback_callbacks.append((callable, self.engine.transaction_level))
+
+        connection = self.engine.connection
+        rollback_callbacks_l = self.rollback_callbacks.get(connection, [])
+        rollback_callbacks_l.append((callable, self.engine.transaction_level))
+        self.rollback_callbacks[connection] = rollback_callbacks_l
 
     def lock(self, entity_class, id_value=None, lock_parents=True):
         self.engine.lock(entity_class, id_value, lock_parents)
@@ -2656,17 +2674,26 @@ class EntityManager(object):
         return cursor
 
     def _flush_callbacks(self, callbacks, call=True):
+        # obtains the list of callbacks pending for the current
+        # connection (for the current thread)
+        callbacks_l = callbacks.get(self.engine.connection, None)
+        if not callbacks_l:
+            return
+
+        # obtains the current transaction level to be used in the
+        # comparison against the target transaction level of the
+        # callbacks that are going to be called
         _transaction_level = self.engine.transaction_level
         while True:
             # in case the sequence of callbacks is now empty then
-            # there's nothign remaining to be done
-            if not callbacks:
+            # there's nothing remaining to be done
+            if not callbacks_l:
                 break
 
             # "peeks" the current callback in the sequence to test
             # it for transaction level accordance and call the callable
             # in case it "complies"
-            callable, transaction_level = callbacks[len(callbacks) - 1]
+            callable, transaction_level = callbacks_l[len(callbacks) - 1]
 
             # in case we've reached the target transaction level
             # then we break the cycle (assumes callbacks list is ordered
@@ -2676,7 +2703,7 @@ class EntityManager(object):
 
             if call:
                 callable()
-            callbacks.pop()
+            callbacks_l.pop()
 
     def _generate_fields(self, entity):
         """

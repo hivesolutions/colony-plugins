@@ -429,6 +429,12 @@ class PgSQLEngine(object):
         _connection.isolation_level(isolation)
 
     @property
+    def connection(self):
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        return _connection.get_connection()
+
+    @property
     def transaction_level(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
