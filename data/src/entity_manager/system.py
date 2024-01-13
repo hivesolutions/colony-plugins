@@ -2693,7 +2693,7 @@ class EntityManager(object):
             # "peeks" the current callback in the sequence to test
             # it for transaction level accordance and call the callable
             # in case it "complies"
-            callable, transaction_level = callbacks_l[len(callbacks) - 1]
+            callable, transaction_level = callbacks_l[len(callbacks_l) - 1]
 
             # in case we've reached the target transaction level
             # then we break the cycle (assumes callbacks list is ordered
