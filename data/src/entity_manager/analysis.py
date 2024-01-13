@@ -67,5 +67,5 @@ class EntityManagerAnalyser(object):
         if self.entity_manager.exists(entity_class):
             return
         self.plugin.warning(
-            "No definition for class '%s' exists" % entity_class.__name__
+            "No schema definition for class '%s' exists in data source" % entity_class.__name__
         )
