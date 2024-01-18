@@ -605,6 +605,22 @@ def _class_lock_row_g(cls, name, value, entity_manager=None):
     entity_manager.lock_table(table_name, parameters)
 
 
+def _class_after_commit_g(cls, callable, entity_manager=None):
+    # obtains the reference to the entity manager and registers
+    # the provided callable to be called after the commit of the
+    # currently open data transaction
+    entity_manager = entity_manager or cls._entity_manager
+    entity_manager.after_commit(callable)
+
+
+def _class_after_rollback_g(cls, callable, entity_manager=None):
+    # obtains the reference to the entity manager and registers
+    # the provided callable to be called after the rollback of the
+    # currently open data transaction
+    entity_manager = entity_manager or cls._entity_manager
+    entity_manager.after_rollback(callable)
+
+
 def _class_valid(cls, entity_manager=None):
     """
     Checks if the current model class reference is valid, according
