@@ -2680,6 +2680,10 @@ class EntityManager(object):
         if not callbacks_l:
             return
 
+        # creates the list that is going to store all of the callables
+        # that have been selected to be called
+        callables = []
+
         # obtains the current transaction level to be used in the
         # comparison against the target transaction level of the
         # callbacks that are going to be called
@@ -2701,9 +2705,20 @@ class EntityManager(object):
             if _transaction_level >= transaction_level:
                 break
 
-            if call:
-                callable()
+            # removes the current item from the callbacks list and
+            # adds its callable to the callables list (to be called)
             callbacks_l.pop()
+            callables.append(callable)
+
+        # in case no call has been requested there's nothing remaining
+        # to be done, so it returns the control flow
+        if not call:
+            return
+
+        # iterates over all the selected callables (callbacks) and
+        # calls them over the same order
+        for callable in callables:
+            callable()
 
     def _generate_fields(self, entity):
         """
