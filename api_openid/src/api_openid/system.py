@@ -1350,9 +1350,9 @@ class OpenIDClient(object):
         if OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE in self.openid_structure.types_list:
             parameters["openid.ns.ax"] = OPENID_AX_1_0_EXTENSION_NAMESPACE_VALUE
             parameters["openid.ax.mode"] = "fetch_request"
-            parameters[
-                "openid.ax.type.nickname"
-            ] = "http://axschema.org/namePerson/friendly"
+            parameters["openid.ax.type.nickname"] = (
+                "http://axschema.org/namePerson/friendly"
+            )
             parameters["openid.ax.type.email"] = "http://axschema.org/contact/email"
             parameters["openid.ax.type.fullname"] = "http://axschema.org/namePerson"
             parameters["openid.ax.type.dob"] = "http://axschema.org/birthDate"

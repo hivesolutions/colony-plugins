@@ -285,9 +285,11 @@ def get_exception_map(self, exception, request=None):
         file_system_encoding = sys.getfilesystemencoding()
         formatted_traceback = traceback.format_tb(traceback_list)
         formatted_traceback = [
-            value.decode(file_system_encoding)
-            if type(value) == colony.legacy.BYTES
-            else value
+            (
+                value.decode(file_system_encoding)
+                if type(value) == colony.legacy.BYTES
+                else value
+            )
             for value in formatted_traceback
         ]
 

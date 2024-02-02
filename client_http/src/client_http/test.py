@@ -153,7 +153,8 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["args"], {})
         self.assertEqual(
-            received_message_j["form"], {colony.legacy.u("你好"): colony.legacy.u("世界")}
+            received_message_j["form"],
+            {colony.legacy.u("你好"): colony.legacy.u("世界")},
         )
         self.assertEqual(received_message_j["data"], "")
 

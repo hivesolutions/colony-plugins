@@ -1042,9 +1042,9 @@ class MVC(colony.System):
                 communication_matching_regex_value
             )
             self.communication_matching_regex_list.append(communication_matching_regex)
-            self.communication_matching_regex_base_map[
-                communication_matching_regex
-            ] = current_base_index
+            self.communication_matching_regex_base_map[communication_matching_regex] = (
+                current_base_index
+            )
 
             # re-sets the current matching regex buffer value and
             # then updates the base index to the current index and
@@ -1066,9 +1066,9 @@ class MVC(colony.System):
         # the matching regex list and base indexes map
         communication_matching_regex = re.compile(communication_matching_regex_value)
         self.communication_matching_regex_list.append(communication_matching_regex)
-        self.communication_matching_regex_base_map[
-            communication_matching_regex
-        ] = current_base_index
+        self.communication_matching_regex_base_map[communication_matching_regex] = (
+            current_base_index
+        )
 
     def _update_resource_matching_regex(self):
         """
@@ -1123,9 +1123,9 @@ class MVC(colony.System):
             resource_matching_regex_value = resource_matching_regex_buffer.get_value()
             resource_matching_regex = re.compile(resource_matching_regex_value)
             self.resource_matching_regex_list.append(resource_matching_regex)
-            self.resource_matching_regex_base_map[
-                resource_matching_regex
-            ] = current_base_index
+            self.resource_matching_regex_base_map[resource_matching_regex] = (
+                current_base_index
+            )
 
             # re-sets the current matching regex buffer value and
             # then updates the base index to the current index and
@@ -1145,9 +1145,9 @@ class MVC(colony.System):
         # the matching regex list and base indexes map
         resource_matching_regex = re.compile(resource_matching_regex_value)
         self.resource_matching_regex_list.append(resource_matching_regex)
-        self.resource_matching_regex_base_map[
-            resource_matching_regex
-        ] = current_base_index
+        self.resource_matching_regex_base_map[resource_matching_regex] = (
+            current_base_index
+        )
 
     def _normalize_patterns(self, patterns, extra=False):
         # creates the list that will hold the final version

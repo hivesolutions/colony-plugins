@@ -1475,9 +1475,9 @@ class ResourcesManager(colony.System):
 
         # sets the resources manager plugins values
         resources_manager_plugins_item["type"] = "map"
-        resources_manager_plugins_item[
-            "columns"
-        ] = resources_manager_plugins_item_columns
+        resources_manager_plugins_item["columns"] = (
+            resources_manager_plugins_item_columns
+        )
         resources_manager_plugins_item["values"] = resources_manager_plugins_information
 
         # creates the system information (item)
@@ -1496,9 +1496,9 @@ class ResourcesManager(colony.System):
     def load_resources_parser_plugin(self, resources_parser_plugin):
         resources_parser_name = resources_parser_plugin.get_resources_parser_name()
 
-        self.resources_parser_plugins_map[
-            resources_parser_name
-        ] = resources_parser_plugin
+        self.resources_parser_plugins_map[resources_parser_name] = (
+            resources_parser_plugin
+        )
 
         self.update_pending_parses()
 

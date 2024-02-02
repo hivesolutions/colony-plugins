@@ -379,9 +379,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin handler name
         handler_name = http_service_handler_plugin.get_handler_name()
 
-        self.http_service_handler_plugins_map[
-            handler_name
-        ] = http_service_handler_plugin
+        self.http_service_handler_plugins_map[handler_name] = (
+            http_service_handler_plugin
+        )
 
     def http_service_handler_unload(self, http_service_handler_plugin):
         # retrieves the plugin handler name
@@ -393,9 +393,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin encoding name
         encoding_name = http_service_encoding_plugin.get_encoding_name()
 
-        self.http_service_encoding_plugins_map[
-            encoding_name
-        ] = http_service_encoding_plugin
+        self.http_service_encoding_plugins_map[encoding_name] = (
+            http_service_encoding_plugin
+        )
 
     def http_service_encoding_unload(self, http_service_encoding_plugin):
         # retrieves the plugin encoding name
@@ -409,9 +409,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin handler name
         handler_name = http_service_authentication_handler_plugin.get_handler_name()
 
-        self.http_service_authentication_handler_plugins_map[
-            handler_name
-        ] = http_service_authentication_handler_plugin
+        self.http_service_authentication_handler_plugins_map[handler_name] = (
+            http_service_authentication_handler_plugin
+        )
 
     def http_service_authentication_handler_unload(
         self, http_service_authentication_handler_plugin
@@ -425,9 +425,9 @@ class ServiceHTTP(colony.System):
         # retrieves the plugin error handler name
         error_handler_name = http_service_error_handler_plugin.get_error_handler_name()
 
-        self.http_service_error_handler_plugins_map[
-            error_handler_name
-        ] = http_service_error_handler_plugin
+        self.http_service_error_handler_plugins_map[error_handler_name] = (
+            http_service_error_handler_plugin
+        )
 
     def http_service_error_handler_unload(self, http_service_error_handler_plugin):
         # retrieves the plugin error handler name
@@ -1345,9 +1345,9 @@ class HTTPClientServiceHandler(object):
             service_connection.request_data["start_line_loaded"] = start_line_loaded
             service_connection.request_data["header_loaded"] = header_loaded
             service_connection.request_data["message_loaded"] = message_loaded
-            service_connection.request_data[
-                "message_offset_index"
-            ] = message_offset_index
+            service_connection.request_data["message_offset_index"] = (
+                message_offset_index
+            )
             service_connection.request_data["message_size"] = message_size
             service_connection.request_data["received_data_size"] = received_data_size
             service_connection.request_data["start_line_index"] = start_line_index
@@ -1941,9 +1941,11 @@ class HTTPClientServiceHandler(object):
             # in case that required (values encoded as byte strings)
             file_system_encoding = sys.getfilesystemencoding()
             formated_traceback = [
-                value.decode(file_system_encoding)
-                if colony.legacy.is_bytes(value)
-                else value
+                (
+                    value.decode(file_system_encoding)
+                    if colony.legacy.is_bytes(value)
+                    else value
+                )
                 for value in formated_traceback
             ]
         # otherwise there is no traceback list, then
@@ -1990,9 +1992,9 @@ class HTTPClientServiceHandler(object):
         of the request.
         """
 
-        self.service_connection_request_handler_map[
-            service_connection
-        ] = request_handler_method
+        self.service_connection_request_handler_map[service_connection] = (
+            request_handler_method
+        )
 
     def unset_service_connection_request_handler(
         self, service_connection, request_handler_method

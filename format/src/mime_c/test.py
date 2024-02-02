@@ -110,7 +110,8 @@ class MimeBaseTestCase(colony.ColonyTestCase):
         message.set_header("Test", "你好世界")
         result = message.get_value(encode=False)
         self.assertEqual(
-            result, colony.legacy.u("MIME-Version: 1.0\r\nTest: 你好世界\r\n\r\n你好世界")
+            result,
+            colony.legacy.u("MIME-Version: 1.0\r\nTest: 你好世界\r\n\r\n你好世界"),
         )
 
     def test_multi_part(self):

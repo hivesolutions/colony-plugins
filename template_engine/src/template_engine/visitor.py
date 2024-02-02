@@ -136,16 +136,16 @@ FILTERS = dict(
     s=lambda v, a, t: a.update(xml_escape=False) or v,
     escape=lambda v, a, t: v if v == None else xml.sax.saxutils.escape(t._to_string(v)),
     safe=lambda v, a, t: a.update(xml_escape=False) or v,
-    default=lambda v, a, t, default="", boolean=False: default
-    if boolean and not v or v == None
-    else v,
+    default=lambda v, a, t, default="", boolean=False: (
+        default if boolean and not v or v == None else v
+    ),
     double=lambda v, a, t: v if v == None else v * 2,
     append=lambda v, a, t, extra: v + extra,
     prepend=lambda v, a, t, extra: extra + v,
     format=lambda v, a, t, format, default=None: default if v == None else format % v,
-    timestamp=lambda v, a, t, default="": str(calendar.timegm(v.utctimetuple()))
-    if v
-    else default,
+    timestamp=lambda v, a, t, default="": (
+        str(calendar.timegm(v.utctimetuple())) if v else default
+    ),
     range=lambda v, a, t: range(int(v)),
     locale=lambda v, a, t: t._resolve_locale(v),
 )
@@ -155,9 +155,9 @@ this dictionary may be extended at runtime """
 
 EXTRAS = dict(
     date=lambda format="%d/%m/%y": datetime.datetime.now().strftime(format),
-    format_datetime=lambda v, format="%Y/%m/%d %H:%M:%S": None
-    if v == None
-    else v.strftime(format),
+    format_datetime=lambda v, format="%Y/%m/%d %H:%M:%S": (
+        None if v == None else v.strftime(format)
+    ),
 )
 """ Dictionary that contains the set of symbols
 that are going to extend the base ones (builtins)

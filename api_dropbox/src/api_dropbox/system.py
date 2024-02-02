@@ -283,9 +283,9 @@ class DropboxClient(object):
 
         # sets the OAuth parameters
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
-        parameters[
-            "oauth_signature_method"
-        ] = self.oauth_structure.oauth_signature_method
+        parameters["oauth_signature_method"] = (
+            self.oauth_structure.oauth_signature_method
+        )
         parameters["oauth_timestamp"] = oauth_timestamp
         parameters["oauth_nonce"] = oauth_nonce
         parameters["oauth_version"] = self.oauth_structure.oauth_version
@@ -375,9 +375,9 @@ class DropboxClient(object):
         # sets the OAuth parameters
         parameters["oauth_token"] = self.oauth_structure.oauth_token
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
-        parameters[
-            "oauth_signature_method"
-        ] = self.oauth_structure.oauth_signature_method
+        parameters["oauth_signature_method"] = (
+            self.oauth_structure.oauth_signature_method
+        )
         parameters["oauth_timestamp"] = oauth_timestamp
         parameters["oauth_nonce"] = oauth_nonce
         parameters["oauth_version"] = self.oauth_structure.oauth_version
@@ -692,9 +692,9 @@ class DropboxClient(object):
         # sets the OAuth parameters
         parameters["oauth_token"] = self.oauth_structure.oauth_access_token
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
-        parameters[
-            "oauth_signature_method"
-        ] = self.oauth_structure.oauth_signature_method
+        parameters["oauth_signature_method"] = (
+            self.oauth_structure.oauth_signature_method
+        )
         parameters["oauth_timestamp"] = oauth_timestamp
         parameters["oauth_nonce"] = oauth_nonce
         parameters["oauth_version"] = self.oauth_structure.oauth_version

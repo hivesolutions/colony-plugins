@@ -168,9 +168,9 @@ class ServiceHTTPSystemInformation(colony.System):
         # sets the framework copyright item values
         framework_copyright_item["type"] = "simple"
         framework_copyright_item["columns"] = []
-        framework_copyright_item[
-            "value"
-        ] = "This program makes use of the Hive Colony Framework, Copyright (c) 2008-2024 Hive Solutions Lda."
+        framework_copyright_item["value"] = (
+            "This program makes use of the Hive Colony Framework, Copyright (c) 2008-2024 Hive Solutions Lda."
+        )
 
         # creates the system information framework item
         system_information_framework_item = {}

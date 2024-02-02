@@ -264,9 +264,9 @@ class ServiceHTTPFile(colony.System):
         # retrieves the plugin directory handler name
         directory_handler_name = directory_handler_plugin.get_directory_handler_name()
 
-        self.directory_handler_plugins_map[
-            directory_handler_name
-        ] = directory_handler_plugin
+        self.directory_handler_plugins_map[directory_handler_name] = (
+            directory_handler_plugin
+        )
 
     def directory_handler_unload(self, directory_handler_plugin):
         # retrieves the plugin directory handler name

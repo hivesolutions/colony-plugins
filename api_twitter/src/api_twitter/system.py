@@ -303,9 +303,9 @@ class TwitterClient(object):
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters[
-            "oauth_signature_method"
-        ] = self.oauth_structure.oauth_signature_method
+        parameters["oauth_signature_method"] = (
+            self.oauth_structure.oauth_signature_method
+        )
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -405,9 +405,9 @@ class TwitterClient(object):
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters[
-            "oauth_signature_method"
-        ] = self.oauth_structure.oauth_signature_method
+        parameters["oauth_signature_method"] = (
+            self.oauth_structure.oauth_signature_method
+        )
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
@@ -1015,9 +1015,9 @@ class TwitterClient(object):
         parameters["oauth_consumer_key"] = self.oauth_structure.oauth_consumer_key
 
         # sets the signature method
-        parameters[
-            "oauth_signature_method"
-        ] = self.oauth_structure.oauth_signature_method
+        parameters["oauth_signature_method"] = (
+            self.oauth_structure.oauth_signature_method
+        )
 
         # sets the timestamp
         parameters["oauth_timestamp"] = oauth_timestamp
