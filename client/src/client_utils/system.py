@@ -527,9 +527,8 @@ class ClientConnection(object):
 
         # connects the connection socket to the connection address
         # the connection is only created in case the connection is persistent
-        self.connection_persistent and self.connection_socket.connect(
-            self.connection_address
-        )
+        if self.connection_persistent:
+            self.connection_socket.connect(self.connection_address)
 
         # sets the socket to non blocking mode
         self.connection_socket.setblocking(0)

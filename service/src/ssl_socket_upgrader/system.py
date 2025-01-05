@@ -55,6 +55,21 @@ SSL_VERSIONS = {
     "ssl3": ssl.PROTOCOL_SSLv3 if hasattr(ssl, "PROTOCOL_SSLv3") else -1,
     "ssl23": ssl.PROTOCOL_SSLv23 if hasattr(ssl, "PROTOCOL_SSLv23") else -1,
     "tls1": ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1,
+    "tls": (
+        ssl.PROTOCOL_TLS
+        if hasattr(ssl, "PROTOCOL_TLS")
+        else (ssl.PROTOCOL_SSLv23 if hasattr(ssl, "PROTOCOL_SSLv23") else -1)
+    ),
+    "tls_client": (
+        ssl.PROTOCOL_TLS_CLIENT
+        if hasattr(ssl, "PROTOCOL_TLS_CLIENT")
+        else ssl.PROTOCOL_TLSv1
+    ),
+    "tls_server": (
+        ssl.PROTOCOL_TLS_SERVER
+        if hasattr(ssl, "PROTOCOL_TLS_SERVER")
+        else ssl.PROTOCOL_TLSv1
+    ),
 }
 """ The map associating the string based description
 values for the various SSL protocols with the corresponding

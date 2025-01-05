@@ -883,7 +883,7 @@ class ATClient(object):
                 content_type_charset="utf-8",
                 key_file_path=key_path,
                 certificate_file_path=certificate_path,
-                ssl_version="tls1",
+                ssl_version="tls",
             )
 
             # creates the HTTP client to be used for the API
