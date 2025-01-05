@@ -531,7 +531,9 @@ class HTTPClient(object):
             )
 
             # retrieves the response according to the state of the yield response
-            response = yield_response and response or ([value for value in response][0])
+            response = (
+                response if yield_response else ([value for value in response][0])
+            )
         finally:
             # sets the authentication flag
             self.authentication = _authentication
@@ -748,7 +750,7 @@ class HTTPClient(object):
 
             # in case no valid data was received (empty data)
             # a proper handling of the problem should be done
-            if data == "":
+            if data == b"" or len(data) == 0:
                 # in case the message size is undefined, assumes
                 # an undefined length message otherwise the message
                 # size must be defined and so an exception is
@@ -804,7 +806,8 @@ class HTTPClient(object):
             else:
                 continue
 
-            # in case the start line is not loaded
+            # in case the start line is not loaded and we're still trying to
+            # find it (looking for the "\r\n")
             if not start_line_loaded:
                 # finds the first new line value
                 start_line_index = message_value.find(b"\r\n")
@@ -1040,9 +1043,9 @@ class HTTPClient(object):
                 # receives the data
                 data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
-                # in case no valid data was received
-                if data == "":
-                    # raises the HTTP invalid data exception
+                # in case no valid data was received (empty data)
+                # then an HTTP invalid data exception must be raised
+                if data == b"" or len(data) == 0:
                     raise exceptions.HTTPInvalidDataException("empty data received")
 
                 # retrieves the data length
@@ -1103,9 +1106,9 @@ class HTTPClient(object):
                 # receives the data
                 data = self.client_connection.receive(response_timeout)
 
-                # in case no valid data was received
-                if data == "":
-                    # raises the HTTP invalid data exception
+                # in case no valid data was received (no data received)
+                # then an HTTP invalid data exception must be raised
+                if data == b"" or len(data) == 0:
                     raise exceptions.HTTPInvalidDataException("empty data received")
 
                 # retrieves the data length

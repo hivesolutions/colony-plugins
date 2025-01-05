@@ -318,8 +318,9 @@ class SMTPClient(object):
             # receives the data
             data = self.client_connection.receive(response_timeout, CHUNK_SIZE)
 
-            # in case no valid data was received
-            if data == "":
+            # in case no valid data was received, then raises an exception
+            # indicated that a problem occurred in the data reception
+            if data == b"" or len(data) == 0:
                 raise exceptions.SMTPInvalidDataException("empty data received")
 
             # writes the data to the string buffer
@@ -769,7 +770,7 @@ class SMTPRequest(object):
         message = self.message_stream.get_value()
 
         # in case the message is not empty
-        if not message == "":
+        if not message == b"":
             # writes the message to the result stream
             result.write(message)
 
