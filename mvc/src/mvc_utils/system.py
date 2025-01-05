@@ -365,6 +365,7 @@ class MVCUtils(colony.System):
             # for the module name to avoid possible problems
             # and then uses it to creates the models module
             models_module_name = models_id.replace(".", "_")
+            models_module_name = str(models_module_name)
             models_module = colony.legacy.new_module(models_module_name)
 
             # sets the entity class the entity model and the (base) model
