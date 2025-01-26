@@ -1917,6 +1917,13 @@ def after_rollback(self, callable, entity_manager=None):
     entity_manager.after_rollback(callable)
 
 
+def has_transaction(self, entity_manager=None):
+    # obtains the reference to the entity manager and checks if
+    # the entity manager has an ongoing transaction pending
+    entity_manager = entity_manager or self._entity_manager
+    return entity_manager.has_transaction()
+
+
 def validate_relation(self, id_attribute_value, relation_name, entity_manager=None):
     """
     Validates a relation of the current entity, checking if was already

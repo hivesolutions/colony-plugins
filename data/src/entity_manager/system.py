@@ -1095,7 +1095,7 @@ class EntityManager(object):
         self._flush_callbacks(self.commit_callbacks, call=False)
 
     def after_commit(self, callable):
-        if self.engine.is_empty:
+        if not self.has_transaction():
             raise exceptions.RuntimeError("not inside a transaction")
 
         connection = self.engine.connection
@@ -1104,13 +1104,19 @@ class EntityManager(object):
         self.commit_callbacks[connection] = commit_callbacks_l
 
     def after_rollback(self, callable):
-        if self.engine.is_empty:
+        if not self.has_transaction():
             raise exceptions.RuntimeError("not inside a transaction")
 
         connection = self.engine.connection
         rollback_callbacks_l = self.rollback_callbacks.get(connection, [])
         rollback_callbacks_l.append((callable, self.engine.transaction_level))
         self.rollback_callbacks[connection] = rollback_callbacks_l
+
+    def has_transaction(self):
+        return not self.is_empty()
+
+    def is_empty(self):
+        return self.engine.is_empty
 
     def lock(self, entity_class, id_value=None, lock_parents=True):
         self.engine.lock(entity_class, id_value, lock_parents)
