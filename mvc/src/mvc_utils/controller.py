@@ -3928,7 +3928,7 @@ def locale_value(self, value, locale=None):
     locale value.
 
     :type value: Object
-    @poram value: The value to be "localized" into the target locale, this
+    :param value: The value to be "localized" into the target locale, this
     value should probably be a string.
     :rtype: Object
     :return: The localized value, this value should probably be a string.
