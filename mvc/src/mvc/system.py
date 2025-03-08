@@ -1269,7 +1269,7 @@ class MVC(colony.System):
             arguments_length > 1 and arguments[1] or ("get", "put", "post", "delete")
         )
         encoders = arguments_length > 2 and arguments[2] or None
-        contraints = arguments_length > 3 and arguments[3] or {}
+        constraints = arguments_length > 3 and arguments[3] or {}
         meta = arguments_length > 4 and arguments[4] or {}
 
         # casts both the operation types and the encoders as tuples
@@ -1303,24 +1303,24 @@ class MVC(colony.System):
         # iterates over the complete set of constraints to be able to
         # ensure that they are valid for the current execution and if
         # the're not the return value is invalid (validation failed)
-        for contraint_name, contraint_value in colony.legacy.items(contraints):
+        for constraint_name, constraint_value in colony.legacy.items(constraints):
             # retrieves the handler constraint value type
-            contraint_value_t = type(contraint_value)
+            constraint_value_t = type(constraint_value)
 
             # retrieves the attribute value base on the
             # handler constraint name
-            attribute_value = rest_request.get_attribute(contraint_name)
+            attribute_value = rest_request.get_attribute(constraint_name)
 
             # tries to cast the attribute value using the constraint
             # type in case it fails returns in error
             try:
-                attribute_value_c = contraint_value_t(attribute_value)
+                attribute_value_c = constraint_value_t(attribute_value)
             except Exception:
                 return None
 
             # in case the attribute value (casted) is not equals
             # to the handler constraint value must return in error
-            if attribute_value_c == contraint_value:
+            if attribute_value_c == constraint_value:
                 return None
 
         # retrieves the (resource path) validation match groups map

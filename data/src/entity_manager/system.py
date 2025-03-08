@@ -1582,7 +1582,7 @@ class EntityManager(object):
             query = query_buffer.get_value()
             self.execute_query(query)
 
-    def delete_contraints(self, entity_class):
+    def delete_constraints(self, entity_class):
         """
         Deletes the various foreign key constraints created
         by the direct relation associated with the entity
@@ -1674,7 +1674,7 @@ class EntityManager(object):
 
         # deletes the various constraints present in
         # the direct relations to the entity manager
-        self.delete_contraints(entity_class)
+        self.delete_constraints(entity_class)
 
         # deletes the various indirect relations (association
         # table) "pointing" to the entity class
