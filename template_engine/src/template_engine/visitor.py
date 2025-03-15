@@ -143,6 +143,8 @@ FILTERS = dict(
     append=lambda v, a, t, extra: v + extra,
     prepend=lambda v, a, t, extra: extra + v,
     format=lambda v, a, t, format, default=None: default if v == None else format % v,
+    nl_to_br=lambda v, a, t: v.replace("\n", "<br/>"),
+    split=lambda v, a, t, separator="\n": v.split(separator),
     timestamp=lambda v, a, t, default="": (
         str(calendar.timegm(v.utctimetuple())) if v else default
     ),
