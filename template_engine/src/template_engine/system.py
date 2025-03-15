@@ -705,7 +705,7 @@ class TemplateFile(object):
         :param template: The template string to be used in the
         C like format operation.
         :rtype: String
-        :returns: The "final" formated string value.
+        :returns: The "final" formatted string value.
         """
 
         try:
