@@ -89,6 +89,11 @@ DATA_TYPE_CAST_TYPES_MAP = dict(
 """ The map associating the data types with the cast types
 so that they may be used for default and fallback casting """
 
+READ_ONLY = colony.conf("DB_READ_ONLY", False, cast=bool)
+""" The read only flag that indicates if the current
+data source is read only or not, this is used to avoid
+data loss in very specific running environments """
+
 
 def _class_get_class_name(cls):
     """
@@ -1162,6 +1167,11 @@ def store(
     :param entity_manager: The optional entity manager
     reference to be used.
     """
+
+    # in case the read only mode is active then no persistence is
+    # allowed, this is a security measure to avoid data loss
+    if READ_ONLY:
+        raise RuntimeError("read only mode, no persistence allowed")
 
     # in case the force persist flag is set (persistence is ignored)
     # the persist type is set to the all permission (no control)
