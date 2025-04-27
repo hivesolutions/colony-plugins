@@ -184,7 +184,7 @@ class PKCS1Structure:
     def generate_write_keys_pem(
         self, keys, private_key_file_path, public_key_file_path, version=1
     ):
-        # generates the public and private key pem values
+        # generates the public and private key PEM values
         private_key_pem, public_key_pem = self.generate_keys_pem(keys, version)
 
         # converts both of the keys into a byte compatible stream
@@ -197,20 +197,20 @@ class PKCS1Structure:
         self._write_file(public_key_file_path, public_key_pem)
 
     def generate_keys_pem(self, keys, version=1):
-        # generates the private key pem
+        # generates the private key PEM
         private_key_pem = self.generate_private_key_pem(keys)
 
-        # generates the public key pem
+        # generates the public key PEM
         public_key_pem = self.generate_public_key_pem(keys)
 
-        # creates a tuple with the private key and public key pem
+        # creates a tuple with the private key and public key PEM
         keys_pem = (private_key_pem, public_key_pem)
 
-        # returns the keys pem
+        # returns the keys PEM
         return keys_pem
 
     def load_read_private_key_pem(self, private_key_file_path):
-        # reads the file, retrieving the private key pem
+        # reads the file, retrieving the private key PEM
         # and constructs and loads the return tuple
         private_key_pem = self._read_file(private_key_file_path)
         private_key_pem = colony.legacy.str(private_key_pem)
@@ -220,7 +220,7 @@ class PKCS1Structure:
         return return_tuple
 
     def load_read_public_key_pem(self, public_key_file_path):
-        # reads the file, retrieving the public key pem
+        # reads the file, retrieving the public key PEM
         # and constructs and loads the keys tuple
         public_key_pem = self._read_file(public_key_file_path)
         public_key_pem = colony.legacy.str(public_key_pem)
@@ -279,7 +279,7 @@ class PKCS1Structure:
 
     def generate_private_key_pem(self, keys, version=1):
         """
-        Generates the a private key in pem format, using
+        Generates the a private key in PEM format, using
         the given keys value.
 
         :type keys: Tuple
@@ -288,13 +288,13 @@ class PKCS1Structure:
         :type version: int
         :param version: The version of the keys to be generated.
         :rtype: String
-        :return: The generated private key in pem format.
+        :return: The generated private key in PEM format.
         """
 
-        # retrieves the private key in der format
+        # retrieves the private key in DER format
         private_key_der = self.generate_private_key_der(keys, version)
 
-        # encodes the private key der in base 64
+        # encodes the private key DER in base 64
         private_key_der = colony.legacy.bytes(private_key_der)
         private_key_der_encoded = base64.b64encode(private_key_der)
         private_key_der_encoded = colony.legacy.str(private_key_der_encoded)
@@ -305,38 +305,38 @@ class PKCS1Structure:
         # adds the begin RSA private value to the string value list
         string_value_list.append(BEGIN_RSA_PRIVATE_VALUE + "\n")
 
-        # splits the private key der encoded value
+        # splits the private key DER encoded value
         private_key_der_splitted = self._split_base_64(private_key_der_encoded)
 
-        # adds the private key der splitted to the string value list
+        # adds the private key DER splitted to the string value list
         string_value_list.append(private_key_der_splitted)
 
         # adds the end RSA private value to the string value list
         string_value_list.append(END_RSA_PRIVATE_VALUE + "\n")
 
         # joins the string value list retrieving the
-        # private key pem value
+        # private key PEM value
         private_key_pem = "".join(string_value_list)
 
-        # returns the private key pem value
+        # returns the private key PEM value
         return private_key_pem
 
     def generate_public_key_pem(self, keys):
         """
-        Generates the a public key in pem format, using
+        Generates the a public key in PEM format, using
         the given keys value.
 
         :type keys: Tuple
         :param keys: A tuple containing the public, private
         and extra key values.
         :rtype: String
-        :return: The generated public key in pem format.
+        :return: The generated public key in PEM format.
         """
 
-        # retrieves the public key in der format
+        # retrieves the public key in DER format
         public_key_der = self.generate_public_key_der(keys)
 
-        # encodes the public key der in base 64
+        # encodes the public key DER in base 64
         public_key_der = colony.legacy.bytes(public_key_der)
         public_key_der_encoded = base64.b64encode(public_key_der)
         public_key_der_encoded = colony.legacy.str(public_key_der_encoded)
@@ -347,20 +347,20 @@ class PKCS1Structure:
         # adds the begin RSA public value to the string value list
         string_value_list.append(BEGIN_PUBLIC_VALUE + "\n")
 
-        # splits the public key der encoded value
+        # splits the public key DER encoded value
         public_key_der_splitted = self._split_base_64(public_key_der_encoded)
 
-        # adds the public key der splitted to the string value list
+        # adds the public key DER splitted to the string value list
         string_value_list.append(public_key_der_splitted)
 
         # adds the end RSA public value to the string value list
         string_value_list.append(END_PUBLIC_VALUE + "\n")
 
         # joins the string value list retrieving the
-        # public key pem value
+        # public key PEM value
         public_key_pem = "".join(string_value_list)
 
-        # returns the public key pem value
+        # returns the public key PEM value
         return public_key_pem
 
     def load_private_key_pem(self, private_key_pem):
@@ -372,13 +372,13 @@ class PKCS1Structure:
                 "private key header/footer not found"
             )
 
-        # retrieves the private key pem contents (avoid header and footer)
+        # retrieves the private key PEM contents (avoid header and footer)
         # and joins the base 64 value back together removing extra newlines
         private_key_pem_contents = private_key_pem_match.group("contents")
         private_key_pem_contents_joined = self._join_base_64(private_key_pem_contents)
 
-        # decodes the private key pem from base 64, obtaining
-        # private key der in binary format, then loads it retrieving
+        # decodes the private key PEM from base 64, obtaining
+        # private key DER in binary format, then loads it retrieving
         # the return tuple to be returned to the caller method
         private_key_pem_contents_joined = colony.legacy.bytes(
             private_key_pem_contents_joined
@@ -399,15 +399,15 @@ class PKCS1Structure:
                 "public key header/footer not found"
             )
 
-        # retrieves the public key pem contents (avoid header and footer)
+        # retrieves the public key PEM contents (avoid header and footer)
         # and joins the base 64 value back together removing extra newlines
         public_key_pem_match_contents = public_key_pem_match.group("contents")
         public_key_pem_match_contents_joined = self._join_base_64(
             public_key_pem_match_contents
         )
 
-        # decodes the public key pem from base 64, obtaining
-        # public key der in binary format the loads it retrieving
+        # decodes the public key PEM from base 64, obtaining
+        # public key DER in binary format the loads it retrieving
         # the keys tuple to be returned to the caller method
         public_key_pem_match_contents_joined = colony.legacy.bytes(
             public_key_pem_match_contents_joined
@@ -415,7 +415,7 @@ class PKCS1Structure:
         public_key_der = base64.b64decode(public_key_pem_match_contents_joined)
         public_key_der = colony.legacy.str(public_key_der)
 
-        # loads the public key der, retrieving the keys tuple
+        # loads the public key DER, retrieving the keys tuple
         keys = self.load_public_key_der(public_key_der)
 
         # returns the keys tuple
@@ -423,7 +423,7 @@ class PKCS1Structure:
 
     def generate_private_key_der(self, keys, version=1):
         """
-        Generates the a private key in der format, using
+        Generates the a private key in DER format, using
         the given keys value.
 
         :type keys: Tuple
@@ -432,7 +432,7 @@ class PKCS1Structure:
         :type version: int
         :param version: The version of the keys to be generated.
         :rtype: String
-        :return: The generated private key in der format.
+        :return: The generated private key in DER format.
         """
 
         # unpacks the keys value
@@ -516,14 +516,14 @@ class PKCS1Structure:
 
     def generate_public_key_der(self, keys):
         """
-        Generates the a public key in der format, using
+        Generates the a public key in DER format, using
         the given keys value.
 
         :type keys: Tuple
         :param keys: A tuple containing the public, private
         and extra key values.
         :rtype: String
-        :return: The generated public key in der format.
+        :return: The generated public key in DER format.
         """
 
         # unpacks the keys value
@@ -986,7 +986,7 @@ class PKCS1Structure:
         # iterates continuously
         while True:
             # in case the base index is greater or equal
-            # to the private key der encoded length the
+            # to the private key DER encoded length the
             # string splitting has reached the end
             if base_index >= string_value_length:
                 break

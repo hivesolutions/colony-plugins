@@ -99,7 +99,7 @@ class SSLStructure(object):
         rsa_structure.generate_keys(number_bits)
         keys = rsa_structure.get_keys()
 
-        # writes the keys in pem format to the target file
+        # writes the keys in PEM format to the target file
         # paths, so that they may be used latter
         pkcs1_structure.generate_write_keys_pem(keys, private_key_path, public_key_path)
 
@@ -269,7 +269,7 @@ class SSLStructure(object):
         # the (long) key into multiple lines
         while True:
             # in case the base index is greater or equal
-            # to the private key der encoded length must
+            # to the private key DER encoded length must
             # break the loop (end of iteration)
             if base_index >= string_value_length:
                 break
