@@ -592,26 +592,26 @@ class PKCS1Structure:
         }
 
         # creates the subject public key info contents (list)
-        subject_plubic_key_info_contents = [
+        subject_public_key_info_contents = [
             algorithm_identifier,
             rsa_public_key_packed_bit_value,
         ]
 
         # creates the subject public key info
-        subject_plubic_key_info = {
+        subject_public_key_info = {
             TYPE_VALUE: {
                 TYPE_CONSTRUCTED_VALUE: 1,
                 TYPE_NUMBER_VALUE: SEQUENCE_TYPE,
                 TYPE_CLASS_VALUE: 0,
             },
-            VALUE_VALUE: subject_plubic_key_info_contents,
+            VALUE_VALUE: subject_public_key_info_contents,
         }
 
         # packs the subject public key info
-        subject_plubic_key_info_packed = ber_structure.pack(subject_plubic_key_info)
+        subject_public_key_info_packed = ber_structure.pack(subject_public_key_info)
 
         # returns the subject public key info
-        return subject_plubic_key_info_packed
+        return subject_public_key_info_packed
 
     def load_private_key_der(self, private_key_der):
         # creates the ber structure
