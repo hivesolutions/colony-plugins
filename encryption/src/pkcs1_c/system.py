@@ -659,24 +659,25 @@ class PKCS1Structure:
         coefficient = rsa_private_key_value[8]
         coefficient_value = coefficient[VALUE_VALUE]
 
-        # creates the public key map
+        # creates the public key map, with the modulus and public exponent values
         public_key = {"n": modulus_value, "e": public_exponent_value}
 
-        # creates the private key map
+        # creates the private key map, with the private exponent,
+        # prime 1 and prime 2 values
         private_key = {
             "d": private_exponent_value,
             "p": prime_1_value,
             "q": prime_2_value,
         }
 
-        # creates the extras map
+        # creates the extras map, with the exponent 1, exponent 2 and coefficient values
         extras = {
             "fe": exponent_1_value,
             "se": exponent_2_value,
             "c": coefficient_value,
         }
 
-        # creates the keys tuple
+        # creates the keys tuple with the public key, private key and extras
         keys = (public_key, private_key, extras)
 
         # creates the return tuple
@@ -740,16 +741,12 @@ class PKCS1Structure:
                 "invalid arguments value: " + str(arguments_value)
             )
 
-        # creates the public key map
+        # creates the public key map with modulus and public exponent values
+        # and then creates the private key map (empty) and the extras map (empty)
+        # and then creates the keys tuple with the public key, private key and extras
         public_key = {"n": modulus_value, "e": public_exponent_value}
-
-        # creates the private key map
         private_key = {}
-
-        # creates the extras map
         extras = {}
-
-        # creates the keys tuple
         keys = (public_key, private_key, extras)
 
         # returns the keys tuple
