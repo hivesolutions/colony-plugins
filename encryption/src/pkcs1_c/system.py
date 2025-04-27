@@ -181,14 +181,6 @@ class PKCS1Structure:
 
         self.ber_plugin = ber_plugin
 
-    def create_structure(self, parameters):
-        # retrieves the ber plugin and uses it to create the requested
-        # PKCS1 structure that may be then be used for cryptographic
-        # based operations on the provided buffers
-        ber_plugin = self.plugin.ber_plugin
-        pkcs1_structure = PKCS1Structure(ber_plugin)
-        return pkcs1_structure
-
     def generate_write_keys_pem(
         self, keys, private_key_file_path, public_key_file_path, version=1
     ):
@@ -428,71 +420,6 @@ class PKCS1Structure:
 
         # returns the keys tuple
         return keys
-
-    def load_certificate_der(self, certificate_der):
-        # loads a certificate in DER format, extracting various fields
-        # expects certificate_der as a string (binary data as str)
-        # creates a ber structure to parse the DER data
-        ber_structure = self.ber_plugin.create_structure({})
-
-        # loads the certificate structure from the DER data
-        certificate = ber_structure.load_der(certificate_der)
-
-        # navigate the certificate structure to extract various fields
-        tbs_certificate = certificate["value"][0]
-
-        # extract version (optional, default is v1)
-        version = (
-            tbs_certificate["value"][0]["value"]
-            if len(tbs_certificate["value"]) > 0
-            else 0
-        )
-
-        # extract serial number
-        serial_number = tbs_certificate["value"][1]["value"]
-
-        # extract signature algorithm
-        signature_algorithm = tbs_certificate["value"][2]["value"][0]["value"]
-
-        # extract issuer
-        issuer = tbs_certificate["value"][3]["value"]
-
-        # extract validity period
-        validity = tbs_certificate["value"][4]["value"]
-        not_before = validity[0]["value"]
-        not_after = validity[1]["value"]
-
-        # extract subject
-        subject = tbs_certificate["value"][5]["value"]
-
-        # extract subject public key info
-        subject_public_key_info = tbs_certificate["value"][6]
-        public_key_der = subject_public_key_info["value"][1]["value"]
-        if (
-            isinstance(public_key_der, (bytes, bytearray, str))
-            and len(public_key_der) > 1
-        ):
-            public_key_der = public_key_der[1:]
-        public_key_der = colony.legacy.str(public_key_der)
-        keys = self.load_public_key_der(public_key_der)
-
-        # extract extensions (if present)
-        extensions = None
-        if len(tbs_certificate["value"]) > 7:
-            extensions = tbs_certificate["value"][7]["value"]
-
-        # return a dictionary with all extracted values
-        return {
-            "version": version,
-            "serial_number": serial_number,
-            "signature_algorithm": signature_algorithm,
-            "issuer": issuer,
-            "not_before": not_before,
-            "not_after": not_after,
-            "subject": subject,
-            "public_key": keys,
-            "extensions": extensions,
-        }
 
     def generate_private_key_der(self, keys, version=1):
         """
@@ -824,6 +751,69 @@ class PKCS1Structure:
 
         # returns the keys tuple
         return keys
+
+    def load_certificate_der(self, certificate_der):
+        # creates the BER structure
+        ber_structure = self.ber_plugin.create_structure({})
+
+        # unpacks the certificate
+        certificate = ber_structure.unpack(certificate_der)
+
+        # navigate the certificate structure to extract various fields
+        tbs_certificate = certificate["value"][0]
+
+        # extract version (optional, default is v1)
+        version = (
+            tbs_certificate["value"][0]["value"]
+            if len(tbs_certificate["value"]) > 0
+            else 0
+        )
+
+        # extract serial number
+        serial_number = tbs_certificate["value"][1]["value"]
+
+        # extract signature algorithm
+        signature_algorithm = tbs_certificate["value"][2]["value"][0]["value"]
+
+        # extract issuer
+        issuer = tbs_certificate["value"][3]["value"]
+
+        # extract validity period
+        validity = tbs_certificate["value"][4]["value"]
+        not_before = validity[0]["value"]
+        not_after = validity[1]["value"]
+
+        # extract subject
+        subject = tbs_certificate["value"][5]["value"]
+
+        # extract subject public key info
+        subject_public_key_info = tbs_certificate["value"][6]
+        public_key_der = subject_public_key_info["value"][1]["value"]
+        if (
+            isinstance(public_key_der, (bytes, bytearray, str))
+            and len(public_key_der) > 1
+        ):
+            public_key_der = public_key_der[1:]
+        public_key_der = colony.legacy.str(public_key_der)
+        keys = self.load_public_key_der(public_key_der)
+
+        # extract extensions (if present)
+        extensions = None
+        if len(tbs_certificate["value"]) > 7:
+            extensions = tbs_certificate["value"][7]["value"]
+
+        # return a dictionary with all extracted values
+        return dict(
+            version=version,
+            serial_number=serial_number,
+            signature_algorithm=signature_algorithm,
+            issuer=issuer,
+            not_before=not_before,
+            not_after=not_after,
+            subject=subject,
+            public_key=keys,
+            extensions=extensions,
+        )
 
     def _encrypt(self, keys, message):
         # unpacks the keys tuple, retrieving the public key,
