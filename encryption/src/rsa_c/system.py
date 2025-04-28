@@ -754,7 +754,7 @@ class RSAStructure(object):
             # the least significant byte value of
             # the integer and adds that character
             # vale to the list containing the characters
-            character_value = colony.legacy.chr(integer_value & 0xFF)
+            character_value = colony.legacy.chr(integer_value & 0xff)
             characters_list.append(character_value)
 
             # shifts the integer value eight bits

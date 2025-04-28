@@ -689,7 +689,7 @@ class BERStructure(object):
             while length:
                 # calculates the substrate from the previous
                 # substrate
-                substrate = colony.legacy.chr(length & 0xFF) + substrate
+                substrate = colony.legacy.chr(length & 0xff) + substrate
 
                 # shifts the length eight bits
                 # to the right
@@ -766,7 +766,7 @@ class BERStructure(object):
         while True:
             # insets the value in the octets list
             # with an and on the bit value
-            octets.insert(0, value & 0xFF)
+            octets.insert(0, value & 0xff)
 
             # in case the value is zero or minus
             # one (end of value)
@@ -785,16 +785,16 @@ class BERStructure(object):
         while len(octets) > 1 and (
             octets[0] == 0
             and octets[1] & 0x80 == 0
-            or octets[0] == 0xFF
+            or octets[0] == 0xff
             and octets[1] & 0x80 != 0
         ):
             del octets[0]
 
         # creates the octets list from the list of values
-        chracter_octets = [colony.legacy.chr(value) for value in octets]
+        character_octets = [colony.legacy.chr(value) for value in octets]
 
         # creates the octets string joining the octet characters
-        octets_string = b"".join(chracter_octets)
+        octets_string = b"".join(character_octets)
 
         # returns the octets string
         return octets_string
@@ -843,7 +843,7 @@ class BERStructure(object):
         sub_identifier += value[index + 1]
 
         # in case the initial identifier overflows
-        if sub_identifier < 0 or sub_identifier > 0xFF:
+        if sub_identifier < 0 or sub_identifier > 0xff:
             # raises the packing error exception
             raise exceptions.PackingError(
                 "Initial sub identifier overflow: %s" % sub_identifier
@@ -876,7 +876,7 @@ class BERStructure(object):
                 # adds the sub identifier character to the octets
                 octets.append(sub_identifier_character)
             # in case the value overflows
-            elif sub_identifier < 0 or sub_identifier > 0xFFFFFFFF:
+            elif sub_identifier < 0 or sub_identifier > 0xffffffff:
                 # raises the packing error exception
                 raise exceptions.PackingError(
                     "sub identifier overflow: %s" % sub_identifier

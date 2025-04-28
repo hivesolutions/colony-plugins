@@ -636,7 +636,7 @@ class SMTPClient(object):
         """
 
         # in case the limit is reached
-        if self.current_transaction_id == 0xFFFF:
+        if self.current_transaction_id == 0xffff:
             # resets the current transaction id
             self.current_transaction_id = 0x0000
 
