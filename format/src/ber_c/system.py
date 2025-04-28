@@ -131,7 +131,10 @@ class BER(colony.System):
 
 class BERStructure(object):
     """
-    Class representing a BER structure.
+    Class representing a BER structure responsible for the
+    encoding and decoding of the BER (Basic Encoding Rules).
+
+    :see: https://en.wikipedia.org/wiki/X.690#BER_encoding
     """
 
     buffer = None
@@ -611,7 +614,9 @@ class BERStructure(object):
         unpacked_set_value = self._unpack_sequence(packed_set_value)
 
         # unpacks the set as a base value
-        set = self.unpack_base_value(unpacked_set_value, set_type, packed_set_extra_type)
+        set = self.unpack_base_value(
+            unpacked_set_value, set_type, packed_set_extra_type
+        )
 
         # returns the set
         return set
