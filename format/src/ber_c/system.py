@@ -188,26 +188,20 @@ class BERStructure(object):
         # retrieves the type number for the value
         type_number = self._get_type_number(value)
 
-        # retrieves the pack method for the type number
+        # retrieves the pack method for the type number, then
+        # uses it to pack the value and returns it
         pack_method = self._get_pack_method(type_number)
-
-        # packs the value
         packed_value = pack_method(value)
-
-        # returns the packed value
         return packed_value
 
     def unpack(self, packed_value):
         # retrieves the type for the packed number value
         type_number = self._get_packed_type_number(packed_value)
 
-        # retrieves the unpack method for the type number
+        # retrieves the unpack method for the type number and
+        # then uses it to unpack the packed value and returns it
         unpack_method = self._get_unpack_method(type_number)
-
-        # unpacks the packed value
         value = unpack_method(packed_value)
-
-        # returns the value
         return value
 
     def pack_boolean(self, boolean):
@@ -1324,15 +1318,25 @@ class BERStructure(object):
         return packed_value
 
     def _get_pack_method(self, type_number):
-        # retrieves the pack method for the type number
-        pack_method = self.pack_methods_map[type_number]
+        # raises an error in case the type number is not found
+        if not type_number in self.unpack_methods_map:
+            raise exceptions.PackingError(
+                "BER pack method not found for type number: %s" % type_number
+            )
 
-        # returns the pack method
+        # retrieves the pack method for the type number
+        # and returns it to the caller method
+        pack_method = self.pack_methods_map[type_number]
         return pack_method
 
     def _get_unpack_method(self, type_number):
-        # retrieves the unpack method for the type number
-        unpack_method = self.unpack_methods_map[type_number]
+        # raises an error in case the type number is not found
+        if not type_number in self.unpack_methods_map:
+            raise exceptions.UnpackingError(
+                "BER unpack method not found for type number: %s" % type_number
+            )
 
-        # returns the unpack method
+        # retrieves the unpack method for the type number and
+        # returns it to the caller method
+        unpack_method = self.unpack_methods_map[type_number]
         return unpack_method
