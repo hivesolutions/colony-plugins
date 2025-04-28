@@ -628,7 +628,7 @@ class BERStructure(object):
         }
 
         # creates the unpacked base value
-        unpaked_base_value = {TYPE_VALUE: type_map, VALUE_VALUE: unpacked_base_value}
+        unpacked_base_value = {TYPE_VALUE: type_map, VALUE_VALUE: unpacked_base_value}
 
         # in case the extra type is defined
         if not extra_type == None:
@@ -647,10 +647,10 @@ class BERStructure(object):
             }
 
             # sets the extra type (map) in the unpacked base value
-            unpaked_base_value[EXTRA_TYPE_VALUE] = extra_type_map
+            unpacked_base_value[EXTRA_TYPE_VALUE] = extra_type_map
 
         # returns the unpacked base value
-        return unpaked_base_value
+        return unpacked_base_value
 
     def get_type_alias_map(self):
         """
