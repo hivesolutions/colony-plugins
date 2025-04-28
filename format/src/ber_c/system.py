@@ -421,7 +421,7 @@ class BERStructure(object):
         unpacked_boolean_value = self._unpack_integer(packed_boolean_value)
 
         # converts the unpacked boolean value to integer
-        unpacked_boolean_value = unpacked_boolean_value == 1 and True or False
+        unpacked_boolean_value = True if unpacked_boolean_value == 1 else False
 
         # unpacks the boolean as a base value
         boolean = self.unpack_base_value(
@@ -1173,13 +1173,11 @@ class BERStructure(object):
         # retrieves the type class from the type value
         type_class = type_value.get(TYPE_CLASS_VALUE, DEFAULT_CLASS)
 
-        # starts the type value from the type number
+        # starts the type value from the type number and then
+        # adds the type constructed and the type class (bit
+        # wise or with bit shift) to the type value
         _type = type_number
-
-        # adds the type constructed to the type
         _type |= type_constructed << 5
-
-        # adds the type class to the type
         _type |= type_class << 6
 
         # returns the type
@@ -1283,9 +1281,8 @@ class BERStructure(object):
         extra_type = colony.legacy.ord(extra_type_octet)
 
         # in case the extra type and the base
-        # type are the same
+        # type are the same, returns invalid
         if extra_type == base_type:
-            # returns invalid
             return None
 
         # returns the extra type
