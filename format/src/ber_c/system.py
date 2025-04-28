@@ -415,14 +415,14 @@ class BERStructure(object):
         packed_boolean_value = self._get_packed_value(packed_boolean)
 
         # unpacks the packed boolean value
-        upacked_boolean_value = self._unpack_integer(packed_boolean_value)
+        unpacked_boolean_value = self._unpack_integer(packed_boolean_value)
 
         # converts the unpacked boolean value to integer
-        upacked_boolean_value = upacked_boolean_value == 1 and True or False
+        unpacked_boolean_value = unpacked_boolean_value == 1 and True or False
 
         # unpacks the boolean as a base value
         boolean = self.unpack_base_value(
-            upacked_boolean_value, boolean_type, packed_boolean_extra_type
+            unpacked_boolean_value, boolean_type, packed_boolean_extra_type
         )
 
         # returns the boolean
@@ -441,11 +441,11 @@ class BERStructure(object):
         packed_integer_value = self._get_packed_value(packed_integer)
 
         # unpacks the packed integer value
-        upacked_integer_value = self._unpack_integer(packed_integer_value)
+        unpacked_integer_value = self._unpack_integer(packed_integer_value)
 
         # unpacks the integer as a base value
         integer = self.unpack_base_value(
-            upacked_integer_value, integer_type, packed_integer_extra_type
+            unpacked_integer_value, integer_type, packed_integer_extra_type
         )
 
         # returns the integer
@@ -464,11 +464,11 @@ class BERStructure(object):
         packed_bit_string_value = self._get_packed_value(packed_bit_string)
 
         # unpacks the packed bit string value
-        upacked_bit_string_value = self._unpack_bit_string(packed_bit_string_value)
+        unpacked_bit_string_value = self._unpack_bit_string(packed_bit_string_value)
 
         # unpacks the bit string as a base value
         bit_string = self.unpack_base_value(
-            upacked_bit_string_value, bit_string_type, packed_bit_string_extra_type
+            unpacked_bit_string_value, bit_string_type, packed_bit_string_extra_type
         )
 
         # returns the bit string
@@ -487,13 +487,13 @@ class BERStructure(object):
         packed_octet_string_value = self._get_packed_value(packed_octet_string)
 
         # unpacks the packed octet string value
-        upacked_octet_string_value = self._unpack_octet_string(
+        unpacked_octet_string_value = self._unpack_octet_string(
             packed_octet_string_value
         )
 
         # unpacks the octet string as a base value
         octet_string = self.unpack_base_value(
-            upacked_octet_string_value,
+            unpacked_octet_string_value,
             octet_string_type,
             packed_octet_string_extra_type,
         )
@@ -512,11 +512,11 @@ class BERStructure(object):
         packed_null_value = self._get_packed_value(packed_null)
 
         # unpacks the packed null value
-        upacked_null_value = self._unpack_null(packed_null_value)
+        unpacked_null_value = self._unpack_null(packed_null_value)
 
         # unpacks the null as a base value
         null = self.unpack_base_value(
-            upacked_null_value, null_type, packed_null_extra_type
+            unpacked_null_value, null_type, packed_null_extra_type
         )
 
         # returns the null
@@ -537,13 +537,13 @@ class BERStructure(object):
         )
 
         # unpacks the packed object identifier value
-        upacked_object_identifier_value = self._unpack_object_identifier(
+        unpacked_object_identifier_value = self._unpack_object_identifier(
             packed_object_identifier_value
         )
 
         # unpacks the object identifier as a base value
         object_identifier = self.unpack_base_value(
-            upacked_object_identifier_value,
+            unpacked_object_identifier_value,
             object_identifier_type,
             packed_object_identifier_extra_type,
         )
@@ -564,11 +564,11 @@ class BERStructure(object):
         packed_enumerated_value = self._get_packed_value(packed_enumerated)
 
         # unpacks the packed enumerated value (as integer)
-        upacked_enumerated_value = self._unpack_integer(packed_enumerated_value)
+        unpacked_enumerated_value = self._unpack_integer(packed_enumerated_value)
 
         # unpacks the enumerated as a base value
         enumerated = self.unpack_base_value(
-            upacked_enumerated_value, enumerated_type, packed_enumerated_extra_type
+            unpacked_enumerated_value, enumerated_type, packed_enumerated_extra_type
         )
 
         # returns the enumerated
@@ -587,11 +587,11 @@ class BERStructure(object):
         packed_sequence_value = self._get_packed_value(packed_sequence)
 
         # unpacks the packed sequence value
-        upacked_sequence_value = self._unpack_sequence(packed_sequence_value)
+        unpacked_sequence_value = self._unpack_sequence(packed_sequence_value)
 
         # unpacks the sequence as a base value
         sequence = self.unpack_base_value(
-            upacked_sequence_value, sequence_type, packed_sequence_extra_type
+            unpacked_sequence_value, sequence_type, packed_sequence_extra_type
         )
 
         # returns the sequence
@@ -608,10 +608,10 @@ class BERStructure(object):
         packed_set_value = self._get_packed_value(packed_set)
 
         # unpacks the packed set value
-        upacked_set_value = self._unpack_sequence(packed_set_value)
+        unpacked_set_value = self._unpack_sequence(packed_set_value)
 
         # unpacks the set as a base value
-        set = self.unpack_base_value(upacked_set_value, set_type, packed_set_extra_type)
+        set = self.unpack_base_value(unpacked_set_value, set_type, packed_set_extra_type)
 
         # returns the set
         return set
@@ -1127,19 +1127,15 @@ class BERStructure(object):
             # increments the index
             index += current_packed_value_total_length
 
-        # sets the sequence as the values list
+        # sets the sequence as the values list and then
+        # returns it
         sequence = values_list
-
-        # returns the sequence
         return sequence
 
     def _resolve_base_type(self, value):
         type_value = {}
-
         type_value[TYPE_NUMBER_VALUE] = value
-
         type = self._resolve_type(type_value)
-
         return type
 
     def _resolve_type(self, type_value):
