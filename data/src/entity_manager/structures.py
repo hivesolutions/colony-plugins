@@ -1659,7 +1659,7 @@ class EntityClass(object):
     def get_items(cls, foreign_relations=False):
         """
         Retrieves the various items (fields) of the current entity
-        that describe it (class) in the current depth level.
+        that describe it (class) at the current depth level.
         If this entity class is inheriting fields from a (non abstract)
         entity those fields will not be returned in this method.
 
@@ -1703,7 +1703,7 @@ class EntityClass(object):
         # in the current class context
         _items = {}
 
-        # iterate over all the items in the current context
+        # iterates over all the items in the current context
         # to filter the ones that do not correspond to a valid
         # field attribute
         for key, value in colony.legacy.iteritems(items):
@@ -1736,6 +1736,11 @@ class EntityClass(object):
                 and cls.is_relation(key)
                 and not cls.is_mapped(key)
             ):
+                continue
+
+            # in case value is not a dictionary (or a dictionary like object)
+            # it should be ignored (not an item)
+            if not hasattr(value, "get"):
                 continue
 
             # sets the value as the item for the current
