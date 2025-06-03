@@ -75,6 +75,10 @@ TO_ONE_RELATIONS = ("one-to-one", "many-to-one")
 TO_MANY_RELATIONS = ("one-to-many", "many-to-many")
 """ The tuple containing the "to-many" relations """
 
+SORT_TOKENS = ("asc", "ascending", "desc", "descending", "1", "-1", "default")
+""" The list of tokens that may be used to represent the
+sort order in the entity manager """
+
 DATA_TYPE_CAST_TYPES_MAP = dict(
     text=colony.legacy.UNICODE,
     string=colony.legacy.UNICODE,
@@ -775,16 +779,23 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # the normalization process
     filters = list(filters)
 
-    # in case the sort value exists but contains not separator
-    # then we assume that the sort value is the default and
-    # we add the default prefix to it, making it a valid sort value
+    # in case the sort value exists but contains no separator
+    # them we try to determine if the sort value is a sort token,
+    # meaning it should be a sort order value or if instead it
+    # is the name of a field to be sorted by (default fallback)
     if sort and not ":" in sort:
-        sort = "default:%s" % sort
+        if sort in SORT_TOKENS:
+            sort = "default:%s" % sort
+        else:
+            sort = "%s:default" % sort
 
-    # normalizes the sort value into the accepter order by
+    # normalizes the sort value into the accepted order by
     # value defaulting to the fallback value in case the
-    # sort value is the default
+    # sort value is the default, notice that the default sort
+    # order must be None, not an empty string or "default"
     sort_value, sort_order = sort.split(":", 1) if sort else ("default", None)
+    if sort_order == "default":
+        sort_order = None
     order_by = order_by if sort_value == "default" else (sort_value, sort_order)
 
     # tries to retrieve the proper value for the paged element
