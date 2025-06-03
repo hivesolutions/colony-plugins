@@ -4813,10 +4813,11 @@ class EntityManager(object):
             if operator:
                 operator = self.engine._resolve_operator(operator)
 
-            # if the name is "__identifier__" it's going to be replaced with
-            # the entity ID, this is a special case, aimed at providing
-            # ergonomics for the default ordering
-            if name == "__identifier__":
+            # if the name is "__default__" or "__identifier__" then it's going
+            # to be replaced with the entity's ID value, this is considered
+            # to be a special case, aimed at providing ergonomics for
+            # the default ordering situations
+            if name in ("__default__", "__identifier__"):
                 name = entity_class.get_id()
 
             # writes the comma to the query buffer only in case the

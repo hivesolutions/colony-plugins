@@ -785,7 +785,7 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # is the name of a field to be sorted by (default fallback)
     if sort and not ":" in sort:
         if sort in SORT_TOKENS:
-            sort = "__identifier__:%s" % sort
+            sort = "__default__:%s" % sort
         else:
             sort = "%s:__default__" % sort
 
@@ -801,9 +801,11 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
         sort_order = None
 
     # in case there's a valid sort value present (which includes the
-    # # "__default__" value) builds the order by tuple with both the
-    # sort value and the sort order (which can be unset as None)
-    # if no sort value exists the default order by (set above) is used
+    # # "__default__" and the "__identifier__" values) then builds the
+    # order by tuple with both the sort value and the sort order
+    # (which can be unset as None)
+    # if no sort value exists the default order by (that is set above
+    # in the function) is used
     if sort_value:
         order_by = ((sort_value, sort_order),)
 
