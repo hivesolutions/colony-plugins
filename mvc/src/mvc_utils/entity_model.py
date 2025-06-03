@@ -775,6 +775,12 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # the normalization process
     filters = list(filters)
 
+    # in case the sort value exists but contains not separator
+    # then we assume that the sort value is the default and
+    # we add the default prefix to it, making it a valid sort value
+    if sort and not ":" in sort:
+        sort = "default:%s" % sort
+
     # normalizes the sort value into the accepter order by
     # value defaulting to the fallback value in case the
     # sort value is the default

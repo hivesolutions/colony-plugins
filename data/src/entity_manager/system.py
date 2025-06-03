@@ -4810,9 +4810,9 @@ class EntityManager(object):
             # writes the order of the order by into the query buffer
             # the value of the writing is the query oriented simplified
             # order string values
-            if order == "ascending":
+            if order in ("asc", "ascending", "1"):
                 query_buffer.write(" asc")
-            elif order == "descending":
+            elif order in ("desc", "descending", "-1"):
                 query_buffer.write(" desc")
 
     def _limit_query_f(self, entity_class, options, query_buffer):
