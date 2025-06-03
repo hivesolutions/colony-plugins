@@ -46,20 +46,20 @@ of variable names/parts should comply with both the name of the variable,
 possible filtering pipeline and method calls """
 
 LITERAL_REGEX = re.compile(
-    "(?P<quoted_single>['][^']+['])|"
-    + '(?P<quoted_double>["][^"]+["])|'
-    + "(?P<float>-?[0-9]+\.[0-9]*)|"
-    + "(?P<integer>-?[0-9]+)|"
-    + "(?P<true_boolean>True)|"
-    + "(?P<false_boolean>False)|"
-    + "(?P<none>None)"
+    r"(?P<quoted_single>['][^']+['])|"
+    + r'(?P<quoted_double>["][^"]+["])|'
+    + r"(?P<float>-?[0-9]+\.[0-9]*)|"
+    + r"(?P<integer>-?[0-9]+)|"
+    + r"(?P<true_boolean>True)|"
+    + r"(?P<false_boolean>False)|"
+    + r"(?P<none>None)"
 )
 """ Regular expression to be used in the parsing of literal values, named
 groups are used for the conditional retrieval of each of the types """
 
 IF_REGEX = re.compile(
-    "(?P<complex>(not\s+)?(.+)\s+(in|<|>|<=|>=|==)\s+(.+))|"
-    + "(?P<simple>(not\s+)?(.+))"
+    r"(?P<complex>(not\s+)?(.+)\s+(in|<|>|<=|>=|==)\s+(.+))|"
+    + r"(?P<simple>(not\s+)?(.+))"
 )
 """ The regular expression that is going to be used for the extraction of the
 various parts of an if statement note that there are two forms of an if
@@ -67,13 +67,13 @@ statement one complex and one simple, this is required so that all forms
 of partial expression may be matched for variables """
 
 FOR_REGEX = re.compile(
-    "(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + "(?P<simple>(.+)\s+in\s+(.+))"
+    r"(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + "(?P<simple>(.+)\s+in\s+(.+))"
 )
 """ Regular expression used for the mating of the various parts of the for
 expression the expression defines two modes one simple with just the key
 definition and one more complex with both key and value definitions """
 
-SET_REGEX = re.compile("(.+)\s+=\s+(.+)")
+SET_REGEX = re.compile(r"(.+)\s+=\s+(.+)")
 """ The regular expression that is going to be used for the match operation
 in the payload of the set operation """
 
