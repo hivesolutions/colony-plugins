@@ -790,14 +790,20 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
             sort = "%s:__default__" % sort
 
     # normalizes the sort value into the accepted order by
-    # value defaulting to the fallback value in case the
-    # sort value is the default, notice that the default sort
-    # order must be None, not an empty string or "default"
+    # value defaulting notice that the sort value must be a
+    # valid field name ("default" is not allowed) and that the
+    # special sort order value "__default__" must be converted
+    # to None (interpreted as default down stream)
     sort_value, sort_order = sort.split(":", 1) if sort else (None, None)
-    if sort_order == "__default__":
-        sort_order = None
     if sort_value == "default":
         sort_value = None
+    if sort_order == "__default__":
+        sort_order = None
+
+    # in case there's a valid sort value present (which includes the
+    # # "__default__" value) builds the order by tuple with both the
+    # sort value and the sort order (which can be unset as None)
+    # if no sort value exists the default order by (set above) is used
     if sort_value:
         order_by = ((sort_value, sort_order),)
 
