@@ -796,7 +796,7 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     sort_value, sort_order = sort.split(":", 1) if sort else ("default", None)
     if sort_order == "default":
         sort_order = None
-    order_by = order_by if sort_value == "default" else (sort_value, sort_order)
+    order_by = order_by if sort_value == "default" else ((sort_value, sort_order),)
 
     # tries to retrieve the proper value for the paged element
     # taking into account a possible boolean approach
