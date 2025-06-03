@@ -801,7 +801,7 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
         sort_order = None
 
     # in case there's a valid sort value present (which includes the
-    # # "__default__" and the "__identifier__" values) then builds the
+    # "__default__" and the "__identifier__" values) then builds the
     # order by tuple with both the sort value and the sort order
     # (which can be unset as None)
     # if no sort value exists the default order by (that is set above
