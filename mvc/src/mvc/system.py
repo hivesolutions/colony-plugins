@@ -37,7 +37,7 @@ from . import exceptions
 from . import file_handler
 from . import communication
 
-NAMED_GROUPS_REGEX_VALUE = "\(\?P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
+NAMED_GROUPS_REGEX_VALUE = r"\(\?P\<[a-zA-Z_][a-zA-Z0-9_]*\>(.+?)\)"
 """ The named groups regex value, that is going to be used
 to replace the named group naming with simple group sequences """
 
@@ -45,17 +45,17 @@ NAMED_GROUPS_REGEX = re.compile(NAMED_GROUPS_REGEX_VALUE)
 """ The named groups (compiled) regex, to be used runtime
 at the runtime matching """
 
-REPLACE_REGEX = re.compile("(?<!\(\?P)\<((\w+)(\([\"'].*?[\"']\))?:)?(\w+)\>")
+REPLACE_REGEX = re.compile(r"(?<!\(\?P)\<((\w+)(\([\"'].*?[\"']\))?:)?(\w+)\>")
 """ The regular expression to be used in the replacement
 of the capture groups for the urls, this regex will capture
 any named group not change until this stage (eg: int,
 string, regex, etc.) """
 
-INT_REGEX = re.compile("\<int:(\w+)\>")
+INT_REGEX = re.compile(r"\<int:(\w+)\>")
 """ The regular expression to be used in the replacement
 of the integer type based groups for the urls """
 
-REGEX_REGEX = re.compile("\<regex\([\"'](.*?)[\"']\):(\w+)\>")
+REGEX_REGEX = re.compile(r"\<regex\([\"'](.*?)[\"']\):(\w+)\>")
 """ Regular expression that is going to be used for the
 replacement of regular expression types with the proper
 group in the final URL based route regex """
