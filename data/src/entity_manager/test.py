@@ -1107,6 +1107,21 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(persons[1].object_id, person_c.object_id)
         self.assertEqual(persons[2].object_id, person_a.object_id)
 
+        # retrieves the persons from the data source ordered
+        # by the address street attribute in ascending order,
+        # now using the asc contraction
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(eager=("address",), order_by=(("address.street", "asc"),)),
+        )
+
+        # verifies that the retrieved list is not empty and that
+        # the various persons are ordered in the expected order
+        self.assertNotEqual(persons, [])
+        self.assertEqual(persons[0].object_id, person_b.object_id)
+        self.assertEqual(persons[1].object_id, person_c.object_id)
+        self.assertEqual(persons[2].object_id, person_a.object_id)
+
     def test_range(self):
         # tests that the range part of the query
         # work correctly in every way
@@ -1601,6 +1616,22 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             mocks.Person,
             1,
             options=dict(eager=("dogs",), order_by=(("dogs.name", "descending"),)),
+        )
+
+        # verifies that the retrieval was a success and that the dogs are now
+        # sorted in the opposite order, when compared with the first retrieval
+        self.assertNotEqual(person, None)
+        self.assertNotEqual(person.dogs, [])
+        self.assertEqual(person.dogs[0].object_id, 4)
+        self.assertEqual(person.dogs[1].object_id, 3)
+        self.assertEqual(person.dogs[2].object_id, 2)
+
+        # re-retrieves the person from the data source, sorting the dogs
+        # relation using the name in a descending order, now using the simplified
+        person = self.entity_manager.get(
+            mocks.Person,
+            1,
+            options=dict(eager=("dogs",), order_by=(("dogs.name", "desc"),)),
         )
 
         # verifies that the retrieval was a success and that the dogs are now
