@@ -761,13 +761,20 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
 
     # retrieves the various components of the form elements
     # defaulting to the pre-defined default values
-    filter_string = data.get("filter_string", "")
-    sort = data.get("sort", None)
+    filter_string = data.get("find_s", "")
+    filter_string = data.get("filter_string", filter_string)
+    sort = data.get("order", None)
+    sort = data.get("sort", sort)
     paged_s = data.get("paged", "0")
     eager_s = data.get("eager", [])
-    filters_s = data.get("filters", [])
-    start_record = data.get("start_record", 0)
-    number_records = data.get("number_records", 5)
+    filters_s = data.get("find_d", [])
+    filters_s = data.get("filters", filters_s)
+    start_record = data.get("offset", 0)
+    start_record = data.get("skip", start_record)
+    start_record = data.get("start_record", start_record)
+    number_records = data.get("count", 5)
+    number_records = data.get("limit", number_records)
+    number_records = data.get("number_records", number_records)
 
     # converts the various integer arguments into the appropriate
     # representations to be used internally
