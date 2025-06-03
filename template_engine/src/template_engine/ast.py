@@ -67,7 +67,7 @@ statement one complex and one simple, this is required so that all forms
 of partial expression may be matched for variables """
 
 FOR_REGEX = re.compile(
-    r"(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + "(?P<simple>(.+)\s+in\s+(.+))"
+    r"(?P<complex>(.+)\s*\,\s*(.+)\s+in\s+(.+))|" + r"(?P<simple>(.+)\s+in\s+(.+))"
 )
 """ Regular expression used for the mating of the various parts of the for
 expression the expression defines two modes one simple with just the key

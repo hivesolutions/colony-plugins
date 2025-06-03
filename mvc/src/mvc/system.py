@@ -396,7 +396,7 @@ class MVC(colony.System):
             # escapes the pattern key replacing the named
             # group selectors, this is required so that the
             # proper key matching is possible
-            pattern_key_escaped = NAMED_GROUPS_REGEX.sub("\g<1>", pattern_key)
+            pattern_key_escaped = NAMED_GROUPS_REGEX.sub(r"\g<1>", pattern_key)
 
             # in case the pattern key escaped does not exists
             # in the patterns map must add it to the structures
