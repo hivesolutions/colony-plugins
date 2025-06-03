@@ -37,10 +37,10 @@ import colony
 from . import utils
 from . import exceptions
 
-EMAIL_REGEX_VALUE = "^[\w\d\._%+-]+@[\w\d\.\-]+$"
+EMAIL_REGEX_VALUE = r"^[\w\d\._%+-]+@[\w\d\.\-]+$"
 """ The email regex value """
 
-URL_REGEX_VALUE = "^\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?$"
+URL_REGEX_VALUE = r"^\w+\:\/\/[^\:\/\?#]+(\:\d+)?(\/[^\?#]+)*\/?(\?[^#]*)?(#.*)?$"
 """ The URL regex value """
 
 EMAIL_REGEX = re.compile(EMAIL_REGEX_VALUE)
