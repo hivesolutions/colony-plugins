@@ -750,7 +750,7 @@ class EntityManager(object):
         # hierarchy to be exported avoiding data corruption problems)
         entity_classes = entity_classes or colony.legacy.values(self.entities_map)
         entity_classes = (
-            include_parents and self._ensure_parents(entity_classes) or entity_classes
+            self._ensure_parents(entity_classes) if include_parents else entity_classes
         )
 
         # iterates over the complete set of entity classes to try to
@@ -801,7 +801,7 @@ class EntityManager(object):
 
                 # decodes the data using the encoding defined
                 # for the data files, in case one is defined
-                data = encoding and data.decode(encoding) or data
+                data = data.decode(encoding) if encoding else data
 
                 # imports the entities contained in the current data
                 # buffer into the the data source associated with the
@@ -872,14 +872,14 @@ class EntityManager(object):
         # hierarchy to be exported avoiding data corruption problems)
         entity_classes = entity_classes or colony.legacy.values(self.entities_map)
         entity_classes = (
-            include_parents and self._ensure_parents(entity_classes) or entity_classes
+            self._ensure_parents(entity_classes) if include_parents else entity_classes
         )
 
         # creates the set of filters that may be used to limit
         # the current find query to the given date range then
         # in case they are valid adds them to the options map
         filters = self._create_range_filters(date_range)
-        options = filters and {"filters": filters} or None
+        options = {"filters": filters} if filters else None
 
         # iterates over all the entity classes to serializes them and
         # store them in the appropriate data files in the target
@@ -907,7 +907,7 @@ class EntityManager(object):
             # calculates the total file count, taking into account that
             # if the remain is zero no increment is done to the (original)
             # file count (integer division) value
-            total_file_count = remain and file_count + 1 or file_count
+            total_file_count = (file_count + 1) if remain else file_count
 
             # retrieves the (table) name of the current entity, this
             # is going to be used to create the appropriate file name
@@ -925,7 +925,7 @@ class EntityManager(object):
                 # range tuple using both the start record and the number of
                 # record (going to be used in to guide the exporting of the class)
                 start_record = _index * FILE_ENTITY_COUNT
-                number_records = _index == file_count and remain or FILE_ENTITY_COUNT
+                number_records = remain if _index == file_count else FILE_ENTITY_COUNT
                 _range = (start_record, number_records)
 
                 # exports the current entity class in the current range, this
@@ -1246,13 +1246,13 @@ class EntityManager(object):
         # (in case it's a to many relations the target id value is
         # not a single value but a sequence of values)
         target_entity_class = (
-            is_to_many and target_entity[0].__class__ or target_entity.__class__
+            target_entity[0].__class__ if is_to_many else target_entity.__class__
         )
         target_id = target_entity_class.get_id()
         target_id_value = (
-            is_to_many
-            and [value.get_id_value() for value in target_entity]
-            or target_entity.get_id_value()
+            [value.get_id_value() for value in target_entity]
+            if is_to_many
+            else target_entity.get_id_value()
         )
 
         # creates the option map for the retrieval of the target
@@ -1465,7 +1465,8 @@ class EntityManager(object):
 
             # ensures (makes sure) that the target class is defined
             # in the data source (avoids problems defining foreign keys)
-            ensure_integrity and self.ensure_definition(target_class)
+            if ensure_integrity:
+                self.ensure_definition(target_class)
 
             # retrieves the target name id and value (definition) from the
             # target class to construct the "target" side of the relation
@@ -1967,7 +1968,8 @@ class EntityManager(object):
             # generates all the generated attributes of the
             # entity (in case any is set to be generated)
             # this should include any generated identifier
-            generate and self._generate_fields(entity)
+            if generate:
+                self._generate_fields(entity)
 
             # runs the global set of validations for the current
             # entity so that integrity for it is ensured
@@ -2901,7 +2903,7 @@ class EntityManager(object):
 
         # retrieves the appropriate id value
         # according to the size of the results
-        id_value = id_values and id_values[0] or None
+        id_value = id_values[0] if id_values else None
 
         # returns the retrieved id value
         # (casted into a single value)
@@ -3026,14 +3028,16 @@ class EntityManager(object):
                     # ensures (makes sure) that the target class is defined
                     # in the data source (avoids problems defining foreign keys)
                     # this is only done when the integrity ensuring is a requirement
-                    ensure_integrity and self.ensure_definition(target_class)
+                    if ensure_integrity:
+                        self.ensure_definition(target_class)
 
                 # creates the foreign key tuple, containing both
                 # the item name and the target class and adds it
                 # to the list of foreign keys for latter generation
                 # of the foreign key query section
                 foreign_key = (item_name, target_class)
-                ensure_integrity and foreign_keys.append(foreign_key)
+                if ensure_integrity:
+                    foreign_keys.append(foreign_key)
 
                 # retrieves the table id (name) and then uses
                 # it to retrieve the value of it, this values
@@ -3066,7 +3070,8 @@ class EntityManager(object):
             query_buffer.write(item_name)
             query_buffer.write(" ")
             query_buffer.write(sql_type)
-            item_value.get("id", False) and query_buffer.write(" primary key")
+            if item_value.get("id", False):
+                query_buffer.write(" primary key")
 
             # updates the id set flag to the correct value
             # in case the id attribute is found
@@ -3174,7 +3179,8 @@ class EntityManager(object):
         query_buffer = colony.StringBuffer()
         query_buffer.write("drop table ")
         query_buffer.write(table_name)
-        self.engine._allow_cascade() and query_buffer.write(" cascade")
+        if self.engine._allow_cascade():
+            query_buffer.write(" cascade")
 
         # retrieves the "final" query value from
         # the query (string) buffer
@@ -3316,15 +3322,16 @@ class EntityManager(object):
                     # validates that the target id attribute contains the appropriate
                     # type for the field (relation) value class description (security
                     # validation), validates only if the field value is defined
-                    field_value and field_value.validate_value(target_id)
-                    field_value and field_value.validate_set(target_id)
+                    if field_value:
+                        field_value.validate_value(target_id)
+                        field_value.validate_set(target_id)
 
                     # retrieves the id value of the relation entity
                     # as the field value to be written into the
                     # insert query (foreign key update) in case the
                     # field value is not set (invalid) the none value
                     # is set to dereference the value
-                    field_value = field_value and field_value.get_id_value() or None
+                    field_value = field_value.get_id_value() if field_value else None
 
                 # writes the comma to the query buffer only in case the
                 # is first flag is not set
@@ -3496,7 +3503,7 @@ class EntityManager(object):
                     # update query (foreign key update) in case the
                     # field value is not set (invalid) the none value
                     # is set to dereference the value
-                    field_value = field_value and field_value.get_id_value() or None
+                    field_value = field_value.get_id_value() if field_value else None
 
                 # writes the comma to the query buffer only in case the
                 # is first flag is not set
@@ -3676,7 +3683,8 @@ class EntityManager(object):
 
                 # in case the relation is of type to many it must be validated
                 # so that the value is assured to be a sequence
-                is_to_many and entity.validate_sequence(indirect_relation)
+                if is_to_many:
+                    entity.validate_sequence(indirect_relation)
 
                 # retrieves the target (table) name from the target
                 # class value then retrieves the target id attribute
@@ -3718,8 +3726,9 @@ class EntityManager(object):
                     # validates that the target id attribute contains the appropriate
                     # type for the relation value class description (security
                     # validation), validates only if the relation is defined
-                    _relation_value and _relation_value.validate_value(target_id)
-                    _relation_value and _relation_value.validate_set(target_id)
+                    if _relation_value:
+                        _relation_value.validate_value(target_id)
+                        _relation_value.validate_set(target_id)
 
                     # retrieves the SQL value for the target id from the relation value
                     # (entity) sets the value as null in case the relation value is not defined
@@ -3801,7 +3810,8 @@ class EntityManager(object):
 
                 # in case the relation is of type to many it must be validated
                 # so that the value is assured to be a sequence
-                is_to_many and entity.validate_sequence(direct_relation)
+                if is_to_many:
+                    entity.validate_sequence(direct_relation)
 
                 # retrieves the target (table) name from the target
                 # class value then retrieves the target id attribute
@@ -3843,15 +3853,16 @@ class EntityManager(object):
                     # validates that the target id attribute contains the appropriate
                     # type for the relation value class description (security
                     # validation), validates only if the relation is defined
-                    _relation_value and _relation_value.validate_value(target_id)
-                    _relation_value and _relation_value.validate_set(target_id)
+                    if _relation_value:
+                        _relation_value.validate_value(target_id)
+                        _relation_value.validate_set(target_id)
 
                     # retrieves the SQL value for the target id from the relation value
                     # (entity) sets the value as null in case the relation value is not defined
                     relation_id_sql_value = (
-                        _relation_value
-                        and _relation_value.get_sql_value(target_id)
-                        or "null"
+                        _relation_value.get_sql_value(target_id)
+                        if _relation_value
+                        else "null"
                     )
 
                     # creates the query to be used to update the foreign key in
@@ -3952,8 +3963,8 @@ class EntityManager(object):
         # the length is calculated otherwise a tuple must created from the
         # single value
         id_value_type = type(id_value)
-        id_length = id_value_type == tuple and len(id_value) or 1
-        id_value = id_value_type == tuple and id_value or (id_value,)
+        id_length = len(id_value) if id_value_type == tuple else 1
+        id_value = id_value if id_value_type == tuple else (id_value,)
 
         # creates the initial verifications bit list as a list of
         # false bits for all elements (by default they're not found)
@@ -3983,7 +3994,7 @@ class EntityManager(object):
         # creates the final verified structure, in case the provided
         # id value is a tuple a tuple should be creates from the verifications
         # list otherwise the first result should be used (single value)
-        verified = id_value_type == tuple and tuple(verifications) or verifications[0]
+        verified = tuple(verifications) if id_value_type == tuple else verifications[0]
 
         # returns the final verified value according
         # to the provided id value
@@ -4252,7 +4263,9 @@ class EntityManager(object):
                     # accessible map of values (this only happens in case
                     # the options are defined)
                     _options = eager.get(table_relation, {})
-                    _options = _options and self.normalize_options(_options) or _options
+                    _options = (
+                        self.normalize_options(_options) if _options else _options
+                    )
 
                     # retrieves the (attribute) names to be retrieved from
                     # the current entity, in case this value is not set the
@@ -4272,7 +4285,7 @@ class EntityManager(object):
                     # normalizes the prefix by replacing the query "oriented"
                     # separator with the "normal" path separator, this prefix
                     # is going to be used for field name creation
-                    _prefix = prefix and prefix[2:].replace("__", ".") + "." or ""
+                    _prefix = (prefix[2:].replace("__", ".") + ".") if prefix else ""
 
                     # creates the fully qualified name (fqn) from the prefix
                     # value and the current table relation name
@@ -4604,7 +4617,9 @@ class EntityManager(object):
                     if entity_class == _entity_class:
                         _prefix = prefix or _table_name
                     else:
-                        _prefix = prefix and prefix + "___" + _table_name or _table_name
+                        _prefix = (
+                            (prefix + "___" + _table_name) if prefix else _table_name
+                        )
 
                     # in case the "mapper" is not defined, this relation
                     # is considered to be an indirect relation (uses
@@ -4694,7 +4709,9 @@ class EntityManager(object):
                     # relation and uses them in conjunction with the new prefix
                     # value to join the tables for the relation
                     _options = eager.get(table_relation, {})
-                    _options = _options and self.normalize_options(_options) or _options
+                    _options = (
+                        self.normalize_options(_options) if _options else _options
+                    )
                     join_tables(target_class, _options, prefix + "__" + table_relation)
 
         join_tables(entity_class, options)
@@ -4793,7 +4810,14 @@ class EntityManager(object):
             # tries to resolve the operator into the appropriate one
             # (uses the engine internals) only does this in case the
             # operator is correctly set and retrieved
-            operator = operator and self.engine._resolve_operator(operator) or operator
+            if operator:
+                operator = self.engine._resolve_operator(operator)
+
+            # if the name is "__identifier__" it's going to be replaced with
+            # the entity ID, this is a special case, aimed at providing
+            # ergonomics for the default ordering
+            if name == "__identifier__":
+                name = entity_class.get_id()
 
             # writes the comma to the query buffer only in case the
             # is first flag is not set
@@ -4803,9 +4827,11 @@ class EntityManager(object):
             # version of it for query ordering and then writes it into
             # the query buffer
             name = self._resolve_name(entity_class, name)
-            operator and query_buffer.write(operator + "(")
+            if operator:
+                query_buffer.write(operator + "(")
             query_buffer.write(name)
-            operator and query_buffer.write(")")
+            if operator:
+                query_buffer.write(")")
 
             # writes the order of the order by into the query buffer
             # the value of the writing is the query oriented simplified
@@ -4962,14 +4988,14 @@ class EntityManager(object):
         # filtering entity and must be considered an exceptional case
         # (only the entity parent class is considered)
         if not table_name:
-            # sets the table name as the single entitie's
+            # sets the table name as the single entity's
             # table name
             table_name = _table_name
         # otherwise in case the entity class is not the current entity
         # class the table name must be created as a composed table name
         elif not _entity_class == entity_class:
             # composes the table name with the previous table name
-            # (prefix) and the current entitie's table name
+            # (prefix) and the current entity's table name
             table_name = table_name + "___" + _table_name
 
         # returns the "processed" table name to be used
@@ -5022,7 +5048,7 @@ class EntityManager(object):
                 entity_class, table_name, filter_field_name
             )
             field_name = (
-                _table_name + "." + filter_field_name + (is_post and " + 0" or "")
+                _table_name + "." + filter_field_name + (" + 0" if is_post else "")
             )
 
             # converts the filter field value into an appropriate SQL representation
@@ -5585,7 +5611,7 @@ class EntityManager(object):
                 entity_class, table_name, filter_field_name
             )
             field_name = (
-                _table_name + "." + filter_field_name + (is_post and " + 0" or "")
+                _table_name + "." + filter_field_name + (" + 0" if is_post else "")
             )
 
             # writes the filter into the SQL query value (the field name
@@ -5682,7 +5708,7 @@ class EntityManager(object):
                 entity_class, table_name, filter_field_name
             )
             field_name = (
-                _table_name + "." + filter_field_name + (is_post and " + 0" or "")
+                _table_name + "." + filter_field_name + (" + 0" if is_post else "")
             )
 
             # retrieves the attribute value type
@@ -6104,7 +6130,8 @@ class EntityManager(object):
                         # list and in case it's not sets it in the relations list,
                         # this is an expensive operation (presence check in list)
                         if not _new_entity in relation_list:
-                            _new_entity and relation_list._append(_new_entity)
+                            if _new_entity:
+                                relation_list._append(_new_entity)
 
                     # otherwise it must be a to one relation and sets the setting
                     # of the "new" entity is just a trivial set on the entity
@@ -6671,13 +6698,13 @@ class EntityManager(object):
             # retrieves the name of the class to be used in the
             # conversion of the entity map into an entity
             class_name = entity_map.get("_class", None)
-            target_class = class_name and self.get_entity(class_name) or entity_class
+            target_class = self.get_entity(class_name) if class_name else entity_class
 
             # in case the full mode is not set the class to be
             # used to select the attribute names for iteration
             # is set as the current entity class, otherwise the
             # class for names is unset (all names retrieved)
-            cls_names = not full_mode and entity_class or None
+            cls_names = None if full_mode else entity_class
 
             # converts the current entity map into an entity
             # object and then adds it to the entities list
@@ -7176,7 +7203,7 @@ class EntityManager(object):
         # the options map (for lazy loading) only in case the
         # options is a dictionary
         is_normalized = (
-            type(options) == dict and options.get("_normalized", False) or False
+            options.get("_normalized", False) if type(options) == dict else False
         )
 
         # in case the options are already normalized
@@ -7739,7 +7766,9 @@ class EntityManager(object):
         # current concrete entity class is used (performance tune)
         names_map = entity_class.get_names_map()
         name_class = (
-            final_name == id and entity_class or names_map.get(final_name, entity_class)
+            entity_class
+            if final_name == id
+            else names_map.get(final_name, entity_class)
         )
         name_class_name = name_class.get_name()
 

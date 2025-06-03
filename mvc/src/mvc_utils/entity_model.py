@@ -75,7 +75,7 @@ TO_ONE_RELATIONS = ("one-to-one", "many-to-one")
 TO_MANY_RELATIONS = ("one-to-many", "many-to-many")
 """ The tuple containing the "to-many" relations """
 
-SORT_TOKENS = ("asc", "ascending", "desc", "descending", "1", "-1", "default")
+SORT_TOKENS = ("asc", "ascending", "desc", "descending", "1", "-1", "__default__")
 """ The list of tokens that may be used to represent the
 sort order in the entity manager """
 
@@ -292,7 +292,7 @@ def _class_get(
         return entity_model
 
     # verifies if the apply name value has been defined for the field or
-    # retrieves the name of the model entitie's class (underscore notation) and
+    # retrieves the name of the model entity's class (underscore notation) and
     # then uses it to retrieve the context field of the same name and applies the
     # data from the field to the model (apply operation)
     name = apply_name or cls.get_class_name()
@@ -785,18 +785,21 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # is the name of a field to be sorted by (default fallback)
     if sort and not ":" in sort:
         if sort in SORT_TOKENS:
-            sort = "default:%s" % sort
+            sort = "__identifier__:%s" % sort
         else:
-            sort = "%s:default" % sort
+            sort = "%s:__default__" % sort
 
     # normalizes the sort value into the accepted order by
     # value defaulting to the fallback value in case the
     # sort value is the default, notice that the default sort
     # order must be None, not an empty string or "default"
-    sort_value, sort_order = sort.split(":", 1) if sort else ("default", None)
-    if sort_order == "default":
+    sort_value, sort_order = sort.split(":", 1) if sort else (None, None)
+    if sort_order == "__default__":
         sort_order = None
-    order_by = order_by if sort_value == "default" else ((sort_value, sort_order),)
+    if sort_value == "default":
+        sort_value = None
+    if sort_value:
+        order_by = ((sort_value, sort_order),)
 
     # tries to retrieve the proper value for the paged element
     # taking into account a possible boolean approach

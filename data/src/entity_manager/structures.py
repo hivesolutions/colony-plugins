@@ -2618,10 +2618,10 @@ class EntityClass(object):
     def is_mapped(cls, relation_name):
         """
         Checks if the relation with the given (attribute) name
-        is "mapped" in the current entitie's table.
+        is "mapped" in the current entity's table.
 
         By checking if the relation attribute is mapped in the
-        current entitie's table the method is verifying if the
+        current entity's table the method is verifying if the
         current entity class is the "mapper" class of the relation.
 
         :type relation_name: String
@@ -2969,7 +2969,7 @@ class EntityClass(object):
 
     def reset_cache(self):
         """
-        Resets the entitie's cache for the current instance so that any
+        Resets the entity's cache for the current instance so that any
         access to the data source will be used in "real mode" avoiding any
         usage of an in memory view of objects.
 
@@ -3876,7 +3876,7 @@ class EntityClass(object):
 
         # iterates over all the relations to convert them
         # into the appropriate map representation and set
-        # them in the current entitie's map
+        # them in the current entity's map
         for relation in relations:
             # retrieves the target class for the current
             # relation and then checks if the current relation
