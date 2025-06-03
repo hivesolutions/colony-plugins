@@ -45,7 +45,7 @@ SEQUENCE_TYPE_VALUE = "sequence"
 MAP_TYPE_VALUE = "map"
 """ The map type value """
 
-ATTRIBUTE_PARSING_REGEX_VALUE = "(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
+ATTRIBUTE_PARSING_REGEX_VALUE = r"(?P<name>[\w]+)|(?P<sequence>\[\])|(?P<map>\[\w+\])"
 """ The attribute parsing regular expression value """
 
 ATTRIBUTE_PARSING_REGEX = re.compile(ATTRIBUTE_PARSING_REGEX_VALUE)

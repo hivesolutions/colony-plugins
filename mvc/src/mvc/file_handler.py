@@ -49,7 +49,7 @@ EXPIRATION_DELTA_TIMESTAMP = 31536000
 INVALID_EXPIRATION_STRING_VALUE = "-1"
 """ The invalid expiration string value """
 
-RELATIVE_PATHS_REGEX_VALUE = "^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
+RELATIVE_PATHS_REGEX_VALUE = r"^\.\.|\/\.\.\/|\\\.\.\\|\.\.$"
 """ The relative paths regex value """
 
 RELATIVE_PATHS_REGEX = re.compile(RELATIVE_PATHS_REGEX_VALUE)
