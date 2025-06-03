@@ -66,6 +66,12 @@ BEGIN_PUBLIC_VALUE = "-----BEGIN PUBLIC KEY-----"
 END_PUBLIC_VALUE = "-----END PUBLIC KEY-----"
 """ The end public value """
 
+BEGIN_CERTIFICATE_VALUE = "-----BEGIN CERTIFICATE-----"
+""" The begin certificate value """
+
+END_CERTIFICATE_VALUE = "-----END CERTIFICATE-----"
+""" The end certificate value """
+
 PRIVATE_KEY_VALUE_REGEX = re.compile(
     BEGIN_RSA_PRIVATE_VALUE + "\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL
 )
@@ -75,6 +81,11 @@ PUBLIC_KEY_VALUE_REGEX = re.compile(
     BEGIN_PUBLIC_VALUE + "\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL
 )
 """ The public key value regex """
+
+CERTIFICATE_VALUE_REGEX = re.compile(
+    BEGIN_CERTIFICATE_VALUE + "\n(?P<contents>.*)\n" + END_CERTIFICATE_VALUE, re.DOTALL
+)
+""" The certificate value regex """
 
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
@@ -421,6 +432,37 @@ class PKCS1Structure:
         # returns the keys tuple
         return keys
 
+    def load_certificate_pem(self, certificate_pem):
+        # matches the certificate header/footer token in case no match
+        # is done raises an exception indicating the problem
+        certificate_pem_match = CERTIFICATE_VALUE_REGEX.match(certificate_pem)
+        if not certificate_pem_match:
+            raise exceptions.InvalidFormatException(
+                "certificate header/footer not found"
+            )
+
+        # retrieves the certificate PEM contents (avoid header and footer)
+        # and joins the base 64 value back together removing extra newlines
+        certificate_pem_match_contents = certificate_pem_match.group("contents")
+        certificate_pem_match_contents_joined = self._join_base_64(
+            certificate_pem_match_contents
+        )
+
+        # decodes the certificate PEM from base 64, obtaining
+        # certificate DER in binary format the loads it retrieving
+        # the certificate map to be returned to the caller method
+        certificate_pem_match_contents_joined = colony.legacy.bytes(
+            certificate_pem_match_contents_joined
+        )
+        certificate_der = base64.b64decode(certificate_pem_match_contents_joined)
+        certificate_der = colony.legacy.str(certificate_der)
+
+        # loads the certificate DER, retrieving the certificate dictionary
+        certificate = self.load_certificate_der(certificate_der)
+
+        # returns the certificate map
+        return certificate
+
     def generate_private_key_der(self, keys, version=1):
         """
         Generates the a private key in DER format, using
@@ -751,6 +793,69 @@ class PKCS1Structure:
 
         # returns the keys tuple
         return keys
+
+    def load_certificate_der(self, certificate_der):
+        # creates the BER structure
+        ber_structure = self.ber_plugin.create_structure({})
+
+        # unpacks the certificate DER into a structure
+        certificate = ber_structure.unpack(certificate_der)
+
+        # navigate the certificate structure to extract various fields
+        tbs_certificate = certificate["value"][0]
+
+        # extract version (optional, default is v1)
+        version = (
+            tbs_certificate["value"][0]["value"]
+            if len(tbs_certificate["value"]) > 0
+            else 0
+        )
+
+        # extract serial number
+        serial_number = tbs_certificate["value"][1]["value"]
+
+        # extract signature algorithm
+        signature_algorithm = tbs_certificate["value"][2]["value"][0]["value"]
+
+        # extract issuer
+        issuer = tbs_certificate["value"][3]["value"]
+
+        # extract validity period
+        validity = tbs_certificate["value"][4]["value"]
+        not_before = validity[0]["value"]
+        not_after = validity[1]["value"]
+
+        # extract subject
+        subject = tbs_certificate["value"][5]["value"]
+
+        # extract subject public key info
+        subject_public_key_info = tbs_certificate["value"][6]
+        public_key_der = subject_public_key_info["value"][1]["value"]
+        if (
+            isinstance(public_key_der, (bytes, bytearray, str))
+            and len(public_key_der) > 1
+        ):
+            public_key_der = public_key_der[1:]
+        public_key_der = colony.legacy.str(public_key_der)
+        keys = self.load_public_key_der(public_key_der)
+
+        # extract extensions (if present)
+        extensions = None
+        if len(tbs_certificate["value"]) > 7:
+            extensions = tbs_certificate["value"][7]["value"]
+
+        # return a dictionary with all extracted values
+        return dict(
+            version=version,
+            serial_number=serial_number,
+            signature_algorithm=signature_algorithm,
+            issuer=issuer,
+            not_before=not_before,
+            not_after=not_after,
+            subject=subject,
+            public_key=keys,
+            extensions=extensions,
+        )
 
     def _encrypt(self, keys, message):
         # unpacks the keys tuple, retrieving the public key,
