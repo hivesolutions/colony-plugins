@@ -778,8 +778,8 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # normalizes the sort value into the accepter order by
     # value defaulting to the fallback value in case the
     # sort value is the default
-    sort_value, sort_order = sort and sort.split(":", 1) or ("default", None)
-    order_by = not sort_value == "default" and ((sort_value, sort_order),) or order_by
+    sort_value, sort_order = sort.split(":", 1) if sort else ("default", None)
+    order_by = order_by if sort_value == "default" else (sort_value, sort_order)
 
     # tries to retrieve the proper value for the paged element
     # taking into account a possible boolean approach
