@@ -889,6 +889,13 @@ class ATClient(object):
                 ssl_version=colony.conf("AT_SSL_VERSION", "tls"),
             )
 
+            # prints the client parameters to be used in the creation
+            # of the HTTP client for AT submission
+            self.plugin.debug(
+                "Submitting AT information using the following parameters: %s"
+                % str(client_parameters)
+            )
+
             # creates the HTTP client to be used for the API
             # operation and opens it with the default configuration
             self.http_client = self.client_http_plugin.create_client(client_parameters)
