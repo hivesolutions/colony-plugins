@@ -117,8 +117,8 @@ class APIAT(colony.System):
         key = api_attributes.get("key", False)
         certificate = api_attributes.get("certificate", False)
         test_mode = colony.conf("AT_TEST_MODE", test_mode, cast=bool)
-        key = colony.conf("AT_KEY", key, cast=bool)
-        certificate = colony.conf("AT_CERTIFICATE", certificate, cast=bool)
+        key = colony.conf("AT_KEY", key)
+        certificate = colony.conf("AT_CERTIFICATE", certificate)
 
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
