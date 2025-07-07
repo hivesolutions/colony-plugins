@@ -1,5 +1,9 @@
 # AT Related Resources
 
+## Passwords
+
+The TesteWebServices.pfx file is protected by the password `TESTEwebservice`.
+
 ## Actions
 
 ### Extract Test Certificate
