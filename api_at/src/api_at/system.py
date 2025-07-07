@@ -883,10 +883,10 @@ class ATClient(object):
             # defines the client parameters to be used in the
             # creation of the HTTP client
             client_parameters = dict(
-                content_type_charset="utf-8",
+                content_type_charset=colony.conf("AT_CONTENT_TYPE", "utf-8"),
                 key_file_path=key_path,
                 certificate_file_path=certificate_path,
-                ssl_version="tls",
+                ssl_version=colony.conf("AT_TLS_VERSION", "tls"),
             )
 
             # creates the HTTP client to be used for the API
