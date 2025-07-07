@@ -886,7 +886,7 @@ class ATClient(object):
                 content_type_charset=colony.conf("AT_CONTENT_TYPE", "utf-8"),
                 key_file_path=key_path,
                 certificate_file_path=certificate_path,
-                ssl_version=colony.conf("AT_TLS_VERSION", "tls"),
+                ssl_version=colony.conf("AT_SSL_VERSION", "tls"),
             )
 
             # creates the HTTP client to be used for the API
