@@ -125,12 +125,12 @@ class APIAT(colony.System):
         # client to the caller method
         at_client = ATClient(
             self.plugin,
-            ssl_plugin,
-            client_http_plugin,
-            at_structure,
-            test_mode,
-            key,
-            certificate,
+            ssl_plugin=ssl_plugin,
+            client_http_plugin=client_http_plugin,
+            at_structure=at_structure,
+            test_mode=test_mode,
+            key=key,
+            certificate=certificate,
         )
         if open_client:
             at_client.open()
