@@ -62,7 +62,6 @@ The best ways to get involved:
 * Mailing list: http://groups.google.com/group/colony-users
 * Twitter: http://twitter.com/colonyframework
 
-
 ## License
 
 Colony is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
