@@ -25,11 +25,13 @@ def test_joined_table_strategy():
     # Create mock entity classes for joined table inheritance
     class Animal(colony.EntityClass):
         """Base animal class using joined table inheritance (default)"""
+
         id = {"type": "integer", "id": True}
         name = {"type": "text"}
 
     class Dog(Animal):
         """Dog subclass - should join with Animal table"""
+
         breed = {"type": "text"}
 
     # Create a mock entity manager to inspect query generation
@@ -37,6 +39,7 @@ def test_joined_table_strategy():
     # but we can inspect what queries would be generated
     try:
         from entity_manager import system
+
         manager = system.EntityManager(None)  # No plugin needed for query inspection
 
         # Generate a find query for Dog
@@ -66,6 +69,7 @@ def test_single_table_strategy():
     # Create mock entity classes for single table inheritance
     class Vehicle(colony.EntityClass):
         """Base vehicle class using single table inheritance"""
+
         __inheritance_strategy__ = "single_table"
         __discriminator_column__ = "vehicle_type"
         __discriminator_value__ = "vehicle"
@@ -75,6 +79,7 @@ def test_single_table_strategy():
 
     class Car(Vehicle):
         """Car subclass - should NOT join, but filter by discriminator"""
+
         __discriminator_value__ = "car"
         num_doors = {"type": "integer"}
 
@@ -95,6 +100,7 @@ def test_table_per_class_strategy():
     # Create mock entity classes for table per class inheritance
     class Person(colony.EntityClass):
         """Base person class using table per class inheritance"""
+
         __inheritance_strategy__ = "table_per_class"
 
         id = {"type": "integer", "id": True}
@@ -102,6 +108,7 @@ def test_table_per_class_strategy():
 
     class Employee(Person):
         """Employee subclass - should have its own complete table"""
+
         employee_id = {"type": "text"}
         department = {"type": "text"}
 
