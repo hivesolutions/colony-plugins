@@ -406,6 +406,125 @@ def example_inheritance_strategies(entity_manager):
     all_dogs = entity_manager.find(Dog, {})  # Returns only Dog instances
 
     # The ORM automatically adds discriminator filters based on the class
+    # For Dog queries with single_table inheritance, the generated SQL will be:
+    # SELECT * FROM Animal WHERE animal_type = 'dog'
+    #
+    # This is different from joined table inheritance which would generate:
+    # SELECT * FROM Dog INNER JOIN Animal ON Dog.id = Animal.id
+
+
+def example_inheritance_query_differences():
+    """
+    Demonstrates how different inheritance strategies generate different SQL queries.
+
+    This is a comprehensive guide showing the exact SQL queries that would be
+    generated for each of the three inheritance strategies.
+    """
+
+    # =========================================================================
+    # Strategy 1: SINGLE TABLE INHERITANCE
+    # =========================================================================
+    # All classes in the hierarchy share ONE table
+    #
+    # Example classes (defined above):
+    #   class Animal:
+    #       __inheritance_strategy__ = "single_table"
+    #       __discriminator_column__ = "animal_type"
+    #       __discriminator_value__ = "animal"
+    #
+    #   class Dog(Animal):
+    #       __discriminator_value__ = "dog"
+    #
+    # Generated SQL for: entity_manager.find(Dog, {})
+    #
+    # SELECT Animal.object_id, Animal.name, Animal.age, Animal.breed,
+    #        Animal.bark_volume, Animal.indoor, Animal.meow_frequency,
+    #        Animal.animal_type
+    # FROM Animal
+    # WHERE Animal.animal_type = 'dog'
+    #
+    # Key characteristics:
+    # - NO JOIN clauses (single table)
+    # - WHERE clause filters by discriminator column
+    # - All fields from all subclasses are in the same table (with NULLs)
+    # - Discriminator column is included in SELECT
+
+    # =========================================================================
+    # Strategy 2: JOINED TABLE INHERITANCE (default)
+    # =========================================================================
+    # Each class gets its own table, subclass tables have FK to parent table
+    #
+    # Example classes:
+    #   class Vehicle(EntityClass):
+    #       # No __inheritance_strategy__ = uses default "joined"
+    #       object_id = IntegerField()
+    #       make = TextField()
+    #
+    #   class Car(Vehicle):
+    #       num_doors = IntegerField()
+    #
+    # Generated SQL for: entity_manager.find(Car, {})
+    #
+    # SELECT Car.object_id, Car.num_doors,
+    #        Vehicle.make
+    # FROM Car
+    # INNER JOIN Vehicle ON Car.object_id = Vehicle.object_id
+    #
+    # Key characteristics:
+    # - INNER JOIN clauses to parent tables
+    # - Each table only contains its own fields
+    # - Normalized schema (no NULLs for unused fields)
+    # - Slower due to joins, but clean schema
+
+    # =========================================================================
+    # Strategy 3: TABLE PER CLASS INHERITANCE
+    # =========================================================================
+    # Each concrete class gets a complete table with ALL fields
+    #
+    # Example classes:
+    #   class Document(EntityClass):
+    #       __inheritance_strategy__ = "table_per_class"
+    #       object_id = IntegerField()
+    #       title = TextField()
+    #       content = TextField()
+    #
+    #   class Invoice(Document):
+    #       invoice_number = TextField()
+    #       amount = FloatField()
+    #
+    # Generated SQL for: entity_manager.find(Invoice, {})
+    #
+    # SELECT Invoice.object_id, Invoice.title, Invoice.content,
+    #        Invoice.invoice_number, Invoice.amount
+    # FROM Invoice
+    #
+    # Key characteristics:
+    # - NO JOIN clauses (each table is self-contained)
+    # - Each concrete class table contains ALL fields (including inherited)
+    # - Duplicated column definitions across tables
+    # - Fast queries, but schema changes affect all tables
+
+    # =========================================================================
+    # SUMMARY
+    # =========================================================================
+    """
+    Choosing the right strategy:
+
+    SINGLE TABLE:
+    - Use when: Few subclasses, few subclass-specific fields
+    - Pros: Fast (no joins), simple queries
+    - Cons: Sparse tables (many NULLs), wide tables
+
+    JOINED TABLE (default):
+    - Use when: Many subclasses, many subclass-specific fields
+    - Pros: Normalized, no NULLs, clean schema
+    - Cons: Slower (requires joins), complex queries
+
+    TABLE PER CLASS:
+    - Use when: Minimal polymorphic queries, subclasses rarely queried together
+    - Pros: Fast, self-contained tables
+    - Cons: Duplicate columns, polymorphic queries are complex/slow
+    """
 
 
 def example_field_validation():
