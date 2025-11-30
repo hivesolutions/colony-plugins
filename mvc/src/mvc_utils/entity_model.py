@@ -1166,6 +1166,7 @@ def store(
     self,
     persist_type=PERSIST_UPDATE | PERSIST_SAVE,
     validate=True,
+    hooks=True,
     immutable=True,
     force_persist=False,
     raise_exception=False,
@@ -1184,6 +1185,8 @@ def store(
     :type validate: bool
     :param validate: Flag controlling if a validation should
     be run in the model before persisting it.
+    :type hooks: bool
+    :param hooks: Flag controlling if the hooks should be executed.
     :type immutable: bool
     :param immutable: Flag that controls/defines if the immutable
     rules should be respected for update operations, this flag is
@@ -1225,12 +1228,23 @@ def store(
 
     # tries to call the pre store method, in order to notify the
     # current instance about the starting of the store procedure
-    if hasattr(self, "pre_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
-        self.pre_store(persist_type)
-    if hasattr(self, "pre_save") and not is_persisted and persist_type & PERSIST_SAVE:
-        self.pre_save(persist_type)
-    if hasattr(self, "pre_update") and is_persisted and persist_type & PERSIST_UPDATE:
-        self.pre_update(persist_type)
+    if hooks:
+        if hasattr(self, "pre_store") and persist_type & (
+            PERSIST_SAVE | PERSIST_UPDATE
+        ):
+            self.pre_store(persist_type)
+        if (
+            hasattr(self, "pre_save")
+            and not is_persisted
+            and persist_type & PERSIST_SAVE
+        ):
+            self.pre_save(persist_type)
+        if (
+            hasattr(self, "pre_update")
+            and is_persisted
+            and persist_type & PERSIST_UPDATE
+        ):
+            self.pre_update(persist_type)
 
     # sets the current entity in the storing operation, this flag
     # should be able to avoid unnecessary recursion
@@ -1248,20 +1262,23 @@ def store(
         # tries to call the on store method, in order to notify the
         # current instance about the starting of the store procedure
         # (this event is called after the preemptive validation process)
-        if hasattr(self, "on_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
-            self.on_store(persist_type)
-        if (
-            hasattr(self, "on_save")
-            and not is_persisted
-            and persist_type & PERSIST_SAVE
-        ):
-            self.on_save(persist_type)
-        if (
-            hasattr(self, "on_update")
-            and is_persisted
-            and persist_type & PERSIST_UPDATE
-        ):
-            self.on_update(persist_type)
+        if hooks:
+            if hasattr(self, "on_store") and persist_type & (
+                PERSIST_SAVE | PERSIST_UPDATE
+            ):
+                self.on_store(persist_type)
+            if (
+                hasattr(self, "on_save")
+                and not is_persisted
+                and persist_type & PERSIST_SAVE
+            ):
+                self.on_save(persist_type)
+            if (
+                hasattr(self, "on_update")
+                and is_persisted
+                and persist_type & PERSIST_UPDATE
+            ):
+                self.on_update(persist_type)
 
         # detaches the current entity model in order
         # to avoid any possible loading of relations
@@ -1276,6 +1293,7 @@ def store(
                 self.store_relations(
                     persist_type,
                     validate=validate,
+                    hooks=hooks,
                     force_persist=force_persist,
                     raise_exception=raise_exception,
                     store_relations=store_relations,
@@ -1292,12 +1310,13 @@ def store(
     except BaseException as exception:
         # tries to call the fail store method, in order to notify the
         # current instance about the failure of the store procedure
-        if hasattr(self, "fail_store"):
-            self.fail_store(persist_type, exception)
-        if hasattr(self, "fail_save") and not is_persisted:
-            self.fail_save(persist_type, exception)
-        if hasattr(self, "fail_update") and is_persisted:
-            self.fail_update(persist_type, exception)
+        if hooks:
+            if hasattr(self, "fail_store"):
+                self.fail_store(persist_type, exception)
+            if hasattr(self, "fail_save") and not is_persisted:
+                self.fail_save(persist_type, exception)
+            if hasattr(self, "fail_update") and is_persisted:
+                self.fail_update(persist_type, exception)
 
         # re-raises the exception to the upper levels, no need to
         # to except at this level
@@ -1309,17 +1328,29 @@ def store(
 
     # tries to call the post store method, in order to notify the
     # current instance about the finishing of the store procedure
-    if hasattr(self, "post_store") and persist_type & (PERSIST_SAVE | PERSIST_UPDATE):
-        self.post_store(persist_type)
-    if hasattr(self, "post_save") and not is_persisted and persist_type & PERSIST_SAVE:
-        self.post_save(persist_type)
-    if hasattr(self, "post_update") and is_persisted and persist_type & PERSIST_UPDATE:
-        self.post_update(persist_type)
+    if hooks:
+        if hasattr(self, "post_store") and persist_type & (
+            PERSIST_SAVE | PERSIST_UPDATE
+        ):
+            self.post_store(persist_type)
+        if (
+            hasattr(self, "post_save")
+            and not is_persisted
+            and persist_type & PERSIST_SAVE
+        ):
+            self.post_save(persist_type)
+        if (
+            hasattr(self, "post_update")
+            and is_persisted
+            and persist_type & PERSIST_UPDATE
+        ):
+            self.post_update(persist_type)
 
 
 def store_f(
     self,
     validate=True,
+    hooks=True,
     raise_exception=False,
     store_relations=True,
     entity_manager=None,
@@ -1336,6 +1367,8 @@ def store_f(
     :type validate: bool
     :param validate: Flag controlling if a validation should
     be run in the model before persisting it.
+    :type hooks: bool
+    :param hooks: Flag controlling if the hooks should be executed.
     :type raise_exception: bool
     :param raise_exception: If an exception must be raised in case
     a validation fails in one of the relation values.
@@ -1353,6 +1386,7 @@ def store_f(
     self.store(
         None,
         validate=validate,
+        hooks=hooks,
         force_persist=True,
         raise_exception=raise_exception,
         store_relations=store_relations,
@@ -1401,6 +1435,7 @@ def store_relations(
     self,
     persist_type,
     validate=False,
+    hooks=True,
     force_persist=False,
     raise_exception=False,
     store_relations=True,
@@ -1421,6 +1456,8 @@ def store_relations(
     :type validate: bool
     :param validate: Flag controlling if a validation should
     be run in the relations models before persisting them.
+    :type hooks: bool
+    :param hooks: Flag controlling if the hooks should be executed.
     :type force_persist: bool
     :param force_persist: Flag controlling if the persistence
     should be forced in which case the persist type mask is completely
@@ -1479,6 +1516,7 @@ def store_relations(
             _persist_type,
             relation_persist_type,
             validate=validate,
+            hooks=hooks,
             force_persist=force_persist,
             raise_exception=raise_exception,
             store_relations=store_relations,
@@ -1492,6 +1530,7 @@ def store_relation(
     persist_type,
     relation_persist_type,
     validate=False,
+    hooks=True,
     force_persist=False,
     raise_exception=False,
     store_relations=True,
@@ -1519,6 +1558,8 @@ def store_relation(
     :type validate: bool
     :param validate: Flag controlling if a validation should
     be run in the relation model before persisting it.
+    :type hooks: bool
+    :param hooks: Flag controlling if the hooks should be executed.
     :type force_persist: bool
     :param force_persist: Flag controlling if the persistence
     should be forced in which case the persist type mask is completely
@@ -1621,7 +1662,8 @@ def store_relation(
             if is_storable:
                 _relation_value.store(
                     persist_type,
-                    validate,
+                    validate=validate,
+                    hooks=hooks,
                     force_persist=force_persist,
                     store_relations=store_relations,
                     entity_manager=entity_manager,
