@@ -31,6 +31,11 @@ from . import exceptions
 from . import structures
 from . import system
 from . import test
+from . import mapping_strategies
+from . import fields
+from . import inheritance_strategies
+from . import lazy_collections
+from . import query_builder
 
 from .analysis import EntityManagerAnalyser
 from .decorators import transaction, lock_table
@@ -46,3 +51,29 @@ from .exceptions import (
 from .structures import Connection, EntityClass, rset, load_serializers
 from .system import DataEntityManager
 from .test import EntityManagerTest, EntityManagerBaseTestCase
+from .mapping_strategies import (
+    MappingStrategy,
+    DefaultMappingStrategy,
+    ConventionOverConfigurationStrategy,
+    AnnotationBasedStrategy,
+)
+from .fields import (
+    Field,
+    IdField,
+    TextField,
+    IntegerField,
+    FloatField,
+    DateField,
+    MetadataField,
+    EmbeddedField,
+    RelationField,
+)
+from .inheritance_strategies import (
+    InheritanceStrategy,
+    JoinedTableStrategy,
+    SingleTableStrategy,
+    TablePerClassStrategy,
+    get_inheritance_strategy,
+)
+from .lazy_collections import LazyCollection, BatchLoader, LazyProxy
+from .query_builder import QueryBuilder, Q
