@@ -44,6 +44,9 @@ from . import mocks
 from . import analysis
 from . import exceptions
 from . import structures
+from . import mapping_strategies
+from . import query_builder
+from . import inheritance_strategies
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding
@@ -376,6 +379,11 @@ class EntityManager(object):
         self.rollback_callbacks = {}
         self._exists = {}
 
+        # Initialize mapping strategy from options or use default
+        self.mapping_strategy = options.get(
+            "mapping_strategy", mapping_strategies.DEFAULT_STRATEGY
+        )
+
         self.apply_types()
 
     def apply_types(self):
@@ -427,6 +435,28 @@ class EntityManager(object):
         """
 
         return self.entities_map.get(entity_name, None)
+
+    def query(self, entity_class):
+        """
+        Creates a new query builder for the given entity class.
+
+        This provides a fluent interface for building queries instead
+        of using nested dictionaries.
+
+        Usage:
+            entity_manager.query(Person)
+                .filter(age__gt=18)
+                .order_by("name")
+                .limit(10)
+                .all()
+
+        :type entity_class: Class
+        :param entity_class: The entity class to query.
+        :rtype: QueryBuilder
+        :return: A new query builder instance.
+        """
+
+        return query_builder.QueryBuilder(self, entity_class)
 
     def get_entity_class(self):
         """
@@ -1900,6 +1930,15 @@ class EntityManager(object):
         # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
         if not entity_class.is_ready():
+            return
+
+        # Check inheritance strategy to see if table should be created
+        # This allows strategies like SingleTableStrategy to only create
+        # a table for the root class in the hierarchy
+        strategy = inheritance_strategies.get_inheritance_strategy(entity_class)
+        if not strategy.should_create_table(entity_class):
+            # Strategy says not to create a table for this class
+            # (e.g., in single-table inheritance, only root creates table)
             return
 
         # generates the create definition query, general

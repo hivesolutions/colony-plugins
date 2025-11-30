@@ -132,8 +132,10 @@ class JoinedTableStrategy(InheritanceStrategy):
         """
         Creates a table for every non-abstract class.
         """
-        # Check if class is abstract
-        return not getattr(entity_class, "abstract", False)
+        # Check if class is abstract - only check the class itself, not parents
+        # Use __dict__ to avoid inheriting abstract=True from parent classes
+        is_abstract = entity_class.__dict__.get("abstract", False)
+        return not is_abstract
 
     def get_fields_for_table(self, entity_class):
         """
@@ -319,7 +321,10 @@ class TablePerClassStrategy(InheritanceStrategy):
         """
         Creates a table for every non-abstract class.
         """
-        return not getattr(entity_class, "abstract", False)
+        # Check if class is abstract - only check the class itself, not parents
+        # Use __dict__ to avoid inheriting abstract=True from parent classes
+        is_abstract = entity_class.__dict__.get("abstract", False)
+        return not is_abstract
 
     def get_fields_for_table(self, entity_class):
         """
