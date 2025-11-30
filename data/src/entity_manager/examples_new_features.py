@@ -80,7 +80,9 @@ class ModernPerson(structures.EntityClass):
     metadata = fields.MetadataField()
 
     # Relations using RelationField descriptors
-    parent = fields.RelationField("to-one", "ModernPerson", reverse="children", is_mapper=True)
+    parent = fields.RelationField(
+        "to-one", "ModernPerson", reverse="children", is_mapper=True
+    )
     children = fields.RelationField("to-many", "ModernPerson", reverse="parent")
     dogs = fields.RelationField("to-many", "ModernDog", reverse="owner")
 
@@ -95,7 +97,9 @@ class ModernDog(structures.EntityClass):
     object_id = fields.IdField(generated=True)
     name = fields.TextField(nullable=False)
     breed = fields.TextField()
-    owner = fields.RelationField("to-one", "ModernPerson", reverse="dogs", is_mapper=True)
+    owner = fields.RelationField(
+        "to-one", "ModernPerson", reverse="dogs", is_mapper=True
+    )
 
 
 # ==============================================================================
@@ -216,7 +220,7 @@ class AnnotatedPerson(structures.EntityClass):
         "to-one",
         "AnnotatedPerson",
         reverse="employees",
-        join_column="boss_object_id"  # Explicit FK column name
+        join_column="boss_object_id",  # Explicit FK column name
     )
 
     employees = fields.RelationField("to-many", "AnnotatedPerson", reverse="boss")
@@ -229,8 +233,8 @@ class AnnotatedPerson(structures.EntityClass):
         join_table={
             "name": "person_project",
             "join_columns": ["person_id"],
-            "inverse_join_columns": ["project_id"]
-        }
+            "inverse_join_columns": ["project_id"],
+        },
     )
 
 
@@ -252,15 +256,15 @@ def example_query_builder(entity_manager):
     Demonstrates the fluent query builder API.
     """
     # Old way (nested dicts)
-    old_results = entity_manager.find(ModernPerson, {
-        "filters": {
-            "age": {"$gt": 18},
-            "name": {"$like": "John%"}
+    old_results = entity_manager.find(
+        ModernPerson,
+        {
+            "filters": {"age": {"$gt": 18}, "name": {"$like": "John%"}},
+            "order_by": [("name", "asc")],
+            "start_record": 0,
+            "number_records": 10,
         },
-        "order_by": [("name", "asc")],
-        "start_record": 0,
-        "number_records": 10
-    })
+    )
 
     # New way (fluent interface)
     new_results = (
@@ -294,18 +298,11 @@ def example_query_builder(entity_manager):
     youngest = entity_manager.query(ModernPerson).order_by("age").first()
 
     # Eager loading
-    people_with_dogs = (
-        entity_manager.query(ModernPerson)
-        .eager("dogs")
-        .all()
-    )
+    people_with_dogs = entity_manager.query(ModernPerson).eager("dogs").all()
 
     # Locking
     locked_person = (
-        entity_manager.query(ModernPerson)
-        .filter(object_id=123)
-        .lock()
-        .first()
+        entity_manager.query(ModernPerson).filter(object_id=123).lock().first()
     )
 
     # Update
@@ -354,8 +351,8 @@ def example_mapping_strategies(entity_manager):
             "entities_list": [ConventionPerson],
             "options": {
                 "mapping_strategy": mapping_strategies.ConventionOverConfigurationStrategy()
-            }
-        }
+            },
+        },
     )
 
     # Option 2: Set on specific entity class
@@ -370,8 +367,8 @@ def example_mapping_strategies(entity_manager):
             "entities_list": [AnnotatedPerson, Project],
             "options": {
                 "mapping_strategy": mapping_strategies.AnnotationBasedStrategy()
-            }
-        }
+            },
+        },
     )
 
 
@@ -401,7 +398,9 @@ def example_inheritance_strategies(entity_manager):
     entity_manager.save(cat)
 
     # Query all animals (polymorphic query)
-    all_animals = entity_manager.find(Animal, {})  # Returns Animal, Dog, and Cat instances
+    all_animals = entity_manager.find(
+        Animal, {}
+    )  # Returns Animal, Dog, and Cat instances
 
     # Query only dogs
     all_dogs = entity_manager.find(Dog, {})  # Returns only Dog instances

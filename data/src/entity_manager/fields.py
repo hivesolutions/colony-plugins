@@ -204,9 +204,9 @@ class IntegerField(Field):
         if min_value is not None or max_value is not None:
             existing_validator = kwargs.get("validator")
             if existing_validator:
-                kwargs["validator"] = (
-                    lambda v: existing_validator(v) and validate_range(v)
-                )
+                kwargs["validator"] = lambda v: existing_validator(
+                    v
+                ) and validate_range(v)
             else:
                 kwargs["validator"] = validate_range
 

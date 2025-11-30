@@ -332,7 +332,9 @@ class QueryBuilder(object):
         results = self._entity_manager.find(self._entity_class, options)
 
         if len(results) == 0:
-            raise Exception("No %s found matching criteria" % self._entity_class.__name__)
+            raise Exception(
+                "No %s found matching criteria" % self._entity_class.__name__
+            )
         elif len(results) > 1:
             raise Exception(
                 "Multiple %s found matching criteria" % self._entity_class.__name__
