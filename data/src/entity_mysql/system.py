@@ -407,9 +407,17 @@ class MySQLEngine(object):
         database = _connection.get_database()
         database = str(database)
 
+        # saves the original query as it can be used to output
+        # the unicode encoded query in case of exception
+        query_o = query
+
         # encodes the provided query into the appropriate
         # representation for MySQL execution
         query = self._encode_query(query)
+
+        # selects the best string representation of the query
+        # based on the Python version
+        query_s = query_o if colony.legacy.PYTHON_3 else query
 
         # creates a new cursor to be used in case one
         # is required, for usage
@@ -418,12 +426,14 @@ class MySQLEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the MySQL engine (for debugging purposes)
-            self.mysql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
+            self.mysql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query_s))
 
             # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly
             if connection._show_sql:
-                self.mysql_system.info("[%s] [%s] %s" % (ENGINE_NAME, database, query))
+                self.mysql_system.info(
+                    "[%s] [%s] %s" % (ENGINE_NAME, database, query_s)
+                )
 
             # takes a snapshot of the initial time for the
             # the query, this is going to be used to detect
@@ -437,7 +447,7 @@ class MySQLEngine(object):
                 cursor.execute(query)
             except Exception:
                 self.mysql_system.info(
-                    "[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query)
+                    "[%s] [%s] [exception] %s" % (ENGINE_NAME, database, query_s)
                 )
                 raise
             final = time.time()
@@ -449,12 +459,12 @@ class MySQLEngine(object):
             is_slow = delta > SLOW_QUERY_TIME
             if is_slow and connection._show_slow_sql:
                 self.mysql_system.info(
-                    "[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query)
+                    "[%s] [%s] [%d ms] %s" % (ENGINE_NAME, database, delta, query_s)
                 )
 
             # triggers a notification about the SQL query execution that
             # has just been performed (should contain also the time in ms)
-            colony.notify_g("sql.executed", query, ENGINE_NAME, delta)
+            colony.notify_g("sql.executed", query_s, ENGINE_NAME, delta)
         except MySQLdb.OperationalError as exception:
             # unpacks the exception arguments into code and
             # message so that it may be used for code verification
