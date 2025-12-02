@@ -60,6 +60,21 @@ class MVCUtilsPlugin(colony.Plugin):
 
         self.system = mvc_utils.MVCUtils(self)
 
+    def get_models(self, models_id):
+        """
+        Retrieves the models module for the given models ID.
+
+        This module will allow direct manipulation of the models
+        using the entity manager.
+
+        :type models_id: str
+        :param models_id: The ID of the models to be retrieved.
+        :rtype: Module
+        :return: The models module for the given models id.
+        """
+
+        return self.system.get_models(models_id)
+
     def assign_models(self, system_instance, plugin_instance, entity_manager_arguments):
         return self.system.create_models(
             system_instance,

@@ -37,6 +37,7 @@ import colony
 from . import utils
 from . import model
 from . import controller
+from . import exceptions
 from . import entity_model
 
 NAME_REFERENCE_VALUE = "__name__"
@@ -115,13 +116,18 @@ class MVCUtils(colony.System):
         self.package_path_models_map = {}
         self.package_path_controllers_map = {}
 
+    def get_models(self, models_id):
+        if not models_id in self.models_modules_map:
+            raise exceptions.NotFoundError("Models ID %s not found" % models_id)
+        return self.models_modules_map.get(models_id, None)
+
     def import_module_mvc_utils(
         self,
         module_name,
         package_name,
         directory_path=None,
         system_instance=None,
-        **kwargs
+        **kwargs,
     ):
         # retrieves the directory path taking into account the call module directory
         directory_path = directory_path or colony.get_instance_module_directory(
