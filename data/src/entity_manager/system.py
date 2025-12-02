@@ -340,7 +340,9 @@ class EntityManager(object):
     in case the transaction level is "rollbacked" """
 
     _exists = {}
-    """ Map for indexing of the classes that have already been persisted """
+    """ Map for indexing of the classes that have already had the
+    schema created in the underlying data source and are considered
+    to exist in the data source """
 
     def __init__(
         self, entity_manager_plugin, engine_plugin, id, entities_map, options={}
@@ -1073,6 +1075,10 @@ class EntityManager(object):
     def stop(self):
         pass
 
+    def restart(self):
+        self.stop()
+        self.start()
+
     def destroy(self):
         self.engine.destroy()
         self._reset_exists()
@@ -1583,6 +1589,10 @@ class EntityManager(object):
             query = query_buffer.get_value()
             self.execute_query(query)
 
+            # updates the cache value of the relation
+            # removing it from the exists map
+            del self._exists[relation_unique]
+
     def delete_constraints(self, entity_class):
         """
         Deletes the various foreign key constraints created
@@ -1687,7 +1697,7 @@ class EntityManager(object):
 
         # updates the cache value of the entity
         # class to the not exists value (fast access)
-        self._exists[entity_class] = False
+        del self._exists[entity_class]
 
         # retrieves all the direct relations of the entity
         # class to delete them from the data source
