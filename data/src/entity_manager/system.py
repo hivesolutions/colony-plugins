@@ -1659,7 +1659,7 @@ class EntityManager(object):
             query = query_buffer.get_value()
             self.execute_query(query)
 
-    def delete(self, entity_class):
+    def delete(self, entity_class, delete_direct=True):
         """
         Deletes the entity class references from the data
         source, this process include a (semi) cascading
@@ -1672,9 +1672,17 @@ class EntityManager(object):
         exists, because the foreign key constraint was not
         removed.
 
+        The `delete_direct` flag may be used to disable the
+        deletion of the direct relations of the entity class,
+        this may be useful in some scenarios, but may also
+        create schema integrity problems.
+
         :type entity_class: EntityClass
         :param entity_class: The entity class to be removed from
         the data source, include (semi) cascading.
+        :type delete_direct: bool
+        :param delete_direct: Whether to delete the direct relations
+        of the entity class (default: True).
         """
 
         # in case the entity class definition does not (already)
@@ -1706,7 +1714,7 @@ class EntityManager(object):
         # iterates over all the direct relations, relations
         # that are mapped in the other side of the relation
         # to drop their entities (required for integrity)
-        for direct_relation in direct_relations:
+        for direct_relation in direct_relations if delete_direct else ():
             # retrieves the target class of the direct relation
             # and deletes it from the data source
             target_class = entity_class.get_target(direct_relation)
