@@ -127,7 +127,7 @@ class MVCUtils(colony.System):
         package_name,
         directory_path=None,
         system_instance=None,
-        **kwargs,
+        **kwargs
     ):
         # retrieves the directory path taking into account the call module directory
         directory_path = directory_path or colony.get_instance_module_directory(
