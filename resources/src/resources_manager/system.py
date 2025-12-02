@@ -52,19 +52,19 @@ RESOURCES_SUFFIX_LENGTH = 13
 RESOURCES_SUFFIX_START_INDEX = -13
 """ The resources suffix value """
 
-ENVIRONMENT_VARIABLE_REGEX = "\$\{[a-zA-Z0-9_]*\}"
+ENVIRONMENT_VARIABLE_REGEX = r"\$\{[a-zA-Z0-9_]*\}"
 """ The regular expression for the environment variable """
 
-RESOURCE_VARIABLE_REGEX = "\$resource\{[a-zA-Z0-9_.]*\}"
+RESOURCE_VARIABLE_REGEX = r"\$resource\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the resource variable """
 
-PLUGIN_VARIABLE_REGEX = "\$plugin\{[a-zA-Z0-9_.]*\}"
+PLUGIN_VARIABLE_REGEX = r"\$plugin\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the plugin variable """
 
-GLOBAL_VARIABLE_REGEX = "\$global\{[a-zA-Z0-9_.]*\}"
+GLOBAL_VARIABLE_REGEX = r"\$global\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the global variable """
 
-LOCAL_VARIABLE_REGEX = "\$local\{[a-zA-Z0-9_.]*\}"
+LOCAL_VARIABLE_REGEX = r"\$local\{[a-zA-Z0-9_.]*\}"
 """ The regular expression for the local variable """
 
 COLONY_VALUE = "colony"

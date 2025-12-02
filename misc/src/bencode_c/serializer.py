@@ -68,7 +68,7 @@ INT_TYPES = {int: True, colony.legacy.LONG: True}
 LIST_TYPES = {list: True, tuple: True}
 """ The map of list types """
 
-DECIMAL_REGEX_VALUE = "\d"
+DECIMAL_REGEX_VALUE = r"\d"
 """ The decimal regular expression value """
 
 DECIMAL_REGEX = re.compile(DECIMAL_REGEX_VALUE)

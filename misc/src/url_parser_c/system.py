@@ -34,7 +34,7 @@ import colony
 
 from . import exceptions
 
-URL_REGEX_VALUE = "(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
+URL_REGEX_VALUE = r"(?P<protocol>\w+\:\/\/)?((?P<authentication>\w+\:\w+)@)?(?P<base_name>[^\:\/\?#]+)(\:(?P<port>\d+))?(?P<resource_reference>(\/[^\?#]+)*)\/?(\?(?P<options>([^#])*))?(?P<location>#(.*))?"
 """ The URL regex value """
 
 URL_REGEX = re.compile(URL_REGEX_VALUE)

@@ -54,6 +54,9 @@ SSL_VERSIONS = {
     "ssl3": ssl.PROTOCOL_SSLv3 if hasattr(ssl, "PROTOCOL_SSLv3") else -1,
     "ssl23": ssl.PROTOCOL_SSLv23 if hasattr(ssl, "PROTOCOL_SSLv23") else -1,
     "tls1": ssl.PROTOCOL_TLSv1 if hasattr(ssl, "PROTOCOL_TLSv1") else -1,
+    "tls11": ssl.PROTOCOL_TLSv1_1 if hasattr(ssl, "PROTOCOL_TLSv1_1") else -1,
+    "tls12": ssl.PROTOCOL_TLSv1_2 if hasattr(ssl, "PROTOCOL_TLSv1_2") else -1,
+    "tls13": ssl.PROTOCOL_TLSv1_3 if hasattr(ssl, "PROTOCOL_TLSv1_3") else -1,
     "tls": (
         ssl.PROTOCOL_TLS
         if hasattr(ssl, "PROTOCOL_TLS")

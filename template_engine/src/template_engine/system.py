@@ -37,50 +37,50 @@ from . import ast
 from . import visitor
 from . import exceptions
 
-OUTPUT_REGEX_VALUE = "\{\{[^\}]*\}\}"
+OUTPUT_REGEX_VALUE = r"\{\{[^\}]*\}\}"
 """ The regular expression value for the matching of the
 output (print) operations, these are specialized nodes
 that are only meant to print variable/literal values """
 
-EVAL_REGEX_VALUE = "\{\%[^\}]*\%\}"
+EVAL_REGEX_VALUE = r"\{\%[^\}]*\%\}"
 """ Regular expression that matched the complex evaluation
 expression that allow the control flow of the template this
 is the regular expression to be used under simple mode """
 
-START_TAG_REGEX_VALUE = "\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
+START_TAG_REGEX_VALUE = r"\$\{[^\/\{}\{}][^\{\}][^\/\{}\{}]*\}"
 """ The start tag regular expression value that should
 match the starting tag of an expression """
 
-END_TAG_REGEX_VALUE = "\$\{\/[^\{\}][^\/\{}\{}]*\}"
+END_TAG_REGEX_VALUE = r"\$\{\/[^\{\}][^\/\{}\{}]*\}"
 """ The end tag regular expression value """
 
-SINGLE_TAG_REGEX_VALUE = "\$\{[^\{\}]*\/\}"
+SINGLE_TAG_REGEX_VALUE = r"\$\{[^\{\}]*\/\}"
 """ The single tag regular expression value """
 
-ATTRIBUTE_REGEX_VALUE = "[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\-\.\/\(\)\:,'\"\|]*"
+ATTRIBUTE_REGEX_VALUE = r"[a-zA-Z_]+=[a-zA-Z_][a-zA-Z0-9_\-\.\/\(\)\:,'\"\|]*"
 """ The attribute regular expression value, this
 regular expression value should be able to match
 the complete set of attribute matches """
 
-QUOTED_SINGLE_REGEX_VALUE = "[a-zA-Z_]+=['][^']+[']"
+QUOTED_SINGLE_REGEX_VALUE = r"[a-zA-Z_]+=['][^']+[']"
 """ The attribute quoted single regular expression value """
 
-QUOTED_DOUBLE_REGEX_VALUE = '[a-zA-Z_]+=["][^"]+["]'
+QUOTED_DOUBLE_REGEX_VALUE = r'[a-zA-Z_]+=["][^"]+["]'
 """ The attribute quoted double regular expression value """
 
-FLOAT_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
+FLOAT_REGEX_VALUE = r"[a-zA-Z_]+=-?[0-9]+\.[0-9]*"
 """ The attribute float regular expression value """
 
-INTEGER_REGEX_VALUE = "[a-zA-Z_]+=-?[0-9]+"
+INTEGER_REGEX_VALUE = r"[a-zA-Z_]+=-?[0-9]+"
 """ The attribute integer regular expression value """
 
-BOOL_TRUE_REGEX_VALUE = "[a-zA-Z_]+=True"
+BOOL_TRUE_REGEX_VALUE = r"[a-zA-Z_]+=True"
 """ The attribute true boolean regular expression value """
 
-BOOL_FALSE_REGEX_VALUE = "[a-zA-Z_]+=False"
+BOOL_FALSE_REGEX_VALUE = r"[a-zA-Z_]+=False"
 """ The attribute false boolean regular expression value """
 
-NONE_REGEX_VALUE = "[a-zA-Z_]+=None"
+NONE_REGEX_VALUE = r"[a-zA-Z_]+=None"
 """ The attribute none regular expression value """
 
 OUTPUT_VALUE = 1

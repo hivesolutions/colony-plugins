@@ -116,21 +116,21 @@ PERSIST_ALL = PERSIST_UPDATE | PERSIST_SAVE | PERSIST_ASSOCIATE
 of the complete set of persist type values """
 
 ATTRIBUTE_PARSING_REGEX_VALUE = (
-    "(?P<name>[\w\-]+)|(?P<sequence>\[\])|(?P<map>\[[\w\-]+\])"
+    r"(?P<name>[\w\-]+)|(?P<sequence>\[\])|(?P<map>\[[\w\-]+\])"
 )
 """ The attribute parsing regular expression value """
 
-CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([A-Z]+)([A-Z][a-z])"
+CAPITALIZED_CAMEL_CASED_WORD_PAIR_REGEX_VALUE = r"([A-Z]+)([A-Z][a-z])"
 """ The capitalized camel cased word pair regex value """
 
-CAMEL_CASED_WORD_PAIR_REGEX_VALUE = "([a-z\d])([A-Z])"
+CAMEL_CASED_WORD_PAIR_REGEX_VALUE = r"([a-z\d])([A-Z])"
 """ The camel cased word pair regex value """
 
-NON_CHARACTER_REGEX_VALUE = "[^A-Z^a-z^0-9^\/]+"
+NON_CHARACTER_REGEX_VALUE = r"[^A-Z^a-z^0-9^\/]+"
 """ The non-character regex value """
 
 LOCALE_REGEX_VALUE = (
-    "(?P<locale>[a-zA-Z0-9-]+)(;q=(?P<relative_value>[0-9]+(\.[0-9]+)?))?"
+    r"(?P<locale>[a-zA-Z0-9-]+)(;q=(?P<relative_value>[0-9]+(\.[0-9]+)?))?"
 )
 """ The locale regex value """
 

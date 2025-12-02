@@ -116,18 +116,21 @@ class APIAT(colony.System):
         test_mode = api_attributes.get("test_mode", False)
         key = api_attributes.get("key", False)
         certificate = api_attributes.get("certificate", False)
+        test_mode = colony.conf("AT_TEST_MODE", test_mode, cast=bool)
+        key = colony.conf("AT_KEY", key)
+        certificate = colony.conf("AT_CERTIFICATE", certificate)
 
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
         # client to the caller method
         at_client = ATClient(
             self.plugin,
-            ssl_plugin,
-            client_http_plugin,
-            at_structure,
-            test_mode,
-            key,
-            certificate,
+            ssl_plugin=ssl_plugin,
+            client_http_plugin=client_http_plugin,
+            at_structure=at_structure,
+            test_mode=test_mode,
+            key=key,
+            certificate=certificate,
         )
         if open_client:
             at_client.open()
@@ -880,10 +883,17 @@ class ATClient(object):
             # defines the client parameters to be used in the
             # creation of the HTTP client
             client_parameters = dict(
-                content_type_charset="utf-8",
+                content_type_charset=colony.conf("AT_CONTENT_TYPE", "utf-8"),
                 key_file_path=key_path,
                 certificate_file_path=certificate_path,
-                ssl_version="tls",
+                ssl_version=colony.conf("AT_SSL_VERSION", "tls"),
+            )
+
+            # prints the client parameters to be used in the creation
+            # of the HTTP client for AT submission
+            self.plugin.debug(
+                "Submitting AT information using the following parameters: %s"
+                % str(client_parameters)
             )
 
             # creates the HTTP client to be used for the API

@@ -52,7 +52,7 @@ TABLE_TOP_TEXT = "ID      STATUS      PLUGIN ID"
 COLUMN_SPACING = 8
 """ The column spacing """
 
-ID_REGEX = "[0-9]+"
+ID_REGEX = r"[0-9]+"
 """ The regular expression to retrieve the id of the plugin """
 
 

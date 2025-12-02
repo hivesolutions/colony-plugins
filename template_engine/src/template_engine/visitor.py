@@ -61,14 +61,14 @@ SERIALIZERS_MAP = None
 the serialization with the appropriate serializer
 object to handle it """
 
-LITERAL_ESCAPE_REGEX_VALUE = "\$\\\\(?=\\\\*\{)"
+LITERAL_ESCAPE_REGEX_VALUE = r"\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
-FUCNTION_ARGUMENTS_REGEX_VALUE = "\([\sa-zA-Z0-9_\-,\.\:\=\%'\/\"]+\)"
+FUNCTION_ARGUMENTS_REGEX_VALUE = r"\([\sa-zA-Z0-9_\-,\.\:\=\%'\/\"]+\)"
 """ The function arguments regular expression value
 that will match any possible (variable or constant) value """
 
-NAMES_REGEX_VALUE = "([^\.]+\([^\)]+\))|([^\.]+)"
+NAMES_REGEX_VALUE = r"([^\.]+\([^\)]+\))|([^\.]+)"
 """ The regular expression that is going to be used for the
 splitting of the various names for a variable based value that
 is going to be evaluated at runtime, this value may contain
@@ -77,7 +77,7 @@ method calls with literal an non literal values """
 LITERAL_ESCAPE_REGEX = re.compile(LITERAL_ESCAPE_REGEX_VALUE)
 """ The literal escape regular expression """
 
-FUCNTION_ARGUMENTS_REGEX = re.compile(FUCNTION_ARGUMENTS_REGEX_VALUE)
+FUNCTION_ARGUMENTS_REGEX = re.compile(FUNCTION_ARGUMENTS_REGEX_VALUE)
 """ The function arguments regular expression """
 
 NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
@@ -1216,7 +1216,7 @@ class Visitor(object):
         # tries to match the complete variable name split against
         # the arguments regular expression, to find out if the call
         # is of type simple or complex (arguments present)
-        arguments_match = FUCNTION_ARGUMENTS_REGEX.search(name)
+        arguments_match = FUNCTION_ARGUMENTS_REGEX.search(name)
 
         # in case there is no valid arguments match, no processing
         # of arguments will occur and an empty sequence is returned

@@ -78,7 +78,7 @@ MISSING_MANDATORY_ARGUMENTS_MESSAGE = "missing mandatory arguments"
 INTERNAL_CONFIGURATION_PROBLEM_MESSAGE = "internal configuration problem"
 """ The internal configuration problem message """
 
-COMMAND_LINE_REGEX_VALUE = '"[^"]*"|[^ \s]+'
+COMMAND_LINE_REGEX_VALUE = r'"[^"]*"|[^ \s]+'
 """ The regular expression to retrieve the command line arguments """
 
 COMMAND_LINE_REGEX = re.compile(COMMAND_LINE_REGEX_VALUE)

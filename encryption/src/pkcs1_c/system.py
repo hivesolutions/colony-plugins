@@ -73,12 +73,12 @@ END_CERTIFICATE_VALUE = "-----END CERTIFICATE-----"
 """ The end certificate value """
 
 PRIVATE_KEY_VALUE_REGEX = re.compile(
-    BEGIN_RSA_PRIVATE_VALUE + "\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL
+    BEGIN_RSA_PRIVATE_VALUE + r"\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL
 )
 """ The private key value regex """
 
 PUBLIC_KEY_VALUE_REGEX = re.compile(
-    BEGIN_PUBLIC_VALUE + "\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL
+    BEGIN_PUBLIC_VALUE + r"\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL
 )
 """ The public key value regex """
 

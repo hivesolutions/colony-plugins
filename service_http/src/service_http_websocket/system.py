@@ -69,10 +69,10 @@ SEC_WEB_SOCKET_KEY_2 = "Sec-WebSocket-Key2"
 DEFAULT_WEB_SOCKET_PROTOCOL = "default"
 """ The default web socket protocol """
 
-DIGITS_REGEX_VALUE = "\d"
+DIGITS_REGEX_VALUE = r"\d"
 """ The digits regex value """
 
-SPACE_REGEX_VALUE = "\s"
+SPACE_REGEX_VALUE = r"\s"
 """ The space regex value """
 
 DIGITS_REGEX = re.compile(DIGITS_REGEX_VALUE)

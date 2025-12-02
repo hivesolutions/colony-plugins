@@ -172,7 +172,7 @@ class WSGI(colony.System):
 
         # retrieves the string based version of the currently
         # executing plugin manager, this value is going to be
-        # used in the formating of the powered by string
+        # used in the formatting of the powered by string
         manager_version = plugin_manager.get_version()
         manager_environment = plugin_manager.get_environment()
 
@@ -242,9 +242,7 @@ class WSGI(colony.System):
 
         # creates the final runtime powered by string and ensures that
         # it's represented by a proper bytes string
-        powered_by = colony.legacy.bytes(
-            POWERED_BY_STRING % (manager_version, manager_environment), force=True
-        )
+        powered_by = str(POWERED_BY_STRING % (manager_version, manager_environment))
 
         # update the status line with the provided code value and then
         # creates the initial/static response headers list with the
