@@ -1514,7 +1514,7 @@ class MVCUtils(colony.System):
 
         # retrieves the expected parameter values
         database_prefix = parameters.get("database_prefix", DEFAULT_DATABASE_PREFIX)
-        database_sufix = parameters.get("database_sufix", DEFAULT_DATABASE_SUFFIX)
+        database_suffix = parameters.get("database_suffix", DEFAULT_DATABASE_SUFFIX)
         configuration_plugin = parameters.get("configuration_plugin", plugin)
 
         # retrieves the system database file name resource
@@ -1528,7 +1528,7 @@ class MVCUtils(colony.System):
         if system_database_filename_resource:
             system_database_filename_suffix = system_database_filename_resource.data
         else:
-            system_database_filename_suffix = database_sufix
+            system_database_filename_suffix = database_suffix
 
         # creates the system database file name value using the prefix and suffix values
         system_database_filename = database_prefix + system_database_filename_suffix

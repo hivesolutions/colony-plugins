@@ -43,7 +43,7 @@ BASE_RESOURCES_PATH = "resources_manager/resources"
 CONFIGURATION_PATH = "configuration"
 """ The configuration path """
 
-RESOURCES_SUFIX_VALUE = "resources.xml"
+RESOURCES_SUFFIX_VALUE = "resources.xml"
 """ The resources suffix value """
 
 RESOURCES_SUFFIX_LENGTH = 13
@@ -1235,7 +1235,7 @@ class ResourcesManager(colony.System):
         # and the last item of the resources name item is the same as the resources suffix value
         is_resource_name = (
             len(resource_name) >= RESOURCES_SUFFIX_LENGTH
-            and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFIX_VALUE
+            and resource_name[RESOURCES_SUFFIX_START_INDEX:] == RESOURCES_SUFFIX_VALUE
         )
 
         # returns the result of the is resource
