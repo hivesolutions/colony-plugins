@@ -1591,7 +1591,8 @@ class EntityManager(object):
 
             # updates the cache value of the relation
             # removing it from the exists map
-            del self._exists[relation_unique]
+            if relation_unique in self._exists:
+                del self._exists[relation_unique]
 
     def delete_constraints(self, entity_class):
         """
@@ -1697,7 +1698,8 @@ class EntityManager(object):
 
         # updates the cache value of the entity
         # class to the not exists value (fast access)
-        del self._exists[entity_class]
+        if entity_class in self._exists:
+            del self._exists[entity_class]
 
         # retrieves all the direct relations of the entity
         # class to delete them from the data source
