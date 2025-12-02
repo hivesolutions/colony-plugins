@@ -1328,16 +1328,16 @@ class EntityManager(object):
         """
         Runs the analysis system for the current entity
         manager instance, this is done using the proper
-        analyser class for the entity manager.
+        analyzer class for the entity manager.
 
         Be aware that this may be an expensive operation
         and its running should be used with proper care.
         """
 
-        # creates an instance of the entity manager analyser
+        # creates an instance of the entity manager analyzer
         # and then runs the (complete) analysis operations
-        analyser = analysis.EntityManagerAnalyser(self)
-        analyser.analyse_all()
+        analyzer = analysis.EntityManagerAnalyzer(self)
+        analyzer.analyse_all()
 
     def create_definitions(self):
         """

@@ -31,9 +31,9 @@ __license__ = "Apache License, Version 2.0"
 import colony
 
 
-class EntityManagerAnalyser(object):
+class EntityManagerAnalyzer(object):
     """
-    Entity manager analyser class responsible for the
+    Entity manager analyzer class responsible for the
     analysis/verifier/recommendation support of an entity
     manager. Should provide ways to improve performance
     and structure for the data layer.
@@ -45,7 +45,7 @@ class EntityManagerAnalyser(object):
 
     entity_manager = None
     """ The reference to the owner/reference to entity
-    manager for which the analyser is going to run """
+    manager for which the analyzer is going to run """
 
     def __init__(self, entity_manager):
         self.entity_manager = entity_manager
