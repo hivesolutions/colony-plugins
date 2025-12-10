@@ -2115,7 +2115,7 @@ class EntityManager(object):
         else:
             self.save(entity, generate=generate)
 
-    def reload(self, entity, options=None):
+    def reload(self, entity, options=None, new=False):
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
@@ -2151,6 +2151,12 @@ class EntityManager(object):
         # "guide" for the retrieval process
         new_entity = self.get(entity_class, id_value, options)
 
+        # in case the new flag is set, returns the new entity
+        # immediately without updating the current entity, this
+        # is not an inline reload, it's a full new entity retrieval
+        if new:
+            return new_entity
+
         # iterates over all the names present in the complete
         # entity class hierarchy to update with the new values
         for name in names_map:
@@ -2179,6 +2185,10 @@ class EntityManager(object):
         # enables the entity, providing the entity with the
         # mechanisms necessary for data source communication
         self.enable(entity)
+
+        # returns the entity itself, because this is an inline
+        # oriented reload operation
+        return entity
 
     def reload_many(self, entities, options=None):
         # normalizes the options, this is going to expand the
