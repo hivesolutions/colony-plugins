@@ -2335,6 +2335,10 @@ class EntityManager(object):
         # mechanisms necessary for data source communication
         self.enable(entity)
 
+        # returns the value of the relation that has just been
+        # loaded, and which is ready to be used by the caller
+        return value
+
     def map(self, entity):
         """
         Maps the relations of the entity that are considered to

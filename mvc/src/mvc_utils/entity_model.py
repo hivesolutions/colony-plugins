@@ -1861,6 +1861,9 @@ def relation(self, name, options={}, force=True, entity_manager=None):
     :type entity_manager: EntityManager
     :param entity_manager: The optional entity manager
     reference to be used.
+    :rtype: Model
+    :return: The value of the relation that has just been
+    loaded, and which is ready to be used by the caller.
     """
 
     # retrieves the entity manager to be used or the
@@ -1873,11 +1876,11 @@ def relation(self, name, options={}, force=True, entity_manager=None):
     # immediately avoiding a reloading of the relation
     value = self.get_value(name)
     if not force and value:
-        return
+        return value
 
     # loads a relation with the provided options (partial
     # loading) using the entity manager
-    entity_manager.relation(self, name, options)
+    return entity_manager.relation(self, name, options)
 
 
 def save_update(self, entity_manager=None):
