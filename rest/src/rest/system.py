@@ -187,7 +187,7 @@ class REST(colony.System):
         try:
             self.session_c.load()
         except Exception as exception:
-            self.warning(
+            self.info(
                 "Falling back to %s session, because of an error '%s'"
                 % (RESTSession.__name__, colony.legacy.UNICODE(exception))
             )
