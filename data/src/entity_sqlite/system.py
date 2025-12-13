@@ -104,6 +104,8 @@ class SQLiteEngine(object):
     def get_insensitive_collate(self):
         db_collate = colony.conf("DB_COLLATE", "nocase")
         db_insensitive_collate = colony.conf("DB_INSENSITIVE_COLLATE", db_collate)
+        if not db_insensitive_collate:
+            return None
         return db_insensitive_collate
 
     def connect(self, connection, parameters={}):
