@@ -40,7 +40,7 @@ RUN_MODE=development DB_ENGINE=sqlite HTTPBIN=httpbin.bemisc.com PLUGIN_PATH=./*
 Before committing, ensure that the following operations items check:
 
 - [ ] Code is formatted with `black .`
-- [ ] Tests pass: `RUN_MODE=development DB_ENGINE=sqlite PLUGIN_PATH="./*/src;./*/*src" python setup.py test`
+- [ ] Tests pass: `RUN_MODE=development DB_ENGINE=sqlite HTTPBIN=httpbin.bemisc.com PLUGIN_PATH="./*/src;./*/*src" python setup.py test`
 - [ ] CHANGELOG.md is updated in [Unreleased] section
 - [ ] No debugging print statements or commented-out code
 - [ ] CRLF line endings are preserved
