@@ -378,7 +378,7 @@ class MVCUtils(colony.System):
             # in the modules module for latter models reference
             setattr(models_module, entity_class.__name__, entity_class)
             setattr(models_module, "EntityModel", entity_class)
-            setattr(models_module, "DataRefenceModel", DataReferenceModel)
+            setattr(models_module, "DataReferenceModel", DataReferenceModel)
             setattr(models_module, "Model", RawModel)
 
             # sets the models module in the models module
