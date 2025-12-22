@@ -333,11 +333,13 @@ class MySQLContentionDetector(ContentionDetector):
     """
     MySQL-specific contention detection.
     Provides lock and transaction analysis for MySQL databases.
+    Works with MySQL 5.7+ and MySQL 8.0+ (using performance_schema).
     """
 
     def get_blocking_queries(self, entity_manager):
         """
         Returns MySQL queries that are blocking other queries.
+        Uses performance_schema for MySQL 8.0+ compatibility.
 
         :type entity_manager: EntityManager
         :param entity_manager: The entity manager to query.
@@ -345,23 +347,61 @@ class MySQLContentionDetector(ContentionDetector):
         :return: List of blocking query information.
         """
 
-        query = """
+        # Try MySQL 8.0+ performance_schema approach first
+        query_perf = """
         SELECT
-            r.trx_id waiting_trx_id,
-            r.trx_mysql_thread_id waiting_thread,
-            r.trx_query waiting_query,
-            b.trx_id blocking_trx_id,
-            b.trx_mysql_thread_id blocking_thread,
-            b.trx_query blocking_query,
-            r.trx_wait_started wait_started,
-            TIMESTAMPDIFF(SECOND, r.trx_wait_started, NOW()) wait_duration_seconds
+            waiting_trx_id,
+            waiting_pid,
+            waiting_query,
+            blocking_trx_id,
+            blocking_pid,
+            blocking_query,
+            wait_started,
+            TIMESTAMPDIFF(SECOND, wait_started, NOW()) as wait_duration_seconds
+        FROM sys.innodb_lock_waits;
+        """
+
+        try:
+            cursor = entity_manager.execute_query(query_perf)
+            results = []
+
+            for row in cursor:
+                results.append({
+                    "waiting_trx_id": row[0],
+                    "waiting_thread": row[1],
+                    "waiting_query": row[2],
+                    "blocking_trx_id": row[3],
+                    "blocking_thread": row[4],
+                    "blocking_query": row[5],
+                    "wait_started": str(row[6]) if row[6] else None,
+                    "wait_duration_seconds": row[7] if row[7] else 0,
+                })
+
+            cursor.close()
+            return results
+
+        except Exception:
+            # Fallback to information_schema for older MySQL versions
+            pass
+
+        # Fallback query for MySQL 5.7
+        query_legacy = """
+        SELECT
+            r.trx_id as waiting_trx_id,
+            r.trx_mysql_thread_id as waiting_thread,
+            r.trx_query as waiting_query,
+            b.trx_id as blocking_trx_id,
+            b.trx_mysql_thread_id as blocking_thread,
+            b.trx_query as blocking_query,
+            r.trx_wait_started as wait_started,
+            TIMESTAMPDIFF(SECOND, r.trx_wait_started, NOW()) as wait_duration_seconds
         FROM information_schema.innodb_lock_waits w
         INNER JOIN information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id
         INNER JOIN information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;
         """
 
         try:
-            cursor = entity_manager.execute_query(query)
+            cursor = entity_manager.execute_query(query_legacy)
             results = []
 
             for row in cursor:
@@ -398,7 +438,8 @@ class MySQLContentionDetector(ContentionDetector):
         query = """
         SELECT
             COUNT(*) as lock_wait_count,
-            SUM(TIMESTAMPDIFF(SECOND, trx_wait_started, NOW())) as total_wait_seconds
+            SUM(TIMESTAMPDIFF(SECOND, trx_wait_started, NOW())) as total_wait_seconds,
+            MAX(TIMESTAMPDIFF(SECOND, trx_wait_started, NOW())) as max_wait_seconds
         FROM information_schema.innodb_trx
         WHERE trx_state = 'LOCK WAIT';
         """
@@ -412,6 +453,7 @@ class MySQLContentionDetector(ContentionDetector):
                 results.append({
                     "lock_wait_count": row[0] if row[0] else 0,
                     "total_wait_seconds": row[1] if row[1] else 0,
+                    "max_wait_seconds": row[2] if row[2] else 0,
                 })
 
             cursor.close()
@@ -433,11 +475,12 @@ class MySQLContentionDetector(ContentionDetector):
         :return: Transaction statistics.
         """
 
+        # Use conditional aggregation instead of FILTER for MySQL compatibility
         query = """
         SELECT
             COUNT(*) as total_transactions,
-            COUNT(*) FILTER (WHERE trx_state = 'RUNNING') as running_transactions,
-            COUNT(*) FILTER (WHERE trx_state = 'LOCK WAIT') as lock_wait_transactions,
+            SUM(CASE WHEN trx_state = 'RUNNING' THEN 1 ELSE 0 END) as running_transactions,
+            SUM(CASE WHEN trx_state = 'LOCK WAIT' THEN 1 ELSE 0 END) as lock_wait_transactions,
             MAX(TIMESTAMPDIFF(SECOND, trx_started, NOW())) as longest_transaction_seconds,
             AVG(TIMESTAMPDIFF(SECOND, trx_started, NOW())) as avg_transaction_seconds
         FROM information_schema.innodb_trx;
@@ -458,10 +501,125 @@ class MySQLContentionDetector(ContentionDetector):
                 }
 
             cursor.close()
+
+            # Get deadlock information
+            deadlock_query = """
+            SELECT VARIABLE_VALUE
+            FROM information_schema.GLOBAL_STATUS
+            WHERE VARIABLE_NAME = 'Innodb_deadlocks';
+            """
+
+            try:
+                cursor = entity_manager.execute_query(deadlock_query)
+                row = cursor.fetchone()
+                if row:
+                    stats["deadlocks"] = int(row[0]) if row[0] else 0
+                cursor.close()
+            except Exception:
+                pass
+
             return stats
 
         except Exception as e:
             self.telemetry_system.plugin.warning(
                 "Failed to get transaction stats: %s" % str(e)
+            )
+            return {}
+
+    def get_slow_queries(self, entity_manager, duration_threshold_seconds=5):
+        """
+        Returns currently executing slow queries from processlist.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :type duration_threshold_seconds: int
+        :param duration_threshold_seconds: Minimum query duration in seconds.
+        :rtype: list
+        :return: List of slow query information.
+        """
+
+        query = """
+        SELECT
+            ID as pid,
+            USER as user,
+            HOST as host,
+            DB as db,
+            COMMAND as command,
+            TIME as duration_seconds,
+            STATE as state,
+            INFO as query
+        FROM information_schema.PROCESSLIST
+        WHERE COMMAND != 'Sleep'
+          AND TIME > %d
+          AND INFO IS NOT NULL
+        ORDER BY TIME DESC;
+        """ % duration_threshold_seconds
+
+        try:
+            cursor = entity_manager.execute_query(query)
+            results = []
+
+            for row in cursor:
+                results.append({
+                    "pid": row[0],
+                    "user": row[1],
+                    "host": row[2],
+                    "database": row[3],
+                    "command": row[4],
+                    "duration_seconds": row[5],
+                    "state": row[6],
+                    "query": row[7],
+                })
+
+            cursor.close()
+            return results
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to get slow queries: %s" % str(e)
+            )
+            return []
+
+    def get_deadlock_info(self, entity_manager):
+        """
+        Returns recent deadlock information from InnoDB status.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: dict
+        :return: Deadlock information.
+        """
+
+        query = "SHOW ENGINE INNODB STATUS"
+
+        try:
+            cursor = entity_manager.execute_query(query)
+            row = cursor.fetchone()
+
+            if row and len(row) > 2:
+                status_text = row[2]
+
+                # Parse the latest deadlock information
+                deadlock_info = {}
+                if "LATEST DETECTED DEADLOCK" in status_text:
+                    # Extract deadlock section
+                    start = status_text.find("LATEST DETECTED DEADLOCK")
+                    end = status_text.find("------------", start + 1)
+                    if end > start:
+                        deadlock_section = status_text[start:end]
+                        deadlock_info["has_recent_deadlock"] = True
+                        deadlock_info["deadlock_text"] = deadlock_section[:500]  # First 500 chars
+                else:
+                    deadlock_info["has_recent_deadlock"] = False
+
+                cursor.close()
+                return deadlock_info
+
+            cursor.close()
+            return {}
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to get deadlock info: %s" % str(e)
             )
             return {}

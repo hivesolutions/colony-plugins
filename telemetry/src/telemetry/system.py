@@ -326,16 +326,46 @@ class Telemetry(colony.System):
                 except Exception as e:
                     # Detect contention-related errors
                     error_str = str(e).lower()
-                    is_lock_error = any(keyword in error_str for keyword in ["lock", "timeout", "deadlock", "serialization"])
+                    error_type = type(e).__name__
+
+                    # Check for database-specific error codes
+                    is_lock_error = False
+                    contention_type = "unknown"
+
+                    # MySQL deadlock detection (error code 1213)
+                    if hasattr(e, 'args') and len(e.args) > 0:
+                        error_code = e.args[0] if isinstance(e.args[0], int) else None
+                        if error_code == 1213:  # MySQL deadlock
+                            is_lock_error = True
+                            contention_type = "deadlock"
+
+                    # Generic error string detection
+                    if not is_lock_error:
+                        lock_keywords = ["lock", "timeout", "deadlock", "serialization", "could not serialize"]
+                        is_lock_error = any(keyword in error_str for keyword in lock_keywords)
+
+                        if "deadlock" in error_str:
+                            contention_type = "deadlock"
+                        elif "timeout" in error_str or "lock timeout" in error_str:
+                            contention_type = "lock_timeout"
+                        elif "serialization" in error_str or "could not serialize" in error_str:
+                            contention_type = "serialization_failure"
+                        else:
+                            contention_type = "lock_wait"
 
                     if is_lock_error:
                         span.set_attribute("db.lock.contention", True)
-                        span.add_event("lock_contention_detected", {"error": str(e)})
+                        span.set_attribute("db.contention.type", contention_type)
+                        span.add_event("lock_contention_detected", {
+                            "error": str(e),
+                            "error_type": error_type,
+                            "contention_type": contention_type
+                        })
 
                         if self.contention_events:
                             self.contention_events.add(1, {
                                 "db.system": entity_manager.engine.get_engine_name(),
-                                "error.type": "lock_contention"
+                                "error.type": contention_type
                             })
 
                     span.set_status(Status(StatusCode.ERROR, str(e)))

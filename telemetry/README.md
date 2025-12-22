@@ -9,6 +9,8 @@ OpenTelemetry instrumentation for the Colony entity manager to detect database t
 - **Performance Metrics**: Track query duration, lock waits, and transaction stats
 - **Contention Detection**: Identify blocking queries, deadlocks, and serialization failures
 - **Database-Specific Monitoring**: Specialized detectors for PostgreSQL and MySQL
+- **MySQL Support**: Full MySQL 5.7+ and 8.0+ compatibility with InnoDB monitoring
+- **Deadlock Detection**: Automatic detection of MySQL deadlocks (error 1213) and PostgreSQL serialization failures
 
 ## Installation
 
@@ -91,8 +93,10 @@ class MyService:
 
 ### Contention Detection
 
+#### PostgreSQL Example
+
 ```python
-# Get a contention detector for your database
+# Get a PostgreSQL contention detector
 detector = telemetry_plugin.get_contention_detector("pgsql")
 
 # Check for blocking queries
@@ -113,13 +117,54 @@ print(f"Active transactions: {stats['active_transactions']}")
 print(f"Longest transaction: {stats['longest_transaction']}")
 print(f"Deadlocks: {stats.get('deadlocks', 0)}")
 
-# Get slow queries (PostgreSQL only)
+# Get slow queries (PostgreSQL)
 slow_queries = detector.get_slow_queries(entity_manager, duration_threshold="5 seconds")
 for query in slow_queries:
     print(f"Slow query (PID {query['pid']}): {query['query']}")
     print(f"  Duration: {query['duration']}")
     print(f"  Wait event: {query['wait_event']}")
 ```
+
+#### MySQL Example
+
+```python
+# Get a MySQL contention detector
+detector = telemetry_plugin.get_contention_detector("mysql")
+
+# Check for InnoDB lock waits (works with MySQL 5.7 and 8.0+)
+blocking_queries = detector.get_blocking_queries(entity_manager)
+for block in blocking_queries:
+    print(f"Thread {block['blocking_thread']} is blocking thread {block['waiting_thread']}")
+    print(f"  Blocking query: {block['blocking_query']}")
+    print(f"  Wait duration: {block['wait_duration_seconds']} seconds")
+
+# Get InnoDB lock wait statistics
+lock_waits = detector.get_lock_waits(entity_manager)
+for wait in lock_waits:
+    print(f"Lock wait count: {wait['lock_wait_count']}")
+    print(f"Total wait time: {wait['total_wait_seconds']} seconds")
+
+# Get transaction statistics
+stats = detector.get_transaction_stats(entity_manager)
+print(f"Running transactions: {stats['running_transactions']}")
+print(f"Lock waiting transactions: {stats['lock_wait_transactions']}")
+print(f"Total deadlocks (lifetime): {stats.get('deadlocks', 0)}")
+
+# Get slow queries from PROCESSLIST (MySQL)
+slow_queries = detector.get_slow_queries(entity_manager, duration_threshold_seconds=5)
+for query in slow_queries:
+    print(f"Slow query (Thread {query['pid']}): {query['query']}")
+    print(f"  Duration: {query['duration_seconds']} seconds")
+    print(f"  State: {query['state']}")
+
+# Get recent deadlock information from InnoDB status
+deadlock_info = detector.get_deadlock_info(entity_manager)
+if deadlock_info.get('has_recent_deadlock'):
+    print("Recent deadlock detected!")
+    print(deadlock_info.get('deadlock_text'))
+```
+
+See [example_mysql.py](example_mysql.py) for complete MySQL examples.
 
 ### Custom Configuration
 
