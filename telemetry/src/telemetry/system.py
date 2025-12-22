@@ -339,9 +339,15 @@ class Telemetry(colony.System):
                             is_lock_error = True
                             contention_type = "deadlock"
 
+                    # SQLite BUSY error detection
+                    if not is_lock_error and error_type == "OperationalError":
+                        if "database is locked" in error_str or "locked" in error_str:
+                            is_lock_error = True
+                            contention_type = "database_locked"
+
                     # Generic error string detection
                     if not is_lock_error:
-                        lock_keywords = ["lock", "timeout", "deadlock", "serialization", "could not serialize"]
+                        lock_keywords = ["lock", "timeout", "deadlock", "serialization", "could not serialize", "busy"]
                         is_lock_error = any(keyword in error_str for keyword in lock_keywords)
 
                         if "deadlock" in error_str:
@@ -350,6 +356,8 @@ class Telemetry(colony.System):
                             contention_type = "lock_timeout"
                         elif "serialization" in error_str or "could not serialize" in error_str:
                             contention_type = "serialization_failure"
+                        elif "database is locked" in error_str or ("busy" in error_str and "sqlite" in error_str):
+                            contention_type = "database_locked"
                         else:
                             contention_type = "lock_wait"
 
@@ -474,5 +482,7 @@ class Telemetry(colony.System):
             return contention.PgSQLContentionDetector(self)
         elif engine_name == "mysql":
             return contention.MySQLContentionDetector(self)
+        elif engine_name == "sqlite":
+            return contention.SQLiteContentionDetector(self)
         else:
             return contention.ContentionDetector(self)

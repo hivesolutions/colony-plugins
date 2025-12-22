@@ -39,6 +39,6 @@ from . import decorators
 from . import system
 from . import test
 
-from .contention import ContentionDetector, PgSQLContentionDetector
+from .contention import ContentionDetector, PgSQLContentionDetector, MySQLContentionDetector, SQLiteContentionDetector
 from .system import Telemetry
 from .test import TelemetryTest

@@ -623,3 +623,341 @@ class MySQLContentionDetector(ContentionDetector):
                 "Failed to get deadlock info: %s" % str(e)
             )
             return {}
+
+
+class SQLiteContentionDetector(ContentionDetector):
+    """
+    SQLite-specific contention detection.
+    Provides monitoring for SQLite databases with file-based locking.
+
+    Note: SQLite uses database-level locks rather than row-level locks,
+    so contention patterns are different from PostgreSQL and MySQL.
+    """
+
+    def get_database_info(self, entity_manager):
+        """
+        Returns SQLite database information and statistics.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: dict
+        :return: Database information.
+        """
+
+        try:
+            info = {}
+
+            # Get database file path and size
+            connection = entity_manager.get_connection()
+            _connection = connection._connection
+
+            try:
+                file_path = _connection.get_file_path()
+                info["file_path"] = file_path
+
+                import os
+                if os.path.exists(file_path):
+                    info["file_size_bytes"] = os.path.getsize(file_path)
+                    info["file_size_mb"] = round(info["file_size_bytes"] / (1024 * 1024), 2)
+            except Exception:
+                pass
+
+            # Get page count and page size
+            try:
+                cursor = entity_manager.execute_query("PRAGMA page_count")
+                row = cursor.fetchone()
+                if row:
+                    info["page_count"] = row[0]
+                cursor.close()
+
+                cursor = entity_manager.execute_query("PRAGMA page_size")
+                row = cursor.fetchone()
+                if row:
+                    info["page_size"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get cache size
+            try:
+                cursor = entity_manager.execute_query("PRAGMA cache_size")
+                row = cursor.fetchone()
+                if row:
+                    info["cache_size"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get journal mode
+            try:
+                cursor = entity_manager.execute_query("PRAGMA journal_mode")
+                row = cursor.fetchone()
+                if row:
+                    info["journal_mode"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get synchronous mode
+            try:
+                cursor = entity_manager.execute_query("PRAGMA synchronous")
+                row = cursor.fetchone()
+                if row:
+                    sync_modes = {0: "OFF", 1: "NORMAL", 2: "FULL", 3: "EXTRA"}
+                    info["synchronous"] = sync_modes.get(row[0], row[0])
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get busy timeout
+            try:
+                cursor = entity_manager.execute_query("PRAGMA busy_timeout")
+                row = cursor.fetchone()
+                if row:
+                    info["busy_timeout_ms"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get locking mode
+            try:
+                cursor = entity_manager.execute_query("PRAGMA locking_mode")
+                row = cursor.fetchone()
+                if row:
+                    info["locking_mode"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            return info
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to get database info: %s" % str(e)
+            )
+            return {}
+
+    def get_blocking_queries(self, entity_manager):
+        """
+        SQLite uses database-level locks, not row-level locks.
+        This method returns information about lock contention.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: list
+        :return: List with lock information (or empty if no contention).
+        """
+
+        # SQLite doesn't have a way to query blocked connections like PostgreSQL/MySQL
+        # Contention is detected via SQLITE_BUSY errors in execute_query
+        return []
+
+    def get_lock_waits(self, entity_manager):
+        """
+        Returns information about SQLite locking configuration.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: list
+        :return: List with lock configuration.
+        """
+
+        try:
+            info = {}
+
+            # Get busy timeout (how long to wait for locks)
+            cursor = entity_manager.execute_query("PRAGMA busy_timeout")
+            row = cursor.fetchone()
+            if row:
+                info["busy_timeout_ms"] = row[0]
+            cursor.close()
+
+            # Get locking mode
+            cursor = entity_manager.execute_query("PRAGMA locking_mode")
+            row = cursor.fetchone()
+            if row:
+                info["locking_mode"] = row[0]
+            cursor.close()
+
+            return [info] if info else []
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to get lock info: %s" % str(e)
+            )
+            return []
+
+    def get_transaction_stats(self, entity_manager):
+        """
+        Returns SQLite database statistics.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: dict
+        :return: Database statistics.
+        """
+
+        try:
+            stats = {}
+
+            # Get database file size
+            try:
+                connection = entity_manager.get_connection()
+                _connection = connection._connection
+                file_path = _connection.get_file_path()
+
+                import os
+                if os.path.exists(file_path):
+                    stats["database_size_bytes"] = os.path.getsize(file_path)
+                    stats["database_size_mb"] = round(stats["database_size_bytes"] / (1024 * 1024), 2)
+            except Exception:
+                pass
+
+            # Get page statistics
+            try:
+                cursor = entity_manager.execute_query("PRAGMA page_count")
+                row = cursor.fetchone()
+                if row:
+                    stats["page_count"] = row[0]
+                cursor.close()
+
+                cursor = entity_manager.execute_query("PRAGMA freelist_count")
+                row = cursor.fetchone()
+                if row:
+                    stats["freelist_count"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get cache statistics (if available)
+            try:
+                cursor = entity_manager.execute_query("PRAGMA cache_size")
+                row = cursor.fetchone()
+                if row:
+                    stats["cache_size"] = row[0]
+                cursor.close()
+            except Exception:
+                pass
+
+            # Get transaction level from connection
+            try:
+                connection = entity_manager.get_connection()
+                _connection = connection._connection
+                if hasattr(_connection, 'transaction_level'):
+                    stats["transaction_level"] = _connection.transaction_level
+                    stats["active_transaction"] = _connection.transaction_level > 0
+            except Exception:
+                pass
+
+            return stats
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to get transaction stats: %s" % str(e)
+            )
+            return {}
+
+    def get_slow_queries(self, entity_manager, duration_threshold_seconds=5):
+        """
+        SQLite doesn't have a processlist like MySQL or pg_stat_activity like PostgreSQL.
+        Slow queries are detected via instrumentation timing, not system tables.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :type duration_threshold_seconds: int
+        :param duration_threshold_seconds: Query duration threshold (not used for SQLite).
+        :rtype: list
+        :return: Empty list (use OpenTelemetry traces for slow query detection).
+        """
+
+        # SQLite doesn't expose a query log or processlist
+        # Use OpenTelemetry traces to detect slow queries
+        return []
+
+    def optimize_database(self, entity_manager):
+        """
+        Runs VACUUM and ANALYZE to optimize the SQLite database.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: dict
+        :return: Optimization results.
+        """
+
+        try:
+            results = {}
+
+            # Get size before optimization
+            connection = entity_manager.get_connection()
+            _connection = connection._connection
+            file_path = _connection.get_file_path()
+
+            import os
+            if os.path.exists(file_path):
+                results["size_before_bytes"] = os.path.getsize(file_path)
+
+            # Run ANALYZE to update statistics
+            try:
+                cursor = entity_manager.execute_query("ANALYZE")
+                cursor.close()
+                results["analyze"] = "completed"
+            except Exception as e:
+                results["analyze"] = f"failed: {str(e)}"
+
+            # Run VACUUM to reclaim space (can't be in a transaction)
+            try:
+                # Note: VACUUM cannot be run inside a transaction
+                cursor = entity_manager.execute_query("VACUUM")
+                cursor.close()
+                results["vacuum"] = "completed"
+            except Exception as e:
+                results["vacuum"] = f"failed: {str(e)}"
+
+            # Get size after optimization
+            if os.path.exists(file_path):
+                results["size_after_bytes"] = os.path.getsize(file_path)
+                if "size_before_bytes" in results:
+                    saved = results["size_before_bytes"] - results["size_after_bytes"]
+                    results["space_saved_bytes"] = saved
+                    results["space_saved_mb"] = round(saved / (1024 * 1024), 2)
+
+            return results
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to optimize database: %s" % str(e)
+            )
+            return {"error": str(e)}
+
+    def get_integrity_check(self, entity_manager):
+        """
+        Runs PRAGMA integrity_check on the database.
+
+        :type entity_manager: EntityManager
+        :param entity_manager: The entity manager to query.
+        :rtype: dict
+        :return: Integrity check results.
+        """
+
+        try:
+            cursor = entity_manager.execute_query("PRAGMA integrity_check")
+            rows = cursor.fetchall()
+            cursor.close()
+
+            results = []
+            for row in rows:
+                results.append(row[0])
+
+            is_ok = len(results) == 1 and results[0] == "ok"
+
+            return {
+                "is_ok": is_ok,
+                "results": results,
+                "message": "Database integrity OK" if is_ok else "Database integrity issues found"
+            }
+
+        except Exception as e:
+            self.telemetry_system.plugin.warning(
+                "Failed to check integrity: %s" % str(e)
+            )
+            return {"error": str(e)}

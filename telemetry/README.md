@@ -8,9 +8,10 @@ OpenTelemetry instrumentation for the Colony entity manager to detect database t
 - **Transaction Tracing**: Distributed tracing for database transactions
 - **Performance Metrics**: Track query duration, lock waits, and transaction stats
 - **Contention Detection**: Identify blocking queries, deadlocks, and serialization failures
-- **Database-Specific Monitoring**: Specialized detectors for PostgreSQL and MySQL
+- **Database-Specific Monitoring**: Specialized detectors for PostgreSQL, MySQL, and SQLite
 - **MySQL Support**: Full MySQL 5.7+ and 8.0+ compatibility with InnoDB monitoring
-- **Deadlock Detection**: Automatic detection of MySQL deadlocks (error 1213) and PostgreSQL serialization failures
+- **SQLite Support**: File-based database monitoring with PRAGMA diagnostics and optimization
+- **Deadlock Detection**: Automatic detection of MySQL deadlocks (error 1213), PostgreSQL serialization failures, and SQLite BUSY errors
 
 ## Installation
 
@@ -294,3 +295,54 @@ The instrumentation is designed to be lightweight:
 ## License
 
 Apache License, Version 2.0
+
+#### SQLite Example
+
+```python
+# Get a SQLite contention detector
+detector = telemetry_plugin.get_contention_detector("sqlite")
+
+# Get database information (file path, size, PRAGMA settings)
+info = detector.get_database_info(entity_manager)
+print(f"File path: {info['file_path']}")
+print(f"File size: {info['file_size_mb']} MB")
+print(f"Journal mode: {info['journal_mode']}")
+print(f"Synchronous mode: {info['synchronous']}")
+print(f"Busy timeout: {info['busy_timeout_ms']} ms")
+
+# Get lock configuration
+lock_info = detector.get_lock_waits(entity_manager)
+for info in lock_info:
+    print(f"Busy timeout: {info['busy_timeout_ms']} ms")
+    print(f"Locking mode: {info['locking_mode']}")
+
+# Get transaction statistics
+stats = detector.get_transaction_stats(entity_manager)
+print(f"Database size: {stats['database_size_mb']} MB")
+print(f"Page count: {stats['page_count']}")
+print(f"Freelist count: {stats['freelist_count']}")
+print(f"Active transaction: {stats['active_transaction']}")
+
+# Run integrity check
+integrity = detector.get_integrity_check(entity_manager)
+if integrity['is_ok']:
+    print("✓ Database integrity OK")
+else:
+    print("⚠️ Database integrity issues detected")
+
+# Optimize database (VACUUM and ANALYZE)
+results = detector.optimize_database(entity_manager)
+print(f"VACUUM: {results['vacuum']}")
+print(f"ANALYZE: {results['analyze']}")
+print(f"Space saved: {results.get('space_saved_mb', 0)} MB")
+```
+
+**SQLite-Specific Notes:**
+- SQLite uses database-level locks (not row-level)
+- Contention detected via SQLITE_BUSY/OperationalError
+- No processlist or system tables like PostgreSQL/MySQL
+- Use PRAGMA statements for diagnostics
+- Enable WAL mode for better concurrency
+
+See [example_sqlite.py](example_sqlite.py) for complete SQLite examples.
+
