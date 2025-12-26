@@ -175,8 +175,10 @@ class PKCS1(colony.System):
 
 class PKCS1Structure:
     """
-    Class representing the PKCS1,
-    cryptographic standards structure.
+    Class representing the PKCS1, cryptographic standards structure.
+
+    Allows the generation, loading, encryption, decryption, signing
+    and verification of messages using the PKCS1 standard.
     """
 
     ber_plugin = None
@@ -801,7 +803,8 @@ class PKCS1Structure:
         # unpacks the certificate DER into a structure
         certificate = ber_structure.unpack(certificate_der)
 
-        # navigate the certificate structure to extract various fields
+        # navigates the certificate structure to extract various fields
+        # that are par of the X.509 certificate structure§
         tbs_certificate = certificate["value"][0]
         tbs_values = tbs_certificate["value"]
 
@@ -817,7 +820,7 @@ class PKCS1Structure:
         extra_type = first_element.get("extra_type", {})
         extra_type_class = extra_type.get("type_class", 0)
 
-        # check if version is present (context-specific class = 2)
+        # checks if version is present (context-specific class = 2)
         if extra_type_class == 2:
             # version is present, extract it from the context-specific wrapper
             version_wrapper = first_element["value"]
@@ -828,27 +831,28 @@ class PKCS1Structure:
             version = 0
             offset = -1
 
-        # extract serial number
+        # extracts serial number
         serial_number = tbs_values[1 + offset]["value"]
 
-        # extract signature algorithm
+        # extracts signature algorithm
         signature_algorithm = tbs_values[2 + offset]["value"][0]["value"]
 
-        # extract issuer
+        # extracts issuer
         issuer = tbs_values[3 + offset]["value"]
 
-        # extract validity period
+        # extracts validity period
         validity = tbs_values[4 + offset]["value"]
         not_before = validity[0]["value"]
         not_after = validity[1]["value"]
 
-        # extract subject
+        # extracts subject
         subject = tbs_values[5 + offset]["value"]
 
-        # extract subject public key info, the structure is:
+        # extracts subject public key info, the structure is:
         # SubjectPublicKeyInfo ::= SEQUENCE {
         #     algorithm AlgorithmIdentifier,
-        #     subjectPublicKey BIT STRING }
+        #     subjectPublicKey BIT STRING
+        # }
         # where the BIT STRING contains the RSA public key:
         # RSAPublicKey ::= SEQUENCE { modulus INTEGER, exponent INTEGER }
         subject_public_key_info = tbs_values[6 + offset]
@@ -860,24 +864,24 @@ class PKCS1Structure:
         rsa_public_key = ber_structure.unpack(public_key_der)
         rsa_public_key_value = rsa_public_key["value"]
 
-        # extract modulus and exponent from the RSA public key
+        # extracts modulus and exponent from the RSA public key
         modulus = rsa_public_key_value[0]["value"]
         public_exponent = rsa_public_key_value[1]["value"]
 
-        # create the keys tuple (public_key, private_key, extras)
+        # creates the keys tuple (public_key, private_key, extras)
         public_key = {"n": modulus, "e": public_exponent}
         private_key = {}
         extras = {}
         keys = (public_key, private_key, extras)
 
-        # extract extensions (if present), extensions are also optional
+        # extracts extensions (if present), extensions are also optional
         # and context-tagged as [3]
         extensions = None
         extensions_index = 7 + offset
         if len(tbs_values) > extensions_index:
             extensions = tbs_values[extensions_index]["value"]
 
-        # return a dictionary with all extracted values
+        # returns a dictionary with all extracted values
         return dict(
             version=version,
             serial_number=serial_number,

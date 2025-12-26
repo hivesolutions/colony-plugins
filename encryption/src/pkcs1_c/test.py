@@ -157,6 +157,42 @@ dJ996JOFis6KMdzf/FUNNORTOObJsP4JZRmfn6o=
         self.assertEqual(type(certificate["issuer"]), list)
         self.assertEqual(type(certificate["subject"]), list)
 
+        # verifies the subject has 6 RDNs (Relative Distinguished Names)
+        subject = certificate["subject"]
+        self.assertEqual(len(subject), 6)
+
+        # verifies specific subject fields by extracting values from RDN structure
+        # each RDN is: SET { SEQUENCE { OID, value } }
+        def get_rdn_value(rdn):
+            return rdn["value"][0]["value"][1]["value"]
+
+        def get_rdn_oid(rdn):
+            return rdn["value"][0]["value"][0]["value"]
+
+        # verifies Country (C) = PT, OID 2.5.4.6
+        self.assertEqual(get_rdn_oid(subject[0]), (2, 5, 4, 6))
+        self.assertEqual(get_rdn_value(subject[0]), "PT")
+
+        # verifies State (ST) = Lisboa, OID 2.5.4.8
+        self.assertEqual(get_rdn_oid(subject[1]), (2, 5, 4, 8))
+        self.assertEqual(get_rdn_value(subject[1]), "Lisboa")
+
+        # verifies Locality (L) = Lisboa, OID 2.5.4.7
+        self.assertEqual(get_rdn_oid(subject[2]), (2, 5, 4, 7))
+        self.assertEqual(get_rdn_value(subject[2]), "Lisboa")
+
+        # verifies Organization (O) = Autoridade Tributaria e Aduaneira, OID 2.5.4.10
+        self.assertEqual(get_rdn_oid(subject[3]), (2, 5, 4, 10))
+        self.assertEqual(get_rdn_value(subject[3]), "Autoridade Tributaria e Aduaneira")
+
+        # verifies Organizational Unit (OU) = Sistemas de Informacao, OID 2.5.4.11
+        self.assertEqual(get_rdn_oid(subject[4]), (2, 5, 4, 11))
+        self.assertEqual(get_rdn_value(subject[4]), "Sistemas de Informacao")
+
+        # verifies Common Name (CN) = Chave Cifra Publica AT, OID 2.5.4.3
+        self.assertEqual(get_rdn_oid(subject[5]), (2, 5, 4, 3))
+        self.assertEqual(get_rdn_value(subject[5]), "Chave Cifra Publica AT")
+
         # verifies public key structure (tuple with public_key, private_key, extras)
         public_key = certificate["public_key"]
         self.assertEqual(type(public_key), tuple)

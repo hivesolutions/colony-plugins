@@ -46,6 +46,7 @@ class APIATPlugin(colony.Plugin):
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
         colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl"),
+        colony.PluginDependency("pt.hive.colony.plugins.encryption.pkcs1"),
     ]
     main_modules = ["api_at"]
 
