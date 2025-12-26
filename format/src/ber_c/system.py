@@ -201,9 +201,13 @@ class BERStructure(object):
         # retrieves the type for the packed number value
         type_number = self._get_packed_type_number(packed_value)
 
+        # retrieves the extra type and determines if it's constructed
+        extra_type = self._get_packed_extra_type(packed_value)
+        type_constructed = self._get_type_constructed(None, extra_type)
+
         # retrieves the unpack method for the type number and
         # then uses it to unpack the packed value and returns it
-        unpack_method = self._get_unpack_method(type_number)
+        unpack_method = self._get_unpack_method(type_number, type_constructed)
         value = unpack_method(packed_value)
         return value
 
@@ -1327,14 +1331,19 @@ class BERStructure(object):
         pack_method = self.pack_methods_map[type_number]
         return pack_method
 
-    def _get_unpack_method(self, type_number):
-        # raises an error in case the type number is not found
-        if not type_number in self.unpack_methods_map:
-            raise exceptions.UnpackingError(
-                "BER unpack method not found for type number: %s" % type_number
-            )
+    def _get_unpack_method(self, type_number, type_constructed=CONSTRUCTED_MODE):
+        # checks if the type number exists in the unpack methods map
+        # if so retrieves and returns the unpack method
+        if type_number in self.unpack_methods_map:
+            unpack_method = self.unpack_methods_map[type_number]
+            return unpack_method
 
-        # retrieves the unpack method for the type number and
-        # returns it to the caller method
-        unpack_method = self.unpack_methods_map[type_number]
-        return unpack_method
+        # for unknown type numbers (like context-specific types or string
+        # types used in X.509 certificates), fall back based on whether
+        # the type is constructed or primitive:
+        # - constructed types (like context-specific containers) -> sequence
+        # - primitive types (like strings, times) -> octet_string
+        if type_constructed == CONSTRUCTED_MODE:
+            return self.unpack_sequence
+        else:
+            return self.unpack_octet_string
