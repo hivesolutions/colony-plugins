@@ -146,7 +146,11 @@ class MySQLEngine(object):
         return encoding
 
     def get_insensitive_collate(self):
-        return "utf8_general_ci"
+        db_collate = colony.conf("DB_COLLATE", "utf8_general_ci")
+        db_insensitive_collate = colony.conf("DB_INSENSITIVE_COLLATE", db_collate)
+        if not db_insensitive_collate:
+            return None
+        return db_insensitive_collate
 
     def apply_types(self, types_map):
         types_map["text"] = "longtext"

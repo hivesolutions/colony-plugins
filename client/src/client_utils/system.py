@@ -522,7 +522,8 @@ class ClientConnection(object):
 
     def open(self):
         """
-        Opens the connection.
+        Opens the connection, effectively making it ready for
+        data transfer operations.
         """
 
         # connects the connection socket to the connection address
@@ -547,7 +548,8 @@ class ClientConnection(object):
 
     def close(self):
         """
-        Closes the connection.
+        Closes the connection, disabling any further data
+        transfer operations.
         """
 
         # unsets the connection status flag

@@ -340,7 +340,9 @@ class EntityManager(object):
     in case the transaction level is "rollbacked" """
 
     _exists = {}
-    """ Map for indexing of the classes that have already been persisted """
+    """ Map for indexing of the classes that have already had the
+    schema created in the underlying data source and are considered
+    to exist in the data source """
 
     def __init__(
         self, entity_manager_plugin, engine_plugin, id, entities_map, options={}
@@ -1073,6 +1075,10 @@ class EntityManager(object):
     def stop(self):
         pass
 
+    def restart(self):
+        self.stop()
+        self.start()
+
     def destroy(self):
         self.engine.destroy()
         self._reset_exists()
@@ -1322,16 +1328,16 @@ class EntityManager(object):
         """
         Runs the analysis system for the current entity
         manager instance, this is done using the proper
-        analyser class for the entity manager.
+        analyzer class for the entity manager.
 
         Be aware that this may be an expensive operation
         and its running should be used with proper care.
         """
 
-        # creates an instance of the entity manager analyser
+        # creates an instance of the entity manager analyzer
         # and then runs the (complete) analysis operations
-        analyser = analysis.EntityManagerAnalyser(self)
-        analyser.analyse_all()
+        analyzer = analysis.EntityManagerAnalyzer(self)
+        analyzer.analyse_all()
 
     def create_definitions(self):
         """
@@ -1583,6 +1589,10 @@ class EntityManager(object):
             query = query_buffer.get_value()
             self.execute_query(query)
 
+            # updates the cache value of the relation
+            # removing it from the exists map
+            del self._exists[relation_unique]
+
     def delete_constraints(self, entity_class):
         """
         Deletes the various foreign key constraints created
@@ -1649,7 +1659,7 @@ class EntityManager(object):
             query = query_buffer.get_value()
             self.execute_query(query)
 
-    def delete(self, entity_class):
+    def delete(self, entity_class, delete_direct=True):
         """
         Deletes the entity class references from the data
         source, this process include a (semi) cascading
@@ -1662,9 +1672,17 @@ class EntityManager(object):
         exists, because the foreign key constraint was not
         removed.
 
+        The `delete_direct` flag may be used to disable the
+        deletion of the direct relations of the entity class,
+        this may be useful in some scenarios, but may also
+        create schema integrity problems.
+
         :type entity_class: EntityClass
         :param entity_class: The entity class to be removed from
         the data source, include (semi) cascading.
+        :type delete_direct: bool
+        :param delete_direct: Whether to delete the direct relations
+        of the entity class (default: True).
         """
 
         # in case the entity class definition does not (already)
@@ -1687,7 +1705,7 @@ class EntityManager(object):
 
         # updates the cache value of the entity
         # class to the not exists value (fast access)
-        self._exists[entity_class] = False
+        del self._exists[entity_class]
 
         # retrieves all the direct relations of the entity
         # class to delete them from the data source
@@ -1696,7 +1714,7 @@ class EntityManager(object):
         # iterates over all the direct relations, relations
         # that are mapped in the other side of the relation
         # to drop their entities (required for integrity)
-        for direct_relation in direct_relations:
+        for direct_relation in direct_relations if delete_direct else ():
             # retrieves the target class of the direct relation
             # and deletes it from the data source
             target_class = entity_class.get_target(direct_relation)
@@ -2097,7 +2115,7 @@ class EntityManager(object):
         else:
             self.save(entity, generate=generate)
 
-    def reload(self, entity, options=None):
+    def reload(self, entity, options=None, new=False):
         # normalizes the options, this is going to expand the
         # options map into a larger and easily accessible
         # map of values (this only happens in case the options
@@ -2133,6 +2151,12 @@ class EntityManager(object):
         # "guide" for the retrieval process
         new_entity = self.get(entity_class, id_value, options)
 
+        # in case the new flag is set, returns the new entity
+        # immediately without updating the current entity, this
+        # is not an inline reload, it's a full new entity retrieval
+        if new:
+            return new_entity
+
         # iterates over all the names present in the complete
         # entity class hierarchy to update with the new values
         for name in names_map:
@@ -2161,6 +2185,10 @@ class EntityManager(object):
         # enables the entity, providing the entity with the
         # mechanisms necessary for data source communication
         self.enable(entity)
+
+        # returns the entity itself, because this is an inline
+        # oriented reload operation
+        return entity
 
     def reload_many(self, entities, options=None):
         # normalizes the options, this is going to expand the
@@ -2306,6 +2334,10 @@ class EntityManager(object):
         # enables the entity, providing the entity with the
         # mechanisms necessary for data source communication
         self.enable(entity)
+
+        # returns the value of the relation that has just been
+        # loaded, and which is ready to be used by the caller
+        return value
 
     def map(self, entity):
         """

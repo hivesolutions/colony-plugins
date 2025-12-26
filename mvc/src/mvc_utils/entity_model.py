@@ -1809,12 +1809,16 @@ def remove(self, entity_manager=None):
     entity_manager.remove(self)
 
 
-def reload(self, options={}, entity_manager=None):
+def reload(self, options={}, entity_manager=None, new=False):
     """
     Reloads the current instance in the data source
     described in the current entity manager.
+
     This method provides the persistence layer for
     reloading an object.
+
+    In case the new flag is set, the entity is reloaded
+    as a new entity, avoiding an inline reload.
 
     :type options: Dictionary
     :param options: The map of options for the reloading
@@ -1822,6 +1826,12 @@ def reload(self, options={}, entity_manager=None):
     :type entity_manager: EntityManager
     :param entity_manager: The optional entity manager
     reference to be used.
+    :type new: bool
+    :param new: If the entity should be reloaded as a new entity,
+    avoiding an inline reload.
+    :rtype: Model
+    :return: The reloaded entity in case the `new` flag is not set,
+    otherwise the new entity is returned.
     """
 
     # retrieves the entity manager to be used or the
@@ -1829,7 +1839,7 @@ def reload(self, options={}, entity_manager=None):
     entity_manager = entity_manager or self._entity_manager
 
     # reloads the entity using the entity manager
-    entity_manager.reload(self, options)
+    return entity_manager.reload(self, options, new=new)
 
 
 def relation(self, name, options={}, force=True, entity_manager=None):
@@ -1851,6 +1861,9 @@ def relation(self, name, options={}, force=True, entity_manager=None):
     :type entity_manager: EntityManager
     :param entity_manager: The optional entity manager
     reference to be used.
+    :rtype: Model
+    :return: The value of the relation that has just been
+    loaded, and which is ready to be used by the caller.
     """
 
     # retrieves the entity manager to be used or the
@@ -1863,11 +1876,11 @@ def relation(self, name, options={}, force=True, entity_manager=None):
     # immediately avoiding a reloading of the relation
     value = self.get_value(name)
     if not force and value:
-        return
+        return value
 
     # loads a relation with the provided options (partial
     # loading) using the entity manager
-    entity_manager.relation(self, name, options)
+    return entity_manager.relation(self, name, options)
 
 
 def save_update(self, entity_manager=None):

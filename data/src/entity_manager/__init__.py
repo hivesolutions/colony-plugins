@@ -32,7 +32,7 @@ from . import structures
 from . import system
 from . import test
 
-from .analysis import EntityManagerAnalyser
+from .analysis import EntityManagerAnalyzer
 from .decorators import transaction, lock_table
 from .exceptions import (
     EntityManagerException,

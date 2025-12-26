@@ -37,6 +37,7 @@ import colony
 from . import utils
 from . import model
 from . import controller
+from . import exceptions
 from . import entity_model
 
 NAME_REFERENCE_VALUE = "__name__"
@@ -114,6 +115,11 @@ class MVCUtils(colony.System):
         self.models_modules_map = {}
         self.package_path_models_map = {}
         self.package_path_controllers_map = {}
+
+    def get_models(self, models_id):
+        if not models_id in self.models_modules_map:
+            raise exceptions.NotFoundError("Models ID %s not found" % models_id)
+        return self.models_modules_map.get(models_id, None)
 
     def import_module_mvc_utils(
         self,
@@ -372,7 +378,7 @@ class MVCUtils(colony.System):
             # in the modules module for latter models reference
             setattr(models_module, entity_class.__name__, entity_class)
             setattr(models_module, "EntityModel", entity_class)
-            setattr(models_module, "DataRefenceModel", DataReferenceModel)
+            setattr(models_module, "DataReferenceModel", DataReferenceModel)
             setattr(models_module, "Model", RawModel)
 
             # sets the models module in the models module
@@ -1508,7 +1514,7 @@ class MVCUtils(colony.System):
 
         # retrieves the expected parameter values
         database_prefix = parameters.get("database_prefix", DEFAULT_DATABASE_PREFIX)
-        database_sufix = parameters.get("database_sufix", DEFAULT_DATABASE_SUFFIX)
+        database_suffix = parameters.get("database_suffix", DEFAULT_DATABASE_SUFFIX)
         configuration_plugin = parameters.get("configuration_plugin", plugin)
 
         # retrieves the system database file name resource
@@ -1522,7 +1528,7 @@ class MVCUtils(colony.System):
         if system_database_filename_resource:
             system_database_filename_suffix = system_database_filename_resource.data
         else:
-            system_database_filename_suffix = database_sufix
+            system_database_filename_suffix = database_suffix
 
         # creates the system database file name value using the prefix and suffix values
         system_database_filename = database_prefix + system_database_filename_suffix

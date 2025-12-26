@@ -198,8 +198,8 @@
                 var value = console.data("text") || "";
 
                 // retrieves the key value
-                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode :
-                    event.which;
+                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode
+                    : event.which;
 
                 // sets the default value for the canceling operation
                 // (no default behavior) as true (most of the times)
@@ -649,8 +649,8 @@
                 var _autocomplete = jQuery(".autocomplete", console);
 
                 // retrieves the key value
-                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode :
-                    event.which;
+                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode
+                    : event.which;
 
                 // retrieves the valid key code and converts it into
                 // a character value, then retrieves the current text
@@ -666,13 +666,13 @@
                     return false;
                 }
 
-                if ((event.ctrlKey || event.metaKey) && String.fromCharCode(keyCode).toLowerCase() ==
-                    "v") {
+                if ((event.ctrlKey || event.metaKey) && String.fromCharCode(keyCode).toLowerCase()
+                    == "v") {
                     return true;
                 }
 
-                if ((event.ctrlKey || event.metaKey) && String.fromCharCode(keyCode).toLowerCase() ==
-                    "r") {
+                if ((event.ctrlKey || event.metaKey) && String.fromCharCode(keyCode).toLowerCase()
+                    == "r") {
                     return true;
                 }
 
@@ -835,8 +835,8 @@
                 // (in case it's set) and then appends the word break tag
                 // into the final value to be appended to the word
                 slice = escape ? escapeHtml(slices[index]) : slices[index];
-                slice = length - cursor - 1 === index ? "<span class=\"cursor\">" + slice + "</span>" :
-                    slice;
+                slice = length - cursor - 1 === index ? "<span class=\"cursor\">" + slice + "</span>"
+                    : slice;
                 word += slice + "<wbr></wbr>";
             }
 
@@ -1008,8 +1008,8 @@
 
                         // creates the new item with both the highlight and
                         // the remaind part and adds it to the list of options
-                        var item = jQuery("<li class=\"" + type + "\"><span class=\"high\">" +
-                            highlight + "</span>" + remainder + "</li>");
+                        var item = jQuery("<li class=\"" + type + "\"><span class=\"high\">"
+                            + highlight + "</span>" + remainder + "</li>");
                         list.append(item);
                         item.data("options", options);
                     }
@@ -1069,8 +1069,8 @@
                     // the autocomplete window above the current line and then
                     // in case the window is not visible places in such
                     // place (notice the minus sign in the margin)
-                    var aboveMargin = _autocomplete.outerHeight() + line.outerHeight() +
-                        AUTOCOMPLETE_OFFSET + windowScroll;
+                    var aboveMargin = _autocomplete.outerHeight() + line.outerHeight()
+                        + AUTOCOMPLETE_OFFSET + windowScroll;
                     if (isVisible) {
                         _autocomplete.removeClass("above");
                     } else {
@@ -1406,9 +1406,9 @@
                 // and add them to the tooltip parameters section
                 for (var index = 0; index < params.length; index++) {
                     var param = params[index];
-                    tooltipParams.append("<div class=\"param\"><span class=\"name\">" + param[0] +
-                        "</span>&nbsp;<span class=\"type\">(" + param[1] +
-                        ")</span><br />&nbsp;&nbsp;<span class=\"description\">" + splitValue(param[2],
+                    tooltipParams.append("<div class=\"param\"><span class=\"name\">" + param[0]
+                        + "</span>&nbsp;<span class=\"type\">(" + param[1]
+                        + ")</span><br />&nbsp;&nbsp;<span class=\"description\">" + splitValue(param[2],
                             true) + "</span></div>")
                 }
             }
@@ -1429,9 +1429,9 @@
                 // in case the return value is valid creates the element
                 // and adds it to the tooltip return element
                 _return
-                    && tooltipReturn.append("<div class=\"param\"><span class=\"name\">" + _return[0] +
-                        "</span>&nbsp;<span class=\"type\">(" + _return[1] +
-                        ")</span><br />&nbsp;&nbsp;<span class=\"description\">" + splitValue(_return[2],
+                    && tooltipReturn.append("<div class=\"param\"><span class=\"name\">" + _return[0]
+                        + "</span>&nbsp;<span class=\"type\">(" + _return[1]
+                        + ")</span><br />&nbsp;&nbsp;<span class=\"description\">" + splitValue(_return[2],
                             true) + "</span></div>")
             }
 
@@ -1808,8 +1808,8 @@
 
                 // retrieves the key value that is going to be used
                 // in the resolution of the proper method
-                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode :
-                    event.which;
+                var keyValue = event.keyCode ? event.keyCode : event.charCode ? event.charCode
+                    : event.which;
 
                 // in case the shift key is pressed some special
                 // operations may be performed

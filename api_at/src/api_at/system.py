@@ -223,14 +223,16 @@ class ATClient(object):
 
     def open(self):
         """
-        Opens the AT client.
+        Opens the AT client, initializing all the required
+        resources for a new AT client.
         """
 
         pass
 
     def close(self):
         """
-        Closes the AT client.
+        Closes the AT client, releasing all the associated
+        resources.
         """
 
         # in case an HTTP client is defined closes it
@@ -865,9 +867,9 @@ class ATClient(object):
         :return: The retrieved HTTP client.
         """
 
-        # in case no HTTP client exists one must be created
-        # for the interaction with the API service
-        if not self.http_client:
+        # in case no HTTP client exists (or it is closed) then one must
+        # be created for the interaction with the API service
+        if not self.http_client or not self.http_client.is_open():
             # retrieves the base values for both the key and the
             # certificate files and retrieves the (final) key and
             # certificate paths according to the current test mode

@@ -186,8 +186,11 @@ class REST(colony.System):
         # loading strategy is re-started for that session
         try:
             self.session_c.load()
-        except Exception:
-            self.debug("Falling back to %s session" % RESTSession.__name__)
+        except Exception as exception:
+            self.info(
+                "Falling back to %s session, because of an error '%s'"
+                % (RESTSession.__name__, colony.legacy.UNICODE(exception))
+            )
             self.session_c = RESTSession
             self.session_c.load()
 
