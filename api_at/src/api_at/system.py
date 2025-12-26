@@ -31,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import os
 import base64
 import hashlib
+import calendar
 import datetime
 
 import xml.dom.minidom
@@ -407,6 +408,73 @@ class ATClient(object):
         """
 
         self.at_structure = at_structure
+
+    def get_certificate_not_before(self):
+        """
+        Retrieves the "not before" validity timestamp from the certificate.
+
+        This value indicates the start of the certificate's validity period,
+        returned as a Unix timestamp (seconds since epoch).
+
+        :rtype: int
+        :return: The Unix timestamp representing when the certificate
+        becomes valid, or None if the certificate info is not available.
+        """
+
+        if not self.certificate_info:
+            return None
+
+        # retrieves the "not before" string from the certificate
+        not_before_s = self.certificate_info.get("not_before", None)
+        if not not_before_s:
+            return None
+
+        # parses the "not before" string into a datetime structure
+        # and then converts it into a timestamp value
+        not_before_d = datetime.datetime.strptime(not_before_s, "%y%m%d%H%M%SZ")
+        not_before = calendar.timegm(not_before_d.timetuple())
+        return not_before
+
+    def get_certificate_not_after(self):
+        """
+        Retrieves the "not after" validity timestamp from the certificate.
+
+        This value indicates the end of the certificate's validity period,
+        returned as a Unix timestamp (seconds since epoch).
+
+        :rtype: int
+        :return: The Unix timestamp representing when the certificate
+        expires, or None if the certificate info is not available.
+        """
+
+        if not self.certificate_info:
+            return None
+
+        # retrieves the "not after" string from the certificate
+        not_after_s = self.certificate_info.get("not_after", None)
+        if not not_after_s:
+            return None
+
+        # parses the "not after" string into a datetime structure
+        # and then converts it into a timestamp value
+        not_after_d = datetime.datetime.strptime(not_after_s, "%y%m%d%H%M%SZ")
+        not_after = calendar.timegm(not_after_d.timetuple())
+        return not_after
+
+    def get_server_name(self):
+        """
+        Retrieves the name of the server environment being used.
+
+        Returns "test" when the client is configured to run in test mode,
+        or "production" when targeting the production AT servers.
+
+        :rtype: String
+        :return: The server environment name, either "test" or "production".
+        """
+
+        if self.test_mode:
+            return "test"
+        return "production"
 
     def _submit_document(
         self, submit_url, document_payload, namespace=None, version=1, check_errors=None
