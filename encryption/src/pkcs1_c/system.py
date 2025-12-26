@@ -803,30 +803,47 @@ class PKCS1Structure:
 
         # navigate the certificate structure to extract various fields
         tbs_certificate = certificate["value"][0]
+        tbs_values = tbs_certificate["value"]
 
-        # extract version (optional, default is v1)
-        version = (
-            tbs_certificate["value"][0]["value"]
-            if len(tbs_certificate["value"]) > 0
-            else 0
-        )
+        # the version field is optional in X.509 certificates and is
+        # context-tagged as [0], when present it's a context-specific
+        # constructed type (class 2), if absent, version defaults to v1 (0)
+        # and all field indices shift by -1
+        first_element = tbs_values[0]
+
+        # the original type info for context-specific types is stored
+        # in "extra_type" since the BER library maps unknown types to
+        # known types (sequence/octet_string) for unpacking
+        extra_type = first_element.get("extra_type", {})
+        extra_type_class = extra_type.get("type_class", 0)
+
+        # check if version is present (context-specific class = 2)
+        if extra_type_class == 2:
+            # version is present, extract it from the context-specific wrapper
+            version_wrapper = first_element["value"]
+            version = version_wrapper[0]["value"] if version_wrapper else 0
+            offset = 0
+        else:
+            # version is absent, default to v1 (version value 0)
+            version = 0
+            offset = -1
 
         # extract serial number
-        serial_number = tbs_certificate["value"][1]["value"]
+        serial_number = tbs_values[1 + offset]["value"]
 
         # extract signature algorithm
-        signature_algorithm = tbs_certificate["value"][2]["value"][0]["value"]
+        signature_algorithm = tbs_values[2 + offset]["value"][0]["value"]
 
         # extract issuer
-        issuer = tbs_certificate["value"][3]["value"]
+        issuer = tbs_values[3 + offset]["value"]
 
         # extract validity period
-        validity = tbs_certificate["value"][4]["value"]
+        validity = tbs_values[4 + offset]["value"]
         not_before = validity[0]["value"]
         not_after = validity[1]["value"]
 
         # extract subject
-        subject = tbs_certificate["value"][5]["value"]
+        subject = tbs_values[5 + offset]["value"]
 
         # extract subject public key info, the structure is:
         # SubjectPublicKeyInfo ::= SEQUENCE {
@@ -834,7 +851,7 @@ class PKCS1Structure:
         #     subjectPublicKey BIT STRING }
         # where the BIT STRING contains the RSA public key:
         # RSAPublicKey ::= SEQUENCE { modulus INTEGER, exponent INTEGER }
-        subject_public_key_info = tbs_certificate["value"][6]
+        subject_public_key_info = tbs_values[6 + offset]
         public_key_bit_string = subject_public_key_info["value"][1]["value"]
 
         # the bit string content is the DER-encoded RSA public key,
@@ -853,10 +870,12 @@ class PKCS1Structure:
         extras = {}
         keys = (public_key, private_key, extras)
 
-        # extract extensions (if present)
+        # extract extensions (if present), extensions are also optional
+        # and context-tagged as [3]
         extensions = None
-        if len(tbs_certificate["value"]) > 7:
-            extensions = tbs_certificate["value"][7]["value"]
+        extensions_index = 7 + offset
+        if len(tbs_values) > extensions_index:
+            extensions = tbs_values[extensions_index]["value"]
 
         # return a dictionary with all extracted values
         return dict(

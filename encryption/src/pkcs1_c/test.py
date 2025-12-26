@@ -135,17 +135,34 @@ dJ996JOFis6KMdzf/FUNNORTOObJsP4JZRmfn6o=
         self.assertTrue("subject" in certificate)
         self.assertTrue("public_key" in certificate)
 
-        # verifies public key structure (should be a tuple with public_key, private_key, extras)
+        # verifies version is v3 (value 2, since 0=v1, 1=v2, 2=v3)
+        self.assertEqual(certificate["version"], 2)
+
+        # verifies the serial number matches the expected value
+        self.assertEqual(
+            certificate["serial_number"],
+            1226540986227540198135250146913179895272046651,
+        )
+
+        # verifies the signature algorithm is SHA256 with RSA (OID 1.2.840.113549.1.1.11)
+        self.assertEqual(
+            certificate["signature_algorithm"], (1, 2, 840, 113549, 1, 1, 11)
+        )
+
+        # verifies the validity period (UTCTime format: YYMMDDHHMMSSZ)
+        self.assertEqual(certificate["not_before"], "250415073858Z")
+        self.assertEqual(certificate["not_after"], "270415074858Z")
+
+        # verifies issuer and subject are present and are lists
+        self.assertEqual(type(certificate["issuer"]), list)
+        self.assertEqual(type(certificate["subject"]), list)
+
+        # verifies public key structure (tuple with public_key, private_key, extras)
         public_key = certificate["public_key"]
         self.assertEqual(type(public_key), tuple)
         self.assertEqual(len(public_key), 3)
 
-        # verifies the public key contains modulus and exponent
+        # verifies the RSA public key has correct values
         public_key_data = public_key[0]
-        self.assertTrue("n" in public_key_data)
-        self.assertTrue("e" in public_key_data)
-
-        # verifies that the signature algorithm is SHA256 with RSA (OID 1.2.840.113549.1.1.11)
-        self.assertEqual(
-            certificate["signature_algorithm"], (1, 2, 840, 113549, 1, 1, 11)
-        )
+        self.assertEqual(public_key_data["e"], 65537)
+        self.assertEqual(public_key_data["n"].bit_length(), 4096)
