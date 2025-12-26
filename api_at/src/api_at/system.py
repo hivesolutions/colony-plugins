@@ -110,6 +110,7 @@ class APIAT(colony.System):
         # retrieves the client HTTP plugin
         ssl_plugin = self.plugin.ssl_plugin
         client_http_plugin = self.plugin.client_http_plugin
+        pkcs1_plugin = self.plugin.pkcs1_plugin
 
         # retrieves the AT structure and test mode (if available)
         at_structure = api_attributes.get("at_structure", None)
@@ -119,6 +120,12 @@ class APIAT(colony.System):
         test_mode = colony.conf("AT_TEST_MODE", test_mode, cast=bool)
         key = colony.conf("AT_KEY", key)
         certificate = colony.conf("AT_CERTIFICATE", certificate)
+
+        # loads the certificate information into a dictionary
+        # using the PKCS1 structure, this info can later be used
+        # for various purposes (eg: validation, display etc.)
+        pkcs1_structure = pkcs1_plugin.create_structure({})
+        certificate_info = pkcs1_structure.load_certificate_pem(certificate)
 
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
@@ -131,6 +138,7 @@ class APIAT(colony.System):
             test_mode=test_mode,
             key=key,
             certificate=certificate,
+            certificate_info=certificate_info,
         )
         if open_client:
             at_client.open()
@@ -175,6 +183,11 @@ class ATClient(object):
     """ The path to the certificate file to be used
     in the connection with the server """
 
+    certificate_info = None
+    """ The loaded certificate information metadata
+    containing information about the certificate (eg:
+    subject, issue date etc.) """
+
     http_client = None
     """ The HTTP client for the connection """
 
@@ -187,6 +200,7 @@ class ATClient(object):
         test_mode=False,
         key=None,
         certificate=None,
+        certificate_info=None,
     ):
         """
         Constructor of the class, should initialize the key and
@@ -211,6 +225,10 @@ class ATClient(object):
         :type certificate: String
         :param certificate: The path to the certificate file to be used
         in the connection with the server.
+        :type certificate_info: Dictionary
+        :param certificate_info: The loaded certificate information metadata
+        containing information about the certificate (eg: subject, issue date
+        etc.).
         """
 
         self.plugin = plugin
@@ -220,6 +238,7 @@ class ATClient(object):
         self.test_mode = test_mode
         self.key = key
         self.certificate = certificate
+        self.certificate_info = certificate_info
 
     def open(self):
         """
