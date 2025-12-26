@@ -69,7 +69,7 @@ class PKCS1BaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "PKCS1 Base test case"
 
-    def test_generate_keys(self):
+    def test_load_certificate_pem(self):
         certificate = self.pkcs1.load_certificate_pem(
             """-----BEGIN CERTIFICATE-----
 MIIIiTCCBnGgAwIBAgITNwAAADtjHvNQBL8xtgAAAAAAOzANBgkqhkiG9w0BAQsF
@@ -120,4 +120,32 @@ oipvlTLirPGg9lDEgWUsElTmJdNsXKpXmndICSSSmYWf1rEg6XDHSGLpn502RATM
 dJ996JOFis6KMdzf/FUNNORTOObJsP4JZRmfn6o=
 -----END CERTIFICATE-----"""
         )
-        print(certificate)
+
+        # verify that certificate was loaded and contains expected structure
+        self.assert_not_equals(certificate, None)
+        self.assert_equals(type(certificate), dict)
+
+        # verify all expected keys are present in the certificate
+        self.assert_true("version" in certificate)
+        self.assert_true("serial_number" in certificate)
+        self.assert_true("signature_algorithm" in certificate)
+        self.assert_true("issuer" in certificate)
+        self.assert_true("not_before" in certificate)
+        self.assert_true("not_after" in certificate)
+        self.assert_true("subject" in certificate)
+        self.assert_true("public_key" in certificate)
+
+        # verify public key structure (should be a tuple with public_key, private_key, extras)
+        public_key = certificate["public_key"]
+        self.assert_equals(type(public_key), tuple)
+        self.assert_equals(len(public_key), 3)
+
+        # verify the public key contains modulus and exponent
+        public_key_data = public_key[0]
+        self.assert_true("n" in public_key_data)
+        self.assert_true("e" in public_key_data)
+
+        # verify the signature algorithm is SHA256 with RSA (OID 1.2.840.113549.1.1.11)
+        self.assert_equals(
+            certificate["signature_algorithm"], (1, 2, 840, 113549, 1, 1, 11)
+        )
