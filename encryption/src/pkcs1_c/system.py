@@ -83,7 +83,7 @@ PUBLIC_KEY_VALUE_REGEX = re.compile(
 """ The public key value regex """
 
 CERTIFICATE_VALUE_REGEX = re.compile(
-    BEGIN_CERTIFICATE_VALUE + "\n(?P<contents>.*)\n" + END_CERTIFICATE_VALUE, re.DOTALL
+    BEGIN_CERTIFICATE_VALUE + r"\n(?P<contents>.*)\n" + END_CERTIFICATE_VALUE, re.DOTALL
 )
 """ The certificate value regex """
 
