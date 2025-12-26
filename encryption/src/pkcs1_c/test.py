@@ -121,11 +121,11 @@ dJ996JOFis6KMdzf/FUNNORTOObJsP4JZRmfn6o=
 -----END CERTIFICATE-----"""
         )
 
-        # verify that certificate was loaded and contains expected structure
+        # verifies that certificate was loaded and contains expected structure
         self.assertNotEqual(certificate, None)
         self.assertEqual(type(certificate), dict)
 
-        # verify all expected keys are present in the certificate
+        # verifies all expected keys are present in the certificate
         self.assertTrue("version" in certificate)
         self.assertTrue("serial_number" in certificate)
         self.assertTrue("signature_algorithm" in certificate)
@@ -135,17 +135,17 @@ dJ996JOFis6KMdzf/FUNNORTOObJsP4JZRmfn6o=
         self.assertTrue("subject" in certificate)
         self.assertTrue("public_key" in certificate)
 
-        # verify public key structure (should be a tuple with public_key, private_key, extras)
+        # verifies public key structure (should be a tuple with public_key, private_key, extras)
         public_key = certificate["public_key"]
         self.assertEqual(type(public_key), tuple)
         self.assertEqual(len(public_key), 3)
 
-        # verify the public key contains modulus and exponent
+        # verifies the public key contains modulus and exponent
         public_key_data = public_key[0]
         self.assertTrue("n" in public_key_data)
         self.assertTrue("e" in public_key_data)
 
-        # verify the signature algorithm is SHA256 with RSA (OID 1.2.840.113549.1.1.11)
+        # verifies that the signature algorithm is SHA256 with RSA (OID 1.2.840.113549.1.1.11)
         self.assertEqual(
             certificate["signature_algorithm"], (1, 2, 840, 113549, 1, 1, 11)
         )
