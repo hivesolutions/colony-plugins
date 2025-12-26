@@ -449,7 +449,7 @@ class PKCS1Structure:
         )
 
         # decodes the certificate PEM from base 64, obtaining
-        # certificate DER in binary format the loads it retrieving
+        # certificate DER in binary format, then loads it retrieving
         # the certificate map to be returned to the caller method
         certificate_pem_match_contents_joined = colony.legacy.bytes(
             certificate_pem_match_contents_joined
