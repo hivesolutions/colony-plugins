@@ -828,16 +828,30 @@ class PKCS1Structure:
         # extract subject
         subject = tbs_certificate["value"][5]["value"]
 
-        # extract subject public key info
+        # extract subject public key info, the structure is:
+        # SubjectPublicKeyInfo ::= SEQUENCE {
+        #     algorithm AlgorithmIdentifier,
+        #     subjectPublicKey BIT STRING }
+        # where the BIT STRING contains the RSA public key:
+        # RSAPublicKey ::= SEQUENCE { modulus INTEGER, exponent INTEGER }
         subject_public_key_info = tbs_certificate["value"][6]
-        public_key_der = subject_public_key_info["value"][1]["value"]
-        if (
-            isinstance(public_key_der, (bytes, bytearray, str))
-            and len(public_key_der) > 1
-        ):
-            public_key_der = public_key_der[1:]
-        public_key_der = colony.legacy.str(public_key_der)
-        keys = self.load_public_key_der(public_key_der)
+        public_key_bit_string = subject_public_key_info["value"][1]["value"]
+
+        # the bit string content is the DER-encoded RSA public key,
+        # we need to unpack it to get the modulus and exponent
+        public_key_der = colony.legacy.str(public_key_bit_string)
+        rsa_public_key = ber_structure.unpack(public_key_der)
+        rsa_public_key_value = rsa_public_key["value"]
+
+        # extract modulus and exponent from the RSA public key
+        modulus = rsa_public_key_value[0]["value"]
+        public_exponent = rsa_public_key_value[1]["value"]
+
+        # create the keys tuple (public_key, private_key, extras)
+        public_key = {"n": modulus, "e": public_exponent}
+        private_key = {}
+        extras = {}
+        keys = (public_key, private_key, extras)
 
         # extract extensions (if present)
         extensions = None

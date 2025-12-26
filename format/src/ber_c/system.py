@@ -972,17 +972,29 @@ class BERStructure(object):
         return integer
 
     def _unpack_bit_string(self, packed_value):
-        # retrieves the number of padding bits
+        # retrieves the number of padding bits from the first byte
         number_padding_bits = colony.legacy.ord(packed_value[0])
 
-        # in case the number of padding bits is
-        # not zero
-        if not number_padding_bits == 0:
-            # raises the operation not implemented exception
-            raise exceptions.OperationNotImplemented("bit string padding removal")
-
-        # retrieves the bit string
+        # retrieves the bit string (excluding the padding indicator byte)
         bit_string = packed_value[1:]
+
+        # if there are padding bits and the bit string is not empty,
+        # we need to mask off the unused bits from the last byte
+        if number_padding_bits > 0 and len(bit_string) > 0:
+            # create a mask to zero out the padding bits in the last byte
+            # for example, if padding is 3, mask is 11111000 (0xF8)
+            mask = (0xFF << number_padding_bits) & 0xFF
+
+            # get the last byte, apply the mask, and rebuild the bit string
+            last_byte = colony.legacy.ord(bit_string[-1])
+            masked_last_byte = last_byte & mask
+
+            # reconstruct the bit string with the masked last byte
+            # using the same type as the input (str or bytes)
+            if isinstance(bit_string, bytes):
+                bit_string = bit_string[:-1] + bytes([masked_last_byte])
+            else:
+                bit_string = bit_string[:-1] + chr(masked_last_byte)
 
         # returns the bit string
         return bit_string
