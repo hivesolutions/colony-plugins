@@ -125,7 +125,7 @@ class APIAT(colony.System):
         # using the PKCS1 structure, this info can later be used
         # for various purposes (eg: validation, display etc.)
         pkcs1_structure = pkcs1_plugin.create_structure({})
-        certificate_info = pkcs1_structure.load_certificate_pem(certificate)
+        certificate_info = pkcs1_structure.load_read_certificate_pem(certificate)
 
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated

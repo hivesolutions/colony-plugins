@@ -242,6 +242,15 @@ class PKCS1Structure:
         # returns the keys tuple
         return keys
 
+    def load_read_certificate_pem(self, certificate_file_path):
+        # reads the file, retrieving the certificate PEM
+        certificate_pem = self._read_file(certificate_file_path)
+        certificate_pem = colony.legacy.str(certificate_pem)
+        certificate = self.load_certificate_pem(certificate_pem)
+
+        # returns the certificate information
+        return certificate
+
     def encrypt(self, keys, message):
         message_pad = self._encrypt(keys, message)
         return message_pad
