@@ -75,8 +75,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
     def test_get_certificate_not_before_generalized_time(self):
         """
-        Tests parsing of GeneralizedTime format (YYYYMMDDhhmmssZ) for
-        not_before.
+        Tests parsing of GeneralizedTime format (YYYYMMDDhhmmssZ) for not_before.
 
         GeneralizedTime uses 4-digit year for dates outside 1950-2049.
         """
@@ -112,8 +111,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
     def test_get_certificate_not_after_generalized_time(self):
         """
-        Tests parsing of GeneralizedTime format (YYYYMMDDhhmmssZ)
-        for not_after.
+        Tests parsing of GeneralizedTime format (YYYYMMDDhhmmssZ) for not_after.
 
         GeneralizedTime uses 4-digit year for dates outside 1950-2049.
         """
@@ -131,8 +129,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
     def test_get_certificate_not_before_none(self):
         """
-        Tests that get_certificate_not_before returns None when
-        certificate_info is None.
+        Tests that get_certificate_not_before returns None when certificate_info is None.
         """
 
         client = ATClient(plugin=None, certificate_info=None)
@@ -141,8 +138,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
     def test_get_certificate_not_after_none(self):
         """
-        Tests that get_certificate_not_after returns None when
-        certificate_info is None.
+        Tests that get_certificate_not_after returns None when certificate_info is None.
         """
 
         client = ATClient(plugin=None, certificate_info=None)
@@ -151,8 +147,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
     def test_get_certificate_not_before_missing_field(self):
         """
-        Tests that get_certificate_not_before returns None when
-        not_before field is missing.
+        Tests that get_certificate_not_before returns None when not_before field is missing.
         """
 
         client = ATClient(plugin=None, certificate_info={})
@@ -161,8 +156,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
     def test_get_certificate_not_after_missing_field(self):
         """
-        Tests that get_certificate_not_after returns None when not_after
-        field is missing.
+        Tests that get_certificate_not_after returns None when not_after field is missing.
         """
 
         client = ATClient(plugin=None, certificate_info={})
