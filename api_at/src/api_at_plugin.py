@@ -42,7 +42,7 @@ class APIATPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["api.at"]
+    capabilities = ["test", "api.at"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.client.http"),
         colony.PluginDependency("pt.hive.colony.plugins.encryption.ssl"),
@@ -55,6 +55,7 @@ class APIATPlugin(colony.Plugin):
         import api_at
 
         self.system = api_at.system.APIAT(self)
+        self.test = api_at.APIATTest(self)
 
     def create_client(self, api_attributes):
         """

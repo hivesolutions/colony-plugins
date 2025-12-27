@@ -983,7 +983,7 @@ class BERStructure(object):
         if number_padding_bits > 0 and len(bit_string) > 0:
             # creates a mask to zero out the padding bits in the last byte
             # for example, if padding is 3, mask is 11111000 (0xF8)
-            mask = (0xff << number_padding_bits) & 0xff
+            mask = (0xFF << number_padding_bits) & 0xFF
 
             # gets the last byte, applies the mask, and rebuild the bit string
             last_byte = colony.legacy.ord(bit_string[-1])
