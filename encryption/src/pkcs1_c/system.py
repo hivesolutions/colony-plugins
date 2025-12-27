@@ -66,6 +66,12 @@ BEGIN_PUBLIC_VALUE = "-----BEGIN PUBLIC KEY-----"
 END_PUBLIC_VALUE = "-----END PUBLIC KEY-----"
 """ The end public value """
 
+BEGIN_CERTIFICATE_VALUE = "-----BEGIN CERTIFICATE-----"
+""" The begin certificate value """
+
+END_CERTIFICATE_VALUE = "-----END CERTIFICATE-----"
+""" The end certificate value """
+
 PRIVATE_KEY_VALUE_REGEX = re.compile(
     BEGIN_RSA_PRIVATE_VALUE + r"\n(?P<contents>.*)\n" + END_RSA_PRIVATE_VALUE, re.DOTALL
 )
@@ -75,6 +81,11 @@ PUBLIC_KEY_VALUE_REGEX = re.compile(
     BEGIN_PUBLIC_VALUE + r"\n(?P<contents>.*)\n" + END_PUBLIC_VALUE, re.DOTALL
 )
 """ The public key value regex """
+
+CERTIFICATE_VALUE_REGEX = re.compile(
+    BEGIN_CERTIFICATE_VALUE + r"\n(?P<contents>.*)\n" + END_CERTIFICATE_VALUE, re.DOTALL
+)
+""" The certificate value regex """
 
 BASE_64_ENCODED_MAXIMUM_SIZE = 64
 """ The base 64 encoded maximum size """
@@ -164,8 +175,10 @@ class PKCS1(colony.System):
 
 class PKCS1Structure:
     """
-    Class representing the PKCS1,
-    cryptographic standards structure.
+    Class representing the PKCS1, cryptographic standards structure.
+
+    Allows the generation, loading, encryption, decryption, signing
+    and verification of messages using the PKCS1 standard.
     """
 
     ber_plugin = None
@@ -228,6 +241,15 @@ class PKCS1Structure:
 
         # returns the keys tuple
         return keys
+
+    def load_read_certificate_pem(self, certificate_file_path):
+        # reads the file, retrieving the certificate PEM
+        certificate_pem = self._read_file(certificate_file_path)
+        certificate_pem = colony.legacy.str(certificate_pem)
+        certificate = self.load_certificate_pem(certificate_pem)
+
+        # returns the certificate information
+        return certificate
 
     def encrypt(self, keys, message):
         message_pad = self._encrypt(keys, message)
@@ -420,6 +442,37 @@ class PKCS1Structure:
 
         # returns the keys tuple
         return keys
+
+    def load_certificate_pem(self, certificate_pem):
+        # matches the certificate header/footer token in case no match
+        # is done raises an exception indicating the problem
+        certificate_pem_match = CERTIFICATE_VALUE_REGEX.match(certificate_pem)
+        if not certificate_pem_match:
+            raise exceptions.InvalidFormatException(
+                "certificate header/footer not found"
+            )
+
+        # retrieves the certificate PEM contents (avoid header and footer)
+        # and joins the base 64 value back together removing extra newlines
+        certificate_pem_match_contents = certificate_pem_match.group("contents")
+        certificate_pem_match_contents_joined = self._join_base_64(
+            certificate_pem_match_contents
+        )
+
+        # decodes the certificate PEM from base 64, obtaining
+        # certificate DER in binary format, then loads it retrieving
+        # the certificate map to be returned to the caller method
+        certificate_pem_match_contents_joined = colony.legacy.bytes(
+            certificate_pem_match_contents_joined
+        )
+        certificate_der = base64.b64decode(certificate_pem_match_contents_joined)
+        certificate_der = colony.legacy.str(certificate_der)
+
+        # loads the certificate DER, retrieving the certificate dictionary
+        certificate = self.load_certificate_der(certificate_der)
+
+        # returns the certificate map
+        return certificate
 
     def generate_private_key_der(self, keys, version=1):
         """
@@ -751,6 +804,104 @@ class PKCS1Structure:
 
         # returns the keys tuple
         return keys
+
+    def load_certificate_der(self, certificate_der):
+        # creates the BER structure
+        ber_structure = self.ber_plugin.create_structure({})
+
+        # unpacks the certificate DER into a structure
+        certificate = ber_structure.unpack(certificate_der)
+
+        # navigates the certificate structure to extract various fields
+        # that are par of the X.509 certificate structure§
+        tbs_certificate = certificate["value"][0]
+        tbs_values = tbs_certificate["value"]
+
+        # the version field is optional in X.509 certificates and is
+        # context-tagged as [0], when present it's a context-specific
+        # constructed type (class 2), if absent, version defaults to v1 (0)
+        # and all field indices shift by -1
+        first_element = tbs_values[0]
+
+        # the original type info for context-specific types is stored
+        # in "extra_type" since the BER library maps unknown types to
+        # known types (sequence/octet_string) for unpacking
+        extra_type = first_element.get("extra_type", {})
+        extra_type_class = extra_type.get("type_class", 0)
+
+        # checks if version is present (context-specific class = 2)
+        if extra_type_class == 2:
+            # version is present, extract it from the context-specific wrapper
+            version_wrapper = first_element["value"]
+            version = version_wrapper[0]["value"] if version_wrapper else 0
+            offset = 0
+        else:
+            # version is absent, default to v1 (version value 0)
+            version = 0
+            offset = -1
+
+        # extracts serial number
+        serial_number = tbs_values[1 + offset]["value"]
+
+        # extracts signature algorithm
+        signature_algorithm = tbs_values[2 + offset]["value"][0]["value"]
+
+        # extracts issuer
+        issuer = tbs_values[3 + offset]["value"]
+
+        # extracts validity period
+        validity = tbs_values[4 + offset]["value"]
+        not_before = validity[0]["value"]
+        not_after = validity[1]["value"]
+
+        # extracts subject
+        subject = tbs_values[5 + offset]["value"]
+
+        # extracts subject public key info, the structure is:
+        # SubjectPublicKeyInfo ::= SEQUENCE {
+        #     algorithm AlgorithmIdentifier,
+        #     subjectPublicKey BIT STRING
+        # }
+        # where the BIT STRING contains the RSA public key:
+        # RSAPublicKey ::= SEQUENCE { modulus INTEGER, exponent INTEGER }
+        subject_public_key_info = tbs_values[6 + offset]
+        public_key_bit_string = subject_public_key_info["value"][1]["value"]
+
+        # the bit string content is the DER-encoded RSA public key,
+        # we need to unpack it to get the modulus and exponent
+        public_key_der = colony.legacy.str(public_key_bit_string)
+        rsa_public_key = ber_structure.unpack(public_key_der)
+        rsa_public_key_value = rsa_public_key["value"]
+
+        # extracts modulus and exponent from the RSA public key
+        modulus = rsa_public_key_value[0]["value"]
+        public_exponent = rsa_public_key_value[1]["value"]
+
+        # creates the keys tuple (public_key, private_key, extras)
+        public_key = {"n": modulus, "e": public_exponent}
+        private_key = {}
+        extras = {}
+        keys = (public_key, private_key, extras)
+
+        # extracts extensions (if present), extensions are also optional
+        # and context-tagged as [3]
+        extensions = None
+        extensions_index = 7 + offset
+        if len(tbs_values) > extensions_index:
+            extensions = tbs_values[extensions_index]["value"]
+
+        # returns a dictionary with all extracted values
+        return dict(
+            version=version,
+            serial_number=serial_number,
+            signature_algorithm=signature_algorithm,
+            issuer=issuer,
+            not_before=not_before,
+            not_after=not_after,
+            subject=subject,
+            public_key=keys,
+            extensions=extensions,
+        )
 
     def _encrypt(self, keys, message):
         # unpacks the keys tuple, retrieving the public key,

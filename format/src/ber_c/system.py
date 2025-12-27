@@ -131,7 +131,10 @@ class BER(colony.System):
 
 class BERStructure(object):
     """
-    Class representing a BER structure.
+    Class representing a BER structure responsible for the
+    encoding and decoding of the BER (Basic Encoding Rules).
+
+    :see: https://en.wikipedia.org/wiki/X.690#BER_encoding
     """
 
     buffer = None
@@ -188,26 +191,24 @@ class BERStructure(object):
         # retrieves the type number for the value
         type_number = self._get_type_number(value)
 
-        # retrieves the pack method for the type number
+        # retrieves the pack method for the type number, then
+        # uses it to pack the value and returns it
         pack_method = self._get_pack_method(type_number)
-
-        # packs the value
         packed_value = pack_method(value)
-
-        # returns the packed value
         return packed_value
 
     def unpack(self, packed_value):
         # retrieves the type for the packed number value
         type_number = self._get_packed_type_number(packed_value)
 
-        # retrieves the unpack method for the type number
-        unpack_method = self._get_unpack_method(type_number)
+        # retrieves the extra type and determines if it's constructed
+        extra_type = self._get_packed_extra_type(packed_value)
+        type_constructed = self._get_type_constructed(None, extra_type)
 
-        # unpacks the packed value
+        # retrieves the unpack method for the type number and
+        # then uses it to unpack the packed value and returns it
+        unpack_method = self._get_unpack_method(type_number, type_constructed)
         value = unpack_method(packed_value)
-
-        # returns the value
         return value
 
     def pack_boolean(self, boolean):
@@ -421,14 +422,14 @@ class BERStructure(object):
         packed_boolean_value = self._get_packed_value(packed_boolean)
 
         # unpacks the packed boolean value
-        upacked_boolean_value = self._unpack_integer(packed_boolean_value)
+        unpacked_boolean_value = self._unpack_integer(packed_boolean_value)
 
         # converts the unpacked boolean value to integer
-        upacked_boolean_value = upacked_boolean_value == 1 and True or False
+        unpacked_boolean_value = True if unpacked_boolean_value == 1 else False
 
         # unpacks the boolean as a base value
         boolean = self.unpack_base_value(
-            upacked_boolean_value, boolean_type, packed_boolean_extra_type
+            unpacked_boolean_value, boolean_type, packed_boolean_extra_type
         )
 
         # returns the boolean
@@ -447,11 +448,11 @@ class BERStructure(object):
         packed_integer_value = self._get_packed_value(packed_integer)
 
         # unpacks the packed integer value
-        upacked_integer_value = self._unpack_integer(packed_integer_value)
+        unpacked_integer_value = self._unpack_integer(packed_integer_value)
 
         # unpacks the integer as a base value
         integer = self.unpack_base_value(
-            upacked_integer_value, integer_type, packed_integer_extra_type
+            unpacked_integer_value, integer_type, packed_integer_extra_type
         )
 
         # returns the integer
@@ -470,11 +471,11 @@ class BERStructure(object):
         packed_bit_string_value = self._get_packed_value(packed_bit_string)
 
         # unpacks the packed bit string value
-        upacked_bit_string_value = self._unpack_bit_string(packed_bit_string_value)
+        unpacked_bit_string_value = self._unpack_bit_string(packed_bit_string_value)
 
         # unpacks the bit string as a base value
         bit_string = self.unpack_base_value(
-            upacked_bit_string_value, bit_string_type, packed_bit_string_extra_type
+            unpacked_bit_string_value, bit_string_type, packed_bit_string_extra_type
         )
 
         # returns the bit string
@@ -493,13 +494,13 @@ class BERStructure(object):
         packed_octet_string_value = self._get_packed_value(packed_octet_string)
 
         # unpacks the packed octet string value
-        upacked_octet_string_value = self._unpack_octet_string(
+        unpacked_octet_string_value = self._unpack_octet_string(
             packed_octet_string_value
         )
 
         # unpacks the octet string as a base value
         octet_string = self.unpack_base_value(
-            upacked_octet_string_value,
+            unpacked_octet_string_value,
             octet_string_type,
             packed_octet_string_extra_type,
         )
@@ -518,11 +519,11 @@ class BERStructure(object):
         packed_null_value = self._get_packed_value(packed_null)
 
         # unpacks the packed null value
-        upacked_null_value = self._unpack_null(packed_null_value)
+        unpacked_null_value = self._unpack_null(packed_null_value)
 
         # unpacks the null as a base value
         null = self.unpack_base_value(
-            upacked_null_value, null_type, packed_null_extra_type
+            unpacked_null_value, null_type, packed_null_extra_type
         )
 
         # returns the null
@@ -543,13 +544,13 @@ class BERStructure(object):
         )
 
         # unpacks the packed object identifier value
-        upacked_object_identifier_value = self._unpack_object_identifier(
+        unpacked_object_identifier_value = self._unpack_object_identifier(
             packed_object_identifier_value
         )
 
         # unpacks the object identifier as a base value
         object_identifier = self.unpack_base_value(
-            upacked_object_identifier_value,
+            unpacked_object_identifier_value,
             object_identifier_type,
             packed_object_identifier_extra_type,
         )
@@ -570,11 +571,11 @@ class BERStructure(object):
         packed_enumerated_value = self._get_packed_value(packed_enumerated)
 
         # unpacks the packed enumerated value (as integer)
-        upacked_enumerated_value = self._unpack_integer(packed_enumerated_value)
+        unpacked_enumerated_value = self._unpack_integer(packed_enumerated_value)
 
         # unpacks the enumerated as a base value
         enumerated = self.unpack_base_value(
-            upacked_enumerated_value, enumerated_type, packed_enumerated_extra_type
+            unpacked_enumerated_value, enumerated_type, packed_enumerated_extra_type
         )
 
         # returns the enumerated
@@ -593,11 +594,11 @@ class BERStructure(object):
         packed_sequence_value = self._get_packed_value(packed_sequence)
 
         # unpacks the packed sequence value
-        upacked_sequence_value = self._unpack_sequence(packed_sequence_value)
+        unpacked_sequence_value = self._unpack_sequence(packed_sequence_value)
 
         # unpacks the sequence as a base value
         sequence = self.unpack_base_value(
-            upacked_sequence_value, sequence_type, packed_sequence_extra_type
+            unpacked_sequence_value, sequence_type, packed_sequence_extra_type
         )
 
         # returns the sequence
@@ -614,10 +615,12 @@ class BERStructure(object):
         packed_set_value = self._get_packed_value(packed_set)
 
         # unpacks the packed set value
-        upacked_set_value = self._unpack_sequence(packed_set_value)
+        unpacked_set_value = self._unpack_sequence(packed_set_value)
 
         # unpacks the set as a base value
-        set = self.unpack_base_value(upacked_set_value, set_type, packed_set_extra_type)
+        set = self.unpack_base_value(
+            unpacked_set_value, set_type, packed_set_extra_type
+        )
 
         # returns the set
         return set
@@ -634,7 +637,7 @@ class BERStructure(object):
         }
 
         # creates the unpacked base value
-        unpaked_base_value = {TYPE_VALUE: type_map, VALUE_VALUE: unpacked_base_value}
+        unpacked_base_value = {TYPE_VALUE: type_map, VALUE_VALUE: unpacked_base_value}
 
         # in case the extra type is defined
         if not extra_type == None:
@@ -653,10 +656,10 @@ class BERStructure(object):
             }
 
             # sets the extra type (map) in the unpacked base value
-            unpaked_base_value[EXTRA_TYPE_VALUE] = extra_type_map
+            unpacked_base_value[EXTRA_TYPE_VALUE] = extra_type_map
 
         # returns the unpacked base value
-        return unpaked_base_value
+        return unpacked_base_value
 
     def get_type_alias_map(self):
         """
@@ -792,10 +795,10 @@ class BERStructure(object):
             del octets[0]
 
         # creates the octets list from the list of values
-        chracter_octets = [colony.legacy.chr(value) for value in octets]
+        character_octets = [colony.legacy.chr(value) for value in octets]
 
         # creates the octets string joining the octet characters
-        octets_string = b"".join(chracter_octets)
+        octets_string = b"".join(character_octets)
 
         # returns the octets string
         return octets_string
@@ -890,7 +893,7 @@ class BERStructure(object):
                 # creates the first sub identifier value
                 first_sub_identifier = sub_identifier & 0x7F
 
-                # convert the first sub identifier to character
+                # converts the first sub identifier to character
                 first_sub_identifier_character = colony.legacy.chr(first_sub_identifier)
 
                 # adds the first sub identifier value to the result
@@ -969,17 +972,29 @@ class BERStructure(object):
         return integer
 
     def _unpack_bit_string(self, packed_value):
-        # retrieves the number of padding bits
+        # retrieves the number of padding bits from the first byte
         number_padding_bits = colony.legacy.ord(packed_value[0])
 
-        # in case the number of padding bits is
-        # not zero
-        if not number_padding_bits == 0:
-            # raises the operation not implemented exception
-            raise exceptions.OperationNotImplemented("bit string padding removal")
-
-        # retrieves the bit string
+        # retrieves the bit string (excluding the padding indicator byte)
         bit_string = packed_value[1:]
+
+        # if there are padding bits and the bit string is not empty,
+        # we need to mask off the unused bits from the last byte
+        if number_padding_bits > 0 and len(bit_string) > 0:
+            # creates a mask to zero out the padding bits in the last byte
+            # for example, if padding is 3, mask is 11111000 (0xF8)
+            mask = (0xFF << number_padding_bits) & 0xFF
+
+            # gets the last byte, applies the mask, and rebuild the bit string
+            last_byte = colony.legacy.ord(bit_string[-1])
+            masked_last_byte = last_byte & mask
+
+            # reconstructs the bit string with the masked last byte
+            # using the same type as the input (str or bytes)
+            if isinstance(bit_string, bytes):
+                bit_string = bit_string[:-1] + bytes([masked_last_byte])
+            else:
+                bit_string = bit_string[:-1] + chr(masked_last_byte)
 
         # returns the bit string
         return bit_string
@@ -1133,19 +1148,15 @@ class BERStructure(object):
             # increments the index
             index += current_packed_value_total_length
 
-        # sets the sequence as the values list
+        # sets the sequence as the values list and then
+        # returns it
         sequence = values_list
-
-        # returns the sequence
         return sequence
 
     def _resolve_base_type(self, value):
         type_value = {}
-
         type_value[TYPE_NUMBER_VALUE] = value
-
         type = self._resolve_type(type_value)
-
         return type
 
     def _resolve_type(self, type_value):
@@ -1178,13 +1189,11 @@ class BERStructure(object):
         # retrieves the type class from the type value
         type_class = type_value.get(TYPE_CLASS_VALUE, DEFAULT_CLASS)
 
-        # starts the type value from the type number
+        # starts the type value from the type number and then
+        # adds the type constructed and the type class (bit
+        # wise or with bit shift) to the type value
         _type = type_number
-
-        # adds the type constructed to the type
         _type |= type_constructed << 5
-
-        # adds the type class to the type
         _type |= type_class << 6
 
         # returns the type
@@ -1288,9 +1297,8 @@ class BERStructure(object):
         extra_type = colony.legacy.ord(extra_type_octet)
 
         # in case the extra type and the base
-        # type are the same
+        # type are the same, returns invalid
         if extra_type == base_type:
-            # returns invalid
             return None
 
         # returns the extra type
@@ -1324,15 +1332,30 @@ class BERStructure(object):
         return packed_value
 
     def _get_pack_method(self, type_number):
-        # retrieves the pack method for the type number
-        pack_method = self.pack_methods_map[type_number]
+        # raises an error in case the type number is not found
+        if not type_number in self.unpack_methods_map:
+            raise exceptions.PackingError(
+                "BER pack method not found for type number: %s" % type_number
+            )
 
-        # returns the pack method
+        # retrieves the pack method for the type number
+        # and returns it to the caller method
+        pack_method = self.pack_methods_map[type_number]
         return pack_method
 
-    def _get_unpack_method(self, type_number):
-        # retrieves the unpack method for the type number
-        unpack_method = self.unpack_methods_map[type_number]
+    def _get_unpack_method(self, type_number, type_constructed=CONSTRUCTED_MODE):
+        # checks if the type number exists in the unpack methods map
+        # if so retrieves and returns the unpack method
+        if type_number in self.unpack_methods_map:
+            unpack_method = self.unpack_methods_map[type_number]
+            return unpack_method
 
-        # returns the unpack method
-        return unpack_method
+        # for unknown type numbers (like context-specific types or string
+        # types used in X.509 certificates), fall back based on whether
+        # the type is constructed or primitive:
+        # - constructed types (like context-specific containers) -> sequence
+        # - primitive types (like strings, times) -> octet_string
+        if type_constructed == CONSTRUCTED_MODE:
+            return self.unpack_sequence
+        else:
+            return self.unpack_octet_string

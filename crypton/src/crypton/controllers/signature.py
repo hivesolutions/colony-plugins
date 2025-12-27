@@ -141,6 +141,9 @@ class SignatureController(BaseController):
         # for validation is defined, meaning that
         # no validation is expected
         validate_api_key = security_map.get("validate_api_key", True)
+        validate_api_key = colony.conf(
+            "CRYPTON_VALIDATE_API_KEY", validate_api_key, cast=bool
+        )
         if not validate_api_key:
             return
 

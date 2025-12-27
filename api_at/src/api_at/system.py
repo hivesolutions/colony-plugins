@@ -31,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import os
 import base64
 import hashlib
+import calendar
 import datetime
 
 import xml.dom.minidom
@@ -175,6 +176,11 @@ class ATClient(object):
     """ The path to the certificate file to be used
     in the connection with the server """
 
+    certificate_info = None
+    """ The loaded certificate information metadata
+    containing information about the certificate (eg:
+    subject, issue date etc.) """
+
     http_client = None
     """ The HTTP client for the connection """
 
@@ -187,6 +193,7 @@ class ATClient(object):
         test_mode=False,
         key=None,
         certificate=None,
+        certificate_info=None,
     ):
         """
         Constructor of the class, should initialize the key and
@@ -211,6 +218,10 @@ class ATClient(object):
         :type certificate: String
         :param certificate: The path to the certificate file to be used
         in the connection with the server.
+        :type certificate_info: Dictionary
+        :param certificate_info: The loaded certificate information metadata
+        containing information about the certificate (eg: subject, issue date
+        etc.).
         """
 
         self.plugin = plugin
@@ -220,6 +231,7 @@ class ATClient(object):
         self.test_mode = test_mode
         self.key = key
         self.certificate = certificate
+        self.certificate_info = certificate_info
 
     def open(self):
         """
@@ -227,7 +239,17 @@ class ATClient(object):
         resources for a new AT client.
         """
 
-        pass
+        # retries the PKCS1 plugin, to be used in the loading of
+        # the certificate information
+        pkcs1_plugin = self.plugin.pkcs1_plugin
+
+        # loads the certificate information into a dictionary
+        # using the PKCS1 structure, this info can later be used
+        # for various purposes (eg: validation, display etc.)
+        pkcs1_structure = pkcs1_plugin.create_structure({})
+        self.certificate_info = pkcs1_structure.load_read_certificate_pem(
+            self._certificate_path
+        )
 
     def close(self):
         """
@@ -388,6 +410,79 @@ class ATClient(object):
         """
 
         self.at_structure = at_structure
+
+    def get_certificate_not_before(self):
+        """
+        Retrieves the "not before" validity timestamp from the certificate.
+
+        This value indicates the start of the certificate's validity period,
+        returned as a Unix timestamp (seconds since epoch).
+
+        :rtype: int
+        :return: The Unix timestamp representing when the certificate
+        becomes valid, or None if the certificate info is not available.
+        """
+
+        if not self.certificate_info:
+            return None
+
+        # retrieves the "not before" string from the certificate
+        not_before_s = self.certificate_info.get("not_before", None)
+        if not not_before_s:
+            return None
+
+        # parses the "not before" string into a datetime structure
+        # and then converts it into a timestamp value, X.509 certificates
+        # use UTCTime (YYMMDDhhmmssZ, 13 chars) for dates 1950-2049 and
+        # GeneralizedTime (YYYYMMDDhhmmssZ, 15 chars) for dates outside that range
+        time_format = "%Y%m%d%H%M%SZ" if len(not_before_s) == 15 else "%y%m%d%H%M%SZ"
+        not_before_d = datetime.datetime.strptime(not_before_s, time_format)
+        not_before = calendar.timegm(not_before_d.timetuple())
+        return not_before
+
+    def get_certificate_not_after(self):
+        """
+        Retrieves the "not after" validity timestamp from the certificate.
+
+        This value indicates the end of the certificate's validity period,
+        returned as a Unix timestamp (seconds since epoch).
+
+        :rtype: int
+        :return: The Unix timestamp representing when the certificate
+        expires, or None if the certificate info is not available.
+        """
+
+        if not self.certificate_info:
+            return None
+
+        # retrieves the "not after" string from the certificate
+        not_after_s = self.certificate_info.get("not_after", None)
+        if not not_after_s:
+            return None
+
+        # parses the "not after" string into a datetime structure
+        # and then converts it into a timestamp value, X.509 certificates
+        # use UTCTime (YYMMDDhhmmssZ, 13 chars) for dates 1950-2049 and
+        # GeneralizedTime (YYYYMMDDhhmmssZ, 15 chars) for dates outside that range
+        time_format = "%Y%m%d%H%M%SZ" if len(not_after_s) == 15 else "%y%m%d%H%M%SZ"
+        not_after_d = datetime.datetime.strptime(not_after_s, time_format)
+        not_after = calendar.timegm(not_after_d.timetuple())
+        return not_after
+
+    def get_server_name(self):
+        """
+        Retrieves the name of the server environment being used.
+
+        Returns "test" when the client is configured to run in test mode,
+        or "production" when targeting the production AT servers.
+
+        :rtype: String
+        :return: The server environment name, either "test" or "production".
+        """
+
+        if self.test_mode:
+            return "test"
+        return "production"
 
     def _submit_document(
         self, submit_url, document_payload, namespace=None, version=1, check_errors=None
@@ -870,24 +965,12 @@ class ATClient(object):
         # in case no HTTP client exists (or it is closed) then one must
         # be created for the interaction with the API service
         if not self.http_client or not self.http_client.is_open():
-            # retrieves the base values for both the key and the
-            # certificate files and retrieves the (final) key and
-            # certificate paths according to the current test mode
-            base_key_path = self.get_resource("api_at/resources/key.pem")
-            base_certificate_path = self.get_resource(
-                "api_at/resources/certificate.crt"
-            )
-            key_path = base_key_path if self.test_mode else self.key
-            certificate_path = (
-                base_certificate_path if self.test_mode else self.certificate
-            )
-
             # defines the client parameters to be used in the
             # creation of the HTTP client
             client_parameters = dict(
                 content_type_charset=colony.conf("AT_CONTENT_TYPE", "utf-8"),
-                key_file_path=key_path,
-                certificate_file_path=certificate_path,
+                key_file_path=self._key_path,
+                certificate_file_path=self._certificate_path,
                 ssl_version=colony.conf("AT_SSL_VERSION", "tls"),
             )
 
@@ -912,6 +995,16 @@ class ATClient(object):
                 continue
             return _node.data
         return None
+
+    @property
+    def _key_path(self):
+        base_key_path = self.get_resource("api_at/resources/key.pem")
+        return base_key_path if self.test_mode else self.key
+
+    @property
+    def _certificate_path(self):
+        base_certificate_path = self.get_resource("api_at/resources/certificate.crt")
+        return base_certificate_path if self.test_mode else self.certificate
 
 
 class ATStructure(object):

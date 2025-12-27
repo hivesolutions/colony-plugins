@@ -27,6 +27,8 @@ __license__ = "Apache License, Version 2.0"
 
 from . import exceptions
 from . import system
+from . import test
 
 from .exceptions import APIATException, ATAPIError
 from .system import APIAT
+from .test import APIATTest, APIATBaseTestCase
