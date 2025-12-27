@@ -432,8 +432,11 @@ class ATClient(object):
             return None
 
         # parses the "not before" string into a datetime structure
-        # and then converts it into a timestamp value
-        not_before_d = datetime.datetime.strptime(not_before_s, "%y%m%d%H%M%SZ")
+        # and then converts it into a timestamp value, X.509 certificates
+        # use UTCTime (YYMMDDhhmmssZ, 13 chars) for dates 1950-2049 and
+        # GeneralizedTime (YYYYMMDDhhmmssZ, 15 chars) for dates outside that range
+        time_format = "%Y%m%d%H%M%SZ" if len(not_before_s) == 15 else "%y%m%d%H%M%SZ"
+        not_before_d = datetime.datetime.strptime(not_before_s, time_format)
         not_before = calendar.timegm(not_before_d.timetuple())
         return not_before
 
@@ -458,8 +461,11 @@ class ATClient(object):
             return None
 
         # parses the "not after" string into a datetime structure
-        # and then converts it into a timestamp value
-        not_after_d = datetime.datetime.strptime(not_after_s, "%y%m%d%H%M%SZ")
+        # and then converts it into a timestamp value, X.509 certificates
+        # use UTCTime (YYMMDDhhmmssZ, 13 chars) for dates 1950-2049 and
+        # GeneralizedTime (YYYYMMDDhhmmssZ, 15 chars) for dates outside that range
+        time_format = "%Y%m%d%H%M%SZ" if len(not_after_s) == 15 else "%y%m%d%H%M%SZ"
+        not_after_d = datetime.datetime.strptime(not_after_s, time_format)
         not_after = calendar.timegm(not_after_d.timetuple())
         return not_after
 
