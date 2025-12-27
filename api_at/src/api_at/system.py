@@ -111,7 +111,6 @@ class APIAT(colony.System):
         # retrieves the client HTTP plugin
         ssl_plugin = self.plugin.ssl_plugin
         client_http_plugin = self.plugin.client_http_plugin
-        pkcs1_plugin = self.plugin.pkcs1_plugin
 
         # retrieves the AT structure and test mode (if available)
         at_structure = api_attributes.get("at_structure", None)
@@ -121,12 +120,6 @@ class APIAT(colony.System):
         test_mode = colony.conf("AT_TEST_MODE", test_mode, cast=bool)
         key = colony.conf("AT_KEY", key)
         certificate = colony.conf("AT_CERTIFICATE", certificate)
-
-        # loads the certificate information into a dictionary
-        # using the PKCS1 structure, this info can later be used
-        # for various purposes (eg: validation, display etc.)
-        pkcs1_structure = pkcs1_plugin.create_structure({})
-        certificate_info = pkcs1_structure.load_read_certificate_pem(certificate)
 
         # creates a new client with the given options, opens
         # it in case it's required and returns the generated
@@ -139,7 +132,6 @@ class APIAT(colony.System):
             test_mode=test_mode,
             key=key,
             certificate=certificate,
-            certificate_info=certificate_info,
         )
         if open_client:
             at_client.open()
@@ -247,7 +239,17 @@ class ATClient(object):
         resources for a new AT client.
         """
 
-        pass
+        # retries the PKCS1 plugin, to be used in the loading of
+        # the certificate information
+        pkcs1_plugin = self.plugin.pkcs1_plugin
+
+        # loads the certificate information into a dictionary
+        # using the PKCS1 structure, this info can later be used
+        # for various purposes (eg: validation, display etc.)
+        pkcs1_structure = pkcs1_plugin.create_structure({})
+        self.certificate_info = pkcs1_structure.load_read_certificate_pem(
+            self._certificate_path
+        )
 
     def close(self):
         """
@@ -957,24 +959,12 @@ class ATClient(object):
         # in case no HTTP client exists (or it is closed) then one must
         # be created for the interaction with the API service
         if not self.http_client or not self.http_client.is_open():
-            # retrieves the base values for both the key and the
-            # certificate files and retrieves the (final) key and
-            # certificate paths according to the current test mode
-            base_key_path = self.get_resource("api_at/resources/key.pem")
-            base_certificate_path = self.get_resource(
-                "api_at/resources/certificate.crt"
-            )
-            key_path = base_key_path if self.test_mode else self.key
-            certificate_path = (
-                base_certificate_path if self.test_mode else self.certificate
-            )
-
             # defines the client parameters to be used in the
             # creation of the HTTP client
             client_parameters = dict(
                 content_type_charset=colony.conf("AT_CONTENT_TYPE", "utf-8"),
-                key_file_path=key_path,
-                certificate_file_path=certificate_path,
+                key_file_path=self._key_path,
+                certificate_file_path=self._certificate_path,
                 ssl_version=colony.conf("AT_SSL_VERSION", "tls"),
             )
 
@@ -999,6 +989,16 @@ class ATClient(object):
                 continue
             return _node.data
         return None
+
+    @property
+    def _key_path(self):
+        base_key_path = self.get_resource("api_at/resources/key.pem")
+        return base_key_path if self.test_mode else self.key
+
+    @property
+    def _certificate_path(self):
+        base_certificate_path = self.get_resource("api_at/resources/certificate.crt")
+        return base_certificate_path if self.test_mode else self.certificate
 
 
 class ATStructure(object):
