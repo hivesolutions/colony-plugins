@@ -893,7 +893,7 @@ class BERStructure(object):
                 # creates the first sub identifier value
                 first_sub_identifier = sub_identifier & 0x7F
 
-                # convert the first sub identifier to character
+                # converts the first sub identifier to character
                 first_sub_identifier_character = colony.legacy.chr(first_sub_identifier)
 
                 # adds the first sub identifier value to the result
@@ -981,15 +981,15 @@ class BERStructure(object):
         # if there are padding bits and the bit string is not empty,
         # we need to mask off the unused bits from the last byte
         if number_padding_bits > 0 and len(bit_string) > 0:
-            # create a mask to zero out the padding bits in the last byte
+            # creates a mask to zero out the padding bits in the last byte
             # for example, if padding is 3, mask is 11111000 (0xF8)
-            mask = (0xFF << number_padding_bits) & 0xFF
+            mask = (0xff << number_padding_bits) & 0xff
 
-            # get the last byte, apply the mask, and rebuild the bit string
+            # gets the last byte, applies the mask, and rebuild the bit string
             last_byte = colony.legacy.ord(bit_string[-1])
             masked_last_byte = last_byte & mask
 
-            # reconstruct the bit string with the masked last byte
+            # reconstructs the bit string with the masked last byte
             # using the same type as the input (str or bytes)
             if isinstance(bit_string, bytes):
                 bit_string = bit_string[:-1] + bytes([masked_last_byte])
