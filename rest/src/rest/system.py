@@ -2591,15 +2591,15 @@ class RESTSession(object):
         """
 
         current_timestamp = time.time()
-        current_timestamp += DEFAULT_EXPIRATION_DELTA_TIMESTAMP
-        current_date_time = datetime.datetime.utcfromtimestamp(current_timestamp)
-        current_date_time_formatted = current_date_time.strftime(DATE_FORMAT)
+        expires_timestamp = int(current_timestamp) + DEFAULT_EXPIRATION_DELTA_TIMESTAMP
+        expires_date_time = datetime.datetime.utcfromtimestamp(expires_timestamp)
+        expires_date_time_formatted = expires_date_time.strftime(DATE_FORMAT)
 
         self.cookie = Cookie()
         self.cookie.set_main_attribute_name("session_id")
         self.cookie.set_attribute("session_id", self.session_id)
         self.cookie.set_attribute("lang", DEFAULT_LANG_VALUE)
-        self.cookie.set_attribute("expires", current_date_time_formatted)
+        self.cookie.set_attribute("expires", expires_date_time_formatted)
 
         self._set_domain(domain, include_sub_domain)
         self._set_secure(secure)
