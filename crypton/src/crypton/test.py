@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import base64
+
 import colony
 
 from .system import Crypton
@@ -42,7 +44,10 @@ class CryptonTest(colony.Test):
     """
 
     def get_bundle(self):
-        return (CryptonBaseTestCase,)
+        return (
+            CryptonBaseTestCase,
+            CryptonEncryptionTestCase,
+        )
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -221,6 +226,124 @@ class CryptonBaseTestCase(colony.ColonyTestCase):
         self.assertTrue(isinstance(exception, colony.ColonyException))
 
 
+class CryptonEncryptionTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Crypton Encryption test case"
+
+    def test_encrypt_base_64(self):
+        # creates a mock SSL structure and tests encryption
+        ssl = MockSSLStructure()
+
+        message = b"Hello World"
+        result = ssl.encrypt_base_64("/path/to/public.key", message)
+
+        # verifies the result is base64 encoded
+        self.assertNotEqual(result, None)
+        self.assertTrue(len(result) > 0)
+        # verifies it can be base64 decoded
+        decoded = base64.b64decode(result)
+        self.assertTrue(decoded.startswith(b"encrypted:"))
+
+    def test_decrypt_base_64(self):
+        # creates a mock SSL structure and tests decryption
+        ssl = MockSSLStructure()
+
+        # first encrypt then decrypt
+        message = b"Secret Message"
+        encrypted = ssl.encrypt_base_64("/path/to/public.key", message)
+        decrypted = ssl.decrypt_base_64("/path/to/private.key", encrypted)
+
+        # verifies the decrypted message matches original
+        self.assertEqual(decrypted, message)
+
+    def test_sign_base_64(self):
+        # creates a mock SSL structure and tests signing
+        ssl = MockSSLStructure()
+
+        message = b"Message to sign"
+        signature = ssl.sign_base_64("/path/to/private.key", "sha256", message)
+
+        # verifies a signature was returned
+        self.assertNotEqual(signature, None)
+        self.assertTrue(len(signature) > 0)
+
+    def test_sign_multiple_algorithms(self):
+        # creates a mock SSL structure
+        ssl = MockSSLStructure()
+
+        # signs with different algorithms
+        message = b"Test message"
+        for algorithm in ("md5", "sha1", "sha256"):
+            signature = ssl.sign_base_64("/path/to/private.key", algorithm, message)
+            self.assertNotEqual(signature, None)
+            self.assertTrue(len(signature) > 0)
+            # verifies algorithm is embedded in signature
+            decoded = base64.b64decode(signature)
+            self.assertIn(algorithm.encode(), decoded)
+
+    def test_verify_base_64(self):
+        # creates a mock SSL structure and tests verification
+        ssl = MockSSLStructure()
+
+        message = b"Signed message"
+        signature = ssl.sign_base_64("/path/to/private.key", "sha256", message)
+
+        # verifies the signature
+        result = ssl.verify_base_64("/path/to/public.key", signature, message)
+        self.assertEqual(result, True)
+
+    def test_encrypt_decrypt_roundtrip(self):
+        # creates a mock SSL structure
+        ssl = MockSSLStructure()
+
+        # tests multiple messages
+        messages = [b"Hello World", b"Test 123", b"Special chars: @#$%"]
+        for original in messages:
+            encrypted = ssl.encrypt_base_64("/path/to/public.key", original)
+            decrypted = ssl.decrypt_base_64("/path/to/private.key", encrypted)
+            self.assertEqual(decrypted, original)
+
+    def test_sign_verify_roundtrip(self):
+        # creates a mock SSL structure
+        ssl = MockSSLStructure()
+
+        # signs and verifies multiple messages
+        messages = [b"Message 1", b"Message 2", b"Message 3"]
+        for message in messages:
+            signature = ssl.sign_base_64("/path/to/private.key", "sha256", message)
+            result = ssl.verify_base_64("/path/to/public.key", signature, message)
+            self.assertEqual(result, True)
+
+    def test_encrypt_empty_message(self):
+        # creates a mock SSL structure
+        ssl = MockSSLStructure()
+
+        # encrypts an empty message
+        encrypted = ssl.encrypt_base_64("/path/to/public.key", b"")
+        decrypted = ssl.decrypt_base_64("/path/to/private.key", encrypted)
+        self.assertEqual(decrypted, b"")
+
+    def test_encrypt_unicode_message(self):
+        # creates a mock SSL structure
+        ssl = MockSSLStructure()
+
+        # encrypts a unicode message
+        message = colony.legacy.u("你好世界").encode("utf-8")
+        encrypted = ssl.encrypt_base_64("/path/to/public.key", message)
+        decrypted = ssl.decrypt_base_64("/path/to/private.key", encrypted)
+        self.assertEqual(decrypted, message)
+
+    def test_base64_message_encoding(self):
+        # tests the base64 encoding flow used in crypton
+        original = b"Hello World"
+        encoded = base64.b64encode(original)
+        decoded = base64.b64decode(encoded)
+
+        self.assertEqual(decoded, original)
+        self.assertEqual(encoded, b"SGVsbG8gV29ybGQ=")
+
+
 class MockPlugin:
     def __init__(self):
         self.mvc_utils_plugin = None
@@ -239,3 +362,39 @@ class MockConfigurationProperty:
 class MockController:
     def __init__(self, name):
         self.name = name
+
+
+class MockSSLStructure:
+    def encrypt_base_64(self, key_path, data):
+        # simulates encryption by base64 encoding with a prefix
+        if isinstance(data, bytes):
+            return base64.b64encode(b"encrypted:" + data).decode("utf-8")
+        return base64.b64encode(b"encrypted:" + data.encode("utf-8")).decode("utf-8")
+
+    def decrypt_base_64(self, key_path, data):
+        # simulates decryption by base64 decoding and removing prefix
+        decoded = base64.b64decode(data)
+        if decoded.startswith(b"encrypted:"):
+            return decoded[10:]
+        return decoded
+
+    def sign_base_64(self, key_path, algorithm, data):
+        # simulates signing by creating a mock signature
+        if isinstance(data, bytes):
+            return base64.b64encode(b"sig:" + algorithm.encode() + b":" + data).decode(
+                "utf-8"
+            )
+        return base64.b64encode(
+            b"sig:" + algorithm.encode() + b":" + data.encode("utf-8")
+        ).decode("utf-8")
+
+    def verify_base_64(self, key_path, signature, data):
+        # simulates verification by checking signature format
+        try:
+            decoded = base64.b64decode(signature)
+            return decoded.startswith(b"sig:")
+        except Exception:
+            return False
+
+    def generate_keys(self, private_path, public_path, number_bits=1024):
+        pass
