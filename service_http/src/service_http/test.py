@@ -20,18 +20,14 @@
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
 __author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
-""" The copyright for the module """
-
 __license__ = "Apache License, Version 2.0"
-""" The license for the module """
 
 import colony
 
 from . import system
 from . import exceptions
+from . import mocks
 
 
 class ServiceHTTPTest(colony.Test):
@@ -89,26 +85,26 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         )
 
     def test_initialization(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
         self.assertEqual(service.http_service_configuration, {})
 
     def test_handler_load(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        handler = MockHandlerPlugin("file")
+        handler = mocks.MockHandlerPlugin("file")
         service.http_service_handler_load(handler)
 
         self.assertIn("file", service.http_service_handler_plugins_map)
         self.assertEqual(service.http_service_handler_plugins_map["file"], handler)
 
     def test_handler_unload(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        handler = MockHandlerPlugin("proxy")
+        handler = mocks.MockHandlerPlugin("proxy")
         service.http_service_handler_load(handler)
         self.assertIn("proxy", service.http_service_handler_plugins_map)
 
@@ -116,20 +112,20 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         self.assertNotIn("proxy", service.http_service_handler_plugins_map)
 
     def test_encoding_load(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        encoding = MockEncodingPlugin("gzip")
+        encoding = mocks.MockEncodingPlugin("gzip")
         service.http_service_encoding_load(encoding)
 
         self.assertIn("gzip", service.http_service_encoding_plugins_map)
         self.assertEqual(service.http_service_encoding_plugins_map["gzip"], encoding)
 
     def test_encoding_unload(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        encoding = MockEncodingPlugin("deflate")
+        encoding = mocks.MockEncodingPlugin("deflate")
         service.http_service_encoding_load(encoding)
         self.assertIn("deflate", service.http_service_encoding_plugins_map)
 
@@ -137,10 +133,10 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         self.assertNotIn("deflate", service.http_service_encoding_plugins_map)
 
     def test_authentication_handler_load(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        auth_handler = MockAuthHandlerPlugin("basic")
+        auth_handler = mocks.MockAuthHandlerPlugin("basic")
         service.http_service_authentication_handler_load(auth_handler)
 
         self.assertIn("basic", service.http_service_authentication_handler_plugins_map)
@@ -150,10 +146,10 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         )
 
     def test_authentication_handler_unload(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        auth_handler = MockAuthHandlerPlugin("digest")
+        auth_handler = mocks.MockAuthHandlerPlugin("digest")
         service.http_service_authentication_handler_load(auth_handler)
         self.assertIn("digest", service.http_service_authentication_handler_plugins_map)
 
@@ -163,10 +159,10 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         )
 
     def test_error_handler_load(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        error_handler = MockErrorHandlerPlugin("template")
+        error_handler = mocks.MockErrorHandlerPlugin("template")
         service.http_service_error_handler_load(error_handler)
 
         self.assertIn("template", service.http_service_error_handler_plugins_map)
@@ -175,10 +171,10 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         )
 
     def test_error_handler_unload(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        error_handler = MockErrorHandlerPlugin("json")
+        error_handler = mocks.MockErrorHandlerPlugin("json")
         service.http_service_error_handler_load(error_handler)
         self.assertIn("json", service.http_service_error_handler_plugins_map)
 
@@ -186,10 +182,10 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         self.assertNotIn("json", service.http_service_error_handler_plugins_map)
 
     def test_configuration_property(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
-        config = MockConfigurationProperty(
+        config = mocks.MockConfigurationProperty(
             {"virtual_servers": {}, "redirections": {}, "contexts": {}}
         )
 
@@ -200,12 +196,12 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(service.http_service_configuration, {})
 
     def test_multiple_handlers(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         service = system.ServiceHTTP(mock_plugin)
 
         handlers = ["file", "proxy", "cgi", "wsgi"]
         for handler_name in handlers:
-            handler = MockHandlerPlugin(handler_name)
+            handler = mocks.MockHandlerPlugin(handler_name)
             service.http_service_handler_load(handler)
 
         self.assertEqual(len(service.http_service_handler_plugins_map), 4)
@@ -368,49 +364,3 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         ]
         for exception in exception_list:
             self.assertTrue(isinstance(exception, exceptions.HTTPRuntimeException))
-
-
-class MockPlugin:
-    def __init__(self):
-        self.service_utils_plugin = None
-        self.manager = None
-
-
-class MockConfigurationProperty:
-    def __init__(self, data):
-        self._data = data
-
-    def get_data(self):
-        return self._data
-
-
-class MockHandlerPlugin:
-    def __init__(self, name):
-        self._handler_name = name
-
-    def get_handler_name(self):
-        return self._handler_name
-
-
-class MockEncodingPlugin:
-    def __init__(self, name):
-        self._encoding_name = name
-
-    def get_encoding_name(self):
-        return self._encoding_name
-
-
-class MockAuthHandlerPlugin:
-    def __init__(self, name):
-        self._handler_name = name
-
-    def get_handler_name(self):
-        return self._handler_name
-
-
-class MockErrorHandlerPlugin:
-    def __init__(self, name):
-        self._error_handler_name = name
-
-    def get_error_handler_name(self):
-        return self._error_handler_name

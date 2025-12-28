@@ -20,18 +20,14 @@
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
 __author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
-""" The copyright for the module """
-
 __license__ = "Apache License, Version 2.0"
-""" The license for the module """
 
 import colony
 
 from . import system
 from . import exceptions
+from . import mocks
 
 
 class ClientUtilsTest(colony.Test):
@@ -60,14 +56,14 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         return "Client Utils Base test case"
 
     def test_initialization(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
         self.assertEqual(client_utils.socket_provider_plugins_map, {})
         self.assertEqual(client_utils.socket_upgrader_plugins_map, {})
 
     def test_generate_client(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
         client = client_utils.generate_client({})
@@ -78,7 +74,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(client.client_utils_plugin, mock_plugin)
 
     def test_generate_client_with_parameters(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
         parameters = {
@@ -95,10 +91,10 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(client.response_timeout, 120)
 
     def test_socket_provider_load(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
-        socket_provider = MockSocketProviderPlugin("normal")
+        socket_provider = mocks.MockSocketProviderPlugin("normal")
         client_utils.socket_provider_load(socket_provider)
 
         self.assertIn("normal", client_utils.socket_provider_plugins_map)
@@ -107,10 +103,10 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         )
 
     def test_socket_provider_unload(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
-        socket_provider = MockSocketProviderPlugin("ssl")
+        socket_provider = mocks.MockSocketProviderPlugin("ssl")
         client_utils.socket_provider_load(socket_provider)
         self.assertIn("ssl", client_utils.socket_provider_plugins_map)
 
@@ -118,10 +114,10 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertNotIn("ssl", client_utils.socket_provider_plugins_map)
 
     def test_socket_upgrader_load(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
-        socket_upgrader = MockSocketUpgraderPlugin("ssl_upgrader")
+        socket_upgrader = mocks.MockSocketUpgraderPlugin("ssl_upgrader")
         client_utils.socket_upgrader_load(socket_upgrader)
 
         self.assertIn("ssl_upgrader", client_utils.socket_upgrader_plugins_map)
@@ -130,10 +126,10 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         )
 
     def test_socket_upgrader_unload(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
-        socket_upgrader = MockSocketUpgraderPlugin("tls_upgrader")
+        socket_upgrader = mocks.MockSocketUpgraderPlugin("tls_upgrader")
         client_utils.socket_upgrader_load(socket_upgrader)
         self.assertIn("tls_upgrader", client_utils.socket_upgrader_plugins_map)
 
@@ -141,12 +137,12 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertNotIn("tls_upgrader", client_utils.socket_upgrader_plugins_map)
 
     def test_multiple_socket_providers(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
         providers = ["normal", "ssl", "tls"]
         for provider_name in providers:
-            socket_provider = MockSocketProviderPlugin(provider_name)
+            socket_provider = mocks.MockSocketProviderPlugin(provider_name)
             client_utils.socket_provider_load(socket_provider)
 
         self.assertEqual(len(client_utils.socket_provider_plugins_map), 3)
@@ -160,7 +156,7 @@ class AbstractClientTestCase(colony.ColonyTestCase):
         return "Abstract Client test case"
 
     def test_initialization_defaults(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
         client = system.AbstractClient(client_utils, mock_plugin)
@@ -176,7 +172,7 @@ class AbstractClientTestCase(colony.ColonyTestCase):
         self.assertEqual(client.client_connections_map, {})
 
     def test_initialization_custom_parameters(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
 
         parameters = {
@@ -198,7 +194,7 @@ class AbstractClientTestCase(colony.ColonyTestCase):
         self.assertEqual(client.response_timeout, 60)
 
     def test_start_stop_client(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
         client = system.AbstractClient(client_utils, mock_plugin)
 
@@ -206,14 +202,13 @@ class AbstractClientTestCase(colony.ColonyTestCase):
         client.stop_client()
 
     def test_generate_connection_tuple_hashable(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         client_utils = system.ClientUtils(mock_plugin)
         client = system.AbstractClient(client_utils, mock_plugin)
 
         connection_tuple = ("localhost", 8080, True, "normal", {"key": "value"})
         hashable = client._generate_connection_tuple_hashable(connection_tuple)
 
-        # verifies it can be used as a dictionary key
         test_dict = {}
         test_dict[hashable] = "test"
         self.assertEqual(test_dict[hashable], "test")
@@ -282,56 +277,3 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         for exception in exception_list:
             self.assertTrue(isinstance(exception, exceptions.ClientUtilsException))
             self.assertTrue(isinstance(exception, colony.ColonyException))
-
-
-class MockPlugin:
-    def __init__(self):
-        self.manager = None
-
-    def debug(self, message):
-        pass
-
-
-class MockSocketProviderPlugin:
-    def __init__(self, name):
-        self._provider_name = name
-
-    def get_provider_name(self):
-        return self._provider_name
-
-    def provide_socket_parameters(self, parameters):
-        return MockSocket()
-
-
-class MockSocketUpgraderPlugin:
-    def __init__(self, name):
-        self._upgrader_name = name
-
-    def get_upgrader_name(self):
-        return self._upgrader_name
-
-    def upgrade_socket_parameters(self, socket, parameters):
-        return socket
-
-
-class MockSocket:
-    def __init__(self):
-        self.blocking = True
-
-    def connect(self, address):
-        pass
-
-    def close(self):
-        pass
-
-    def setblocking(self, blocking):
-        self.blocking = blocking
-
-    def recv(self, size):
-        return b""
-
-    def send(self, data):
-        return len(data)
-
-    def sendto(self, data, address):
-        return len(data)

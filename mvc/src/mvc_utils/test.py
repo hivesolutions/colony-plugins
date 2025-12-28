@@ -20,18 +20,14 @@
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
 __author__ = "João Magalhães <joamag@hive.pt>"
-""" The author(s) of the module """
-
 __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
-""" The copyright for the module """
-
 __license__ = "Apache License, Version 2.0"
-""" The license for the module """
 
 import colony
 
 from . import system
 from . import exceptions
+from . import mocks
 
 
 class MVCUtilsTest(colony.Test):
@@ -60,7 +56,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
         return "MVC Utils Base test case"
 
     def test_initialization(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         mvc_utils = system.MVCUtils(mock_plugin)
 
         self.assertEqual(mvc_utils.models_modules_map, {})
@@ -68,7 +64,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(mvc_utils.package_path_controllers_map, {})
 
     def test_get_models_not_found(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         mvc_utils = system.MVCUtils(mock_plugin)
 
         raised = False
@@ -79,7 +75,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(raised, True)
 
     def test_convert_controller_name(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         mvc_utils = system.MVCUtils(mock_plugin)
 
         ref_name, base_name = mvc_utils._convert_controller_name("MainController")
@@ -87,7 +83,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(base_name, "main")
 
     def test_convert_controller_name_with_prefix(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         mvc_utils = system.MVCUtils(mock_plugin)
 
         ref_name, base_name = mvc_utils._convert_controller_name(
@@ -97,7 +93,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(base_name, "user")
 
     def test_convert_controller_name_complex(self):
-        mock_plugin = MockPlugin()
+        mock_plugin = mocks.MockPlugin()
         mvc_utils = system.MVCUtils(mock_plugin)
 
         ref_name, base_name = mvc_utils._convert_controller_name(
@@ -202,7 +198,7 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         self.assertEqual(exception.message, "validation failed")
 
     def test_model_validation_error_with_model(self):
-        mock_model = MockModelWithErrors()
+        mock_model = mocks.MockModelWithErrors()
         exception = exceptions.ModelValidationError(
             "validation failed", model=mock_model
         )
@@ -217,7 +213,7 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         self.assertEqual(result, "no model defined")
 
     def test_model_validation_error_get_validation_s_with_model(self):
-        mock_model = MockModelWithErrors()
+        mock_model = mocks.MockModelWithErrors()
         exception = exceptions.ModelValidationError(
             "validation failed", model=mock_model
         )
@@ -232,7 +228,7 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         self.assertEqual(str(exception), "Controller validation error - access denied")
 
     def test_controller_validation_error_with_controller(self):
-        mock_controller = MockController()
+        mock_controller = mocks.MockController()
         exception = exceptions.ControllerValidationError(
             "permission denied", controller=mock_controller
         )
@@ -288,26 +284,3 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         ]
         for exception in exception_list:
             self.assertTrue(isinstance(exception, exceptions.ValidationError))
-
-
-class MockPlugin:
-    def __init__(self):
-        self.mvc_utils_plugin = None
-        self.template_engine_plugin = None
-        self.json_plugin = None
-        self.entity_manager_plugin = None
-        self.business_helper_plugin = None
-        self.resources_manager_plugin = None
-        self.file_manager_plugin = None
-        self.manager = None
-        self.template_engine = []
-
-
-class MockController:
-    def __init__(self):
-        self.name = "test_controller"
-
-
-class MockModelWithErrors:
-    def __init__(self):
-        self.validation_errors_map = {"email": ["invalid format", "required"]}
