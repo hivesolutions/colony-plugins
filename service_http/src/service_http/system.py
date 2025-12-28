@@ -3381,7 +3381,7 @@ class HTTPRequest(object):
         if self.expiration_timestamp:
             # converts the expiration timestamp to date time and formats it
             # according to the HTTP specification setting it in the headers map
-            expiration_date_time = datetime.datetime.fromtimestamp(
+            expiration_date_time = datetime.datetime.utcfromtimestamp(
                 self.expiration_timestamp
             )
             expiration_date_time_formatted = expiration_date_time.strftime(DATE_FORMAT)
@@ -3389,7 +3389,7 @@ class HTTPRequest(object):
         if self.last_modified_timestamp:
             # converts the last modified timestamp to date time and formats it
             # according to the HTTP specification setting it in the headers map
-            last_modified_date_time = datetime.datetime.fromtimestamp(
+            last_modified_date_time = datetime.datetime.utcfromtimestamp(
                 self.last_modified_timestamp
             )
             last_modified_date_time_formatted = last_modified_date_time.strftime(
@@ -3776,7 +3776,9 @@ class HTTPRequest(object):
                 if_modified_header_data_time = datetime.datetime.strptime(
                     if_modified_header, DATE_FORMAT
                 )
-                modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
+                modified_date_time = datetime.datetime.utcfromtimestamp(
+                    modified_timestamp
+                )
 
                 # in case the modified date time is less or the same
                 # as the if modified header date time (no modification)

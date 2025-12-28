@@ -1030,7 +1030,7 @@ class WSGIRequest(object):
 
     def set_last_modified_timestamp(self, last_modified_timestamp):
         self.last_modified_timestamp = last_modified_timestamp
-        last_modified = datetime.datetime.fromtimestamp(self.last_modified_timestamp)
+        last_modified = datetime.datetime.utcfromtimestamp(self.last_modified_timestamp)
         last_modified_f = last_modified.strftime("%a, %d %b %Y %H:%M:%S GMT")
         self.headers_out["Last-Modified"] = last_modified_f
 
@@ -1062,7 +1062,9 @@ class WSGIRequest(object):
                 if_modified_header_data_time = datetime.datetime.strptime(
                     if_modified_header, "%a, %d %b %Y %H:%M:%S GMT"
                 )
-                modified_date_time = datetime.datetime.fromtimestamp(modified_timestamp)
+                modified_date_time = datetime.datetime.utcfromtimestamp(
+                    modified_timestamp
+                )
 
                 # in case the modified date time is less or the same
                 # as the if modified header date time (no modification)
