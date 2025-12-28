@@ -26,7 +26,6 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 from . import exceptions
-from . import mocks
 from . import system
 from . import test
 
