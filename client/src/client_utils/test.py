@@ -205,7 +205,9 @@ class AbstractClientTestCase(colony.ColonyTestCase):
         # verifies default values
         self.assertEqual(client.client_type, "connection")
         self.assertEqual(client.chunk_size, system.CHUNK_SIZE)
-        self.assertEqual(client.client_connection_timeout, system.CLIENT_CONNECTION_TIMEOUT)
+        self.assertEqual(
+            client.client_connection_timeout, system.CLIENT_CONNECTION_TIMEOUT
+        )
         self.assertEqual(client.connection_timeout, system.CONNECTION_TIMEOUT)
         self.assertEqual(client.request_timeout, system.REQUEST_TIMEOUT)
         self.assertEqual(client.response_timeout, system.RESPONSE_TIMEOUT)

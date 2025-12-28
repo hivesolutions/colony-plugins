@@ -151,9 +151,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         # creates, loads and unloads an authentication handler
         auth_handler = MockAuthHandlerPlugin("digest")
         service.http_service_authentication_handler_load(auth_handler)
-        self.assertIn(
-            "digest", service.http_service_authentication_handler_plugins_map
-        )
+        self.assertIn("digest", service.http_service_authentication_handler_plugins_map)
 
         service.http_service_authentication_handler_unload(auth_handler)
         self.assertNotIn(
@@ -287,7 +285,8 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         exception = exceptions.ClientRequestSecurityViolation("path traversal detected")
         self.assertEqual(exception.message, "path traversal detected")
         self.assertEqual(
-            str(exception), "Client request security violation - path traversal detected"
+            str(exception),
+            "Client request security violation - path traversal detected",
         )
 
     def test_http_runtime_exception(self):
@@ -300,13 +299,17 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         # creates exception with message
         exception = exceptions.HTTPInvalidDataException("malformed request")
         self.assertEqual(exception.message, "malformed request")
-        self.assertEqual(str(exception), "HTTP invalid data exception - malformed request")
+        self.assertEqual(
+            str(exception), "HTTP invalid data exception - malformed request"
+        )
 
     def test_http_no_handler_exception(self):
         # creates exception with message
         exception = exceptions.HTTPNoHandlerException("no handler registered")
         self.assertEqual(exception.message, "no handler registered")
-        self.assertEqual(str(exception), "HTTP no handler exception - no handler registered")
+        self.assertEqual(
+            str(exception), "HTTP no handler exception - no handler registered"
+        )
 
     def test_http_handler_not_found_exception(self):
         # creates exception with message
@@ -329,14 +332,17 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         exception = exceptions.HTTPInvalidMultipartRequestException("missing boundary")
         self.assertEqual(exception.message, "missing boundary")
         self.assertEqual(
-            str(exception), "HTTP invalid multipart request exception - missing boundary"
+            str(exception),
+            "HTTP invalid multipart request exception - missing boundary",
         )
 
     def test_http_data_retrieval_exception(self):
         # creates exception with message
         exception = exceptions.HTTPDataRetrievalException("connection reset")
         self.assertEqual(exception.message, "connection reset")
-        self.assertEqual(str(exception), "HTTP data retrieval exception - connection reset")
+        self.assertEqual(
+            str(exception), "HTTP data retrieval exception - connection reset"
+        )
 
     def test_http_data_sending_exception(self):
         # creates exception with message

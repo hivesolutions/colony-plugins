@@ -236,7 +236,9 @@ class ExceptionsTestCase(colony.ColonyTestCase):
     def test_model_validation_error_with_model(self):
         # creates a mock model with validation errors
         mock_model = MockModelWithErrors()
-        exception = exceptions.ModelValidationError("validation failed", model=mock_model)
+        exception = exceptions.ModelValidationError(
+            "validation failed", model=mock_model
+        )
         self.assertEqual(exception.model, mock_model)
 
         # verifies string representation includes model info
@@ -252,7 +254,9 @@ class ExceptionsTestCase(colony.ColonyTestCase):
     def test_model_validation_error_get_validation_s_with_model(self):
         # creates a mock model with validation errors
         mock_model = MockModelWithErrors()
-        exception = exceptions.ModelValidationError("validation failed", model=mock_model)
+        exception = exceptions.ModelValidationError(
+            "validation failed", model=mock_model
+        )
         result = exception.get_validation_s()
         self.assertIn("email", result)
         self.assertIn("invalid format", result)
@@ -267,7 +271,9 @@ class ExceptionsTestCase(colony.ColonyTestCase):
     def test_controller_validation_error_with_controller(self):
         # creates exception with controller
         mock_controller = MockController()
-        exception = exceptions.ControllerValidationError("permission denied", controller=mock_controller)
+        exception = exceptions.ControllerValidationError(
+            "permission denied", controller=mock_controller
+        )
         self.assertEqual(exception.controller, mock_controller)
 
     def test_controller_validation_reason_failed(self):
@@ -286,7 +292,9 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         # creates exception with message
         exception = exceptions.ValidationMethodError("method not callable")
         self.assertEqual(exception.message, "method not callable")
-        self.assertEqual(str(exception), "Validation method error - method not callable")
+        self.assertEqual(
+            str(exception), "Validation method error - method not callable"
+        )
 
     def test_model_apply_exception(self):
         # creates exception with message
@@ -309,7 +317,9 @@ class ExceptionsTestCase(colony.ColonyTestCase):
             exceptions.ModelApplyException("test"),
         ]
         for exception in exception_list:
-            self.assertTrue(isinstance(exception, exceptions.MVCUtilsExceptionException))
+            self.assertTrue(
+                isinstance(exception, exceptions.MVCUtilsExceptionException)
+            )
             self.assertTrue(isinstance(exception, colony.ColonyException))
 
     def test_validation_error_inheritance(self):
