@@ -60,6 +60,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
         return "Service HTTP Base test case"
 
     def setUp(self):
+        colony.ColonyTestCase.setUp(self)
         # clears class-level maps to ensure test isolation
         system.ServiceHTTP.http_service_handler_plugins_map = {}
         system.ServiceHTTP.http_service_encoding_plugins_map = {}
