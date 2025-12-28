@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import calendar
 import datetime
 import time
 
@@ -785,7 +786,8 @@ class WSGIRequestCacheTestCase(colony.ColonyTestCase):
         )
 
         request = system.WSGIRequest(wsgi, environ)
-        old_timestamp = datetime.datetime(2022, 1, 1, 12, 0, 0).timestamp()
+        old_dt = datetime.datetime(2022, 1, 1, 12, 0, 0)
+        old_timestamp = calendar.timegm(old_dt.timetuple())
 
         result = request.verify_resource_modification(modified_timestamp=old_timestamp)
         self.assertEqual(result, False)
@@ -804,7 +806,8 @@ class WSGIRequestCacheTestCase(colony.ColonyTestCase):
         )
 
         request = system.WSGIRequest(wsgi, environ)
-        new_timestamp = datetime.datetime(2024, 1, 1, 12, 0, 0).timestamp()
+        new_date_time = datetime.datetime(2024, 1, 1, 12, 0, 0)
+        new_timestamp = calendar.timegm(new_date_time.timetuple())
 
         result = request.verify_resource_modification(modified_timestamp=new_timestamp)
         self.assertEqual(result, True)
