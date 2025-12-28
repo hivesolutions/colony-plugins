@@ -27,6 +27,7 @@ __license__ = "Apache License, Version 2.0"
 
 from . import exceptions
 from . import system
+from . import test
 
 from .exceptions import (
     ServiceHTTPException,
@@ -43,3 +44,4 @@ from .exceptions import (
     UnauthorizedException,
 )
 from .system import ServiceHTTP
+from .test import ServiceHTTPTest

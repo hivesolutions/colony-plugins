@@ -19,33 +19,38 @@
 # You should have received a copy of the Apache License along with
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import controller
-from . import entity_model
-from . import exceptions
-from . import model
-from . import system
-from . import test
-from . import utils
 
-from .exceptions import (
-    MVCUtilsExceptionException,
-    InvalidValidationMethod,
-    InvalidAttributeName,
-    InsufficientHTTPInformation,
-    NotFoundError,
-    ValidationError,
-    ModelValidationError,
-    ControllerValidationError,
-    ControllerValidationReasonFailed,
-    ValidationMethodError,
-    ModelApplyException,
-)
-from .system import MVCUtils
-from .test import MVCUtilsTest
-from .utils import validated, transaction, eager, serialized, Controller
+class MockPlugin(object):
+    def __init__(self):
+        self.authentication_handler_plugins = []
+
+
+class MockAuthHandler(object):
+    def __init__(self, handler_name):
+        self.handler_name = handler_name
+        self.return_value = {"valid": False}
+        self.raise_exception = False
+        self.exception = None
+
+    def get_handler_name(self):
+        return self.handler_name
+
+    def handle_request(self, request):
+        if self.raise_exception:
+            raise self.exception
+        return self.return_value
+
+
+class MockAuthException(Exception):
+    def __init__(self, message):
+        self.message = message
+        super(MockAuthException, self).__init__(message)

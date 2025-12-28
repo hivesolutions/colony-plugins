@@ -42,7 +42,7 @@ class MVCUtilsPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["mvc.utils"]
+    capabilities = ["mvc.utils", "test"]
     capabilities_allowed = ["template_engine"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.template_engine"),
@@ -59,6 +59,7 @@ class MVCUtilsPlugin(colony.Plugin):
         import mvc_utils
 
         self.system = mvc_utils.MVCUtils(self)
+        self.test = mvc_utils.MVCUtilsTest(self)
 
     def get_models(self, models_id):
         """

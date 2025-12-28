@@ -42,7 +42,7 @@ class AuthenticationPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
-    capabilities = ["authentication"]
+    capabilities = ["authentication", "test"]
     capabilities_allowed = ["authentication_handler"]
     main_modules = ["authentication"]
 
@@ -51,6 +51,7 @@ class AuthenticationPlugin(colony.Plugin):
         import authentication
 
         self.system = authentication.Authentication(self)
+        self.test = authentication.AuthenticationTest(self)
 
     def authenticate_user(self, username, password, authentication_handler, arguments):
         return self.system.authenticate_user(

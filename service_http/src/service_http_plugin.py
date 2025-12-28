@@ -46,7 +46,7 @@ class ServiceHTTPPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT,
         colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = ["service.http"]
+    capabilities = ["service.http", "test"]
     capabilities_allowed = [
         "http_service_handler",
         "http_service_encoding",
@@ -61,6 +61,7 @@ class ServiceHTTPPlugin(colony.Plugin):
         import service_http
 
         self.system = service_http.ServiceHTTP(self)
+        self.test = service_http.ServiceHTTPTest(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
