@@ -19,6 +19,7 @@ jobs:
           "3.10",
           "3.11",
           "3.12",
+          "3.13",
           latest,
           rc
         ]
@@ -34,7 +35,7 @@ jobs:
       - run: |
           pip install black
           black . --check
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.13'
       - run: python setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com
@@ -64,7 +65,7 @@ jobs:
       - run: |
           pip install black
           black . --check
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.13'
       - run: pypy setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com
@@ -79,6 +80,7 @@ jobs:
           "3.10",
           "3.11",
           "3.12",
+          "3.13",
           latest
         ]
     runs-on: ubuntu-24.04-arm
@@ -97,7 +99,12 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          "2.7"
+          "2.7",
+          #3.6,
+          #3.7,
+          #3.8,
+          #3.9,
+          #"3.10"
         ]
     runs-on: ubuntu-24.04-arm
     container: pypy:${{ matrix.python-version }}
