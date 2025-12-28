@@ -89,7 +89,47 @@ class ConsoleBase(colony.System):
         :param console_context: The console context for the processing.
         """
 
-        raise colony.PluginSystemException("not implemented")
+        # retrieves the extension id from the arguments map (optional)
+        extension_id = arguments_map.get("extension_id", None)
+
+        # if an extension id is specified, show help for that extension only
+        # otherwise show help for all available commands
+        if extension_id:
+            output_method("Help for extension: " + extension_id)
+            output_method("")
+
+        # outputs the header for the commands list
+        output_method("Available commands:")
+        output_method("")
+
+        # iterates over all commands in the commands map and
+        # prints each command name with its description
+        for command_name in sorted(self.commands_map.keys()):
+            # retrieves the command information
+            command_info = self.commands_map[command_name]
+
+            # retrieves the command description (tries both 'description' and 'help' keys)
+            command_description = command_info.get(
+                "description", command_info.get("help", "No description available")
+            )
+
+            # retrieves the command arguments for display
+            command_arguments = command_info.get("arguments", [])
+
+            # builds the arguments string for display
+            arguments_str = ""
+            for argument in command_arguments:
+                argument_name = argument.get("name", "arg")
+                is_mandatory = argument.get("mandatory", False)
+                if is_mandatory:
+                    arguments_str += " <" + argument_name + ">"
+                else:
+                    arguments_str += " [" + argument_name + "]"
+
+            # outputs the command name with arguments and description
+            output_method("  " + command_name + arguments_str)
+            output_method("      " + command_description)
+            output_method("")
 
     def process_helpall(self, arguments, arguments_map, output_method, console_context):
         """
@@ -106,7 +146,55 @@ class ConsoleBase(colony.System):
         :param console_context: The console context for the processing.
         """
 
-        raise colony.PluginSystemException("not implemented")
+        # outputs the header with extension name
+        output_method("Console Extension: " + CONSOLE_EXTENSION_NAME)
+        output_method("=" * 40)
+        output_method("")
+
+        # outputs the header for the commands list
+        output_method("Available commands:")
+        output_method("")
+
+        # iterates over all commands in the commands map and
+        # prints each command name with its description
+        for command_name in sorted(self.commands_map.keys()):
+            # retrieves the command information
+            command_info = self.commands_map[command_name]
+
+            # retrieves the command description (tries both 'description' and 'help' keys)
+            command_description = command_info.get(
+                "description", command_info.get("help", "No description available")
+            )
+
+            # retrieves the command arguments for display
+            command_arguments = command_info.get("arguments", [])
+
+            # builds the arguments string for display
+            arguments_str = ""
+            for argument in command_arguments:
+                argument_name = argument.get("name", "arg")
+                is_mandatory = argument.get("mandatory", False)
+                if is_mandatory:
+                    arguments_str += " <" + argument_name + ">"
+                else:
+                    arguments_str += " [" + argument_name + "]"
+
+            # outputs the command name with arguments and description
+            output_method("  " + command_name + arguments_str)
+            output_method("      " + command_description)
+
+            # outputs argument details if there are any
+            for argument in command_arguments:
+                argument_name = argument.get("name", "arg")
+                argument_description = argument.get("description", "")
+                is_mandatory = argument.get("mandatory", False)
+                mandatory_str = " (required)" if is_mandatory else " (optional)"
+                if argument_description:
+                    output_method(
+                        "        " + argument_name + ": " + argument_description + mandatory_str
+                    )
+
+            output_method("")
 
     def process_extensions(
         self, arguments, arguments_map, output_method, console_context
@@ -125,7 +213,21 @@ class ConsoleBase(colony.System):
         :param console_context: The console context for the processing.
         """
 
-        raise colony.PluginSystemException("not implemented")
+        # outputs the header for the extensions list
+        output_method("Loaded console extensions:")
+        output_method("")
+
+        # retrieves the number of commands in this extension
+        commands_count = len(self.commands_map)
+
+        # outputs information about this extension
+        output_method(
+            "  " + CONSOLE_EXTENSION_NAME + " - " + str(commands_count) + " command(s)"
+        )
+        output_method("")
+
+        # outputs a hint to use help for more information
+        output_method("Use 'help [extension_id]' for detailed command information.")
 
     def process_status(self, arguments, arguments_map, output_method, console_context):
         """
