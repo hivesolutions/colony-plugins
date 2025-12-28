@@ -42,10 +42,7 @@ class CryptonTest(colony.Test):
     """
 
     def get_bundle(self):
-        return (
-            CryptonSystemTestCase,
-            CryptonExceptionsTestCase,
-        )
+        return (CryptonBaseTestCase,)
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -54,20 +51,12 @@ class CryptonTest(colony.Test):
         colony.Test.tear_down(self, test_case)
 
 
-class CryptonSystemTestCase(colony.ColonyTestCase):
-    """
-    Test case for the Crypton system class.
-    Tests initialization and configuration management.
-    """
-
+class CryptonBaseTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
-        return "Crypton System test case"
+        return "Crypton Base test case"
 
     def test_initialization(self):
-        """
-        Tests that Crypton system initializes with empty maps.
-        """
         mock_plugin = MockPlugin()
         crypton = Crypton(mock_plugin)
 
@@ -75,13 +64,10 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
         self.assertEqual(crypton.security_map, {})
 
     def test_set_configuration_property(self):
-        """
-        Tests setting configuration property updates keys and security maps.
-        """
         mock_plugin = MockPlugin()
         crypton = Crypton(mock_plugin)
 
-        # creates a mock configuration property
+        # creates a mock configuration property with keys and security
         config_property = MockConfigurationProperty(
             {
                 "keys": {
@@ -94,26 +80,24 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
             }
         )
 
-        # sets the configuration property
+        # sets the configuration property and verifies the maps were updated
         crypton.set_configuration_property(config_property)
 
-        # verifies the keys map was updated
         self.assertNotEqual(crypton.keys_map, {})
-        self.assertEqual(crypton.keys_map["test_key"]["private_key"], "/path/to/private.key")
-        self.assertEqual(crypton.keys_map["test_key"]["public_key"], "/path/to/public.key")
-
-        # verifies the security map was updated
+        self.assertEqual(
+            crypton.keys_map["test_key"]["private_key"], "/path/to/private.key"
+        )
+        self.assertEqual(
+            crypton.keys_map["test_key"]["public_key"], "/path/to/public.key"
+        )
         self.assertNotEqual(crypton.security_map, {})
         self.assertEqual(crypton.security_map["validate_api_key"], True)
 
     def test_unset_configuration_property(self):
-        """
-        Tests unsetting configuration property clears keys and security maps.
-        """
         mock_plugin = MockPlugin()
         crypton = Crypton(mock_plugin)
 
-        # first sets some configuration
+        # sets some configuration first
         config_property = MockConfigurationProperty(
             {
                 "keys": {"test_key": {"private_key": "/path/to/key"}},
@@ -126,20 +110,17 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
         self.assertNotEqual(crypton.keys_map, {})
         self.assertNotEqual(crypton.security_map, {})
 
-        # unsets the configuration
+        # unsets the configuration and verifies maps are now empty
         crypton.unset_configuration_property()
 
-        # verifies maps are now empty
         self.assertEqual(crypton.keys_map, {})
         self.assertEqual(crypton.security_map, {})
 
-    def test_set_multiple_keys(self):
-        """
-        Tests setting configuration with multiple keys.
-        """
+    def test_set_configuration_multiple_keys(self):
         mock_plugin = MockPlugin()
         crypton = Crypton(mock_plugin)
 
+        # creates configuration with multiple keys
         config_property = MockConfigurationProperty(
             {
                 "keys": {
@@ -168,13 +149,10 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
         self.assertIn("development_key", crypton.keys_map)
 
     def test_get_controller(self):
-        """
-        Tests get_controller method retrieves controllers correctly.
-        """
         mock_plugin = MockPlugin()
         crypton = Crypton(mock_plugin)
 
-        # adds mock controllers
+        # adds mock controllers to the crypton instance
         mock_main_controller = MockController("main")
         mock_signature_controller = MockController("signature")
         crypton.controllers = {
@@ -182,7 +160,7 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
             "signature": mock_signature_controller,
         }
 
-        # retrieves controllers
+        # retrieves controllers and verifies they are correct
         main = crypton.get_controller("main")
         signature = crypton.get_controller("signature")
 
@@ -190,13 +168,10 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
         self.assertEqual(signature.name, "signature")
 
     def test_get_patterns(self):
-        """
-        Tests that get_patterns returns valid route patterns.
-        """
         mock_plugin = MockPlugin()
         crypton = Crypton(mock_plugin)
 
-        # creates mock controllers
+        # creates mock controllers with required methods
         mock_main = MockController("main")
         mock_main.encrypt = lambda r: None
         mock_main.decrypt = lambda r: None
@@ -209,16 +184,14 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
         crypton.main_controller = mock_main
         crypton.consumer_controller = mock_consumer
 
+        # retrieves patterns and verifies structure
         patterns = crypton.get_patterns()
 
-        # verifies patterns structure
         self.assertEqual(len(patterns), 5)
-
-        # verifies each pattern is a 3-tuple (route, handler, method)
         for pattern in patterns:
             self.assertEqual(len(pattern), 3)
 
-        # verifies routes
+        # verifies all expected routes are present
         routes = [p[0] for p in patterns]
         self.assertIn("crypton/encrypt", routes)
         self.assertIn("crypton/decrypt", routes)
@@ -226,44 +199,22 @@ class CryptonSystemTestCase(colony.ColonyTestCase):
         self.assertIn("crypton/verify", routes)
         self.assertIn("crypton/consumers", routes)
 
-
-class CryptonExceptionsTestCase(colony.ColonyTestCase):
-    """
-    Test case for Crypton exceptions.
-    """
-
-    @staticmethod
-    def get_description():
-        return "Crypton Exceptions test case"
-
-    def test_crypton_exception_base(self):
-        """
-        Tests base CryptonException class.
-        """
+    def test_crypton_exception(self):
         exception = CryptonException()
         self.assertEqual(exception.message, None)
 
     def test_access_denied_exception(self):
-        """
-        Tests AccessDeniedException with message.
-        """
         exception = AccessDeniedException("invalid API key")
 
         self.assertEqual(exception.message, "invalid API key")
         self.assertEqual(str(exception), "Access denied exception - invalid API key")
 
     def test_access_denied_exception_unicode(self):
-        """
-        Tests AccessDeniedException with unicode message.
-        """
         exception = AccessDeniedException(colony.legacy.u("访问被拒绝"))
 
         self.assertEqual(exception.message, colony.legacy.u("访问被拒绝"))
 
     def test_access_denied_exception_inheritance(self):
-        """
-        Tests that AccessDeniedException inherits from CryptonException.
-        """
         exception = AccessDeniedException("test")
 
         self.assertTrue(isinstance(exception, CryptonException))
@@ -271,10 +222,6 @@ class CryptonExceptionsTestCase(colony.ColonyTestCase):
 
 
 class MockPlugin:
-    """
-    Mock plugin for testing Crypton system.
-    """
-
     def __init__(self):
         self.mvc_utils_plugin = None
         self.ssl_plugin = None
@@ -282,10 +229,6 @@ class MockPlugin:
 
 
 class MockConfigurationProperty:
-    """
-    Mock configuration property for testing.
-    """
-
     def __init__(self, data):
         self._data = data
 
@@ -294,9 +237,5 @@ class MockConfigurationProperty:
 
 
 class MockController:
-    """
-    Mock controller for testing.
-    """
-
     def __init__(self, name):
         self.name = name
