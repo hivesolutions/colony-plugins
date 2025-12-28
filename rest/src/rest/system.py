@@ -1716,11 +1716,11 @@ class RESTRequest(object):
 
         # retrieves the plugin manager for the current context
         return plugin_manager
-    
+
     def get_server_software(self):
         """
         Retrieves the server software for the current request.
-        
+
         :rtype: String
         :return: The server software for the current request.
         """

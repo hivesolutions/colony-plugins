@@ -357,7 +357,7 @@ class WSGIRequest(object):
     this request object may be used as a compatibility mock to
     the internal HTTP request object and as such must comply with
     with the same interface (protocol).
-    
+
     Additional methods may be added to this class to provide
     additional functionality to the request object, but cannot
     be used in the internal HTTP request object lifecycle.
