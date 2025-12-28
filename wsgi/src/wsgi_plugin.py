@@ -33,7 +33,17 @@ import colony
 
 class WSGIPlugin(colony.Plugin):
     """
-    The main class for the WSGI plugin.
+    The main class for the WSGI plugin, providing a bridge between
+    WSGI-compliant web servers and the Colony Framework.
+
+    This plugin enables Colony applications to run behind standard
+    WSGI servers (e.g., Gunicorn, uWSGI, mod_wsgi) by translating
+    the WSGI environ dictionary into Colony request objects and
+    forwarding them to the REST plugin for handling.
+
+    The plugin delegates the core logic to the WSGI system class,
+    which manages request/response translation, CORS headers, and
+    error handling according to PEP 333/3333 specifications.
     """
 
     id = "pt.hive.colony.plugins.wsgi"
@@ -47,7 +57,7 @@ class WSGIPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT,
         colony.IRON_PYTHON_ENVIRONMENT,
     ]
-    capabilities = ["wsgi"]
+    capabilities = ["wsgi", "test"]
     dependencies = [colony.PluginDependency("pt.hive.colony.plugins.rest")]
     main_modules = ["wsgi"]
 
@@ -56,6 +66,7 @@ class WSGIPlugin(colony.Plugin):
         import wsgi
 
         self.system = wsgi.WSGI(self)
+        self.test = wsgi.WSGITest(self)
 
     def handle(self, environ, start_response, prefix, alias, rewrite):
         return self.system.handle(environ, start_response, prefix, alias, rewrite)

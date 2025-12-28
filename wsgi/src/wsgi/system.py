@@ -437,6 +437,19 @@ class WSGIRequest(object):
     meant to be mediated (generator based) or is a
     single content buffer is used (default) """
 
+    mediated_handler = None
+    """ The handler object that is going to be used
+    to retrieve the chunks of data for mediated responses,
+    must implement get_chunk() and get_size() methods """
+
+    chunked_encoding = False
+    """ Flag indicating if the current response is
+    using chunked transfer encoding """
+
+    cookies_allowed = True
+    """ Flag indicating if cookies are allowed for
+    the current request/response cycle """
+
     content_type_charset = None
     """ The content type charset that is going to be
     used to encode the underlying message buffer, this
@@ -927,10 +940,10 @@ class WSGIRequest(object):
         pass
 
     def allow_cookies(self):
-        self.allow_cookies = True
+        self.cookies_allowed = True
 
     def deny_cookies(self):
-        self.allow_cookies = False
+        self.cookies_allowed = False
 
     def is_mediated(self):
         return self.mediated
