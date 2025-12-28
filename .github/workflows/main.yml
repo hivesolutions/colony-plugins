@@ -69,15 +69,35 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
-  build-pypy-arm:
-    name: Build PyPy ARM
+  build-arm:
+    name: Build ARM
     timeout-minutes: 10
     strategy:
       matrix:
         python-version: [
           "3.9",
           "3.10",
-          "3.11"
+          "3.11",
+          "3.12",
+          latest
+        ]
+    runs-on: ubuntu-24.04-arm
+    container: python:${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python --version
+      - run: pip install -r requirements.txt
+      - run: python setup.py test
+        env:
+          HTTPBIN: httpbin.bemisc.com
+          PLUGIN_PATH: ./*/src;./*/*src
+  build-pypy-arm:
+    name: Build PyPy ARM
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: [
+          "2.7"
         ]
     runs-on: ubuntu-24.04-arm
     container: pypy:${{ matrix.python-version }}
