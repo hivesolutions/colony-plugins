@@ -366,8 +366,8 @@ class ServiceHTTPFile(colony.System):
 
             # retrieves the file properties
             file_size = file_stat[stat.ST_SIZE]
-            file_modified_date = datetime.datetime.fromtimestamp(
-                file_stat[stat.ST_MTIME]
+            file_modified_date = datetime.datetime.utcfromtimestamp(
+                int(file_stat[stat.ST_MTIME])
             )
 
             # retrieves the file mode
