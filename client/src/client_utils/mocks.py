@@ -29,7 +29,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 
-class MockPlugin:
+class MockPlugin(object):
     def __init__(self):
         self.manager = None
 
@@ -37,7 +37,7 @@ class MockPlugin:
         pass
 
 
-class MockSocketProviderPlugin:
+class MockSocketProviderPlugin(object):
     def __init__(self, name):
         self._provider_name = name
 
@@ -48,7 +48,7 @@ class MockSocketProviderPlugin:
         return MockSocket()
 
 
-class MockSocketUpgraderPlugin:
+class MockSocketUpgraderPlugin(object):
     def __init__(self, name):
         self._upgrader_name = name
 
@@ -59,7 +59,7 @@ class MockSocketUpgraderPlugin:
         return socket
 
 
-class MockSocket:
+class MockSocket(object):
     def __init__(self):
         self.blocking = True
 

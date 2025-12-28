@@ -29,13 +29,13 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 
-class MockPlugin:
+class MockPlugin(object):
     def __init__(self):
         self.service_utils_plugin = None
         self.manager = None
 
 
-class MockConfigurationProperty:
+class MockConfigurationProperty(object):
     def __init__(self, data):
         self._data = data
 
@@ -43,7 +43,7 @@ class MockConfigurationProperty:
         return self._data
 
 
-class MockHandlerPlugin:
+class MockHandlerPlugin(object):
     def __init__(self, name):
         self._handler_name = name
 
@@ -51,7 +51,7 @@ class MockHandlerPlugin:
         return self._handler_name
 
 
-class MockEncodingPlugin:
+class MockEncodingPlugin(object):
     def __init__(self, name):
         self._encoding_name = name
 
@@ -59,7 +59,7 @@ class MockEncodingPlugin:
         return self._encoding_name
 
 
-class MockAuthHandlerPlugin:
+class MockAuthHandlerPlugin(object):
     def __init__(self, name):
         self._handler_name = name
 
@@ -67,7 +67,7 @@ class MockAuthHandlerPlugin:
         return self._handler_name
 
 
-class MockErrorHandlerPlugin:
+class MockErrorHandlerPlugin(object):
     def __init__(self, name):
         self._error_handler_name = name
 

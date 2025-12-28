@@ -29,7 +29,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 
-class MockPlugin:
+class MockPlugin(object):
     def __init__(self):
         self.mvc_utils_plugin = None
         self.template_engine_plugin = None
@@ -42,11 +42,11 @@ class MockPlugin:
         self.template_engine = []
 
 
-class MockController:
+class MockController(object):
     def __init__(self):
         self.name = "test_controller"
 
 
-class MockModelWithErrors:
+class MockModelWithErrors(object):
     def __init__(self):
         self.validation_errors_map = {"email": ["invalid format", "required"]}

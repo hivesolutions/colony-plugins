@@ -29,12 +29,12 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 
-class MockPlugin:
+class MockPlugin(object):
     def __init__(self):
         self.authentication_handler_plugins = []
 
 
-class MockAuthHandler:
+class MockAuthHandler(object):
     def __init__(self, handler_name):
         self.handler_name = handler_name
         self.return_value = {"valid": False}
