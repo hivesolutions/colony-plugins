@@ -24,12 +24,15 @@ RUN_MODE=development DB_ENGINE=sqlite HTTPBIN=httpbin.bemisc.com PLUGIN_PATH=./*
 ### Writing Tests
 
 #### File Structure
+
 - Tests are placed in `test.py` within each module (e.g., `client/src/client_utils/test.py`)
 - Mock classes go in a separate `mocks.py` file in the same directory
 - Register tests in `__init__.py` with `from . import test`
 
 #### Import Style
+
 Use module-level imports with prefix access:
+
 ```python
 from . import system
 from . import exceptions
@@ -40,6 +43,7 @@ service = system.ServiceHTTP(mocks.MockPlugin())
 ```
 
 #### Test Class Structure
+
 ```python
 class ModuleNameTest(colony.Test):
     """
@@ -70,7 +74,9 @@ class SomeTestCase(colony.ColonyTestCase):
 ```
 
 #### Plugin Registration
+
 Add test capability to the plugin file:
+
 ```python
 capabilities = [
     "existing_capability",
@@ -83,7 +89,9 @@ def load_plugin(self):
 ```
 
 #### Test Isolation
+
 When overriding `setUp`, always call parent first:
+
 ```python
 def setUp(self):
     colony.ColonyTestCase.setUp(self)
@@ -91,6 +99,7 @@ def setUp(self):
 ```
 
 For class-level state, save in `setUp` and restore in `tearDown`:
+
 ```python
 def setUp(self):
     colony.ColonyTestCase.setUp(self)
