@@ -2590,7 +2590,7 @@ class RESTSession(object):
         and only available through secure connections.
         """
 
-        current_timestamp = int(time.time())
+        current_timestamp = time.time()
         expires_timestamp = current_timestamp + DEFAULT_EXPIRATION_DELTA_TIMESTAMP
         expires_date_time = datetime.datetime.utcfromtimestamp(expires_timestamp)
         expires_date_time_formatted = expires_date_time.strftime(DATE_FORMAT)
