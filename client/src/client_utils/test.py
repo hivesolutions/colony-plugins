@@ -30,22 +30,8 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-from .system import ClientUtils
-from .system import AbstractClient
-from .system import ClientConnection
-from .system import CHUNK_SIZE
-from .system import REQUEST_TIMEOUT
-from .system import RESPONSE_TIMEOUT
-from .system import CONNECTION_TIMEOUT
-from .system import CLIENT_CONNECTION_TIMEOUT
-from .exceptions import ClientUtilsException
-from .exceptions import SocketProviderNotFound
-from .exceptions import SocketUpgraderNotFound
-from .exceptions import ClientRequestTimeout
-from .exceptions import ServerRequestTimeout
-from .exceptions import ClientResponseTimeout
-from .exceptions import ServerResponseTimeout
-from .exceptions import RequestClosed
+from . import system
+from . import exceptions
 
 
 class ClientUtilsTest(colony.Test):
@@ -76,7 +62,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_initialization(self):
         # creates a mock plugin and initializes the client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # verifies the maps are initialized empty
         self.assertEqual(client_utils.socket_provider_plugins_map, {})
@@ -85,21 +71,21 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_generate_client(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # generates a client with empty parameters
         client = client_utils.generate_client({})
 
         # verifies the client was created correctly
         self.assertNotEqual(client, None)
-        self.assertTrue(isinstance(client, AbstractClient))
+        self.assertTrue(isinstance(client, system.AbstractClient))
         self.assertEqual(client.client_utils, client_utils)
         self.assertEqual(client.client_utils_plugin, mock_plugin)
 
     def test_generate_client_with_parameters(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # generates a client with custom parameters
         parameters = {
@@ -119,7 +105,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_socket_provider_load(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # creates a mock socket provider plugin
         socket_provider = MockSocketProviderPlugin("normal")
@@ -136,7 +122,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_socket_provider_unload(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # creates and loads a mock socket provider
         socket_provider = MockSocketProviderPlugin("ssl")
@@ -154,7 +140,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_socket_upgrader_load(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # creates a mock socket upgrader plugin
         socket_upgrader = MockSocketUpgraderPlugin("ssl_upgrader")
@@ -171,7 +157,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_socket_upgrader_unload(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # creates and loads a mock socket upgrader
         socket_upgrader = MockSocketUpgraderPlugin("tls_upgrader")
@@ -189,7 +175,7 @@ class ClientUtilsBaseTestCase(colony.ColonyTestCase):
     def test_multiple_socket_providers(self):
         # creates a mock plugin and client utils
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # loads multiple socket providers
         providers = ["normal", "ssl", "tls"]
@@ -211,24 +197,24 @@ class AbstractClientTestCase(colony.ColonyTestCase):
     def test_initialization_defaults(self):
         # creates mock objects
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # creates a client with default parameters
-        client = AbstractClient(client_utils, mock_plugin)
+        client = system.AbstractClient(client_utils, mock_plugin)
 
         # verifies default values
         self.assertEqual(client.client_type, "connection")
-        self.assertEqual(client.chunk_size, CHUNK_SIZE)
-        self.assertEqual(client.client_connection_timeout, CLIENT_CONNECTION_TIMEOUT)
-        self.assertEqual(client.connection_timeout, CONNECTION_TIMEOUT)
-        self.assertEqual(client.request_timeout, REQUEST_TIMEOUT)
-        self.assertEqual(client.response_timeout, RESPONSE_TIMEOUT)
+        self.assertEqual(client.chunk_size, system.CHUNK_SIZE)
+        self.assertEqual(client.client_connection_timeout, system.CLIENT_CONNECTION_TIMEOUT)
+        self.assertEqual(client.connection_timeout, system.CONNECTION_TIMEOUT)
+        self.assertEqual(client.request_timeout, system.REQUEST_TIMEOUT)
+        self.assertEqual(client.response_timeout, system.RESPONSE_TIMEOUT)
         self.assertEqual(client.client_connections_map, {})
 
     def test_initialization_custom_parameters(self):
         # creates mock objects
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
 
         # creates custom parameters
         parameters = {
@@ -241,7 +227,7 @@ class AbstractClientTestCase(colony.ColonyTestCase):
         }
 
         # creates a client with custom parameters
-        client = AbstractClient(client_utils, mock_plugin, parameters)
+        client = system.AbstractClient(client_utils, mock_plugin, parameters)
 
         # verifies custom values were applied
         self.assertEqual(client.client_type, "udp")
@@ -254,8 +240,8 @@ class AbstractClientTestCase(colony.ColonyTestCase):
     def test_start_stop_client(self):
         # creates mock objects
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
-        client = AbstractClient(client_utils, mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
+        client = system.AbstractClient(client_utils, mock_plugin)
 
         # verifies start does not raise
         client.start_client()
@@ -266,8 +252,8 @@ class AbstractClientTestCase(colony.ColonyTestCase):
     def test_generate_connection_tuple_hashable(self):
         # creates mock objects
         mock_plugin = MockPlugin()
-        client_utils = ClientUtils(mock_plugin)
-        client = AbstractClient(client_utils, mock_plugin)
+        client_utils = system.ClientUtils(mock_plugin)
+        client = system.AbstractClient(client_utils, mock_plugin)
 
         # creates a connection tuple with dictionary
         connection_tuple = ("localhost", 8080, True, "normal", {"key": "value"})
@@ -296,64 +282,64 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_client_utils_exception(self):
         # creates a base exception
-        exception = ClientUtilsException()
+        exception = exceptions.ClientUtilsException()
         self.assertEqual(exception.message, None)
 
     def test_socket_provider_not_found(self):
         # creates exception with message
-        exception = SocketProviderNotFound("ssl provider")
+        exception = exceptions.SocketProviderNotFound("ssl provider")
         self.assertEqual(exception.message, "ssl provider")
         self.assertEqual(str(exception), "Socket provider not found - ssl provider")
 
     def test_socket_upgrader_not_found(self):
         # creates exception with message
-        exception = SocketUpgraderNotFound("tls upgrader")
+        exception = exceptions.SocketUpgraderNotFound("tls upgrader")
         self.assertEqual(exception.message, "tls upgrader")
         self.assertEqual(str(exception), "Socket upgrader not found - tls upgrader")
 
     def test_client_request_timeout(self):
         # creates exception with message
-        exception = ClientRequestTimeout("120s timeout")
+        exception = exceptions.ClientRequestTimeout("120s timeout")
         self.assertEqual(exception.message, "120s timeout")
         self.assertEqual(str(exception), "Client request timeout - 120s timeout")
 
     def test_server_request_timeout(self):
         # creates exception with message
-        exception = ServerRequestTimeout("30s timeout")
+        exception = exceptions.ServerRequestTimeout("30s timeout")
         self.assertEqual(exception.message, "30s timeout")
         self.assertEqual(str(exception), "Server request timeout - 30s timeout")
 
     def test_client_response_timeout(self):
         # creates exception with message
-        exception = ClientResponseTimeout("60s timeout")
+        exception = exceptions.ClientResponseTimeout("60s timeout")
         self.assertEqual(exception.message, "60s timeout")
         self.assertEqual(str(exception), "Client response timeout - 60s timeout")
 
     def test_server_response_timeout(self):
         # creates exception with message
-        exception = ServerResponseTimeout("45s timeout")
+        exception = exceptions.ServerResponseTimeout("45s timeout")
         self.assertEqual(exception.message, "45s timeout")
         self.assertEqual(str(exception), "Server response timeout - 45s timeout")
 
     def test_request_closed(self):
         # creates exception with message
-        exception = RequestClosed("connection reset")
+        exception = exceptions.RequestClosed("connection reset")
         self.assertEqual(exception.message, "connection reset")
         self.assertEqual(str(exception), "Request closed - connection reset")
 
     def test_exception_inheritance(self):
         # verifies all exceptions inherit from base
-        exceptions = [
-            SocketProviderNotFound("test"),
-            SocketUpgraderNotFound("test"),
-            ClientRequestTimeout("test"),
-            ServerRequestTimeout("test"),
-            ClientResponseTimeout("test"),
-            ServerResponseTimeout("test"),
-            RequestClosed("test"),
+        exception_list = [
+            exceptions.SocketProviderNotFound("test"),
+            exceptions.SocketUpgraderNotFound("test"),
+            exceptions.ClientRequestTimeout("test"),
+            exceptions.ServerRequestTimeout("test"),
+            exceptions.ClientResponseTimeout("test"),
+            exceptions.ServerResponseTimeout("test"),
+            exceptions.RequestClosed("test"),
         ]
-        for exception in exceptions:
-            self.assertTrue(isinstance(exception, ClientUtilsException))
+        for exception in exception_list:
+            self.assertTrue(isinstance(exception, exceptions.ClientUtilsException))
             self.assertTrue(isinstance(exception, colony.ColonyException))
 
 

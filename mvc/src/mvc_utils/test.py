@@ -30,20 +30,8 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-from .system import MVCUtils
-from .system import RawModel
-from .system import DataReferenceModel
-from .exceptions import MVCUtilsExceptionException
-from .exceptions import InvalidValidationMethod
-from .exceptions import InvalidAttributeName
-from .exceptions import InsufficientHTTPInformation
-from .exceptions import NotFoundError
-from .exceptions import ValidationError
-from .exceptions import ModelValidationError
-from .exceptions import ControllerValidationError
-from .exceptions import ControllerValidationReasonFailed
-from .exceptions import ValidationMethodError
-from .exceptions import ModelApplyException
+from . import system
+from . import exceptions
 
 
 class MVCUtilsTest(colony.Test):
@@ -74,7 +62,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
     def test_initialization(self):
         # creates a mock plugin and initializes mvc utils
         mock_plugin = MockPlugin()
-        mvc_utils = MVCUtils(mock_plugin)
+        mvc_utils = system.MVCUtils(mock_plugin)
 
         # verifies the maps are initialized
         self.assertEqual(mvc_utils.models_modules_map, {})
@@ -84,7 +72,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
     def test_get_models_not_found(self):
         # creates a mock plugin and mvc utils
         mock_plugin = MockPlugin()
-        mvc_utils = MVCUtils(mock_plugin)
+        mvc_utils = system.MVCUtils(mock_plugin)
 
         # verifies getting a non-existent models id raises exception
         raised = False
@@ -97,7 +85,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
     def test_convert_controller_name(self):
         # creates a mock plugin and mvc utils
         mock_plugin = MockPlugin()
-        mvc_utils = MVCUtils(mock_plugin)
+        mvc_utils = system.MVCUtils(mock_plugin)
 
         # tests controller name conversion
         ref_name, base_name = mvc_utils._convert_controller_name("MainController")
@@ -107,7 +95,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
     def test_convert_controller_name_with_prefix(self):
         # creates a mock plugin and mvc utils
         mock_plugin = MockPlugin()
-        mvc_utils = MVCUtils(mock_plugin)
+        mvc_utils = system.MVCUtils(mock_plugin)
 
         # tests controller name conversion with prefix
         ref_name, base_name = mvc_utils._convert_controller_name(
@@ -119,7 +107,7 @@ class MVCUtilsBaseTestCase(colony.ColonyTestCase):
     def test_convert_controller_name_complex(self):
         # creates a mock plugin and mvc utils
         mock_plugin = MockPlugin()
-        mvc_utils = MVCUtils(mock_plugin)
+        mvc_utils = system.MVCUtils(mock_plugin)
 
         # tests complex controller name conversion
         ref_name, base_name = mvc_utils._convert_controller_name(
@@ -136,11 +124,11 @@ class RawModelTestCase(colony.ColonyTestCase):
 
     def test_data_reference_model(self):
         # verifies data reference model has the flag
-        self.assertEqual(DataReferenceModel.data_reference, True)
+        self.assertEqual(system.DataReferenceModel.data_reference, True)
 
     def test_raw_model_creation(self):
         # creates a raw model subclass for testing
-        class TestModel(RawModel):
+        class TestModel(system.RawModel):
             def __init__(self):
                 self.name = "test"
 
@@ -150,7 +138,7 @@ class RawModelTestCase(colony.ColonyTestCase):
 
     def test_raw_model_has_value(self):
         # creates a raw model subclass for testing
-        class TestModel(RawModel):
+        class TestModel(system.RawModel):
             pass
 
         # creates an instance and sets a value
@@ -163,7 +151,7 @@ class RawModelTestCase(colony.ColonyTestCase):
 
     def test_raw_model_get_value(self):
         # creates a raw model subclass for testing
-        class TestModel(RawModel):
+        class TestModel(system.RawModel):
             pass
 
         # creates an instance and sets a value
@@ -180,7 +168,7 @@ class RawModelTestCase(colony.ColonyTestCase):
 
     def test_raw_model_attach_detach(self):
         # creates a raw model subclass for testing
-        class TestModel(RawModel):
+        class TestModel(system.RawModel):
             pass
 
         # creates an instance
@@ -198,24 +186,24 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_mvc_utils_exception(self):
         # creates a base exception
-        exception = MVCUtilsExceptionException()
+        exception = exceptions.MVCUtilsExceptionException()
         self.assertEqual(exception.message, None)
 
     def test_invalid_validation_method(self):
         # creates exception with message
-        exception = InvalidValidationMethod("unknown_method")
+        exception = exceptions.InvalidValidationMethod("unknown_method")
         self.assertEqual(exception.message, "unknown_method")
         self.assertEqual(str(exception), "Invalid validation method - unknown_method")
 
     def test_invalid_attribute_name(self):
         # creates exception with message
-        exception = InvalidAttributeName("123invalid")
+        exception = exceptions.InvalidAttributeName("123invalid")
         self.assertEqual(exception.message, "123invalid")
         self.assertEqual(str(exception), "Invalid attribute name - 123invalid")
 
     def test_insufficient_http_information(self):
         # creates exception with message
-        exception = InsufficientHTTPInformation("missing host header")
+        exception = exceptions.InsufficientHTTPInformation("missing host header")
         self.assertEqual(exception.message, "missing host header")
         self.assertEqual(
             str(exception), "Insufficient HTTP information - missing host header"
@@ -223,32 +211,32 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_not_found_error(self):
         # creates exception with message
-        exception = NotFoundError("user not found")
+        exception = exceptions.NotFoundError("user not found")
         self.assertEqual(exception.message, "user not found")
         self.assertEqual(exception.status_code, 404)
         self.assertEqual(str(exception), "Not found error - user not found")
 
     def test_validation_error(self):
         # creates exception with message
-        exception = ValidationError("invalid email format")
+        exception = exceptions.ValidationError("invalid email format")
         self.assertEqual(exception.message, "invalid email format")
         self.assertEqual(str(exception), "Validation error - invalid email format")
 
     def test_validation_error_with_variable(self):
         # creates exception with message and variable
-        exception = ValidationError("required field", variable="email")
+        exception = exceptions.ValidationError("required field", variable="email")
         self.assertEqual(exception.message, "required field")
         self.assertEqual(exception.variable, "email")
 
     def test_model_validation_error(self):
         # creates exception with message
-        exception = ModelValidationError("validation failed")
+        exception = exceptions.ModelValidationError("validation failed")
         self.assertEqual(exception.message, "validation failed")
 
     def test_model_validation_error_with_model(self):
         # creates a mock model with validation errors
         mock_model = MockModelWithErrors()
-        exception = ModelValidationError("validation failed", model=mock_model)
+        exception = exceptions.ModelValidationError("validation failed", model=mock_model)
         self.assertEqual(exception.model, mock_model)
 
         # verifies string representation includes model info
@@ -257,21 +245,21 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_model_validation_error_get_validation_s(self):
         # creates exception without model
-        exception = ModelValidationError("validation failed")
+        exception = exceptions.ModelValidationError("validation failed")
         result = exception.get_validation_s()
         self.assertEqual(result, "no model defined")
 
     def test_model_validation_error_get_validation_s_with_model(self):
         # creates a mock model with validation errors
         mock_model = MockModelWithErrors()
-        exception = ModelValidationError("validation failed", model=mock_model)
+        exception = exceptions.ModelValidationError("validation failed", model=mock_model)
         result = exception.get_validation_s()
         self.assertIn("email", result)
         self.assertIn("invalid format", result)
 
     def test_controller_validation_error(self):
         # creates exception with message
-        exception = ControllerValidationError("access denied")
+        exception = exceptions.ControllerValidationError("access denied")
         self.assertEqual(exception.message, "access denied")
         self.assertEqual(exception.status_code, 403)
         self.assertEqual(str(exception), "Controller validation error - access denied")
@@ -279,13 +267,13 @@ class ExceptionsTestCase(colony.ColonyTestCase):
     def test_controller_validation_error_with_controller(self):
         # creates exception with controller
         mock_controller = MockController()
-        exception = ControllerValidationError("permission denied", controller=mock_controller)
+        exception = exceptions.ControllerValidationError("permission denied", controller=mock_controller)
         self.assertEqual(exception.controller, mock_controller)
 
     def test_controller_validation_reason_failed(self):
         # creates exception with reasons
         reasons = ["invalid token", "expired session"]
-        exception = ControllerValidationReasonFailed(
+        exception = exceptions.ControllerValidationReasonFailed(
             "authentication failed", reasons_list=reasons
         )
         self.assertEqual(exception.message, "authentication failed")
@@ -296,43 +284,43 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_validation_method_error(self):
         # creates exception with message
-        exception = ValidationMethodError("method not callable")
+        exception = exceptions.ValidationMethodError("method not callable")
         self.assertEqual(exception.message, "method not callable")
         self.assertEqual(str(exception), "Validation method error - method not callable")
 
     def test_model_apply_exception(self):
         # creates exception with message
-        exception = ModelApplyException("cannot apply data")
+        exception = exceptions.ModelApplyException("cannot apply data")
         self.assertEqual(exception.message, "cannot apply data")
         self.assertEqual(str(exception), "Model apply exception - cannot apply data")
 
     def test_exception_inheritance(self):
         # verifies all exceptions inherit from base
-        exceptions = [
-            InvalidValidationMethod("test"),
-            InvalidAttributeName("test"),
-            InsufficientHTTPInformation("test"),
-            NotFoundError("test"),
-            ValidationError("test"),
-            ModelValidationError("test"),
-            ControllerValidationError("test"),
-            ControllerValidationReasonFailed("test"),
-            ValidationMethodError("test"),
-            ModelApplyException("test"),
+        exception_list = [
+            exceptions.InvalidValidationMethod("test"),
+            exceptions.InvalidAttributeName("test"),
+            exceptions.InsufficientHTTPInformation("test"),
+            exceptions.NotFoundError("test"),
+            exceptions.ValidationError("test"),
+            exceptions.ModelValidationError("test"),
+            exceptions.ControllerValidationError("test"),
+            exceptions.ControllerValidationReasonFailed("test"),
+            exceptions.ValidationMethodError("test"),
+            exceptions.ModelApplyException("test"),
         ]
-        for exception in exceptions:
-            self.assertTrue(isinstance(exception, MVCUtilsExceptionException))
+        for exception in exception_list:
+            self.assertTrue(isinstance(exception, exceptions.MVCUtilsExceptionException))
             self.assertTrue(isinstance(exception, colony.ColonyException))
 
     def test_validation_error_inheritance(self):
         # verifies validation exceptions inherit from ValidationError
-        exceptions = [
-            ModelValidationError("test"),
-            ControllerValidationError("test"),
-            ControllerValidationReasonFailed("test"),
+        exception_list = [
+            exceptions.ModelValidationError("test"),
+            exceptions.ControllerValidationError("test"),
+            exceptions.ControllerValidationReasonFailed("test"),
         ]
-        for exception in exceptions:
-            self.assertTrue(isinstance(exception, ValidationError))
+        for exception in exception_list:
+            self.assertTrue(isinstance(exception, exceptions.ValidationError))
 
 
 class MockPlugin:

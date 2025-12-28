@@ -30,22 +30,8 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-from .system import ServiceHTTP
-from .system import STATUS_MESSAGES
-from .system import DEFAULT_PORT
-from .system import SERVER_IDENTIFIER
-from .exceptions import ServiceHTTPException
-from .exceptions import EncodingNotFound
-from .exceptions import ClientRequestSecurityViolation
-from .exceptions import HTTPRuntimeException
-from .exceptions import HTTPInvalidDataException
-from .exceptions import HTTPNoHandlerException
-from .exceptions import HTTPHandlerNotFoundException
-from .exceptions import HTTPAuthenticationHandlerNotFoundException
-from .exceptions import HTTPInvalidMultipartRequestException
-from .exceptions import HTTPDataRetrievalException
-from .exceptions import HTTPDataSendingException
-from .exceptions import UnauthorizedException
+from . import system
+from . import exceptions
 
 
 class ServiceHTTPTest(colony.Test):
@@ -75,15 +61,15 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
 
     def setUp(self):
         # clears class-level maps to ensure test isolation
-        ServiceHTTP.http_service_handler_plugins_map = {}
-        ServiceHTTP.http_service_encoding_plugins_map = {}
-        ServiceHTTP.http_service_authentication_handler_plugins_map = {}
-        ServiceHTTP.http_service_error_handler_plugins_map = {}
+        system.ServiceHTTP.http_service_handler_plugins_map = {}
+        system.ServiceHTTP.http_service_encoding_plugins_map = {}
+        system.ServiceHTTP.http_service_authentication_handler_plugins_map = {}
+        system.ServiceHTTP.http_service_error_handler_plugins_map = {}
 
     def test_initialization(self):
         # creates a mock plugin and initializes the service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # verifies the instance is created with proper attributes
         self.assertEqual(service.http_service_configuration, {})
@@ -91,7 +77,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_handler_load(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates and loads a mock handler
         handler = MockHandlerPlugin("file")
@@ -104,7 +90,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_handler_unload(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates, loads and unloads a handler
         handler = MockHandlerPlugin("proxy")
@@ -117,7 +103,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_encoding_load(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates and loads a mock encoding plugin
         encoding = MockEncodingPlugin("gzip")
@@ -130,7 +116,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_encoding_unload(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates, loads and unloads an encoding
         encoding = MockEncodingPlugin("deflate")
@@ -143,7 +129,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_authentication_handler_load(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates and loads a mock authentication handler
         auth_handler = MockAuthHandlerPlugin("basic")
@@ -159,7 +145,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_authentication_handler_unload(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates, loads and unloads an authentication handler
         auth_handler = MockAuthHandlerPlugin("digest")
@@ -176,7 +162,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_error_handler_load(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates and loads a mock error handler
         error_handler = MockErrorHandlerPlugin("template")
@@ -191,7 +177,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_error_handler_unload(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates, loads and unloads an error handler
         error_handler = MockErrorHandlerPlugin("json")
@@ -204,7 +190,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_configuration_property(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # creates a configuration property
         config = MockConfigurationProperty(
@@ -222,7 +208,7 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
     def test_multiple_handlers(self):
         # creates a mock plugin and service
         mock_plugin = MockPlugin()
-        service = ServiceHTTP(mock_plugin)
+        service = system.ServiceHTTP(mock_plugin)
 
         # loads multiple handlers
         handlers = ["file", "proxy", "cgi", "wsgi"]
@@ -243,40 +229,40 @@ class StatusMessagesTestCase(colony.ColonyTestCase):
 
     def test_status_messages_defined(self):
         # verifies common status codes are defined
-        self.assertIn(200, STATUS_MESSAGES)
-        self.assertIn(201, STATUS_MESSAGES)
-        self.assertIn(301, STATUS_MESSAGES)
-        self.assertIn(302, STATUS_MESSAGES)
-        self.assertIn(400, STATUS_MESSAGES)
-        self.assertIn(401, STATUS_MESSAGES)
-        self.assertIn(403, STATUS_MESSAGES)
-        self.assertIn(404, STATUS_MESSAGES)
-        self.assertIn(500, STATUS_MESSAGES)
-        self.assertIn(502, STATUS_MESSAGES)
-        self.assertIn(503, STATUS_MESSAGES)
+        self.assertIn(200, system.STATUS_MESSAGES)
+        self.assertIn(201, system.STATUS_MESSAGES)
+        self.assertIn(301, system.STATUS_MESSAGES)
+        self.assertIn(302, system.STATUS_MESSAGES)
+        self.assertIn(400, system.STATUS_MESSAGES)
+        self.assertIn(401, system.STATUS_MESSAGES)
+        self.assertIn(403, system.STATUS_MESSAGES)
+        self.assertIn(404, system.STATUS_MESSAGES)
+        self.assertIn(500, system.STATUS_MESSAGES)
+        self.assertIn(502, system.STATUS_MESSAGES)
+        self.assertIn(503, system.STATUS_MESSAGES)
 
     def test_status_messages_values(self):
         # verifies common status message values
-        self.assertEqual(STATUS_MESSAGES[200], "OK")
-        self.assertEqual(STATUS_MESSAGES[201], "Created")
-        self.assertEqual(STATUS_MESSAGES[204], "No Content")
-        self.assertEqual(STATUS_MESSAGES[301], "Moved permanently")
-        self.assertEqual(STATUS_MESSAGES[302], "Found")
-        self.assertEqual(STATUS_MESSAGES[400], "Bad Request")
-        self.assertEqual(STATUS_MESSAGES[401], "Unauthorized")
-        self.assertEqual(STATUS_MESSAGES[403], "Forbidden")
-        self.assertEqual(STATUS_MESSAGES[404], "Not Found")
-        self.assertEqual(STATUS_MESSAGES[500], "Internal Server Error")
+        self.assertEqual(system.STATUS_MESSAGES[200], "OK")
+        self.assertEqual(system.STATUS_MESSAGES[201], "Created")
+        self.assertEqual(system.STATUS_MESSAGES[204], "No Content")
+        self.assertEqual(system.STATUS_MESSAGES[301], "Moved permanently")
+        self.assertEqual(system.STATUS_MESSAGES[302], "Found")
+        self.assertEqual(system.STATUS_MESSAGES[400], "Bad Request")
+        self.assertEqual(system.STATUS_MESSAGES[401], "Unauthorized")
+        self.assertEqual(system.STATUS_MESSAGES[403], "Forbidden")
+        self.assertEqual(system.STATUS_MESSAGES[404], "Not Found")
+        self.assertEqual(system.STATUS_MESSAGES[500], "Internal Server Error")
 
     def test_default_port(self):
         # verifies the default port value
-        self.assertEqual(DEFAULT_PORT, 8080)
+        self.assertEqual(system.DEFAULT_PORT, 8080)
 
     def test_server_identifier(self):
         # verifies server identifier is defined
-        self.assertNotEqual(SERVER_IDENTIFIER, None)
-        self.assertTrue(len(SERVER_IDENTIFIER) > 0)
-        self.assertIn("Hive-Colony-Web", SERVER_IDENTIFIER)
+        self.assertNotEqual(system.SERVER_IDENTIFIER, None)
+        self.assertTrue(len(system.SERVER_IDENTIFIER) > 0)
+        self.assertIn("Hive-Colony-Web", system.SERVER_IDENTIFIER)
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):
@@ -286,18 +272,18 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_service_http_exception(self):
         # creates a base exception
-        exception = ServiceHTTPException()
+        exception = exceptions.ServiceHTTPException()
         self.assertEqual(exception.message, None)
 
     def test_encoding_not_found(self):
         # creates exception with message
-        exception = EncodingNotFound("brotli")
+        exception = exceptions.EncodingNotFound("brotli")
         self.assertEqual(exception.message, "brotli")
         self.assertEqual(str(exception), "Encoding not found - brotli")
 
     def test_client_request_security_violation(self):
         # creates exception with message
-        exception = ClientRequestSecurityViolation("path traversal detected")
+        exception = exceptions.ClientRequestSecurityViolation("path traversal detected")
         self.assertEqual(exception.message, "path traversal detected")
         self.assertEqual(
             str(exception), "Client request security violation - path traversal detected"
@@ -305,25 +291,25 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_http_runtime_exception(self):
         # creates exception with message
-        exception = HTTPRuntimeException("runtime error")
+        exception = exceptions.HTTPRuntimeException("runtime error")
         self.assertEqual(exception.message, "runtime error")
         self.assertEqual(str(exception), "HTTP runtime exception - runtime error")
 
     def test_http_invalid_data_exception(self):
         # creates exception with message
-        exception = HTTPInvalidDataException("malformed request")
+        exception = exceptions.HTTPInvalidDataException("malformed request")
         self.assertEqual(exception.message, "malformed request")
         self.assertEqual(str(exception), "HTTP invalid data exception - malformed request")
 
     def test_http_no_handler_exception(self):
         # creates exception with message
-        exception = HTTPNoHandlerException("no handler registered")
+        exception = exceptions.HTTPNoHandlerException("no handler registered")
         self.assertEqual(exception.message, "no handler registered")
         self.assertEqual(str(exception), "HTTP no handler exception - no handler registered")
 
     def test_http_handler_not_found_exception(self):
         # creates exception with message
-        exception = HTTPHandlerNotFoundException("custom_handler")
+        exception = exceptions.HTTPHandlerNotFoundException("custom_handler")
         self.assertEqual(exception.message, "custom_handler")
         self.assertEqual(
             str(exception), "HTTP handler not found exception - custom_handler"
@@ -331,7 +317,7 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_http_auth_handler_not_found_exception(self):
         # creates exception with message
-        exception = HTTPAuthenticationHandlerNotFoundException("oauth")
+        exception = exceptions.HTTPAuthenticationHandlerNotFoundException("oauth")
         self.assertEqual(exception.message, "oauth")
         self.assertEqual(
             str(exception), "HTTP authentication handler not found exception - oauth"
@@ -339,7 +325,7 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_http_invalid_multipart_request_exception(self):
         # creates exception with message
-        exception = HTTPInvalidMultipartRequestException("missing boundary")
+        exception = exceptions.HTTPInvalidMultipartRequestException("missing boundary")
         self.assertEqual(exception.message, "missing boundary")
         self.assertEqual(
             str(exception), "HTTP invalid multipart request exception - missing boundary"
@@ -347,61 +333,61 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
     def test_http_data_retrieval_exception(self):
         # creates exception with message
-        exception = HTTPDataRetrievalException("connection reset")
+        exception = exceptions.HTTPDataRetrievalException("connection reset")
         self.assertEqual(exception.message, "connection reset")
         self.assertEqual(str(exception), "HTTP data retrieval exception - connection reset")
 
     def test_http_data_sending_exception(self):
         # creates exception with message
-        exception = HTTPDataSendingException("broken pipe")
+        exception = exceptions.HTTPDataSendingException("broken pipe")
         self.assertEqual(exception.message, "broken pipe")
         self.assertEqual(str(exception), "HTTP data sending exception - broken pipe")
 
     def test_unauthorized_exception(self):
         # creates exception with message and status code
-        exception = UnauthorizedException("invalid credentials", 401)
+        exception = exceptions.UnauthorizedException("invalid credentials", 401)
         self.assertEqual(exception.message, "invalid credentials")
         self.assertEqual(exception.status_code, 401)
         self.assertEqual(str(exception), "Unauthorized - invalid credentials")
 
     def test_unauthorized_exception_custom_status(self):
         # creates exception with different status codes
-        exception = UnauthorizedException("forbidden", 403)
+        exception = exceptions.UnauthorizedException("forbidden", 403)
         self.assertEqual(exception.status_code, 403)
 
     def test_exception_inheritance(self):
         # verifies all exceptions inherit from base
-        exceptions = [
-            EncodingNotFound("test"),
-            ClientRequestSecurityViolation("test"),
-            HTTPRuntimeException("test"),
-            HTTPInvalidDataException("test"),
-            HTTPNoHandlerException("test"),
-            HTTPHandlerNotFoundException("test"),
-            HTTPAuthenticationHandlerNotFoundException("test"),
-            HTTPInvalidMultipartRequestException("test"),
-            HTTPDataRetrievalException("test"),
-            HTTPDataSendingException("test"),
-            UnauthorizedException("test", 401),
+        exception_list = [
+            exceptions.EncodingNotFound("test"),
+            exceptions.ClientRequestSecurityViolation("test"),
+            exceptions.HTTPRuntimeException("test"),
+            exceptions.HTTPInvalidDataException("test"),
+            exceptions.HTTPNoHandlerException("test"),
+            exceptions.HTTPHandlerNotFoundException("test"),
+            exceptions.HTTPAuthenticationHandlerNotFoundException("test"),
+            exceptions.HTTPInvalidMultipartRequestException("test"),
+            exceptions.HTTPDataRetrievalException("test"),
+            exceptions.HTTPDataSendingException("test"),
+            exceptions.UnauthorizedException("test", 401),
         ]
-        for exception in exceptions:
-            self.assertTrue(isinstance(exception, ServiceHTTPException))
+        for exception in exception_list:
+            self.assertTrue(isinstance(exception, exceptions.ServiceHTTPException))
             self.assertTrue(isinstance(exception, colony.ColonyException))
 
     def test_http_runtime_exception_inheritance(self):
         # verifies runtime exceptions inherit from HTTPRuntimeException
-        exceptions = [
-            HTTPInvalidDataException("test"),
-            HTTPNoHandlerException("test"),
-            HTTPHandlerNotFoundException("test"),
-            HTTPAuthenticationHandlerNotFoundException("test"),
-            HTTPInvalidMultipartRequestException("test"),
-            HTTPDataRetrievalException("test"),
-            HTTPDataSendingException("test"),
-            UnauthorizedException("test", 401),
+        exception_list = [
+            exceptions.HTTPInvalidDataException("test"),
+            exceptions.HTTPNoHandlerException("test"),
+            exceptions.HTTPHandlerNotFoundException("test"),
+            exceptions.HTTPAuthenticationHandlerNotFoundException("test"),
+            exceptions.HTTPInvalidMultipartRequestException("test"),
+            exceptions.HTTPDataRetrievalException("test"),
+            exceptions.HTTPDataSendingException("test"),
+            exceptions.UnauthorizedException("test", 401),
         ]
-        for exception in exceptions:
-            self.assertTrue(isinstance(exception, HTTPRuntimeException))
+        for exception in exception_list:
+            self.assertTrue(isinstance(exception, exceptions.HTTPRuntimeException))
 
 
 class MockPlugin:
