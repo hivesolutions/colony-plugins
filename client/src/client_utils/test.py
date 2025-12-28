@@ -49,6 +49,11 @@ from .exceptions import RequestClosed
 
 
 class ClientUtilsTest(colony.Test):
+    """
+    The client utils infra-structure test class, responsible
+    for the returning of the associated tests.
+    """
+
     def get_bundle(self):
         return (
             ClientUtilsBaseTestCase,

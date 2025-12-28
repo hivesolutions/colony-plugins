@@ -47,6 +47,11 @@ from .exceptions import ModelApplyException
 
 
 class MVCUtilsTest(colony.Test):
+    """
+    The MVC utils infra-structure test class, responsible
+    for the returning of the associated tests.
+    """
+
     def get_bundle(self):
         return (
             MVCUtilsBaseTestCase,

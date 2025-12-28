@@ -49,6 +49,11 @@ from .exceptions import UnauthorizedException
 
 
 class ServiceHTTPTest(colony.Test):
+    """
+    The service HTTP infra-structure test class, responsible
+    for the returning of the associated tests.
+    """
+
     def get_bundle(self):
         return (
             ServiceHTTPBaseTestCase,
