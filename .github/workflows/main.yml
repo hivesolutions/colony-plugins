@@ -50,8 +50,7 @@ jobs:
           #3.7,
           #3.8,
           #3.9,
-          #"3.10",
-          "3.11"
+          #"3.10"
         ]
     runs-on: ubuntu-latest
     container: pypy:${{ matrix.python-version }}
@@ -66,6 +65,26 @@ jobs:
           pip install black
           black . --check
         if: matrix.python-version == '3.12'
+      - run: pypy setup.py test
+        env:
+          HTTPBIN: httpbin.bemisc.com
+          PLUGIN_PATH: ./*/src;./*/*src
+  build-pypy-arm:
+    name: Build PyPy ARM
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: [
+          "3.9",
+          "3.10",
+          "3.11"
+        ]
+    runs-on: ubuntu-24.04-arm
+    container: pypy:${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pypy --version
+      - run: pip install -r requirements.txt
       - run: pypy setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com
