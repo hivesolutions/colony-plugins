@@ -1,5 +1,7 @@
 *.pyc
 
+session.shelve*
+
 .DS_Store
 
 /.vscode/settings.json

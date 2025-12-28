@@ -27,6 +27,7 @@ __license__ = "Apache License, Version 2.0"
 
 from . import exceptions
 from . import system
+from . import test
 
 from .exceptions import (
     ServiceException,
@@ -42,3 +43,4 @@ from .exceptions import (
     InvalidCookie,
 )
 from .system import REST
+from .test import RESTTest

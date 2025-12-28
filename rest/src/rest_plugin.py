@@ -33,7 +33,18 @@ import colony
 
 class RESTPlugin(colony.Plugin):
     """
-    The main class for the REST plugin.
+    The main class for the REST plugin, providing the core infrastructure
+    for handling RESTful HTTP requests within the Colony Framework.
+
+    This plugin acts as both an HTTP handler and an RPC handler, routing
+    incoming requests to the appropriate REST services. It supports URL
+    pattern matching with regex-based routing, content encoding/decoding
+    (via rest_encoder plugins), and session management with configurable
+    timeout and expiration policies.
+
+    The plugin delegates the core logic to the REST system class, which
+    maintains the routing regex, service method mappings, and session
+    persistence layer.
     """
 
     id = "pt.hive.colony.plugins.rest"
@@ -42,7 +53,7 @@ class RESTPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["rest", "http_handler", "rpc_handler"]
+    capabilities = ["rest", "http_handler", "rpc_handler", "test"]
     capabilities_allowed = ["rest_encoder", "rest_service", "rpc_service"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.resources.manager"),
@@ -55,6 +66,7 @@ class RESTPlugin(colony.Plugin):
         import rest
 
         self.system = rest.REST(self)
+        self.test = rest.RESTTest(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
