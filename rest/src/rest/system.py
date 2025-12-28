@@ -785,9 +785,9 @@ class REST(colony.System):
         rest_encoder_plugins = self.plugin.rest_encoder_plugins
 
         # in case no encoder name is defined the default result is
-        # returns as a plain string of the provided result
+        # returned as a plain string of the provided result
         if not encoder_name:
-            "text/plain", str(result)
+            return "text/plain", str(result)
 
         # iterates over all the complete set of REST encoder plugins
         # trying to find the encoder for the requested name
@@ -2568,11 +2568,16 @@ class RESTSession(object):
     @classmethod
     def gc(cls):
         cls.GC_PENDING = False
+        expired_sids = []
         for sid in cls.STORAGE:
             session = cls.STORAGE.get(sid, None)
+            if not session:
+                continue
             is_expired = session.is_expired()
             if is_expired:
-                cls.expire(sid)
+                expired_sids.append(sid)
+        for sid in expired_sids:
+            cls.expire(sid)
 
     def update(self, domain=None, include_sub_domain=False, secure=False):
         self.start(domain=domain, include_sub_domain=include_sub_domain, secure=secure)
@@ -2944,11 +2949,16 @@ class ShelveSession(RESTSession):
     @classmethod
     def gc(cls):
         cls.GC_PENDING = False
+        expired_sids = []
         for sid in cls.SHELVE:
             session = cls.SHELVE.get(sid, None)
+            if not session:
+                continue
             is_expired = session.is_expired()
             if is_expired:
-                cls.expire(sid)
+                expired_sids.append(sid)
+        for sid in expired_sids:
+            cls.expire(sid)
 
     def flush(self):
         if not self.is_dirty():
@@ -2996,7 +3006,7 @@ class RedisSession(RESTSession):
 
     @classmethod
     def unload(cls):
-        super(ShelveSession, cls).unload()
+        super(RedisSession, cls).unload()
         cls.REDIS = None
 
     @classmethod
@@ -3027,6 +3037,9 @@ class RedisSession(RESTSession):
         if not session_s:
             return session_s
         session = colony.legacy.cPickle.loads(session_s)
+        if not isinstance(session, RESTSession):
+            cls.expire(sid)
+            return None
         is_expired = session.is_expired()
         if is_expired:
             cls.expire(sid)

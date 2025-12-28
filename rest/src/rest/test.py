@@ -50,6 +50,7 @@ class RESTTest(colony.Test):
             RESTSessionTestCase,
             CookieTestCase,
             ExceptionsTestCase,
+            RegressionTestCase,
         )
 
     def set_up(self, test_case):
@@ -910,3 +911,167 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         ]
         for exception in exception_list:
             self.assertTrue(isinstance(exception, exceptions.BadServiceRequest))
+
+
+class RegressionTestCase(colony.ColonyTestCase):
+    """
+    Regression tests for critical bug fixes in the REST system.
+    These tests ensure that previously identified issues don't resurface.
+    """
+
+    @staticmethod
+    def get_description():
+        return "REST Regression test case"
+
+    def setUp(self):
+        colony.ColonyTestCase.setUp(self)
+        self._saved_storage = system.RESTSession.STORAGE
+        system.RESTSession.STORAGE = {}
+        system.RESTSession.GC_PENDING = True
+
+    def tearDown(self):
+        system.RESTSession.STORAGE = self._saved_storage
+
+    def test_gc_does_not_raise_on_expired_sessions(self):
+        """
+        Regression test for dictionary iteration bug in gc().
+
+        Previously, gc() would iterate over the storage dictionary
+        while simultaneously deleting expired entries, causing:
+        RuntimeError: dictionary changed size during iteration
+
+        Fixed by collecting expired session IDs first, then deleting.
+        """
+
+        session1 = system.RESTSession.new("gc_test_1", timeout=0.01)
+        session2 = system.RESTSession.new("gc_test_2", timeout=0.01)
+        session3 = system.RESTSession.new("gc_test_3", timeout=1000)
+
+        time.sleep(0.05)
+
+        try:
+            system.RESTSession.gc()
+        except RuntimeError as e:
+            if "dictionary changed size during iteration" in str(e):
+                self.fail(
+                    "gc() raised RuntimeError due to dictionary modification during iteration"
+                )
+            raise
+
+        self.assertNotIn("gc_test_1", system.RESTSession.STORAGE)
+        self.assertNotIn("gc_test_2", system.RESTSession.STORAGE)
+        self.assertIn("gc_test_3", system.RESTSession.STORAGE)
+
+    def test_gc_handles_none_session(self):
+        """
+        Test that gc() handles None sessions gracefully.
+
+        The gc() method should skip any None entries in the storage
+        without raising an AttributeError.
+        """
+
+        system.RESTSession.new("valid_session", timeout=1000)
+        system.RESTSession.STORAGE["none_session"] = None
+
+        try:
+            system.RESTSession.gc()
+        except AttributeError:
+            self.fail("gc() raised AttributeError when encountering None session")
+
+        self.assertIn("valid_session", system.RESTSession.STORAGE)
+
+    def test_gc_with_all_expired_sessions(self):
+        """
+        Test gc() when all sessions are expired.
+
+        This is an edge case where the entire storage would be cleared
+        during iteration, which previously would cause an error.
+        """
+
+        system.RESTSession.new("expired_1", timeout=0.01)
+        system.RESTSession.new("expired_2", timeout=0.01)
+        system.RESTSession.new("expired_3", timeout=0.01)
+
+        time.sleep(0.05)
+
+        try:
+            system.RESTSession.gc()
+        except RuntimeError:
+            self.fail("gc() raised RuntimeError when all sessions expired")
+
+        self.assertEqual(system.RESTSession.count(), 0)
+
+    def test_gc_with_empty_storage(self):
+        """
+        Test gc() when storage is empty.
+
+        Should complete without error.
+        """
+
+        self.assertEqual(system.RESTSession.count(), 0)
+
+        try:
+            system.RESTSession.gc()
+        except Exception as e:
+            self.fail("gc() raised exception on empty storage: %s" % str(e))
+
+    def test_translate_result_returns_value_without_encoder(self):
+        """
+        Regression test for missing return statement in translate_result().
+
+        Previously, when encoder_name was not provided, the function
+        would execute `"text/plain", str(result)` without returning,
+        causing None to be returned or the function to continue
+        and raise an InvalidEncoder exception.
+
+        Fixed by adding the missing return keyword.
+        """
+
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+
+        result = rest.translate_result({"key": "value"}, encoder_name=None)
+
+        self.assertNotEqual(result, None)
+        self.assertEqual(len(result), 2)
+        content_type, data = result
+        self.assertEqual(content_type, "text/plain")
+        self.assertIn("key", data)
+
+    def test_translate_result_with_string_result(self):
+        """
+        Test `translate_result()` with a simple string when no encoder specified.
+        """
+
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+
+        result = rest.translate_result("hello world", encoder_name=None)
+
+        self.assertEqual(result, ("text/plain", "hello world"))
+
+    def test_translate_result_with_number_result(self):
+        """
+        Test `translate_result()` with a number when no encoder specified.
+        """
+
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+
+        result = rest.translate_result(42, encoder_name=None)
+
+        self.assertEqual(result, ("text/plain", "42"))
+
+    def test_translate_result_with_empty_encoder_name(self):
+        """
+        Test `translate_result()` with empty string encoder name.
+
+        Empty string is falsy, so should behave like None.
+        """
+
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+
+        result = rest.translate_result("test", encoder_name="")
+
+        self.assertEqual(result, ("text/plain", "test"))
