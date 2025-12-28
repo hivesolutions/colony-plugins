@@ -42,7 +42,7 @@ class CryptonPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["mvc_service", "controller_access"]
+    capabilities = ["mvc_service", "controller_access", "test"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.mvc.utils"),
         colony.PluginDependency("pt.hive.colony.plugins.misc.random"),
@@ -55,6 +55,7 @@ class CryptonPlugin(colony.Plugin):
         import crypton
 
         self.system = crypton.Crypton(self)
+        self.test = crypton.CryptonTest(self)
 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
