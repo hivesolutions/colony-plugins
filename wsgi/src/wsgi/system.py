@@ -353,11 +353,14 @@ class WSGI(colony.System):
 
 class WSGIRequest(object):
     """
-    Represents an HTTP request to be handled
-    in the WSGI context, this value may be
-    used as a compatibility mock to the internal
-    HTTP request object and as such must comply
+    Represents an HTTP request to be handled in the WSGI context,
+    this request object may be used as a compatibility mock to
+    the internal HTTP request object and as such must comply with
     with the same interface (protocol).
+    
+    Additional methods may be added to this class to provide
+    additional functionality to the request object, but cannot
+    be used in the internal HTTP request object lifecycle.
     """
 
     service = None
@@ -1049,6 +1052,9 @@ class WSGIRequest(object):
             return self.status_message
         else:
             return STATUS_MESSAGES.get(self.status_code, "Invalid")
+
+    def get_server_software(self):
+        return self.environ.get("SERVER_SOFTWARE", None)
 
     def verify_resource_modification(self, modified_timestamp=None, etag_value=None):
         # retrieves the if modified header value and in case the

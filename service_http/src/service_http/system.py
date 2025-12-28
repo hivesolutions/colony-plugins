@@ -3752,6 +3752,9 @@ class HTTPRequest(object):
         # returns the status message
         return status_message
 
+    def get_server_software(self):
+        return "%s/%s" % (SERVER_NAME, SERVER_VERSION)
+
     def verify_resource_modification(self, modified_timestamp=None, etag_value=None):
         """
         Verifies the resource to check for any modification since the
