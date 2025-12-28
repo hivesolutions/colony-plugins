@@ -30,6 +30,7 @@ from . import entity_model
 from . import exceptions
 from . import model
 from . import system
+from . import test
 from . import utils
 
 from .exceptions import (
@@ -46,4 +47,5 @@ from .exceptions import (
     ModelApplyException,
 )
 from .system import MVCUtils
+from .test import MVCUtilsTest
 from .utils import validated, transaction, eager, serialized, Controller

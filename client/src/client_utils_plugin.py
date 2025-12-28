@@ -46,6 +46,7 @@ class ClientUtilsPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT,
         colony.IRON_PYTHON_ENVIRONMENT,
     ]
+    capabilities = ["test"]
     capabilities_allowed = ["socket_provider", "socket_upgrader"]
     main_modules = ["client_utils"]
 
@@ -54,6 +55,7 @@ class ClientUtilsPlugin(colony.Plugin):
         import client_utils
 
         self.system = client_utils.ClientUtils(self)
+        self.test = client_utils.ClientUtilsTest(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
