@@ -61,11 +61,35 @@ class ServiceHTTPBaseTestCase(colony.ColonyTestCase):
 
     def setUp(self):
         colony.ColonyTestCase.setUp(self)
+        # saves original class-level maps to restore later
+        self._saved_handler_map = (
+            system.ServiceHTTP.http_service_handler_plugins_map.copy()
+        )
+        self._saved_encoding_map = (
+            system.ServiceHTTP.http_service_encoding_plugins_map.copy()
+        )
+        self._saved_auth_map = (
+            system.ServiceHTTP.http_service_authentication_handler_plugins_map.copy()
+        )
+        self._saved_error_map = (
+            system.ServiceHTTP.http_service_error_handler_plugins_map.copy()
+        )
         # clears class-level maps to ensure test isolation
         system.ServiceHTTP.http_service_handler_plugins_map = {}
         system.ServiceHTTP.http_service_encoding_plugins_map = {}
         system.ServiceHTTP.http_service_authentication_handler_plugins_map = {}
         system.ServiceHTTP.http_service_error_handler_plugins_map = {}
+
+    def tearDown(self):
+        # restores original class-level maps
+        system.ServiceHTTP.http_service_handler_plugins_map = self._saved_handler_map
+        system.ServiceHTTP.http_service_encoding_plugins_map = self._saved_encoding_map
+        system.ServiceHTTP.http_service_authentication_handler_plugins_map = (
+            self._saved_auth_map
+        )
+        system.ServiceHTTP.http_service_error_handler_plugins_map = (
+            self._saved_error_map
+        )
 
     def test_initialization(self):
         # creates a mock plugin and initializes the service
