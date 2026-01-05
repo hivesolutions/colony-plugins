@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Method `get_certificate_common_name()` in ATClient to extract the Common Name (CN) from the certificate's subject field
 * Support for context-specific ASN.1 types in BER library, enabling X.509 certificate parsing
 * Bit string padding removal implementation in BER library
 * Test case for certificate PEM loading in PKCS1 module

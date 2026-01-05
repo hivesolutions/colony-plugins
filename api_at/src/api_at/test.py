@@ -162,3 +162,55 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         client = ATClient(plugin=None, certificate_info={})
         not_after = client.get_certificate_not_after()
         self.assertEqual(not_after, None)
+
+    def test_get_certificate_common_name(self):
+        """
+        Tests that get_certificate_common_name correctly extracts the CN from subject.
+
+        The subject is a list of RDNs where each RDN has the structure:
+        SET { SEQUENCE { OID, value } }
+        The Common Name OID is 2.5.4.3.
+        """
+
+        # creates a mock subject structure matching the format from load_certificate_der
+        subject = [
+            {"value": [{"value": [{"value": (2, 5, 4, 6)}, {"value": "PT"}]}]},
+            {"value": [{"value": [{"value": (2, 5, 4, 3)}, {"value": "Test Common Name"}]}]},
+        ]
+
+        client = ATClient(plugin=None, certificate_info={"subject": subject})
+        common_name = client.get_certificate_common_name()
+        self.assertEqual(common_name, "Test Common Name")
+
+    def test_get_certificate_common_name_none(self):
+        """
+        Tests that get_certificate_common_name returns None when certificate_info is None.
+        """
+
+        client = ATClient(plugin=None, certificate_info=None)
+        common_name = client.get_certificate_common_name()
+        self.assertEqual(common_name, None)
+
+    def test_get_certificate_common_name_missing_subject(self):
+        """
+        Tests that get_certificate_common_name returns None when subject field is missing.
+        """
+
+        client = ATClient(plugin=None, certificate_info={})
+        common_name = client.get_certificate_common_name()
+        self.assertEqual(common_name, None)
+
+    def test_get_certificate_common_name_not_found(self):
+        """
+        Tests that get_certificate_common_name returns None when CN OID is not in subject.
+        """
+
+        # creates a mock subject without Common Name (OID 2.5.4.3)
+        subject = [
+            {"value": [{"value": [{"value": (2, 5, 4, 6)}, {"value": "PT"}]}]},
+            {"value": [{"value": [{"value": (2, 5, 4, 10)}, {"value": "Some Org"}]}]},
+        ]
+
+        client = ATClient(plugin=None, certificate_info={"subject": subject})
+        common_name = client.get_certificate_common_name()
+        self.assertEqual(common_name, None)

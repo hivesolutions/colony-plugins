@@ -469,6 +469,45 @@ class ATClient(object):
         not_after = calendar.timegm(not_after_d.timetuple())
         return not_after
 
+    def get_certificate_common_name(self):
+        """
+        Retrieves the common name (CN) from the certificate's subject.
+
+        The common name is extracted from the certificate's subject field
+        by searching for the RDN with OID 2.5.4.3 (id-at-commonName).
+
+        :rtype: String
+        :return: The common name of the certificate, or None if the
+        certificate info is not available or no common name is found.
+        """
+
+        if not self.certificate_info:
+            return None
+
+        # retrieves the subject from the certificate, which is a list of
+        # Relative Distinguished Names (RDNs), each RDN has the structure:
+        # SET { SEQUENCE { OID, value } }
+        subject = self.certificate_info.get("subject", None)
+        if not subject:
+            return None
+
+        # the OID for commonName is 2.5.4.3
+        common_name_oid = (2, 5, 4, 3)
+
+        # iterates through the subject RDNs to find the common name
+        for rdn in subject:
+            rdn_value = rdn.get("value", [])
+            if not rdn_value:
+                continue
+            rdn_sequence = rdn_value[0].get("value", [])
+            if len(rdn_sequence) < 2:
+                continue
+            oid = rdn_sequence[0].get("value", None)
+            if oid == common_name_oid:
+                return rdn_sequence[1].get("value", None)
+
+        return None
+
     def get_server_name(self):
         """
         Retrieves the name of the server environment being used.
