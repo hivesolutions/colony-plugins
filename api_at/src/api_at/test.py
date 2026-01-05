@@ -175,7 +175,11 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         # creates a mock subject structure matching the format from load_certificate_der
         subject = [
             {"value": [{"value": [{"value": (2, 5, 4, 6)}, {"value": "PT"}]}]},
-            {"value": [{"value": [{"value": (2, 5, 4, 3)}, {"value": "Test Common Name"}]}]},
+            {
+                "value": [
+                    {"value": [{"value": (2, 5, 4, 3)}, {"value": "Test Common Name"}]}
+                ]
+            },
         ]
 
         client = ATClient(plugin=None, certificate_info={"subject": subject})
