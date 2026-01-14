@@ -384,6 +384,17 @@ class HTTPClient(object):
     def close(self, parameters=None):
         parameters = parameters or {}
         self._http_client.stop_client()
+        self._http_client = None
+
+    def is_open(self):
+        """
+        Retrieves if the current HTTP client is open.
+
+        :rtype: bool
+        :return: If the current HTTP client is open.
+        """
+
+        return self._http_client is not None
 
     def fetch_url(
         self,

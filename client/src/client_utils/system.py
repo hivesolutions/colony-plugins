@@ -70,14 +70,40 @@ DEFAULT_TYPE = "connection"
 
 class ClientUtils(colony.System):
     """
-    The client class.
+    The client utilities class, responsible for providing a centralized
+    management system for client socket connections within the Colony
+    framework.
+
+    This class serves as the main entry point for creating and configuring
+    network clients. It manages socket provider and upgrader plugins,
+    allowing dynamic registration and lookup of different socket types
+    (e.g., normal, SSL/TLS) and connection upgraders.
+
+    The class maintains two plugin maps:
+    - socket_provider_plugins_map: Maps socket provider names (e.g., "normal",
+      "ssl") to their respective plugins, enabling socket creation through
+      a unified interface.
+    - socket_upgrader_plugins_map: Maps socket upgrader names to their
+      respective plugins, allowing connection upgrades (e.g., upgrading
+      a plain connection to SSL/TLS).
+
+    Typical usage involves:
+    1. Loading socket provider/upgrader plugins via the load methods.
+    2. Generating client instances using generate_client() with the
+       desired configuration parameters.
+    3. Using the generated AbstractClient to create and manage connections.
+
+    :see: AbstractClient
+    :see: ClientConnection
     """
 
     socket_provider_plugins_map = {}
-    """ The socket provider plugins map """
+    """ The socket provider plugins map, containing the mapping between
+    socket provider names and their corresponding plugin instances """
 
     socket_upgrader_plugins_map = {}
-    """ The socket upgrader plugins map """
+    """ The socket upgrader plugins map, containing the mapping between
+    socket upgrader names and their corresponding plugin instances """
 
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
