@@ -589,10 +589,19 @@ class SQLiteConnection(object):
         # current thread, one must be create it
         if not connection:
             # creates a new connection and sets it in the
-            # connections map for the current thread
+            # connections map for the current thread, notice
+            # that windows specific optimizations are applied
+            # to the connection, this is due to the fact that
+            # the SQLite database is a file system database and
+            # as such the performance of the database is heavily
+            # dependent on the file system
             connection = sqlite3.connect(
                 self.file_path, timeout=30, isolation_level="DEFERRED"
             )
+            if os.name == "nt":
+                connection.execute("PRAGMA journal_mode = WAL")
+                connection.execute("PRAGMA synchronous=NORMAL;")
+                connection.execute("PRAGMA temp_store=MEMORY;")
             self.connections_map[thread_id] = connection
 
             # creates a new transaction level for the connection
