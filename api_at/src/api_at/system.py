@@ -366,6 +366,17 @@ class ATClient(object):
         return data
 
     def get_series(self, get_series_payload):
+        """
+        Retrieves document series information from the AT server.
+
+        :type get_series_payload: String
+        :param get_series_payload: The XML payload for querying series,
+        should follow the AT series consultation schema.
+        :rtype: String
+        :return: The XML response containing series information.
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Especificos.pdf
+        """
+
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
         base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
@@ -373,6 +384,33 @@ class ATClient(object):
 
         # submits the series document and returns the result
         data = self._submit_document(get_series_url, get_series_payload, version=2)
+        return data
+
+    def get_invoice_v1(self, invoice_query_payload):
+        """
+        Retrieves invoice information from the AT server using the V1 API.
+
+        This method allows querying previously submitted invoices by sending
+        an InvoicesRequest payload to the AT webservice, which returns the
+        matching invoice data in an InvoicesResponse structure.
+
+        :type invoice_query_payload: String
+        :param invoice_query_payload: The XML payload for querying invoices,
+        should follow the AT InvoicesRequest schema which typically includes
+        fields such as TaxRegistrationNumber, StartDate, EndDate, etc.
+        :rtype: String
+        :return: The XML response containing invoice information
+        (InvoicesResponse structure).
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Documents/ComunicacaodosdadosdasfaturasaAT.pdf
+        """
+
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = INVOICE_BASE_TEST_URL_V1 if self.test_mode else INVOICE_BASE_URL_V1
+        get_invoice_url = base_url + "/faturas"
+
+        # queries the invoice information and returns the result
+        data = self._submit_document(get_invoice_url, invoice_query_payload)
         return data
 
     def validate_credentials(self):
@@ -875,6 +913,37 @@ class ATClient(object):
         series_resp = document.getElementsByTagName(tag_name)
         series_resp = colony.xml_to_dict(series_resp[0]) if series_resp else None
         return series_resp
+
+    def get_at_invoice(self, data, tag_name="InvoicesResponse"):
+        """
+        Parses the provided XML data, retrieving the
+        invoice response structure.
+
+        The provided XML data should be compliant with
+        the pre-defined AT SOAP response for invoice queries.
+
+        :type data: String
+        :param data: The string containing the XML data
+        to be used for parsing and retrieval of the
+        invoice response.
+        :type tag_name: String
+        :param tag_name: The name of the tag that is going to
+        be used to obtain the invoice dictionary payload.
+        :rtype: Dictionary
+        :return: The AT invoice response structure containing
+        the queried invoice information.
+        """
+
+        # parses the XML data and retrieves the entry document
+        # structure that will be uses in the parsing
+        document = xml.dom.minidom.parseString(data)
+
+        # retrieves the AT invoice response from the document,
+        # and returns it, returning none in case the
+        # invoice response was not found in the document
+        invoice_resp = document.getElementsByTagName(tag_name)
+        invoice_resp = colony.xml_to_dict(invoice_resp[0]) if invoice_resp else None
+        return invoice_resp
 
     def _check_at_errors_v1(
         self,

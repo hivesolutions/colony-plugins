@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Invoice retrieval functionality in AT plugin via `get_invoice_v1` method for querying previously submitted invoices
+* Helper method `get_at_invoice` for parsing invoice response data from AT webservice
+* Docstrings for `get_series` method in AT plugin
 * Method `get_certificate_common_name()` in ATClient to extract the Common Name (CN) from the certificate's subject field
 * Support for context-specific ASN.1 types in BER library, enabling X.509 certificate parsing
 * Bit string padding removal implementation in BER library
