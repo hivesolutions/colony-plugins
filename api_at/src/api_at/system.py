@@ -58,9 +58,22 @@ INVOICE_BASE_TEST_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:723/fatcor
 (in version 2), this is a secure HTTPS based URL
 but still only for testing purposes """
 
-INVOICE_WSDL_URL_V2 = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Fatcorews.wsdl"
+INVOICE_WSDL_URL_V2 = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/Fatcorews.wsdl"
 """ The link to the WSDL description file for the
 invoice (in version 2) submission operations """
+
+QUERY_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:424/fatshare/ws/"
+""" The base URL to be used for invoice query
+operations, this is a secure HTTPS based URL """
+
+QUERY_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:724/fatshare/ws/"
+""" The base test URL to be used for invoice query
+operations, this is a secure HTTPS based URL
+but still only for testing purposes """
+
+QUERY_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/fatshareInvoices.wsdl"
+""" The link to the WSDL description file for the
+invoice query operations """
 
 TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
 """ The base URL to be used for transport document
@@ -71,7 +84,7 @@ TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
-TRANSPORT_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Documents/documentosTransporte.wsdl"
+TRANSPORT_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/Documentos_de_transporte/Documents/documentosTransporte.wsdl"
 """ The link to the WSDL description file for the
 transport submission operations """
 
@@ -84,7 +97,7 @@ SERIES_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:722/SeriesWSSe
 submission, this is a secure HTTPS based URL
 but still only for testing purposes """
 
-SERIES_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/SeriesAutoFaturacaoWSService.wsdl"
+SERIES_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/Comunicacao_de_series_ATCUD/Documents/Comunicacao_Series.wsdl"
 """ The link to the WSDL description file for the
 document series submission operations """
 
@@ -317,7 +330,7 @@ class ATClient(object):
 
     def submit_invoice_v2(self, invoice_payload):
         """
-        see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
         """
 
         # retrieves the proper based URL according to the current
@@ -336,9 +349,72 @@ class ATClient(object):
         )
         return data
 
+    def change_invoice_status(self, status_payload):
+        """
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
+        """
+
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = INVOICE_BASE_TEST_URL_V2 if self.test_mode else INVOICE_BASE_URL_V2
+        change_status_url = base_url
+
+        # submits the status change request and returns the result
+        data = self._submit_document(
+            change_status_url,
+            status_payload,
+            version=2,
+            check_errors=lambda data: self._check_at_errors_v1(
+                data, code_tag="CodigoResposta", message_tag="Mensagem"
+            ),
+        )
+        return data
+
+    def delete_invoice(self, delete_payload):
+        """
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
+        """
+
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = INVOICE_BASE_TEST_URL_V2 if self.test_mode else INVOICE_BASE_URL_V2
+        delete_invoice_url = base_url
+
+        # submits the delete request and returns the result
+        data = self._submit_document(
+            delete_invoice_url,
+            delete_payload,
+            version=2,
+            check_errors=lambda data: self._check_at_errors_v1(
+                data, code_tag="CodigoResposta", message_tag="Mensagem"
+            ),
+        )
+        return data
+
+    def query_invoices(self, query_payload):
+        """
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/Comunicacao_dos_elementos_dos_documentos_de_faturacao.pdf
+        """
+
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = QUERY_BASE_TEST_URL if self.test_mode else QUERY_BASE_URL
+        query_invoices_url = base_url
+
+        # submits the query request and returns the result
+        data = self._submit_document(
+            query_invoices_url,
+            query_payload,
+            version=2,
+            check_errors=lambda data: self._check_at_errors_v2(
+                data, code_tag="codResultOper", message_tag="msgResultOper"
+            ),
+        )
+        return data
+
     def submit_transport(self, transport_payload):
         """
-        see: https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Documents/Comunicacao_Dados_Documentos_Transporte.pdf
+        see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/Documentos_de_transporte/Documents/Comunicacao_Dados_Documentos_Transporte.pdf
         """
 
         # retrieves the proper based URL according to the current
@@ -846,6 +922,37 @@ class ATClient(object):
         at_doc_code_id = self._text(at_doc_code_ids[0]) if at_doc_code_ids else None
         return at_doc_code_id
 
+    def get_at_invoices(self, data, tag_name="InvoicesList"):
+        """
+        Parses the provided XML data, retrieving the
+        invoices response structure.
+
+        The provided XML data should be compliant with
+        the pre-defined AT SOAP response for invoice queries.
+
+        :type data: String
+        :param data: The string containing the XML data
+        to be used for parsing and retrieval of the
+        invoices response.
+        :type tag_name: String
+        :param tag_name: The name of the tag that is going to
+        be used to obtain the invoices dictionary payload.
+        :rtype: Dictionary
+        :return: The AT invoices response structure containing
+        a list of invoices with their details.
+        """
+
+        # parses the XML data and retrieves the entry document
+        # structure that will be used in the parsing
+        document = xml.dom.minidom.parseString(data)
+
+        # retrieves the AT invoices response from the document,
+        # and returns it, returning none in case the invoices
+        # list was not found in the document
+        invoices_resp = document.getElementsByTagName(tag_name)
+        invoices_resp = colony.xml_to_dict(invoices_resp[0]) if invoices_resp else None
+        return invoices_resp
+
     def get_at_series(self, data, tag_name="registarSerieResp"):
         """
         Parses the provided XML data, retrieving the
@@ -981,9 +1088,11 @@ class ATClient(object):
         result_code = self._text(result_code[0])
         result_code = int(result_code)
 
-        # determines if the result code represents a success (eg: 2xxxx) and
-        # if that's the case returns the control flow immediately (not an error)
-        is_success = result_code // 1000 == 2
+        # determines if the result code represents a success (eg: 2xxx or 2xxxx)
+        # and if that's the case returns the control flow immediately (not an error),
+        # the divisor is calculated based on the number of digits in the code
+        divisor = 10 ** (len(str(result_code)) - 1)
+        is_success = result_code // divisor == 2
         if is_success:
             return
 

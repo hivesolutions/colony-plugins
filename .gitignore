@@ -8,5 +8,5 @@ session.shelve*
 
 /.env
 /.venv
+/.claude
 /.venv-pypy
-

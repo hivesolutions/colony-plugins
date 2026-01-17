@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* New AT invoice management methods in ATClient: `change_invoice_status()`, `delete_invoice()`, `query_invoices()`, and `get_at_invoices()` for complete invoice lifecycle management
+* New constants for AT invoice query operations: `QUERY_BASE_URL`, `QUERY_BASE_TEST_URL`, and `QUERY_WSDL_URL`
+* Tests for `get_at_invoices()` method covering both populated and empty invoice responses
 * Method `get_certificate_common_name()` in ATClient to extract the Common Name (CN) from the certificate's subject field
 * Support for context-specific ASN.1 types in BER library, enabling X.509 certificate parsing
 * Bit string padding removal implementation in BER library

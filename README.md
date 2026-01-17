@@ -44,6 +44,10 @@ Colony aims to eliminate the complexity typically associated with the creation o
 * MVC Stack.
 * and more...
 
+## Documentation
+
+Design documents describing technical decisions and implementation details can be found in the [doc/design](doc/design/) directory.
+
 ## Contributing
 
 Colony is currently in its early development stages, and we are open to contributions across various areas of work.
