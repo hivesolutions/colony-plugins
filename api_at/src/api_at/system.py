@@ -1088,9 +1088,11 @@ class ATClient(object):
         result_code = self._text(result_code[0])
         result_code = int(result_code)
 
-        # determines if the result code represents a success (eg: 2xxxx) and
-        # if that's the case returns the control flow immediately (not an error)
-        is_success = result_code // 1000 == 2
+        # determines if the result code represents a success (eg: 2xxx or 2xxxx)
+        # and if that's the case returns the control flow immediately (not an error),
+        # the divisor is calculated based on the number of digits in the code
+        divisor = 10 ** (len(str(result_code)) - 1)
+        is_success = result_code // divisor == 2
         if is_success:
             return
 
