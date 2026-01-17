@@ -30,7 +30,8 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
-from .system import ATClient
+from . import system
+from . import exceptions
 
 
 class APIATTest(colony.Test):
@@ -60,7 +61,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `validate_credentials` always returns `True` (API compatibility mock).
         """
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         result = client.validate_credentials()
         self.assertEqual(result, True)
 
@@ -72,7 +73,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
 
         # creates an `ATClient` with mock `certificate_info` using `UTCTime` format
-        client = ATClient(
+        client = system.ATClient(
             plugin=None,
             certificate_info={"not_before": "250415073858Z"},
         )
@@ -90,7 +91,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
 
         # creates an `ATClient` with mock `certificate_info` using `GeneralizedTime` format
-        client = ATClient(
+        client = system.ATClient(
             plugin=None,
             certificate_info={"not_before": "20500415073858Z"},
         )
@@ -105,7 +106,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_certificate_not_before` returns `None` when `certificate_info` is `None`.
         """
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         not_before = client.get_certificate_not_before()
         self.assertEqual(not_before, None)
 
@@ -114,7 +115,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_certificate_not_before` returns `None` when `not_before` field is missing.
         """
 
-        client = ATClient(plugin=None, certificate_info={})
+        client = system.ATClient(plugin=None, certificate_info={})
         not_before = client.get_certificate_not_before()
         self.assertEqual(not_before, None)
 
@@ -126,7 +127,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
 
         # creates an `ATClient` with mock `certificate_info` using `UTCTime` format
-        client = ATClient(
+        client = system.ATClient(
             plugin=None,
             certificate_info={"not_after": "270415074858Z"},
         )
@@ -144,7 +145,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
 
         # creates an `ATClient` with mock `certificate_info` using `GeneralizedTime` format
-        client = ATClient(
+        client = system.ATClient(
             plugin=None,
             certificate_info={"not_after": "20510415074858Z"},
         )
@@ -159,7 +160,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_certificate_not_after` returns `None` when `certificate_info` is `None`.
         """
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         not_after = client.get_certificate_not_after()
         self.assertEqual(not_after, None)
 
@@ -168,7 +169,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_certificate_not_after` returns `None` when `not_after` field is missing.
         """
 
-        client = ATClient(plugin=None, certificate_info={})
+        client = system.ATClient(plugin=None, certificate_info={})
         not_after = client.get_certificate_not_after()
         self.assertEqual(not_after, None)
 
@@ -191,7 +192,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             },
         ]
 
-        client = ATClient(plugin=None, certificate_info={"subject": subject})
+        client = system.ATClient(plugin=None, certificate_info={"subject": subject})
         common_name = client.get_certificate_common_name()
         self.assertEqual(common_name, "Test Common Name")
 
@@ -200,7 +201,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_certificate_common_name` returns `None` when `certificate_info` is `None`.
         """
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         common_name = client.get_certificate_common_name()
         self.assertEqual(common_name, None)
 
@@ -209,7 +210,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_certificate_common_name` returns `None` when `subject` field is missing.
         """
 
-        client = ATClient(plugin=None, certificate_info={})
+        client = system.ATClient(plugin=None, certificate_info={})
         common_name = client.get_certificate_common_name()
         self.assertEqual(common_name, None)
 
@@ -224,7 +225,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             {"value": [{"value": [{"value": (2, 5, 4, 10)}, {"value": "Some Org"}]}]},
         ]
 
-        client = ATClient(plugin=None, certificate_info={"subject": subject})
+        client = system.ATClient(plugin=None, certificate_info={"subject": subject})
         common_name = client.get_certificate_common_name()
         self.assertEqual(common_name, None)
 
@@ -233,7 +234,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_server_name` returns `"test"` when `test_mode` is `True`.
         """
 
-        client = ATClient(plugin=None, certificate_info=None, test_mode=True)
+        client = system.ATClient(plugin=None, certificate_info=None, test_mode=True)
         server_name = client.get_server_name()
         self.assertEqual(server_name, "test")
 
@@ -242,7 +243,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `get_server_name` returns `"production"` when `test_mode` is `False`.
         """
 
-        client = ATClient(plugin=None, certificate_info=None, test_mode=False)
+        client = system.ATClient(plugin=None, certificate_info=None, test_mode=False)
         server_name = client.get_server_name()
         self.assertEqual(server_name, "production")
 
@@ -263,7 +264,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         doc_id = client.get_at_document_id(xml_response)
         self.assertEqual(doc_id, "AT123456789")
 
@@ -283,7 +284,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         doc_id = client.get_at_document_id(xml_response)
         self.assertEqual(doc_id, None)
 
@@ -312,7 +313,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         invoices = client.get_at_invoices(xml_response)
         self.assertNotEqual(invoices, None)
 
@@ -334,7 +335,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         invoices = client.get_at_invoices(xml_response)
         self.assertEqual(invoices, None)
 
@@ -358,7 +359,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         invoices = client.get_at_invoices(xml_response, tag_name="CustomInvoiceList")
         self.assertNotEqual(invoices, None)
 
@@ -393,7 +394,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         invoices = client.get_at_invoices(xml_response)
         self.assertNotEqual(invoices, None)
 
@@ -415,7 +416,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         series = client.get_at_series(xml_response)
         self.assertNotEqual(series, None)
 
@@ -434,7 +435,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         series = client.get_at_series(xml_response)
         self.assertEqual(series, None)
 
@@ -454,7 +455,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         series = client.get_at_series(xml_response, tag_name="consultarSeriesResp")
         self.assertNotEqual(series, None)
 
@@ -474,7 +475,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         # should not raise any exception
         client._check_at_errors_v1(xml_response)
 
@@ -482,8 +483,6 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
         Tests that `_check_at_errors_v1` raises `ATAPIError` for error response.
         """
-
-        from . import exceptions
 
         # creates a sample XML response with error code
         xml_response = """<?xml version="1.0" encoding="utf-8"?>
@@ -496,7 +495,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         raised = False
         try:
             client._check_at_errors_v1(xml_response)
@@ -510,8 +509,6 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         Tests that `_check_at_errors_v1` raises `ATAPIError` for SOAP fault response.
         """
 
-        from . import exceptions
-
         # creates a sample XML response with SOAP fault
         xml_response = """<?xml version="1.0" encoding="utf-8"?>
         <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
@@ -523,7 +520,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         raised = False
         try:
             client._check_at_errors_v1(xml_response)
@@ -546,7 +543,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         # should not raise any exception
         client._check_at_errors_v1(xml_response)
 
@@ -566,7 +563,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         # should not raise any exception
         client._check_at_errors_v1(
             xml_response, code_tag="CodigoResposta", message_tag="Mensagem"
@@ -590,7 +587,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         # should not raise any exception
         client._check_at_errors_v2(xml_response)
 
@@ -598,8 +595,6 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
         Tests that `_check_at_errors_v2` raises `ATAPIError` for error response (non-`2xxxx`).
         """
-
-        from . import exceptions
 
         # creates a sample XML response with error code (`3xxxx` = validation error)
         xml_response = """<?xml version="1.0" encoding="utf-8"?>
@@ -614,7 +609,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         raised = False
         try:
             client._check_at_errors_v2(xml_response)
@@ -627,8 +622,6 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
         Tests that `_check_at_errors_v2` raises `ATAPIError` for auth error (`4xxxx` codes).
         """
-
-        from . import exceptions
 
         # creates a sample XML response with authentication error code
         xml_response = """<?xml version="1.0" encoding="utf-8"?>
@@ -643,7 +636,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         raised = False
         try:
             client._check_at_errors_v2(xml_response)
@@ -656,8 +649,6 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
         Tests that `_check_at_errors_v2` raises `ATAPIError` for system error (`5xxxx` codes).
         """
-
-        from . import exceptions
 
         # creates a sample XML response with system error code
         xml_response = """<?xml version="1.0" encoding="utf-8"?>
@@ -672,7 +663,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         raised = False
         try:
             client._check_at_errors_v2(xml_response)
@@ -696,7 +687,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         # should not raise any exception
         client._check_at_errors_v2(xml_response)
 
@@ -716,7 +707,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             </S:Body>
         </S:Envelope>"""
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
         # should not raise any exception (`21000` starts with `2`, so it's success)
         client._check_at_errors_v2(
             xml_response, code_tag="customCode", message_tag="customMessage"
@@ -730,7 +721,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         # test various success codes in the `2xxxx` range
         success_codes = [20000, 20001, 21000, 22500, 29999]
 
-        client = ATClient(plugin=None, certificate_info=None)
+        client = system.ATClient(plugin=None, certificate_info=None)
 
         for code in success_codes:
             xml_response = (
