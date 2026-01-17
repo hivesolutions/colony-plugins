@@ -58,35 +58,9 @@ INVOICE_BASE_TEST_URL_V2 = "https://servicos.portaldasfinancas.gov.pt:723/fatcor
 (in version 2), this is a secure HTTPS based URL
 but still only for testing purposes """
 
-INVOICE_WSDL_URL_V2 = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Fatcorews/Documents/Fatcorews.wsdl"
+INVOICE_WSDL_URL_V2 = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/Fatcorews.wsdl"
 """ The link to the WSDL description file for the
 invoice (in version 2) submission operations """
-
-TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
-""" The base URL to be used for transport document
-submission, this is a secure HTTPS based URL"""
-
-TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
-""" The base test URL to be used for transport document
-submission, this is a secure HTTPS based URL
-but still only for testing purposes """
-
-TRANSPORT_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Documents/documentosTransporte.wsdl"
-""" The link to the WSDL description file for the
-transport submission operations """
-
-SERIES_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:422/SeriesWSService"
-""" The base URL to be used for document series
-submission, this is a secure HTTPS based URL"""
-
-SERIES_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:722/SeriesWSService"
-""" The base test URL to be used for document series
-submission, this is a secure HTTPS based URL
-but still only for testing purposes """
-
-SERIES_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Faturacao/Comunicacao_Series_ATCUD/Documents/SeriesAutoFaturacaoWSService.wsdl"
-""" The link to the WSDL description file for the
-document series submission operations """
 
 QUERY_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:424/fatshare/ws/"
 """ The base URL to be used for invoice query
@@ -100,6 +74,32 @@ but still only for testing purposes """
 QUERY_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/e_Fatura/Documents/fatshareInvoices.wsdl"
 """ The link to the WSDL description file for the
 invoice query operations """
+
+TRANSPORT_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:401/sgdtws"
+""" The base URL to be used for transport document
+submission, this is a secure HTTPS based URL"""
+
+TRANSPORT_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:701/sgdtws"
+""" The base test URL to be used for transport document
+submission, this is a secure HTTPS based URL
+but still only for testing purposes """
+
+TRANSPORT_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/Documentos_de_transporte/Documents/documentosTransporte.wsdl"
+""" The link to the WSDL description file for the
+transport submission operations """
+
+SERIES_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:422/SeriesWSService"
+""" The base URL to be used for document series
+submission, this is a secure HTTPS based URL"""
+
+SERIES_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:722/SeriesWSService"
+""" The base test URL to be used for document series
+submission, this is a secure HTTPS based URL
+but still only for testing purposes """
+
+SERIES_WSDL_URL = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Outras_entidades/Suporte_tecnologico/Webservice/Comunicacao_de_series_ATCUD/Documents/Comunicacao_Series.wsdl"
+""" The link to the WSDL description file for the
+document series submission operations """
 
 
 class APIAT(colony.System):
