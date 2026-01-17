@@ -218,3 +218,54 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         client = ATClient(plugin=None, certificate_info={"subject": subject})
         common_name = client.get_certificate_common_name()
         self.assertEqual(common_name, None)
+
+    def test_get_at_invoices(self):
+        """
+        Tests that get_at_invoices correctly parses a SOAP response with invoice data.
+        """
+
+        # creates a sample XML response matching the AT invoice query format
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <InvoicesResponse>
+                    <InvoicesList>
+                        <Invoice>
+                            <InvoiceNo>FT 2026/1</InvoiceNo>
+                            <ATCUD>AAAA-1234</ATCUD>
+                            <GrossTotal>100.00</GrossTotal>
+                        </Invoice>
+                    </InvoicesList>
+                    <estadoExecucao>
+                        <codResultOper>20000</codResultOper>
+                        <msgResultOper>Sucesso</msgResultOper>
+                    </estadoExecucao>
+                </InvoicesResponse>
+            </S:Body>
+        </S:Envelope>"""
+
+        client = ATClient(plugin=None, certificate_info=None)
+        invoices = client.get_at_invoices(xml_response)
+        self.assertNotEqual(invoices, None)
+
+    def test_get_at_invoices_empty_response(self):
+        """
+        Tests that get_at_invoices returns None when InvoicesList is not present.
+        """
+
+        # creates a sample XML response without InvoicesList
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <InvoicesResponse>
+                    <estadoExecucao>
+                        <codResultOper>20000</codResultOper>
+                        <msgResultOper>Sucesso</msgResultOper>
+                    </estadoExecucao>
+                </InvoicesResponse>
+            </S:Body>
+        </S:Envelope>"""
+
+        client = ATClient(plugin=None, certificate_info=None)
+        invoices = client.get_at_invoices(xml_response)
+        self.assertEqual(invoices, None)
