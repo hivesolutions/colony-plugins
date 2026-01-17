@@ -943,7 +943,7 @@ class ATClient(object):
         """
 
         # parses the XML data and retrieves the entry document
-        # structure that will be uses in the parsing
+        # structure that will be used in the parsing
         document = xml.dom.minidom.parseString(data)
 
         # retrieves the AT invoices response from the document,
