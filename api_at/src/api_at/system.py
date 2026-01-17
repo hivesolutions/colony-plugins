@@ -62,11 +62,11 @@ INVOICE_WSDL_URL_V2 = "https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contrib
 """ The link to the WSDL description file for the
 invoice (in version 2) submission operations """
 
-QUERY_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:424/fatshare/ws/"
+QUERY_BASE_URL = "https://servicos.portaldasfinancas.gov.pt:425/fatshare/ws/fatshareFaturas"
 """ The base URL to be used for invoice query
 operations, this is a secure HTTPS based URL """
 
-QUERY_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:724/fatshare/ws/"
+QUERY_BASE_TEST_URL = "https://servicos.portaldasfinancas.gov.pt:725/fatshare/ws/fatshareFaturas"
 """ The base test URL to be used for invoice query
 operations, this is a secure HTTPS based URL
 but still only for testing purposes """
