@@ -76,7 +76,7 @@ XXX-short_descriptive_name.md
 For example:
 
 - `000-design_workflow.md`
-- `001-at_invoice_query.md`
+- `001-at_invoice_api.md`
 - `002-authentication_strategy.md`
 
 Use lowercase with underscores for the descriptive portion. Keep filenames concise but meaningful.
