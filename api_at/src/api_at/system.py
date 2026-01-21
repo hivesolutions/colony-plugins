@@ -348,7 +348,7 @@ class ATClient(object):
             invoice_payload,
             version=2,
             check_errors=lambda data: self._check_at_errors_v1(
-                data, code_tag="CodigoResposta", message_tag="Mensagem"
+                data, code_tag="ns2:CodigoResposta", message_tag="ns2:Mensagem"
             ),
         )
         return data
@@ -369,7 +369,7 @@ class ATClient(object):
             status_payload,
             version=2,
             check_errors=lambda data: self._check_at_errors_v1(
-                data, code_tag="CodigoResposta", message_tag="Mensagem"
+                data, code_tag="ns2:CodigoResposta", message_tag="ns2:Mensagem"
             ),
         )
         return data
@@ -390,7 +390,7 @@ class ATClient(object):
             delete_payload,
             version=2,
             check_errors=lambda data: self._check_at_errors_v1(
-                data, code_tag="CodigoResposta", message_tag="Mensagem"
+                data, code_tag="ns2:CodigoResposta", message_tag="ns2:Mensagem"
             ),
         )
         return data
