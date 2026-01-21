@@ -43,20 +43,16 @@ COMPLEX_OBJECT = [
     [36, "China", "杰"],
 ]
 
-SIMPLE_CSV = colony.legacy.u(
-    """age;country;name
+SIMPLE_CSV = colony.legacy.u("""age;country;name
 24;Portugal;João
 12;Ireland;Michael
-"""
-)
+""")
 
-COMPLEX_CSV = colony.legacy.u(
-    """age;country;name
+COMPLEX_CSV = colony.legacy.u("""age;country;name
 24;Portugal;João
 12;Ireland;Michael
 36;China;杰
-"""
-)
+""")
 
 SIMPLE_RAW = [
     dict(

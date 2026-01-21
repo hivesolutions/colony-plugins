@@ -724,8 +724,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         client = system.ATClient(plugin=None, certificate_info=None)
 
         for code in success_codes:
-            xml_response = (
-                """<?xml version="1.0" encoding="utf-8"?>
+            xml_response = """<?xml version="1.0" encoding="utf-8"?>
             <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
                 <S:Body>
                     <Response>
@@ -733,9 +732,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
                         <msgResultOper>Success</msgResultOper>
                     </Response>
                 </S:Body>
-            </S:Envelope>"""
-                % code
-            )
+            </S:Envelope>""" % code
 
             # should not raise any exception for success codes
             client._check_at_errors_v2(xml_response)

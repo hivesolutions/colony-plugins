@@ -70,8 +70,7 @@ class PKCS1BaseTestCase(colony.ColonyTestCase):
         return "PKCS1 Base test case"
 
     def test_load_certificate_pem(self):
-        certificate = self.pkcs1.load_certificate_pem(
-            """-----BEGIN CERTIFICATE-----
+        certificate = self.pkcs1.load_certificate_pem("""-----BEGIN CERTIFICATE-----
 MIIIiTCCBnGgAwIBAgITNwAAADtjHvNQBL8xtgAAAAAAOzANBgkqhkiG9w0BAQsF
 ADBHMRUwEwYKCZImiZPyLGQBGRYFbG9jYWwxFTATBgoJkiaJk/IsZAEZFgVyaXR0
 YTEXMBUGA1UEAxMOQVQgSXNzdWluZyBDQTIwHhcNMjUwNDE1MDczODU4WhcNMjcw
@@ -118,8 +117,7 @@ JQ4Nq5OGLMDD0SP8ZERoHJMnDpI9NMGaQXYVoKsstPgUwVRRT7eFw+44NsJeIbd2
 sh1MoR6OVGfW8+ZyIsyrOSXaePw2s+LsM+A/DNOaovUTfer3n5fGmeAbAtic/ATf
 oipvlTLirPGg9lDEgWUsElTmJdNsXKpXmndICSSSmYWf1rEg6XDHSGLpn502RATM
 dJ996JOFis6KMdzf/FUNNORTOObJsP4JZRmfn6o=
------END CERTIFICATE-----"""
-        )
+-----END CERTIFICATE-----""")
 
         # verifies that certificate was loaded and contains expected structure
         self.assertNotEqual(certificate, None)
