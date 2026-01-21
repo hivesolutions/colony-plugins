@@ -1055,7 +1055,12 @@ class ATClient(object):
         raise exceptions.ATAPIError(return_message, error_code=return_code)
 
     def _check_at_errors_v2(
-        self, data, code_tag="codResultOper", message_tag="msgResultOper"
+        self,
+        data,
+        fault_code="faultcode",
+        fault_tag="faultstring",
+        code_tag="codResultOper",
+        message_tag="msgResultOper",
     ):
         """
         Checks the given data for AT errors (v2 version).
@@ -1065,6 +1070,12 @@ class ATClient(object):
 
         :type data: Dictionary
         :param data: The data to be checked for AT errors.
+        :type fault_code: String
+        :param fault_code: The name of the XML tag to be used
+        to obtain the fault code.
+        :type fault_tag: String
+        :param fault_tag: The name of the XML tag to be used
+        to obtain the fault string explanation.
         :type code_tag: String
         :param code_tag: The name of the XML tag to be used
         to obtain the result code.
@@ -1077,15 +1088,22 @@ class ATClient(object):
         # structure that will be uses in the parsing
         document = xml.dom.minidom.parseString(data)
 
-        # tries to obtain the elements for both the result code
-        # and the result message (description)
+        # tries to retrieve the various elements from the XML data
+        # that represent error information, an error may be either
+        # a normal message based error or a fault
+        fault_code = document.getElementsByTagName(fault_code)
+        fault_string = document.getElementsByTagName(fault_tag)
         result_code = document.getElementsByTagName(code_tag)
         result_message = document.getElementsByTagName(message_tag)
 
         # in case no result code is present we can safely return
         # immediately as no error is present
-        if not result_code:
+        if not result_code and not fault_code:
             return
+
+        # obtains the best possible reference for the result code
+        # either from the fault code or from the result code
+        result_code = fault_code if fault_code else result_code
 
         # converts the result code into its textual representation and
         # then into an integer value, to be properly handled
@@ -1103,6 +1121,7 @@ class ATClient(object):
         # obtains the result message (if present) and raises the error with
         # both the code and the message to be handled by exception handlers
         result_message = self._text(result_message[0]) if result_message else None
+        result_message = self._text(fault_string[0]) if fault_string else result_message
         raise exceptions.ATAPIError(result_message, error_code=result_code)
 
     def _get_http_client(self):
