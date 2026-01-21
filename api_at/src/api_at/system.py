@@ -411,7 +411,7 @@ class ATClient(object):
             query_payload,
             version=2,
             check_errors=lambda data: self._check_at_errors_v2(
-                data, code_tag="codResultOper", message_tag="msgResultOper"
+                data, code_tag="EstadoOperacao", message_tag="Desc"
             ),
         )
         return data
