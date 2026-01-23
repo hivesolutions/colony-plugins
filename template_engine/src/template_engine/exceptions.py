@@ -179,6 +179,33 @@ class InvalidNumberAttributes(TemplateEngineException):
         return "Invalid number attributes - %s" % self.message
 
 
+class InvalidTagName(TemplateEngineException):
+    """
+    The invalid tag name class.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        :type message: String
+        :param message: The message to be printed.
+        """
+
+        TemplateEngineException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "Invalid tag name - %s" % self.message
+
+
 class InvalidBooleanValue(TemplateEngineException):
     """
     The invalid boolean value class.

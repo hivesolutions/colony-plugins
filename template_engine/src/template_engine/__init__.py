@@ -49,6 +49,7 @@ from .exceptions import (
     UndefinedReference,
     VariableNotIterable,
     InvalidNumberAttributes,
+    InvalidTagName,
     InvalidBooleanValue,
     InvalidSerializer,
 )

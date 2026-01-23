@@ -425,6 +425,11 @@ class Visitor(object):
         pass
 
     def process_accept(self, node, name):
+        # in case the process method is not defined, raises an exception
+        # indicating tha the tag is not supported
+        if not hasattr(self, "process_" + name):
+            raise exceptions.InvalidTagName(name)
+
         # retrieves the process method for the name and runs the
         # same method with the current node as the argument
         process_method = getattr(self, "process_" + name)
