@@ -514,7 +514,9 @@ class MySQLEngine(object):
             # in case the error code is related with a dead lock
             # then the current operation should be re-started by
             # raising a proper exception to the top layers (owners)
-            code, _message = exception.args
+            code, message = (
+                exception.args if len(exception.args) > 1 else (None, exception.args[0])
+            )
             if code in DEAD_LOCK_ERRORS:
                 self.mysql_system.warning(
                     "[%s] [%s] [dead lock] %s" % (ENGINE_NAME, database, query)
@@ -534,9 +536,11 @@ class MySQLEngine(object):
             # then verifies if this error is meant to be ignored and in
             # case it's prints a warning message but does not fails, otherwise
             # raises the exception as this should break the current code
-            code, _message = exception.args
+            code, message = (
+                exception.args if len(exception.args) > 1 else (None, exception.args[0])
+            )
             if code in IGNORE_ERRORS:
-                self.mysql_system.warning(_message)
+                self.mysql_system.warning(message)
             else:
                 cursor.close()
                 raise
