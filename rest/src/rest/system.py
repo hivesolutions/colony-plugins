@@ -1403,6 +1403,20 @@ class RESTRequest(object):
 
         return self.redirected
 
+    def is_secure(self):
+        """
+        Checks if the current request is secure, meaning it's running
+        under HTTPS (SSL/TLS).
+
+        Relies on the underlying request object to provide the necessary
+        information, as only it knows the connection details.
+
+        :rtype: bool
+        :return: If the current request is secure.
+        """
+
+        return self.request.is_secure() if hasattr(self.request, "is_secure") else False
+
     def flush(self):
         """
         Flushes the REST request buffer, this operation should
