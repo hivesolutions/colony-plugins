@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Test case for certificate PEM loading in PKCS1 module
 * Regression tests for session GC and translate_result fixes in REST plugin
 
+### Changed
+
+*
+
 ### Fixed
 
 * Race condition in `RESTSession.gc()` and `ShelveSession.gc()` that caused `RuntimeError: dictionary changed size during iteration` when expiring sessions during garbage collection
