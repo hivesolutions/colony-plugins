@@ -494,6 +494,41 @@ class EntityManager(object):
 
         return self.engine.get_database_size()
 
+    def get_database_encoding(self):
+        """
+        Retrieves the encoding (character set) used by the underlying
+        database for storing and retrieving text data.
+
+        The encoding value is engine-specific and may vary between
+        different database systems (e.g., utf8, utf8mb4 for MySQL,
+        utf-8 for SQLite).
+
+        :rtype: String
+        :return: The database encoding/character set name.
+        """
+
+        if not hasattr(self.engine, "get_database_encoding"):
+            return None
+        return self.engine.get_database_encoding()
+
+    def get_insensitive_collate(self):
+        """
+        Retrieves the collation setting used for case-insensitive
+        comparisons in the underlying database.
+
+        The collation value is engine-specific and defines how
+        string comparisons are performed (e.g., utf8_general_ci
+        for MySQL, nocase for SQLite).
+
+        :rtype: String
+        :return: The case-insensitive collation name, or None
+        if not applicable.
+        """
+
+        if not hasattr(self.engine, "get_insensitive_collate"):
+            return None
+        return self.engine.get_insensitive_collate()
+
     def get_connection(self):
         """
         Retrieves the current available connection.
