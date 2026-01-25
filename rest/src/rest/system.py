@@ -2933,9 +2933,7 @@ class ShelveSession(RESTSession):
         if not exists_path:
             os.makedirs(base_path)
         file_path = os.path.join(base_path, file_path)
-        print("SHELEVEL path: %s %s" % (base_path, file_path))
         cls.SHELVE = cls.SHELVE or shelve.open(file_path, protocol=2, writeback=True)
-        print("ShelveSession.load()", cls.SHELVE)
 
     @classmethod
     def unload(cls):
