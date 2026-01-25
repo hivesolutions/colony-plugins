@@ -39,7 +39,7 @@ import colony
 
 from . import exceptions
 
-REGEX_COMILATION_LIMIT = 99
+REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
 
 HANDLER_BASE_FILENAME = "/dynamic/rest/"
@@ -101,6 +101,11 @@ DEFAULT_DIRTY_INTERVAL = 600
 considered valid as an interval to mark a session as
 dirty for the new calculus of expire time, this value
 avoids an exhaustion on flushing the session data """
+
+SESSION_ALIAS = dict(file="shelve")
+""" The map that associated simpler name with the alias
+for the session engine resolution, this allows for more
+intuitive naming of the session engine """
 
 
 class REST(colony.System):
@@ -172,6 +177,7 @@ class REST(colony.System):
         # value and if there's success retrieves the proper class from the
         # dictionary of global values as the session class to be used
         session = colony.conf("SESSION", None)
+        session = SESSION_ALIAS.get(session, session)
         if session:
             session = colony.to_camelcase(session)
             self.session_c = globals()[session + "Session"]
@@ -909,7 +915,7 @@ class REST(colony.System):
 
             # in case the current index is in the limit of the python
             # regex compilation, must split the regex as a new one
-            if index % REGEX_COMILATION_LIMIT == 0:
+            if index % REGEX_COMPILATION_LIMIT == 0:
                 # retrieves the matching regex value from the matching
                 # regex value buffer then compiles it adding it to the
                 # list of matching regex (for latter usage)
@@ -2927,12 +2933,15 @@ class ShelveSession(RESTSession):
         if not exists_path:
             os.makedirs(base_path)
         file_path = os.path.join(base_path, file_path)
+        print("SHELEVEL path: %s %s" % (base_path, file_path))
         cls.SHELVE = cls.SHELVE or shelve.open(file_path, protocol=2, writeback=True)
+        print("ShelveSession.load()", cls.SHELVE)
 
     @classmethod
     def unload(cls):
         super(ShelveSession, cls).unload()
-        cls.SHELVE and cls.SHELVE.close()
+        if cls.SHELVE:
+            cls.SHELVE.close()
         cls.SHELVE = None
 
     @classmethod
