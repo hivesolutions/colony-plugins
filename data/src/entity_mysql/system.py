@@ -139,6 +139,12 @@ class MySQLEngine(object):
             cursor.close()
         return result
 
+    def get_query_encoding(self):
+        connection = self.entity_manager.get_connection()
+        _connection = connection._connection
+        encoding = _connection.get_query_encoding()
+        return encoding
+
     def get_database_encoding(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection
@@ -832,8 +838,8 @@ class MySQLEngine(object):
         # retrieves the current database encoding and then
         # uses it to encode the query into the proper query
         # representation (string normalization), then returns
-        # it to the caller
-        database_encoding = self.get_database_encoding()
+        # it to the caller method for downstream processing
+        database_encoding = self.get_query_encoding()
         query = query.encode(database_encoding)
         return query
 
@@ -1066,11 +1072,22 @@ class MySQLConnection(object):
     def get_database(self):
         return self.database
 
-    def get_database_encoding(self, alias=True):
+    def get_query_encoding(self):
+        return "utf-8"
+
+    def get_database_encoding(self, alias=False):
         # checks if the current object already contains the encoding
         # attribute set for such cases the retrieval is immediate
         if hasattr(self, "_encoding"):
             return self._encoding
+
+        # tries to obtain the encoding to be used in the connection
+        # from a configuration value, if it succeeds the encoding
+        # is set and returned immediately
+        encoding = colony.conf("DB_ENCODING", None)
+        if encoding:
+            self._encoding = encoding
+            return encoding
 
         # retrieves the query to be used in the retrieval of the
         # database encoding and executes it retrieving the encoding
