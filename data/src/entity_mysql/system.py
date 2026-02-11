@@ -1075,7 +1075,7 @@ class MySQLConnection(object):
     def get_query_encoding(self):
         return "utf-8"
 
-    def get_database_encoding(self, alias=False):
+    def get_database_encoding(self, alias=True):
         # checks if the current object already contains the encoding
         # attribute set for such cases the retrieval is immediate
         if hasattr(self, "_encoding"):
