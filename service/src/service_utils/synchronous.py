@@ -2193,9 +2193,11 @@ class ServiceConnection(object):
                 selected_values = select.select(
                     [self.connection_socket], [], [], request_timeout
                 )
-            except Exception:
+            except Exception as exception:
                 # raises the request closed exception
-                raise exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed(
+                    "invalid socket: %s" % colony.legacy.UNICODE(exception)
+                )
 
             if selected_values == ([], [], []):
                 # raises the server request timeout exception
@@ -2285,9 +2287,11 @@ class ServiceConnection(object):
                 selected_values = select.select(
                     [], [self.connection_socket], [], response_timeout
                 )
-            except Exception:
+            except Exception as exception:
                 # raises the request closed exception
-                raise exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed(
+                    "invalid socket: %s" % colony.legacy.UNICODE(exception)
+                )
 
             if selected_values == ([], [], []):
                 # raises the server response timeout exception

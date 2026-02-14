@@ -840,11 +840,13 @@ class ClientConnection(object):
                 selected_values = select.select(
                     [self.connection_socket], [], [], request_timeout
                 )
-            except Exception:
+            except Exception as exception:
                 # closes the connection and then raises the
                 # request closed exception
                 self.close()
-                raise exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed(
+                    "invalid socket: %s" % colony.legacy.UNICODE(exception)
+                )
 
             if selected_values == ([], [], []):
                 # closes the connection and then raises the
@@ -960,11 +962,13 @@ class ClientConnection(object):
                     [],
                     response_timeout,
                 )
-            except Exception:
+            except Exception as exception:
                 # closes the connection and raises a request closed exception
                 # meaning that there was a problem in the connection selection
                 self.close()
-                raise exceptions.RequestClosed("invalid socket")
+                raise exceptions.RequestClosed(
+                    "invalid socket: %s" % colony.legacy.UNICODE(exception)
+                )
 
             # in case there is pending data to be received
             if not selected_values[0] == []:
