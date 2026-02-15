@@ -43,6 +43,7 @@ class ServiceHTTPTest(colony.Test):
 
     def get_bundle(self):
         return (
+            HTTPRequestTestCase,
             ServiceHTTPBaseTestCase,
             StatusMessagesTestCase,
             ExceptionsTestCase,
@@ -53,6 +54,32 @@ class ServiceHTTPTest(colony.Test):
 
     def tear_down(self, test_case):
         colony.Test.tear_down(self, test_case)
+
+
+class HTTPRequestTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "HTTP Request test case"
+
+    def test_get_service_connection(self):
+        connection = mocks.MockServiceConnection()
+        request = system.HTTPRequest(service_connection=connection)
+
+        self.assertEqual(request.get_service_connection(), connection)
+
+    def test_get_connection_address(self):
+        connection = mocks.MockServiceConnection(("192.168.1.100", 54321))
+        request = system.HTTPRequest(service_connection=connection)
+
+        address = request.get_connection_address()
+        self.assertEqual(address, ("192.168.1.100", 54321))
+
+    def test_get_connection_address_default(self):
+        connection = mocks.MockServiceConnection()
+        request = system.HTTPRequest(service_connection=connection)
+
+        address = request.get_connection_address()
+        self.assertEqual(address, ("127.0.0.1", 8080))
 
 
 class ServiceHTTPBaseTestCase(colony.ColonyTestCase):

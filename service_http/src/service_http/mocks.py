@@ -73,3 +73,8 @@ class MockErrorHandlerPlugin(object):
 
     def get_error_handler_name(self):
         return self._error_handler_name
+
+
+class MockServiceConnection(object):
+    def __init__(self, address=("127.0.0.1", 8080)):
+        self.connection_address = address

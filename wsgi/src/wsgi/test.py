@@ -378,6 +378,29 @@ class WSGIRequestTestCase(colony.ColonyTestCase):
 
         self.assertEqual(request.is_secure(), True)
 
+    def test_get_connection_address(self):
+        mock_plugin = mocks.MockPlugin()
+        wsgi = system.WSGI(mock_plugin)
+        environ = mocks.create_environ(method="GET", path="/test")
+        environ["REMOTE_ADDR"] = "192.168.1.100"
+
+        request = system.WSGIRequest(wsgi, environ)
+
+        address, port = request.get_connection_address()
+        self.assertEqual(address, "192.168.1.100")
+        self.assertEqual(port, None)
+
+    def test_get_connection_address_missing(self):
+        mock_plugin = mocks.MockPlugin()
+        wsgi = system.WSGI(mock_plugin)
+        environ = mocks.create_environ(method="GET", path="/test")
+
+        request = system.WSGIRequest(wsgi, environ)
+
+        address, port = request.get_connection_address()
+        self.assertEqual(address, None)
+        self.assertEqual(port, None)
+
     def test_allow_deny_cookies(self):
         mock_plugin = mocks.MockPlugin()
         wsgi = system.WSGI(mock_plugin)

@@ -153,6 +153,9 @@ class MockRequest(object):
     def get_service_connection(self):
         return self._service_connection
 
+    def get_connection_address(self):
+        return self._service_connection.connection_address
+
 
 class MockService(object):
     def __init__(self):

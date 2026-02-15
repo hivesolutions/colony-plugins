@@ -3492,6 +3492,20 @@ class HTTPRequest(object):
 
         return self.service_connection
 
+    def get_connection_address(self):
+        """
+        Returns the connection address of the current request,
+        this is an alias to the retrieval of the connection
+        address from the service connection object.
+
+        :rtype: Tuple
+        :return: The connection address of the current request,
+        which is a tuple containing the IP address and the TCP
+        port of the client.
+        """
+
+        return self.service_connection.connection_address
+
     def get_attributes_list(self):
         """
         Retrieves the list of attribute names in the

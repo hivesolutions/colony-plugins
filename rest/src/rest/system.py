@@ -2244,35 +2244,57 @@ class RESTRequest(object):
 
         return self.request.get_service_connection()
 
-    def get_address(self):
+    def get_connection_address(self, resolve=True, cleanup=True):
         """
-        Retrieves the (ip) address of the service connection
+        Retrieves the connection address for the current request, this is
+        the address of the client that is connected to the server and is
+        sending the request.
+
+        :rtype: Tuple
+        :return: The connection address for the current request, which is a tuple
+        containing the IP address and the TCP port of the client.
+        """
+
+        address, port = self.request.get_connection_address()
+
+        if resolve:
+            address = self.get_header("X-Forwarded-For") or address
+            address = self.get_header("X-Client-IP") or address
+            address = self.get_header("X-Real-IP") or address
+            address = address.split(",", 1)[0].strip() if address else address
+
+        if cleanup and address and address.startswith("::ffff:"):
+            address = address[7:]
+
+        return (address, port)
+
+    def get_address(self, resolve=True, cleanup=True):
+        """
+        Retrieves the (IP) address of the service connection
         associated with the REST request.
 
+        :type resolve: bool
+        :param resolve: If the method should try to resolve the
+        real client IP address (proxy resolution).
+        :type cleanup: bool
+        :param cleanup: If the method should clean up the IP address
+        removing any IPv6 prefix (like ::ffff: for IPv4-mapped addresses).
         :rtype: String
-        :return: The (ip) address of the service connection.
+        :return: The (IP) address of the service connection.
         """
 
-        # retrieves the service connection for the request,
-        # unpacks the connection address into the address
-        service_connection = self.request.service_connection
-        address = service_connection.connection_address[0]
-        return address
+        return self.get_connection_address(resolve=resolve, cleanup=cleanup)[0]
 
     def get_port(self):
         """
-        Retrieves the (tcp) port of the service connection
+        Retrieves the (TCP) port of the service connection
         associated with the REST request.
 
         :rtype: String
-        :return: The (tcp) port of the service connection.
+        :return: The (TCP) port of the service connection.
         """
 
-        # retrieves the service connection for the request,
-        # unpacks the connection port into the port
-        service_connection = self.request.service_connection
-        port = service_connection.connection_address[1]
-        return port
+        return self.get_connection_address()[1]
 
     def field(
         self, name, default=None, cast=None, mandatory=False, split=False, token=","

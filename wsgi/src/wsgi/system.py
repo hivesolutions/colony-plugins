@@ -986,6 +986,22 @@ class WSGIRequest(object):
         url_scheme = self.environ.get("wsgi.url_scheme", None)
         return url_scheme == "https"
 
+    def get_connection_address(self):
+        """
+        Retrieves the connection address for the current request, this is
+        the address of the client that is connected to the server and is
+        sending the request.
+
+        :rtype: Tuple
+        :return: The connection address for the current request, which is a tuple
+        containing the IP address and the TCP port of the client.
+        """
+
+        return (
+            self.environ.get("REMOTE_ADDR", None),
+            int(self.environ.get("REMOTE_PORT", 0)) or None,
+        )
+
     def get_attributes_list(self):
         """
         Retrieves the list of attribute names in the
