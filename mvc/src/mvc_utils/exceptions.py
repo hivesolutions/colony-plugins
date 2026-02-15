@@ -272,7 +272,8 @@ class ModelValidationError(ValidationError):
 
 class ControllerValidationError(ValidationError):
     """
-    The controller validation error class.
+    The controller validation error class, to be used in the
+    context of ACL based validation.
     """
 
     controller = None
@@ -311,10 +312,16 @@ class ControllerValidationReasonFailed(ControllerValidationError):
     """
     The controller validation reason failed class, to be used
     to encapsulate the multiple reasons for the validation failure.
+
+    This is used to be able to provide more detailed information about
+    ACL validation failures, allowing the caller to be able to
+    understand the various reasons for the validation failure.
     """
 
     reasons_list = []
-    """ The list of reasons for validation failure """
+    """ The list of reasons for validation failure, should be
+    a list of strings in plain english describing the various
+    reasons for validation to have failed """
 
     def __init__(self, message, controller=None, reasons_list=[]):
         """

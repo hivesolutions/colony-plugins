@@ -515,7 +515,9 @@ class RESTRequestTestCase(colony.ColonyTestCase):
         mock_request = mocks.MockRequest()
         rest_request = system.RESTRequest(rest, mock_request)
 
-        address, port = rest_request.get_connection_address(resolve=False, cleanup=False)
+        address, port = rest_request.get_connection_address(
+            resolve=False, cleanup=False
+        )
         self.assertEqual(address, "127.0.0.1")
         self.assertEqual(port, 8080)
 
@@ -569,7 +571,9 @@ class RESTRequestTestCase(colony.ColonyTestCase):
         mock_plugin = mocks.MockPlugin()
         rest = system.REST(mock_plugin, session_c=system.RESTSession)
         mock_request = mocks.MockRequest()
-        mock_request.headers["X-Forwarded-For"] = "203.0.113.50, 70.41.3.18, 150.172.238.178"
+        mock_request.headers["X-Forwarded-For"] = (
+            "203.0.113.50, 70.41.3.18, 150.172.238.178"
+        )
         rest_request = system.RESTRequest(rest, mock_request)
 
         address, port = rest_request.get_connection_address()
@@ -580,7 +584,10 @@ class RESTRequestTestCase(colony.ColonyTestCase):
         mock_plugin = mocks.MockPlugin()
         rest = system.REST(mock_plugin, session_c=system.RESTSession)
         mock_request = mocks.MockRequest()
-        mock_request._service_connection.connection_address = ("::ffff:192.168.1.1", 9090)
+        mock_request._service_connection.connection_address = (
+            "::ffff:192.168.1.1",
+            9090,
+        )
         rest_request = system.RESTRequest(rest, mock_request)
 
         address, port = rest_request.get_connection_address(resolve=False)
@@ -591,10 +598,15 @@ class RESTRequestTestCase(colony.ColonyTestCase):
         mock_plugin = mocks.MockPlugin()
         rest = system.REST(mock_plugin, session_c=system.RESTSession)
         mock_request = mocks.MockRequest()
-        mock_request._service_connection.connection_address = ("::ffff:192.168.1.1", 9090)
+        mock_request._service_connection.connection_address = (
+            "::ffff:192.168.1.1",
+            9090,
+        )
         rest_request = system.RESTRequest(rest, mock_request)
 
-        address, port = rest_request.get_connection_address(resolve=False, cleanup=False)
+        address, port = rest_request.get_connection_address(
+            resolve=False, cleanup=False
+        )
         self.assertEqual(address, "::ffff:192.168.1.1")
         self.assertEqual(port, 9090)
 
@@ -604,7 +616,9 @@ class RESTRequestTestCase(colony.ColonyTestCase):
         mock_request = mocks.MockRequest()
         rest_request = system.RESTRequest(rest, mock_request)
 
-        self.assertEqual(rest_request.get_address(resolve=False, cleanup=False), "127.0.0.1")
+        self.assertEqual(
+            rest_request.get_address(resolve=False, cleanup=False), "127.0.0.1"
+        )
 
     def test_get_address_with_resolve(self):
         mock_plugin = mocks.MockPlugin()

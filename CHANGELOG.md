@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * New `get_connection_address()` method in `HTTPRequest` and `WSGIRequest` to provide a uniform interface for retrieving client connection address
 * Optional `resolve` and `cleanup` parameters in `RESTRequest.get_address()` for controlling proxy resolution and IPv6 cleanup
 * Tests for `get_connection_address()`, `get_address()`, and `get_port()` across REST, service HTTP, and WSGI modules
+* Exception handling in `validated` decorator to catch `ControllerValidationError` raised during function execution and route to `validation_failed` handler
+* Tests for the `validated` decorator covering pre-validation failures, in-function exception catching, re-raise behavior, and flag management
 * New AT invoice management methods in ATClient: `change_invoice_status()`, `delete_invoice()`, `query_invoices()`, and `get_at_invoices()` for complete invoice lifecycle management
 * New constants for AT invoice query operations: `QUERY_BASE_URL`, `QUERY_BASE_TEST_URL`, and `QUERY_WSDL_URL`
 * Tests for `get_at_invoices()` method covering both populated and empty invoice responses

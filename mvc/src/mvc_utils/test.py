@@ -30,9 +30,10 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+from . import utils
+from . import mocks
 from . import system
 from . import exceptions
-from . import mocks
 
 
 class MVCUtilsTest(colony.Test):
@@ -45,6 +46,7 @@ class MVCUtilsTest(colony.Test):
         return (
             MVCUtilsBaseTestCase,
             RawModelTestCase,
+            ValidatedDecoratorTestCase,
             ExceptionsTestCase,
         )
 
@@ -154,6 +156,175 @@ class RawModelTestCase(colony.ColonyTestCase):
         model = TestModel()
         model.attach()
         model.detach()
+
+
+class ValidatedDecoratorTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Validated Decorator test case"
+
+    def test_validated_calls_function(self):
+        controller = mocks.MockValidatedController()
+
+        @utils.validated()
+        def action(self, request):
+            return "success"
+
+        request = mocks.MockRequest()
+        result = action(controller, request)
+
+        self.assertEqual(result, "success")
+
+    def test_validated_raises_without_validate_method(self):
+        controller = mocks.MockController()
+        request = mocks.MockRequest()
+
+        @utils.validated()
+        def action(self, request):
+            return "success"
+
+        self.assertRaises(
+            exceptions.ControllerValidationError, action, controller, request
+        )
+
+    def test_validated_pre_validation_failure_with_handler(self):
+        controller = mocks.MockValidatedController(
+            validate_reasons=["missing token"],
+            validation_failed_result="handled",
+        )
+
+        @utils.validated()
+        def action(self, request):
+            return "success"
+
+        request = mocks.MockRequest()
+        result = action(controller, request)
+
+        self.assertEqual(result, "handled")
+        self.assertEqual(len(controller._validation_failed_calls), 1)
+        self.assertEqual(
+            controller._validation_failed_calls[0]["reasons"], ["missing token"]
+        )
+
+    def test_validated_pre_validation_failure_raises_without_handler(self):
+        controller = mocks.MockValidatedControllerNoHandler(
+            validate_reasons=["missing token"],
+        )
+
+        @utils.validated()
+        def action(self, request):
+            return "success"
+
+        request = mocks.MockRequest()
+        self.assertRaises(
+            exceptions.ControllerValidationReasonFailed, action, controller, request
+        )
+
+    def test_validated_catches_controller_validation_error(self):
+        controller = mocks.MockValidatedController(
+            validation_failed_result="handled",
+        )
+
+        @utils.validated()
+        def action(self, request):
+            raise exceptions.ControllerValidationError("access denied")
+
+        request = mocks.MockRequest()
+        result = action(controller, request)
+
+        self.assertEqual(result, "handled")
+        self.assertEqual(len(controller._validation_failed_calls), 1)
+        call = controller._validation_failed_calls[0]
+        self.assertEqual(call["validation_parameters"], None)
+        self.assertEqual(call["reasons"], "Controller validation error - access denied")
+
+    def test_validated_catches_reason_failed_with_reasons_list(self):
+        controller = mocks.MockValidatedController(
+            validation_failed_result="handled",
+        )
+
+        @utils.validated()
+        def action(self, request):
+            raise exceptions.ControllerValidationReasonFailed(
+                "auth failed",
+                reasons_list=["expired token", "invalid scope"],
+            )
+
+        request = mocks.MockRequest()
+        result = action(controller, request)
+
+        self.assertEqual(result, "handled")
+        self.assertEqual(len(controller._validation_failed_calls), 1)
+        call = controller._validation_failed_calls[0]
+        self.assertEqual(call["reasons"], ["expired token", "invalid scope"])
+
+    def test_validated_reraises_without_handler(self):
+        controller = mocks.MockValidatedControllerNoHandler()
+
+        @utils.validated()
+        def action(self, request):
+            raise exceptions.ControllerValidationError("access denied")
+
+        request = mocks.MockRequest()
+        self.assertRaises(
+            exceptions.ControllerValidationError, action, controller, request
+        )
+
+    def test_validated_reraises_when_should_call_false(self):
+        controller = mocks.MockValidatedController(
+            validation_failed_result="handled",
+        )
+
+        @utils.validated(call_validation_failed=False)
+        def action(self, request):
+            raise exceptions.ControllerValidationError("access denied")
+
+        request = mocks.MockRequest()
+        self.assertRaises(
+            exceptions.ControllerValidationError, action, controller, request
+        )
+
+    def test_validated_sets_validated_flag(self):
+        controller = mocks.MockValidatedController()
+
+        @utils.validated()
+        def action(self, request):
+            return "success"
+
+        request = mocks.MockRequest()
+        action(controller, request)
+
+        self.assertEqual(request.parameters.get("validated"), True)
+
+    def test_validated_skips_validation_when_already_validated(self):
+        call_count = []
+        controller = mocks.MockValidatedController()
+
+        original_validate = controller.validate
+
+        def counting_validate(request, parameters, validation_parameters):
+            call_count.append(True)
+            return original_validate(request, parameters, validation_parameters)
+
+        controller.validate = counting_validate
+
+        @utils.validated()
+        def action(self, request):
+            return "success"
+
+        request = mocks.MockRequest(parameters={"validated": True})
+        action(controller, request)
+
+        self.assertEqual(len(call_count), 0)
+
+    def test_validated_preserves_function_name(self):
+        controller = mocks.MockValidatedController()
+
+        @utils.validated()
+        def my_action(self, request):
+            return "success"
+
+        self.assertEqual(my_action.__name__, "my_action")
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

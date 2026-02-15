@@ -50,3 +50,37 @@ class MockController(object):
 class MockModelWithErrors(object):
     def __init__(self):
         self.validation_errors_map = {"email": ["invalid format", "required"]}
+
+
+class MockRequest(object):
+    def __init__(self, parameters=None):
+        self.parameters = parameters or {}
+
+
+class MockValidatedController(object):
+    def __init__(self, validate_reasons=None, validation_failed_result=None):
+        self._validate_reasons = validate_reasons or []
+        self._validation_failed_result = validation_failed_result
+        self._validation_failed_calls = []
+
+    def validate(self, request, parameters, validation_parameters):
+        return self._validate_reasons
+
+    def validation_failed(self, request, parameters, validation_parameters, reasons):
+        self._validation_failed_calls.append(
+            dict(
+                request=request,
+                parameters=parameters,
+                validation_parameters=validation_parameters,
+                reasons=reasons,
+            )
+        )
+        return self._validation_failed_result
+
+
+class MockValidatedControllerNoHandler(object):
+    def __init__(self, validate_reasons=None):
+        self._validate_reasons = validate_reasons or []
+
+    def validate(self, request, parameters, validation_parameters):
+        return self._validate_reasons

@@ -189,7 +189,27 @@ def validated(
             # otherwise the reason list is empty (no errors have occurred) and so the
             # "normal" function call workflow must be used
             else:
-                return_value = colony.call_safe(function, *args, **kwargs)
+                try:
+                    return_value = colony.call_safe(function, *args, **kwargs)
+                except exceptions.ControllerValidationError as exception:
+                    if validation_failed_method and should_call:
+                        # calls the validation failed method with the request the parameters the
+                        # validation parameters and the reasons list and sets the return value
+                        return_value = validation_failed_method(
+                            request,
+                            parameters,
+                            None,
+                            getattr(
+                                exception,
+                                "reasons_list",
+                                colony.legacy.UNICODE(exception),
+                            ),
+                        )
+
+                    # otherwise there is no validation method defined and the exception
+                    # must be re-raised (default fallback strategy)
+                    else:
+                        raise
 
             # returns the return value, retrieved from either the
             # validation method or form the decorated function
