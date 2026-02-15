@@ -39,6 +39,11 @@ import colony
 
 from . import exceptions
 
+try:
+    import ipaddress
+except ImportError:
+    ipaddress = None
+
 REGEX_COMPILATION_LIMIT = 99
 """ The regex compilation limit """
 
@@ -2265,6 +2270,14 @@ class RESTRequest(object):
 
         if cleanup and address and address.startswith("::ffff:"):
             address = address[7:]
+
+        if cleanup and address and ipaddress:
+            try:
+                addr = ipaddress.ip_address(address)
+                if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped:
+                    address = str(addr.ipv4_mapped)
+            except ValueError:
+                pass
 
         return (address, port)
 
