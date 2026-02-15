@@ -2271,13 +2271,27 @@ class RESTRequest(object):
         if cleanup and address and address.startswith("::ffff:"):
             address = address[7:]
 
-        if cleanup and address and ipaddress:
-            try:
-                addr = ipaddress.ip_address(address)
-                if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped:
-                    address = str(addr.ipv4_mapped)
-            except ValueError:
-                pass
+        if cleanup and address:
+            if ipaddress:
+                try:
+                    addr = ipaddress.ip_address(address)
+                    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped:
+                        address = str(addr.ipv4_mapped)
+                except ValueError:
+                    pass
+            else:
+                parts = address.lower().strip().split(":")
+                if (
+                    len(parts) == 8
+                    and parts[:5] == ["0000"] * 5
+                    and parts[5] == "ffff"
+                ):
+                    address = "%d.%d.%d.%d" % (
+                        int(parts[6][:2], 16),
+                        int(parts[6][2:], 16),
+                        int(parts[7][:2], 16),
+                        int(parts[7][2:], 16),
+                    )
 
         return (address, port)
 

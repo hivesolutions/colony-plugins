@@ -610,6 +610,150 @@ class RESTRequestTestCase(colony.ColonyTestCase):
         self.assertEqual(address, "::ffff:192.168.1.1")
         self.assertEqual(port, 9090)
 
+    def test_get_connection_address_cleanup_ipv6_mapped_full(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "0000:0000:0000:0000:0000:ffff:0a2a:da08",
+            9090,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        address, port = rest_request.get_connection_address(resolve=False)
+        self.assertEqual(address, "10.42.218.8")
+        self.assertEqual(port, 9090)
+
+    def test_get_connection_address_cleanup_ipv6_mapped_full_alt(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "0000:0000:0000:0000:0000:ffff:c0a8:0101",
+            8080,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        address, port = rest_request.get_connection_address(resolve=False)
+        self.assertEqual(address, "192.168.1.1")
+        self.assertEqual(port, 8080)
+
+    def test_get_connection_address_cleanup_ipv6_mapped_full_no_cleanup(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "0000:0000:0000:0000:0000:ffff:0a2a:da08",
+            9090,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        address, port = rest_request.get_connection_address(
+            resolve=False, cleanup=False
+        )
+        self.assertEqual(address, "0000:0000:0000:0000:0000:ffff:0a2a:da08")
+        self.assertEqual(port, 9090)
+
+    def test_get_connection_address_cleanup_ipv6_pure(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+            443,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        address, port = rest_request.get_connection_address(resolve=False)
+        self.assertEqual(address, "2001:0db8:85a3:0000:0000:8a2e:0370:7334")
+        self.assertEqual(port, 443)
+
+    def test_get_connection_address_cleanup_ipv4_passthrough(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "192.168.1.100",
+            3000,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        address, port = rest_request.get_connection_address(resolve=False)
+        self.assertEqual(address, "192.168.1.100")
+        self.assertEqual(port, 3000)
+
+    def test_get_connection_address_cleanup_ipv6_mapped_resolve(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "0000:0000:0000:0000:0000:ffff:0a2a:da08",
+            9090,
+        )
+        mock_request.headers["X-Forwarded-For"] = "203.0.113.50"
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        address, port = rest_request.get_connection_address()
+        self.assertEqual(address, "203.0.113.50")
+        self.assertEqual(port, 9090)
+
+    def test_get_connection_address_cleanup_ipv6_mapped_fallback(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "0000:0000:0000:0000:0000:ffff:0a2a:da08",
+            9090,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        _ipaddress = system.ipaddress
+        try:
+            system.ipaddress = None
+            address, port = rest_request.get_connection_address(resolve=False)
+            self.assertEqual(address, "10.42.218.8")
+            self.assertEqual(port, 9090)
+        finally:
+            system.ipaddress = _ipaddress
+
+    def test_get_connection_address_cleanup_ipv6_short_fallback(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "::ffff:192.168.1.1",
+            9090,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        _ipaddress = system.ipaddress
+        try:
+            system.ipaddress = None
+            address, port = rest_request.get_connection_address(resolve=False)
+            self.assertEqual(address, "192.168.1.1")
+            self.assertEqual(port, 9090)
+        finally:
+            system.ipaddress = _ipaddress
+
+    def test_get_connection_address_cleanup_ipv6_pure_fallback(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+        mock_request = mocks.MockRequest()
+        mock_request._service_connection.connection_address = (
+            "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+            443,
+        )
+        rest_request = system.RESTRequest(rest, mock_request)
+
+        _ipaddress = system.ipaddress
+        try:
+            system.ipaddress = None
+            address, port = rest_request.get_connection_address(resolve=False)
+            self.assertEqual(address, "2001:0db8:85a3:0000:0000:8a2e:0370:7334")
+            self.assertEqual(port, 443)
+        finally:
+            system.ipaddress = _ipaddress
+
     def test_get_address(self):
         mock_plugin = mocks.MockPlugin()
         rest = system.REST(mock_plugin, session_c=system.RESTSession)
