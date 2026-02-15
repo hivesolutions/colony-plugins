@@ -68,7 +68,21 @@ def validated(
     validation_parameters=None, validation_method=None, call_validation_failed=None
 ):
     """
-    Decorator for the validated method.
+    Decorator that enforces ACL-based validation on MVC controller
+    action methods, typically used for session authentication,
+    permission checks, or token verification.
+
+    The controller must implement a `validate` method. Optionally
+    it may also implement `validation_failed` to handle failures
+    gracefully (e.g. rendering an error page or returning an error
+    response) instead of raising an exception.
+
+    The decorator runs pre-validation via `self.validate()` before
+    the action, skipping it if the request is already validated to
+    avoid redundant checks in nested calls. If pre-validation fails
+    and no handler exists, a `ControllerValidationReasonFailed` is
+    raised. Any `ControllerValidationError` raised during action
+    execution is also caught and routed to the handler if available.
 
     :type validation_parameters: Object
     :param validation_parameters: The parameters to be used when calling
@@ -79,7 +93,8 @@ def validated(
     :type call_validation_failed: bool
     :param call_validation_failed: If the validation failed method should be
     called in case the validation fails. This value is not defined by default
-    and for such situations it will be inferred from the current parameters.
+    and for such situations it will be inferred from the current parameters
+    (disabled when a serializer is present in the request).
     :rtype: Function
     :return: The created decorator.
     """
