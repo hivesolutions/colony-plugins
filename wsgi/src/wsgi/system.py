@@ -830,6 +830,22 @@ class WSGIRequest(object):
         header = self.environ.get(header_name, None)
         return self.environ.get(header_name_b, header)
 
+    def get_headers(self):
+        # extracts all the HTTP headers from the WSGI environ
+        # dictionary, converting the WSGI format (HTTP_ prefix,
+        # uppercase, underscores) back to standard HTTP header
+        # names (title case, dashes), also includes the special
+        # WSGI variables Content-Type and Content-Length
+        headers = {}
+        for key, value in self.environ.items():
+            if key.startswith("HTTP_"):
+                header_name = key[5:].replace("_", "-").title()
+                headers[header_name] = value
+            elif key in ("CONTENT_TYPE", "CONTENT_LENGTH"):
+                header_name = key.replace("_", "-").title()
+                headers[header_name] = value
+        return headers
+
     def set_header(self, header_name, header_value, encode=True):
         """
         Set a response header value on the request.

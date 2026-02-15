@@ -99,6 +99,9 @@ class MockRequest(object):
     def get_header(self, header_name):
         return self.headers.get(header_name, None)
 
+    def get_headers(self):
+        return self.headers
+
     def set_header(self, header_name, header_value):
         self.headers[header_name] = header_value
 

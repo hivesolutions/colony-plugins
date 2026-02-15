@@ -3232,6 +3232,17 @@ class HTTPRequest(object):
 
         return self.headers_map.get(header_name, None)
 
+    def get_headers(self):
+        """
+        Retrieves a dictionary containing all the headers
+        of the request.
+
+        :rtype: Dictionary
+        :return: A dictionary with all the request headers.
+        """
+
+        return self.headers_map
+
     def set_header(self, header_name, header_value, encode=True):
         """
         Set a response header value on the request.

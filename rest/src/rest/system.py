@@ -1608,6 +1608,17 @@ class RESTRequest(object):
 
         return self.request.get_header(header_name)
 
+    def get_headers(self):
+        """
+        Retrieves a dictionary containing all the headers
+        of the request.
+
+        :rtype: Dictionary
+        :return: A dictionary with all the request headers.
+        """
+
+        return self.request.get_headers()
+
     def set_header(self, header_name, header_value):
         """
         Set a response header value on the request, this will
