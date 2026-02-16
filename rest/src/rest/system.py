@@ -2272,14 +2272,16 @@ class RESTRequest(object):
             address = address[7:]
 
         if cleanup and address:
+            resolved = False
             if ipaddress:
                 try:
                     addr = ipaddress.ip_address(address)
                     if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped:
                         address = str(addr.ipv4_mapped)
-                except ValueError:
+                    resolved = True
+                except (ValueError, TypeError):
                     pass
-            else:
+            if not resolved:
                 parts = address.lower().strip().split(":")
                 if len(parts) == 8 and parts[:5] == ["0000"] * 5 and parts[5] == "ffff":
                     address = "%d.%d.%d.%d" % (
