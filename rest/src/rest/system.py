@@ -2281,11 +2281,7 @@ class RESTRequest(object):
                     pass
             else:
                 parts = address.lower().strip().split(":")
-                if (
-                    len(parts) == 8
-                    and parts[:5] == ["0000"] * 5
-                    and parts[5] == "ffff"
-                ):
+                if len(parts) == 8 and parts[:5] == ["0000"] * 5 and parts[5] == "ffff":
                     address = "%d.%d.%d.%d" % (
                         int(parts[6][:2], 16),
                         int(parts[6][2:], 16),
