@@ -2627,6 +2627,13 @@ class RESTSession(object):
         return len(cls.STORAGE)
 
     @classmethod
+    def keys(cls):
+        if not cls.STORAGE:
+            cls.load()
+        for key in cls.STORAGE:
+            yield key
+
+    @classmethod
     def new(cls, *args, **kwargs):
         if not cls.STORAGE:
             cls.load()
@@ -3009,6 +3016,13 @@ class ShelveSession(RESTSession):
         return len(cls.SHELVE)
 
     @classmethod
+    def keys(cls):
+        if cls.SHELVE == None:
+            cls.load()
+        for key in cls.SHELVE:
+            yield key
+
+    @classmethod
     def new(cls, *args, **kwargs):
         if cls.SHELVE == None:
             cls.load()
@@ -3107,6 +3121,20 @@ class RedisSession(RESTSession):
         if not cls.REDIS:
             cls.load()
         return cls.REDIS.dbsize()
+
+    @classmethod
+    def keys(cls):
+        if not cls.REDIS:
+            cls.load()
+        cursor = 0
+        while True:
+            cursor, partial = cls.REDIS.scan(cursor=cursor)
+            for key in partial:
+                if isinstance(key, bytes):
+                    key = key.decode("utf-8")
+                yield key
+            if cursor == 0:
+                break
 
     @classmethod
     def new(cls, *args, **kwargs):
