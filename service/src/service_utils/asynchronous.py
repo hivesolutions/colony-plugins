@@ -244,29 +244,50 @@ class AbstractService(object):
         self.address_fd_map[client_socket_fd] = (client_address, service_port)
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
-        client_connection = ClientConnection(
-            self, client_socket, client_address, service_port
-        )
-        client_connection.service_execution_thread = self.service_execution_thread
-        self.client_connection_map[client_socket] = client_connection
+        try:
+            client_connection = ClientConnection(
+                self, client_socket, client_address, service_port
+            )
+            client_connection.service_execution_thread = self.service_execution_thread
+            self.client_connection_map[client_socket] = client_connection
 
-        self.add_handler(client_socket_fd, client_connection.read_handler, READ)
-        self.add_handler(client_socket_fd, client_connection.write_handler, WRITE)
-        self.add_handler(client_socket_fd, client_connection.error_handler, ERROR)
+            self.add_handler(client_socket_fd, client_connection.read_handler, READ)
+            self.add_handler(client_socket_fd, client_connection.write_handler, WRITE)
+            self.add_handler(client_socket_fd, client_connection.error_handler, ERROR)
+        except Exception:
+            # removes the partially registered socket from the internal
+            # structures to avoid leaking the file descriptor
+            self.socket_fd_map.pop(client_socket_fd, None)
+            self.address_fd_map.pop(client_socket_fd, None)
+            self.poll_instance.unregister(client_socket_fd)
+            self.client_connection_map.pop(client_socket, None)
+            raise
 
     def remove_socket(self, client_socket):
         client_socket_fd = client_socket.fileno()
 
-        del self.socket_fd_map[client_socket_fd]
-        del self.address_fd_map[client_socket_fd]
+        self.socket_fd_map.pop(client_socket_fd, None)
+        self.address_fd_map.pop(client_socket_fd, None)
         self.poll_instance.unregister(client_socket_fd)
 
-        client_connection = self.client_connection_map[client_socket]
-        del self.client_connection_map[client_socket]
+        client_connection = self.client_connection_map.pop(client_socket, None)
 
-        self.remove_handler(client_socket_fd, client_connection.read_handler, READ)
-        self.remove_handler(client_socket_fd, client_connection.write_handler, WRITE)
-        self.remove_handler(client_socket_fd, client_connection.error_handler, ERROR)
+        # removes the handlers for the client connection, in case the
+        # client connection is not available (partial registration) the
+        # handler removal is skipped
+        if client_connection:
+            try:
+                self.remove_handler(
+                    client_socket_fd, client_connection.read_handler, READ
+                )
+                self.remove_handler(
+                    client_socket_fd, client_connection.write_handler, WRITE
+                )
+                self.remove_handler(
+                    client_socket_fd, client_connection.error_handler, ERROR
+                )
+            except Exception:
+                pass
 
         client_socket.close()
 
@@ -304,7 +325,9 @@ class AbstractService(object):
         # retrieves the socket fd and then retrieves
         # the socket from the socket fd map
         socket_fd = tuple[0]
-        socket = self.socket_fd_map[socket_fd]
+        socket = self.socket_fd_map.get(socket_fd, None)
+        if not socket:
+            return
 
         # iterates over all the handlers for the
         # tuple (to call them)
@@ -324,10 +347,17 @@ class AbstractService(object):
                 # retrieves the client connection from the client
                 # connection map using the socket and closes it, at
                 # this point the client connection may not exist in
-                # the client connection map, in such case no client
-                # connection is closed
+                # the client connection map, in such case tries to
+                # close the socket directly to avoid leaking file
+                # descriptors for pending or partially registered sockets
                 client_connection = self.client_connection_map.get(socket, None)
-                client_connection and client_connection.close()
+                if client_connection:
+                    client_connection.close()
+                else:
+                    try:
+                        socket.close()
+                    except Exception:
+                        pass
 
     def add_time_handler(self, time, callback_method):
         heapq.heappush(self.time_events, (time, callback_method))
@@ -616,6 +646,18 @@ class AbstractService(object):
             # removes the client socket from
             # internal structures
             self.remove_socket(client_socket)
+
+        # closes any remaining pending sockets that are still
+        # in the handshake state and were not yet promoted to
+        # the client connection map to avoid leaking file descriptors
+        for _socket_fd, pending_socket in colony.legacy.items(
+            dict(self.pending_fd_map)
+        ):
+            try:
+                pending_socket.close()
+            except Exception:
+                pass
+        self.pending_fd_map.clear()
 
     def _start_threads(self):
         """
@@ -916,11 +958,17 @@ class ServiceConnection(Connection):
                     raise
 
             # sets the service connection to non blocking mode
-            # and then adds the service connection in the service
-            service_connection.setblocking(0)
-            self.service.add_socket(
-                service_connection, service_address, self.connection_port
-            )
+            # and then adds the service connection in the service,
+            # in case of an exception the accepted socket is closed
+            # to avoid leaking file descriptors
+            try:
+                service_connection.setblocking(0)
+                self.service.add_socket(
+                    service_connection, service_address, self.connection_port
+                )
+            except Exception:
+                service_connection.close()
+                raise
 
     def get_handshake_handler(self, service_connection, service_address, socket_fd):
         def handshake_handler(_socket):

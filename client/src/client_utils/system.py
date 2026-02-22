@@ -59,6 +59,14 @@ RECEIVE_RETRIES = 3
 SEND_RETRIES = 3
 """ The send retries """
 
+RECONNECT_RETRIES = 3
+""" The reconnect retries """
+
+SELECT_MAX_FD = 1024
+""" The maximum file descriptor value for select, above
+this value the select call is going to raise an error on
+most Linux based systems (FD_SETSIZE) """
+
 WSAEWOULDBLOCK = 10035
 """ Windows based value for the error raised when a non
 blocking connection is not able to read/write more, this
@@ -296,8 +304,17 @@ class AbstractClient(object):
 
         # in case the connection tuple is not present in the
         # client connections map or the current client connection
-        # is not open
+        # is not open, then we need to run proper close diligence
         if not client_connection or not client_connection.is_open():
+            # in case there's an existing (closed) client connection
+            # closes it explicitly to release the underlying socket
+            # file descriptor preventing accumulation of stale sockets
+            if client_connection:
+                try:
+                    client_connection.close()
+                except Exception:
+                    pass
+
             # creates the a new client connection for the given connection tuple
             # and sets the client connection in the client connections map
             client_connection = self._create_client_connection(connection_tuple)
@@ -835,6 +852,10 @@ class ClientConnection(object):
 
         # iterates continuously
         while True:
+            # ensures the socket file descriptor is within the valid
+            # range for the select call before running it
+            self._ensure_socket_fd()
+
             try:
                 # runs the select in the connection socket, with timeout
                 selected_values = select.select(
@@ -938,6 +959,10 @@ class ClientConnection(object):
         # retrieves the number of bytes in the message
         number_bytes = len(message)
 
+        # sets the initial number of reconnection retries available
+        # to be used to limit the number of reconnection attempts
+        reconnect_retries = RECONNECT_RETRIES
+
         # iterates over all the read buffer data read from the client
         # to make decisions on either reconnect or not
         for data in self._read_buffer:
@@ -949,10 +974,15 @@ class ClientConnection(object):
                     "Received empty data (in read buffer), reconnecting socket"
                 )
                 self._reconnect_connection_socket()
+                reconnect_retries -= 1
                 break
 
         # iterates continuously, trying to select
         while True:
+            # ensures the socket file descriptor is within the valid
+            # range for the select call before running it
+            self._ensure_socket_fd()
+
             try:
                 # runs the select in the connection socket, with the timeout
                 # defined for the response (as expected)
@@ -979,12 +1009,21 @@ class ClientConnection(object):
                     # in case the data is invalid it means the connection has
                     # been dropped and a re-connection is required
                     if not data:
+                        # in case there are no more reconnection retries available
+                        # closes the connection and raises an exception
+                        if reconnect_retries <= 0:
+                            self.close()
+                            raise exceptions.RequestClosed(
+                                "max reconnection retries reached"
+                            )
+
                         # prints a debug message and then runs the re-connection
                         # operation to try to send the data
                         self.client_plugin.debug(
                             "Received empty data, reconnecting socket"
                         )
                         self._reconnect_connection_socket()
+                        reconnect_retries -= 1
 
                     # otherwise there are contents in it
                     else:
@@ -992,13 +1031,28 @@ class ClientConnection(object):
                         # into the queue to be handled latter
                         self.client_plugin.debug("Received extra data, returning it")
                         self.return_data(data)
+                except (
+                    exceptions.RequestClosed,
+                    exceptions.ClientUtilsException,
+                ):
+                    raise
                 except Exception as exception:
+                    # in case there are no more reconnection retries available
+                    # closes the connection and raises an exception
+                    if reconnect_retries <= 0:
+                        self.close()
+                        raise exceptions.RequestClosed(
+                            "max reconnection retries reached: "
+                            + colony.legacy.UNICODE(exception)
+                        )
+
                     # prints a debug message and then reconnects the connection socket
                     self.client_plugin.debug(
                         "Problem while receiving pending data: "
                         + colony.legacy.UNICODE(exception)
                     )
                     self._reconnect_connection_socket()
+                    reconnect_retries -= 1
 
             # in case there are no selected values connection is closed as the timeout
             # value has been reached (reason for unblocking)
@@ -1082,6 +1136,10 @@ class ClientConnection(object):
             self.connection_socket_name, self.connection_socket_parameters
         )
 
+        # updates the base connection socket reference to avoid
+        # holding a stale reference to the old (closed) socket
+        self._connection_socket = self.connection_socket
+
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
 
@@ -1091,6 +1149,32 @@ class ClientConnection(object):
 
         # prints a debug message about reconnection
         self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
+
+    def _ensure_socket_fd(self):
+        """
+        Ensures that the current connection socket file descriptor
+        is within the valid range for the select call, raises an
+        exception in case the file descriptor is out of range.
+        """
+
+        # retrieves the file descriptor for the current connection
+        # socket and verifies it against the select limit
+        try:
+            file_descriptor = self.connection_socket.fileno()
+        except Exception:
+            self.close()
+            raise exceptions.RequestClosed(
+                "invalid socket: unable to retrieve file descriptor"
+            )
+
+        # in case the file descriptor is out of range for select
+        # closes the connection and raises an exception
+        if file_descriptor >= SELECT_MAX_FD:
+            self.close()
+            raise exceptions.RequestClosed(
+                "invalid socket: filedescriptor %d out of range for select"
+                % file_descriptor
+            )
 
     def _process_exception(self, exception):
         """

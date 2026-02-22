@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Socket file descriptor leak in `client_utils` caused by unbounded reconnection attempts in `_send()`, stale socket references in `_reconnect_connection_socket()`, and missing cleanup of closed connections in `get_client_connection()` that could lead to "filedescriptor out of range in select()" errors
+* Socket file descriptor leak in `service_utils` where accepted sockets could be orphaned when handler exceptions occurred for pending (handshake) or partially registered connections, and where `remove_socket()` could skip cleanup on missing map entries
 * Race condition in `RESTSession.gc()` and `ShelveSession.gc()` that caused `RuntimeError: dictionary changed size during iteration` when expiring sessions during garbage collection
 * Missing return statement in `REST.translate_result()` that caused the method to not return a value when no encoder name was specified
 * Incorrect `super()` call in `RedisSession.unload()` that referenced `ShelveSession` instead of `RedisSession`
