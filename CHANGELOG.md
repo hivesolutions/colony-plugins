@@ -26,7 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Service polling in `service_utils` now auto-selects the best available mechanism: `epoll` on Linux, `poll` on other Unix systems, and `select` as fallback
+* Implemented `EpollPolling` using `select.epoll()` and `Epoll2Polling` using `select.poll()` as alternatives to `SelectPolling`, removing the 1024 file descriptor limit on supported platforms
 
 ### Fixed
 

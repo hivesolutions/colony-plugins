@@ -542,8 +542,16 @@ class AbstractService(object):
         service, this includes setting the connection as active.
         """
 
-        # sets the initial poll instance
-        self.poll_instance = SelectPolling()
+        # sets the initial poll instance, using the best available
+        # polling mechanism for the current platform, epoll is
+        # preferred on Linux, poll is used as a fallback on other
+        # Unix systems and select is used as the last resort
+        if hasattr(select, "epoll"):
+            self.poll_instance = EpollPolling()
+        elif hasattr(select, "poll"):
+            self.poll_instance = Epoll2Polling()
+        else:
+            self.poll_instance = SelectPolling()
 
         # sets the service connection active flag as true
         self.service_connection_active = True
@@ -681,6 +689,17 @@ class AbstractService(object):
 
 
 class SelectPolling(object):
+    """
+    Polling class that uses the select mechanism for event
+    notification, this is the most portable approach and is
+    available on all platforms (Linux, macOS, Windows).
+
+    The select mechanism has a file descriptor limit of 1024
+    (FD_SETSIZE) on most Linux based systems, meaning that
+    sockets with file descriptors above this value will cause
+    an error when passed to select.
+    """
+
     readable_socket_list = None
     writeable_socket_list = None
     errors_socket_list = None
@@ -747,20 +766,242 @@ class SelectPolling(object):
 
 
 class EpollPolling(object):
+    """
+    Polling class that uses the epoll mechanism for event
+    notification, this is the most efficient approach for
+    Linux based systems and has no file descriptor limit.
+
+    The epoll mechanism is only available on Linux based
+    systems (not available on macOS or Windows).
+    """
+
+    registered_map = {}
+    """ Map containing the currently registered event masks
+    for each socket fd, used to support partial register
+    and unregister operations """
+
     def __init__(self):
-        pass
+        self.epoll = select.epoll()
+        self.registered_map = {}
 
-    def register(self, socket):
-        pass
+    def register(self, socket_fd, operations):
+        # translates the internal operations into the epoll
+        # event mask flags, read operations are mapped to
+        # EPOLLIN and write to EPOLLOUT
+        event_mask = 0
+        if operations & READ:
+            event_mask |= _EPOLLIN
+        if operations & WRITE:
+            event_mask |= _EPOLLOUT
+        if operations & ERROR:
+            event_mask |= _EPOLLERR | _EPOLLHUP
 
-    def unregister(self, socket):
-        pass
+        # retrieves the current mask for the socket fd and
+        # combines it with the new operations, in case the
+        # socket fd is already registered modifies it
+        current_mask = self.registered_map.get(socket_fd, 0)
+        new_mask = current_mask | event_mask
 
-    def poll(self):
-        pass
+        # registers or modifies the socket fd in the epoll
+        # instance with the combined event mask
+        if current_mask:
+            self.epoll.modify(socket_fd, new_mask)
+        else:
+            self.epoll.register(socket_fd, new_mask)
+        self.registered_map[socket_fd] = new_mask
+
+    def unregister(self, socket_fd, operations=ALL):
+        # retrieves the current mask for the socket fd,
+        # in case there's no current registration returns
+        current_mask = self.registered_map.get(socket_fd, 0)
+        if not current_mask:
+            return
+
+        # in case all operations are being unregistered the
+        # socket fd is removed from the epoll instance completely
+        if operations == ALL:
+            try:
+                self.epoll.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+            return
+
+        # otherwise only the specified operations are removed
+        # from the current event mask for the socket fd
+        new_mask = current_mask
+        if operations & READ:
+            new_mask &= ~_EPOLLIN
+        if operations & WRITE:
+            new_mask &= ~_EPOLLOUT
+        if operations & ERROR:
+            new_mask &= ~(_EPOLLERR | _EPOLLHUP)
+
+        # in case the new mask is empty the socket fd is
+        # completely unregistered, otherwise it's modified
+        if new_mask == 0:
+            try:
+                self.epoll.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+        else:
+            try:
+                self.epoll.modify(socket_fd, new_mask)
+            except IOError:
+                pass
+            self.registered_map[socket_fd] = new_mask
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # polls the epoll instance with the given timeout
+        # and translates the results into the internal format
+        events = self.epoll.poll(timeout)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for socket_fd, event_mask in events:
+            if event_mask & _EPOLLIN:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+            if event_mask & _EPOLLOUT:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+            if event_mask & (_EPOLLERR | _EPOLLHUP):
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = colony.legacy.items(events_map)
+
+        # returns the events list
+        return events_list
+
+
+class Epoll2Polling(object):
+    """
+    Polling class that uses the poll mechanism for event
+    notification, this is a portable alternative to epoll
+    that has no file descriptor limit and is available on
+    most Unix based systems.
+    """
+
+    registered_map = {}
+    """ Map containing the currently registered event masks
+    for each socket fd, used to support partial register
+    and unregister operations """
+
+    def __init__(self):
+        self.poll_instance = select.poll()
+        self.registered_map = {}
+
+    def register(self, socket_fd, operations):
+        # translates the internal operations into the poll
+        # event mask flags, read operations are mapped to
+        # POLLIN and write to POLLOUT
+        event_mask = 0
+        if operations & READ:
+            event_mask |= _EPOLLIN
+        if operations & WRITE:
+            event_mask |= _EPOLLOUT
+        if operations & ERROR:
+            event_mask |= _EPOLLERR | _EPOLLHUP
+
+        # retrieves the current mask for the socket fd and
+        # combines it with the new operations, in case the
+        # socket fd is already registered modifies it
+        current_mask = self.registered_map.get(socket_fd, 0)
+        new_mask = current_mask | event_mask
+
+        # registers or modifies the socket fd in the poll
+        # instance with the combined event mask
+        if current_mask:
+            self.poll_instance.modify(socket_fd, new_mask)
+        else:
+            self.poll_instance.register(socket_fd, new_mask)
+        self.registered_map[socket_fd] = new_mask
+
+    def unregister(self, socket_fd, operations=ALL):
+        # retrieves the current mask for the socket fd,
+        # in case there's no current registration returns
+        current_mask = self.registered_map.get(socket_fd, 0)
+        if not current_mask:
+            return
+
+        # in case all operations are being unregistered the
+        # socket fd is removed from the poll instance completely
+        if operations == ALL:
+            try:
+                self.poll_instance.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+            return
+
+        # otherwise only the specified operations are removed
+        # from the current event mask for the socket fd
+        new_mask = current_mask
+        if operations & READ:
+            new_mask &= ~_EPOLLIN
+        if operations & WRITE:
+            new_mask &= ~_EPOLLOUT
+        if operations & ERROR:
+            new_mask &= ~(_EPOLLERR | _EPOLLHUP)
+
+        # in case the new mask is empty the socket fd is
+        # completely unregistered, otherwise it's modified
+        if new_mask == 0:
+            try:
+                self.poll_instance.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+        else:
+            self.poll_instance.modify(socket_fd, new_mask)
+            self.registered_map[socket_fd] = new_mask
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # polls the poll instance with the given timeout (in
+        # milliseconds as required by the poll interface) and
+        # translates the results into the internal format
+        events = self.poll_instance.poll(timeout * 1000)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for socket_fd, event_mask in events:
+            if event_mask & _EPOLLIN:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+            if event_mask & _EPOLLOUT:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+            if event_mask & (_EPOLLERR | _EPOLLHUP):
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = colony.legacy.items(events_map)
+
+        # returns the events list
+        return events_list
 
 
 class KqueuePolling(object):
+    """
+    Polling class that uses the kqueue mechanism for event
+    notification, this is the most efficient approach for
+    BSD based systems (including macOS) and has no file
+    descriptor limit.
+
+    The kqueue mechanism is only available on BSD based
+    systems (not available on Linux or Windows).
+
+    This class is currently a stub and is not yet implemented.
+    """
+
     def __init__(self):
         pass
 
