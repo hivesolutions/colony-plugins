@@ -2745,7 +2745,7 @@ class RESTSession(object):
 
         original = self.expire_time
         self._generate_expire_time(self.timeout, self.maximum_timeout)
-        should_mark = self.expire_time - original > dirty_interval
+        should_mark = self.expire_time - original >= dirty_interval
         if should_mark:
             self.mark()
 
