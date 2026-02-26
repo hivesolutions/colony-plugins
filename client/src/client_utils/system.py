@@ -430,10 +430,19 @@ class AbstractClient(object):
             # closes it explicitly to release the underlying socket
             # file descriptor preventing accumulation of stale sockets
             if client_connection:
+                if self.client_plugin:
+                    self.client_plugin.debug(
+                        "Closing stale connection to: %s"
+                        % str(client_connection.connection_address)
+                    )
                 try:
                     client_connection.close()
-                except Exception:
-                    pass
+                except Exception as exception:
+                    if self.client_plugin:
+                        self.client_plugin.warning(
+                            "Problem closing stale connection: %s"
+                            % colony.legacy.UNICODE(exception)
+                        )
 
             # creates the a new client connection for the given connection tuple
             # and sets the client connection in the client connections map
