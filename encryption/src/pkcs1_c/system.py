@@ -385,7 +385,12 @@ class PKCS1Structure:
         # returns the public key PEM value
         return public_key_pem
 
-    def load_private_key_pem(self, private_key_pem):
+    def load_private_key_pem(self, private_key_pem, normalize=True):
+        # normalizes line endings to ensure cross-platform compatibility
+        # (Windows files may contain CRLF which breaks the regex match)
+        if normalize:
+            private_key_pem = private_key_pem.replace("\r\n", "\n")
+
         # matches the public key header/footer token in case no match
         # is done raises an exception indicating the problem
         private_key_pem_match = PRIVATE_KEY_VALUE_REGEX.match(private_key_pem)
@@ -412,7 +417,12 @@ class PKCS1Structure:
         # returns the return tuple
         return return_tuple
 
-    def load_public_key_pem(self, public_key_pem):
+    def load_public_key_pem(self, public_key_pem, normalize=True):
+        # normalizes line endings to ensure cross-platform compatibility
+        # (Windows files may contain CRLF which breaks the regex match)
+        if normalize:
+            public_key_pem = public_key_pem.replace("\r\n", "\n")
+
         # matches the public key header/footer token in case no match
         # is done raises an exception indicating the problem
         public_key_pem_match = PUBLIC_KEY_VALUE_REGEX.match(public_key_pem)
@@ -443,7 +453,12 @@ class PKCS1Structure:
         # returns the keys tuple
         return keys
 
-    def load_certificate_pem(self, certificate_pem):
+    def load_certificate_pem(self, certificate_pem, normalize=True):
+        # normalizes line endings to ensure cross-platform compatibility
+        # (Windows files may contain CRLF which breaks the regex match)
+        if normalize:
+            certificate_pem = certificate_pem.replace("\r\n", "\n")
+
         # matches the certificate header/footer token in case no match
         # is done raises an exception indicating the problem
         certificate_pem_match = CERTIFICATE_VALUE_REGEX.match(certificate_pem)
