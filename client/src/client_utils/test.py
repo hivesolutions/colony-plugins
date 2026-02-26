@@ -245,7 +245,9 @@ class PollSocketTestCase(colony.ColonyTestCase):
         server.listen(1)
         server_fd = server.fileno()
         try:
-            readable, writeable = system.poll_socket(server_fd, system.READ, 0.001)
+            readable, writeable = system.AbstractClient.poll_socket(
+                server_fd, system.READ, 0.001
+            )
             self.assertEqual(readable, False)
             self.assertEqual(writeable, False)
         finally:
@@ -263,7 +265,9 @@ class PollSocketTestCase(colony.ColonyTestCase):
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             client.connect(("127.0.0.1", port))
-            readable, _writeable = system.poll_socket(server_fd, system.READ, 1.0)
+            readable, _writeable = system.AbstractClient.poll_socket(
+                server_fd, system.READ, 1.0
+            )
             self.assertEqual(readable, True)
         finally:
             client.close()
@@ -281,7 +285,7 @@ class PollSocketTestCase(colony.ColonyTestCase):
         try:
             client.connect(("127.0.0.1", port))
             client_fd = client.fileno()
-            _readable, writeable = system.poll_socket(
+            _readable, writeable = system.AbstractClient.poll_socket(
                 client_fd, system.READ | system.WRITE, 1.0
             )
             self.assertEqual(writeable, True)
@@ -298,7 +302,7 @@ class PollSocketTestCase(colony.ColonyTestCase):
         server.listen(1)
         server_fd = server.fileno()
         try:
-            result = system.poll_socket(server_fd, system.READ, 0.001)
+            result = system.AbstractClient.poll_socket(server_fd, system.READ, 0.001)
             self.assertEqual(len(result), 2)
             self.assertTrue(isinstance(result[0], bool))
             self.assertTrue(isinstance(result[1], bool))

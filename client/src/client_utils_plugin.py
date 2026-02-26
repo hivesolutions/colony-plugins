@@ -77,6 +77,19 @@ class ClientUtilsPlugin(colony.Plugin):
 
         return self.system.generate_client(parameters)
 
+    def connection_stats(self):
+        """
+        Returns aggregated connection statistics across all generated
+        client instances managed by this plugin.
+
+        :rtype: Dictionary
+        :return: A dictionary containing total, open and closed connection
+        counts plus a list of per-connection detail entries, each with the
+        remote address, socket type, persistent flag and open status.
+        """
+
+        return self.system.connection_stats()
+
     @colony.load_allowed_capability("socket_provider")
     def socket_provider_load_allowed(self, plugin, capability):
         self.system.socket_provider_load(plugin)

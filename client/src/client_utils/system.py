@@ -97,107 +97,6 @@ DEFAULT_TYPE = "connection"
 """ The default type client """
 
 
-def poll_socket(socket_fd, operations, timeout):
-    """
-    Polls a single socket file descriptor for the given operations
-    using the best available polling mechanism on the current platform.
-
-    Uses epoll on Linux, kqueue on BSD/macOS, poll as a portable
-    Unix fallback, and select as the final Windows-compatible fallback.
-    Unlike select, epoll/kqueue/poll have no file descriptor limit.
-
-    :type socket_fd: int
-    :param socket_fd: The socket file descriptor to poll.
-    :type operations: int
-    :param operations: The bitmask of operations to poll for (READ, WRITE).
-    :type timeout: float
-    :param timeout: The maximum time in seconds to wait for events.
-    :rtype: tuple
-    :return: A tuple of (readable, writeable) boolean values.
-    """
-
-    # uses epoll on Linux, which has no file descriptor limit
-    # and is more efficient than select for large numbers of fds
-    if hasattr(select, "epoll"):
-        epoll = select.epoll()
-        try:
-            event_mask = 0
-            if operations & READ:
-                event_mask |= _EPOLLIN
-            if operations & WRITE:
-                event_mask |= _EPOLLOUT
-            epoll.register(socket_fd, event_mask)
-            try:
-                events = epoll.poll(timeout)
-            finally:
-                epoll.unregister(socket_fd)
-        finally:
-            epoll.close()
-        readable = any(mask & _EPOLLIN for _fd, mask in events)
-        writeable = any(mask & _EPOLLOUT for _fd, mask in events)
-        return readable, writeable
-
-    # uses kqueue on BSD/macOS, which also has no file descriptor limit
-    # and is the native mechanism on those platforms
-    if hasattr(select, "kqueue"):
-        kqueue = select.kqueue()
-        try:
-            changelist = []
-            if operations & READ:
-                changelist.append(
-                    select.kevent(
-                        socket_fd,
-                        filter=select.KQ_FILTER_READ,
-                        flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
-                    )
-                )
-            if operations & WRITE:
-                changelist.append(
-                    select.kevent(
-                        socket_fd,
-                        filter=select.KQ_FILTER_WRITE,
-                        flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
-                    )
-                )
-            events = kqueue.control(changelist, len(changelist), timeout)
-        finally:
-            kqueue.close()
-        readable = any(e.filter == select.KQ_FILTER_READ for e in events)
-        writeable = any(e.filter == select.KQ_FILTER_WRITE for e in events)
-        return readable, writeable
-
-    # uses poll as a portable Unix fallback, which also has no
-    # file descriptor limit unlike select (available on most Unix systems)
-    if hasattr(select, "poll"):
-        poll_instance = select.poll()
-        event_mask = 0
-        if operations & READ:
-            event_mask |= _EPOLLIN
-        if operations & WRITE:
-            event_mask |= _EPOLLOUT
-        poll_instance.register(socket_fd, event_mask)
-        events = poll_instance.poll(timeout * 1000)
-        poll_instance.unregister(socket_fd)
-        readable = any(mask & _EPOLLIN for _fd, mask in events)
-        writeable = any(mask & _EPOLLOUT for _fd, mask in events)
-        return readable, writeable
-
-    # falls back to select, which is portable across all platforms
-    # including Windows - on POSIX systems select is limited to file
-    # descriptors below 1024 (FD_SETSIZE), but on Windows the fd_set
-    # is an array (not a bitmask) so high-numbered FDs are valid
-    if not sys.platform == "win32" and socket_fd >= SELECT_MAX_FD:
-        raise exceptions.RequestClosed(
-            "invalid socket: filedescriptor %d out of range for select" % socket_fd
-        )
-    read_fds = [socket_fd] if operations & READ else []
-    write_fds = [socket_fd] if operations & WRITE else []
-    readable_fds, writeable_fds, _errors = select.select(
-        read_fds, write_fds, [], timeout
-    )
-    return bool(readable_fds), bool(writeable_fds)
-
-
 class ClientUtils(colony.System):
     """
     The client utilities class, responsible for providing a centralized
@@ -235,10 +134,15 @@ class ClientUtils(colony.System):
     """ The socket upgrader plugins map, containing the mapping between
     socket upgrader names and their corresponding plugin instances """
 
+    clients_list = []
+    """ The list of all generated client instances, used for aggregating
+    connection statistics across the entire plugin lifecycle """
+
     def __init__(self, plugin):
         colony.System.__init__(self, plugin)
         self.socket_provider_plugins_map = {}
         self.socket_upgrader_plugins_map = {}
+        self.clients_list = []
 
     def generate_client(self, parameters):
         """
@@ -250,7 +154,44 @@ class ClientUtils(colony.System):
         :return: The generated client.
         """
 
-        return AbstractClient(self, self.plugin, parameters)
+        client = AbstractClient(self, self.plugin, parameters)
+        self.clients_list.append(client)
+        return client
+
+    def connection_stats(self):
+        """
+        Aggregates and returns connection statistics across all generated
+        client instances managed by this plugin.
+
+        :rtype: Dictionary
+        :return: A dictionary containing total, open and closed connection
+        counts plus a list of per-connection detail entries, each with the
+        remote address, socket type, persistent flag and open status.
+        """
+
+        connections = []
+        for client in self.clients_list:
+            for _key, conn in colony.legacy.items(client.client_connections_map):
+                host, port = conn.connection_address[:2]
+                connections.append(
+                    dict(
+                        host=host,
+                        port=port,
+                        socket_name=conn.connection_socket_name,
+                        persistent=conn.connection_persistent,
+                        open=conn.is_open(),
+                    )
+                )
+
+        total = len(connections)
+        open_count = sum(1 for c in connections if c["open"])
+        return dict(
+            total=total,
+            open=open_count,
+            closed=total - open_count,
+            polling=AbstractClient.polling_mechanism(),
+            connections=connections,
+        )
 
     def socket_provider_load(self, socket_provider_plugin):
         """
@@ -379,6 +320,125 @@ class AbstractClient(object):
 
         self.client_connections_map = {}
 
+    @classmethod
+    def polling_mechanism(cls):
+        """
+        Returns a string identifying the polling backend that poll_socket()
+        will use on the current platform.
+
+        :rtype: String
+        :return: One of "epoll", "kqueue", "poll" or "select".
+        """
+
+        if hasattr(select, "epoll"):
+            return "epoll"
+        if hasattr(select, "kqueue"):
+            return "kqueue"
+        if hasattr(select, "poll"):
+            return "poll"
+        return "select"
+
+    @classmethod
+    def poll_socket(cls, socket_fd, operations, timeout):
+        """
+        Polls a single socket file descriptor for the given operations
+        using the best available polling mechanism on the current platform.
+
+        Uses epoll on Linux, kqueue on BSD/macOS, poll as a portable
+        Unix fallback, and select as the final Windows-compatible fallback.
+        Unlike select, epoll/kqueue/poll have no file descriptor limit.
+
+        :type socket_fd: int
+        :param socket_fd: The socket file descriptor to poll.
+        :type operations: int
+        :param operations: The bitmask of operations to poll for (READ, WRITE).
+        :type timeout: float
+        :param timeout: The maximum time in seconds to wait for events.
+        :rtype: tuple
+        :return: A tuple of (readable, writeable) boolean values.
+        """
+
+        # uses epoll on Linux, which has no file descriptor limit
+        # and is more efficient than select for large numbers of fds
+        if hasattr(select, "epoll"):
+            epoll = select.epoll()
+            try:
+                event_mask = 0
+                if operations & READ:
+                    event_mask |= _EPOLLIN
+                if operations & WRITE:
+                    event_mask |= _EPOLLOUT
+                epoll.register(socket_fd, event_mask)
+                try:
+                    events = epoll.poll(timeout)
+                finally:
+                    epoll.unregister(socket_fd)
+            finally:
+                epoll.close()
+            readable = any(mask & _EPOLLIN for _fd, mask in events)
+            writeable = any(mask & _EPOLLOUT for _fd, mask in events)
+            return readable, writeable
+
+        # uses kqueue on BSD/macOS, which also has no file descriptor limit
+        # and is the native mechanism on those platforms
+        if hasattr(select, "kqueue"):
+            kqueue = select.kqueue()
+            try:
+                changelist = []
+                if operations & READ:
+                    changelist.append(
+                        select.kevent(
+                            socket_fd,
+                            filter=select.KQ_FILTER_READ,
+                            flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
+                        )
+                    )
+                if operations & WRITE:
+                    changelist.append(
+                        select.kevent(
+                            socket_fd,
+                            filter=select.KQ_FILTER_WRITE,
+                            flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
+                        )
+                    )
+                events = kqueue.control(changelist, len(changelist), timeout)
+            finally:
+                kqueue.close()
+            readable = any(e.filter == select.KQ_FILTER_READ for e in events)
+            writeable = any(e.filter == select.KQ_FILTER_WRITE for e in events)
+            return readable, writeable
+
+        # uses poll as a portable Unix fallback, which also has no
+        # file descriptor limit unlike select (available on most Unix systems)
+        if hasattr(select, "poll"):
+            poll_instance = select.poll()
+            event_mask = 0
+            if operations & READ:
+                event_mask |= _EPOLLIN
+            if operations & WRITE:
+                event_mask |= _EPOLLOUT
+            poll_instance.register(socket_fd, event_mask)
+            events = poll_instance.poll(timeout * 1000)
+            poll_instance.unregister(socket_fd)
+            readable = any(mask & _EPOLLIN for _fd, mask in events)
+            writeable = any(mask & _EPOLLOUT for _fd, mask in events)
+            return readable, writeable
+
+        # falls back to select, which is portable across all platforms
+        # including Windows - on POSIX systems select is limited to file
+        # descriptors below 1024 (FD_SETSIZE), but on Windows the fd_set
+        # is an array (not a bitmask) so high-numbered FDs are valid
+        if not sys.platform == "win32" and socket_fd >= SELECT_MAX_FD:
+            raise exceptions.RequestClosed(
+                "invalid socket: filedescriptor %d out of range for select" % socket_fd
+            )
+        read_fds = [socket_fd] if operations & READ else []
+        write_fds = [socket_fd] if operations & WRITE else []
+        readable_fds, writeable_fds, _errors = select.select(
+            read_fds, write_fds, [], timeout
+        )
+        return bool(readable_fds), bool(writeable_fds)
+
     def start_client(self):
         """
         Starts the client.
@@ -397,6 +457,46 @@ class AbstractClient(object):
         ):
             # closes the client connection
             client_connection.close()
+
+        # removes this client from the parent utils tracking list so that
+        # stopped clients do not accumulate in connection_stats()
+        if self in self.client_utils.clients_list:
+            self.client_utils.clients_list.remove(self)
+
+    def connection_stats(self):
+        """
+        Returns connection statistics for this client instance.
+
+        :rtype: Dictionary
+        :return: A dictionary containing total, open and closed connection
+        counts plus a list of per-connection detail entries, each with the
+        remote address, socket type, persistent flag and open status.
+        """
+
+        cls = self.__class__
+
+        connections = []
+        for _key, conn in colony.legacy.items(self.client_connections_map):
+            host, port = conn.connection_address[:2]
+            connections.append(
+                dict(
+                    host=host,
+                    port=port,
+                    socket_name=conn.connection_socket_name,
+                    persistent=conn.connection_persistent,
+                    open=conn.is_open(),
+                )
+            )
+
+        total = len(connections)
+        open_count = sum(1 for c in connections if c["open"])
+        return dict(
+            total=total,
+            open=open_count,
+            closed=total - open_count,
+            polling=cls.polling_mechanism(),
+            connections=connections,
+        )
 
     def get_client_connection(self, connection_tuple, open_connection=True):
         """
@@ -990,7 +1090,7 @@ class ClientConnection(object):
             try:
                 # polls the connection socket for read readiness using
                 # the best available polling mechanism on this platform
-                readable, _writeable = poll_socket(
+                readable, _writeable = self.client.poll_socket(
                     file_descriptor, READ, request_timeout
                 )
             except Exception as exception:
@@ -1118,7 +1218,7 @@ class ClientConnection(object):
             try:
                 # polls the connection socket for both read and write
                 # readiness using the best available polling mechanism
-                readable, writeable = poll_socket(
+                readable, writeable = AbstractClient.poll_socket(
                     file_descriptor, READ | WRITE, response_timeout
                 )
             except Exception as exception:
