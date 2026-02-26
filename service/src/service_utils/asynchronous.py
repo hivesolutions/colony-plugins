@@ -544,10 +544,13 @@ class AbstractService(object):
 
         # sets the initial poll instance, using the best available
         # polling mechanism for the current platform, epoll is
-        # preferred on Linux, poll is used as a fallback on other
-        # Unix systems and select is used as the last resort
+        # preferred on Linux, kqueue on BSD/macOS, poll is used
+        # as a fallback on other Unix systems and select is used
+        # as the last resort
         if hasattr(select, "epoll"):
             self.poll_instance = EpollPolling()
+        elif hasattr(select, "kqueue"):
+            self.poll_instance = KqueuePolling()
         elif hasattr(select, "poll"):
             self.poll_instance = Epoll2Polling()
         else:
@@ -998,21 +1001,205 @@ class KqueuePolling(object):
 
     The kqueue mechanism is only available on BSD based
     systems (not available on Linux or Windows).
-
-    This class is currently a stub and is not yet implemented.
     """
 
+    registered_map = {}
+    """ Map containing the currently registered event masks
+    for each socket fd, used to support partial register
+    and unregister operations """
+
     def __init__(self):
-        pass
+        self.kqueue = select.kqueue()
+        self.registered_map = {}
 
-    def register(self, socket):
-        pass
+    def register(self, socket_fd, operations):
+        # retrieves the current mask for the socket fd and
+        # combines it with the new operations
+        current_mask = self.registered_map.get(socket_fd, 0)
+        new_mask = current_mask | operations
 
-    def unregister(self, socket):
-        pass
+        # builds the list of kevent changes to apply to the
+        # kqueue instance based on the new operations being
+        # registered for the socket fd
+        changelist = self._build_changelist(socket_fd, current_mask, new_mask)
 
-    def poll(self):
-        pass
+        # applies the changes to the kqueue instance and
+        # updates the registered map with the new mask
+        if changelist:
+            self.kqueue.control(changelist, 0)
+        self.registered_map[socket_fd] = new_mask
+
+    def unregister(self, socket_fd, operations=ALL):
+        # retrieves the current mask for the socket fd,
+        # in case there's no current registration returns
+        current_mask = self.registered_map.get(socket_fd, 0)
+        if not current_mask:
+            return
+
+        # in case all operations are being unregistered the
+        # socket fd is removed from the kqueue instance completely
+        if operations == ALL:
+            changelist = self._build_delete_list(socket_fd, current_mask)
+            if changelist:
+                try:
+                    self.kqueue.control(changelist, 0)
+                except OSError:
+                    pass
+            self.registered_map.pop(socket_fd, None)
+            return
+
+        # otherwise only the specified operations are removed
+        # from the current event mask for the socket fd
+        new_mask = current_mask & ~operations
+
+        # in case the new mask is empty the socket fd is
+        # completely unregistered, otherwise it's modified
+        if new_mask == 0:
+            changelist = self._build_delete_list(socket_fd, current_mask)
+            if changelist:
+                try:
+                    self.kqueue.control(changelist, 0)
+                except OSError:
+                    pass
+            self.registered_map.pop(socket_fd, None)
+        else:
+            changelist = self._build_changelist(socket_fd, current_mask, new_mask)
+            if changelist:
+                try:
+                    self.kqueue.control(changelist, 0)
+                except OSError:
+                    pass
+            self.registered_map[socket_fd] = new_mask
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # retrieves the maximum number of events to poll
+        # based on the number of registered socket fd's
+        max_events = max(len(self.registered_map), 1)
+
+        # polls the kqueue instance with the given timeout
+        # and translates the results into the internal format
+        events = self.kqueue.control(None, max_events, timeout)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for event in events:
+            socket_fd = event.ident
+            if event.filter == select.KQ_FILTER_READ:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+            if event.filter == select.KQ_FILTER_WRITE:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+            if event.flags & select.KQ_EV_ERROR:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+            if event.flags & select.KQ_EV_EOF:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = colony.legacy.items(events_map)
+
+        # returns the events list
+        return events_list
+
+    def _build_changelist(self, socket_fd, current_mask, new_mask):
+        """
+        Builds the list of kevent changes required to transition
+        from the current mask to the new mask for the given socket fd.
+
+        :type socket_fd: int
+        :param socket_fd: The socket file descriptor.
+        :type current_mask: int
+        :param current_mask: The current event mask.
+        :type new_mask: int
+        :param new_mask: The new event mask.
+        :rtype: list
+        :return: The list of kevent changes.
+        """
+
+        changelist = []
+
+        # determines which read events need to be added or removed
+        # based on the difference between current and new masks
+        current_read = current_mask & READ
+        new_read = new_mask & READ
+        if new_read and not current_read:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_READ,
+                    flags=select.KQ_EV_ADD,
+                )
+            )
+        elif current_read and not new_read:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_READ,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+
+        # determines which write events need to be added or removed
+        # based on the difference between current and new masks
+        current_write = current_mask & WRITE
+        new_write = new_mask & WRITE
+        if new_write and not current_write:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_WRITE,
+                    flags=select.KQ_EV_ADD,
+                )
+            )
+        elif current_write and not new_write:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_WRITE,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+
+        return changelist
+
+    def _build_delete_list(self, socket_fd, current_mask):
+        """
+        Builds the list of kevent changes required to remove
+        all registered events for the given socket fd.
+
+        :type socket_fd: int
+        :param socket_fd: The socket file descriptor.
+        :type current_mask: int
+        :param current_mask: The current event mask.
+        :rtype: list
+        :return: The list of kevent delete changes.
+        """
+
+        changelist = []
+
+        # removes all currently registered filters for
+        # the socket fd from the kqueue instance
+        if current_mask & READ:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_READ,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+        if current_mask & WRITE:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_WRITE,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+
+        return changelist
 
 
 class Connection(object):

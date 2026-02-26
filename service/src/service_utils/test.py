@@ -49,6 +49,7 @@ class ServiceUtilsTest(colony.Test):
             SelectPollingTestCase,
             EpollPollingTestCase,
             Epoll2PollingTestCase,
+            KqueuePollingTestCase,
             AbstractServiceTestCase,
             ExceptionsTestCase,
         )
@@ -449,6 +450,205 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         self.assertIn(server_fd, polling.registered_map)
 
         polling.unregister(server_fd)
+        server.close()
+
+
+class KqueuePollingTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Kqueue Polling test case"
+
+    def _skip_if_no_kqueue(self):
+        """
+        Returns true if kqueue is not available on the
+        current platform (not BSD/macOS).
+        """
+
+        return not hasattr(select, "kqueue")
+
+    def test_initialization(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        polling = asynchronous.KqueuePolling()
+
+        self.assertEqual(polling.registered_map, {})
+
+    def test_register_read(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ)
+
+        self.assertIn(server_fd, polling.registered_map)
+
+        polling.unregister(server_fd)
+        server.close()
+
+    def test_register_combined(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ | asynchronous.ERROR)
+
+        self.assertIn(server_fd, polling.registered_map)
+
+        polling.unregister(server_fd)
+        server.close()
+
+    def test_unregister(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ | asynchronous.ERROR)
+        polling.unregister(server_fd)
+
+        self.assertNotIn(server_fd, polling.registered_map)
+
+        server.close()
+
+    def test_unregister_partial(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ)
+        polling.register(server_fd, asynchronous.WRITE)
+        polling.unregister(server_fd, asynchronous.READ)
+
+        self.assertIn(server_fd, polling.registered_map)
+
+        polling.unregister(server_fd)
+        server.close()
+
+    def test_unregister_not_registered(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        polling = asynchronous.KqueuePolling()
+
+        # should not raise for unregistered fd's
+        polling.unregister(999)
+
+    def test_modify(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ)
+        polling.modify(server_fd, asynchronous.WRITE)
+
+        self.assertIn(server_fd, polling.registered_map)
+
+        polling.unregister(server_fd)
+        server.close()
+
+    def test_poll_empty(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ | asynchronous.ERROR)
+
+        # poll with a very short timeout, no connections
+        # pending so the result should be empty
+        events = polling.poll(0.001)
+        events_list = list(events)
+
+        self.assertEqual(events_list, [])
+
+        polling.unregister(server_fd)
+        server.close()
+
+    def test_incremental_register(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ)
+        polling.register(server_fd, asynchronous.WRITE)
+
+        self.assertIn(server_fd, polling.registered_map)
+
+        polling.unregister(server_fd)
+        server.close()
+
+    def test_poll_with_connection(self):
+        if self._skip_if_no_kqueue():
+            return
+
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(("127.0.0.1", 0))
+        server.listen(1)
+        port = server.getsockname()[1]
+        server_fd = server.fileno()
+
+        polling = asynchronous.KqueuePolling()
+        polling.register(server_fd, asynchronous.READ)
+
+        # creates a client connection to trigger a read event
+        # on the server socket (incoming connection)
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(("127.0.0.1", port))
+
+        # poll should now return the server fd as readable
+        events = polling.poll(1.0)
+        events_list = list(events)
+
+        self.assertTrue(len(events_list) > 0)
+
+        # verifies that the server fd is in the events
+        event_fds = [fd for fd, _mask in events_list]
+        self.assertIn(server_fd, event_fds)
+
+        polling.unregister(server_fd)
+        client.close()
         server.close()
 
 
