@@ -169,6 +169,8 @@ class ClientUtils(colony.System):
         remote address, socket type, persistent flag and open status.
         """
 
+        polling = AbstractClient.polling_mechanism()
+
         connections = []
         for client in self.clients_list:
             for _key, conn in colony.legacy.items(client.client_connections_map):
@@ -185,6 +187,7 @@ class ClientUtils(colony.System):
                         socket_name=conn.connection_socket_name,
                         persistent=conn.connection_persistent,
                         open=conn.is_open(),
+                        polling=polling,
                     )
                 )
 
@@ -194,7 +197,7 @@ class ClientUtils(colony.System):
             total=total,
             open=open_count,
             closed=total - open_count,
-            polling=AbstractClient.polling_mechanism(),
+            polling=polling,
             connections=connections,
         )
 
@@ -478,7 +481,7 @@ class AbstractClient(object):
         remote address, socket type, persistent flag and open status.
         """
 
-        cls = self.__class__
+        polling = self.polling_mechanism()
 
         connections = []
         for _key, conn in colony.legacy.items(self.client_connections_map):
@@ -495,6 +498,7 @@ class AbstractClient(object):
                     socket_name=conn.connection_socket_name,
                     persistent=conn.connection_persistent,
                     open=conn.is_open(),
+                    polling=polling,
                 )
             )
 
@@ -504,7 +508,7 @@ class AbstractClient(object):
             total=total,
             open=open_count,
             closed=total - open_count,
-            polling=cls.polling_mechanism(),
+            polling=polling,
             connections=connections,
         )
 
