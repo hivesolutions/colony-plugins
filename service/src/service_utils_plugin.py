@@ -46,6 +46,7 @@ class ServiceUtilsPlugin(colony.Plugin):
         colony.JYTHON_ENVIRONMENT,
         colony.IRON_PYTHON_ENVIRONMENT,
     ]
+    capabilities = ["test"]
     capabilities_allowed = ["threads", "socket_provider", "socket_upgrader"]
     dependencies = [colony.PluginDependency("pt.hive.colony.plugins.work.pool")]
     main_modules = ["service_utils"]
@@ -55,6 +56,7 @@ class ServiceUtilsPlugin(colony.Plugin):
         import service_utils
 
         self.system = service_utils.ServiceUtils(self)
+        self.test = service_utils.ServiceUtilsTest(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):
