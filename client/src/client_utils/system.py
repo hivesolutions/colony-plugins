@@ -173,10 +173,15 @@ class ClientUtils(colony.System):
         for client in self.clients_list:
             for _key, conn in colony.legacy.items(client.client_connections_map):
                 host, port = conn.connection_address[:2]
+                try:
+                    fd = conn.connection_socket.fileno()
+                except Exception:
+                    fd = -1
                 connections.append(
                     dict(
                         host=host,
                         port=port,
+                        fd=fd,
                         socket_name=conn.connection_socket_name,
                         persistent=conn.connection_persistent,
                         open=conn.is_open(),
@@ -478,10 +483,15 @@ class AbstractClient(object):
         connections = []
         for _key, conn in colony.legacy.items(self.client_connections_map):
             host, port = conn.connection_address[:2]
+            try:
+                fd = conn.connection_socket.fileno()
+            except Exception:
+                fd = -1
             connections.append(
                 dict(
                     host=host,
                     port=port,
+                    fd=fd,
                     socket_name=conn.connection_socket_name,
                     persistent=conn.connection_persistent,
                     open=conn.is_open(),
