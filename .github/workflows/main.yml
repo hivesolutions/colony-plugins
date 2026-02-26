@@ -118,3 +118,67 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
+  build-windows:
+    name: Build Windows
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: [
+          "3.5",
+          "3.6",
+          "3.7",
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13"
+        ]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python --version
+      - run: pip install -r requirements.txt
+      - run: |
+          pip install black
+          black . --check
+        if: matrix.python-version == '3.13'
+      - run: python setup.py test
+        env:
+          HTTPBIN: httpbin.bemisc.com
+          PLUGIN_PATH: ./*/src;./*/*src
+  build-macos:
+    name: Build macOS
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: [
+          "3.5",
+          "3.6",
+          "3.7",
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13"
+        ]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python --version
+      - run: pip install -r requirements.txt
+      - run: |
+          pip install black
+          black . --check
+        if: matrix.python-version == '3.13'
+      - run: python setup.py test
+        env:
+          HTTPBIN: httpbin.bemisc.com
+          PLUGIN_PATH: ./*/src;./*/*src
