@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import sys
 import time
 import errno
 import select
@@ -182,9 +183,10 @@ def poll_socket(socket_fd, operations, timeout):
         return readable, writeable
 
     # falls back to select, which is portable across all platforms
-    # including Windows but is limited to file descriptors below 1024
-    # (FD_SETSIZE) on Linux — rejects any fd that would cause select to fail
-    if socket_fd >= SELECT_MAX_FD:
+    # including Windows - on POSIX systems select is limited to file
+    # descriptors below 1024 (FD_SETSIZE), but on Windows the fd_set
+    # is an array (not a bitmask) so high-numbered FDs are valid
+    if not sys.platform == "win32" and socket_fd >= SELECT_MAX_FD:
         raise exceptions.RequestClosed(
             "invalid socket: filedescriptor %d out of range for select" % socket_fd
         )
