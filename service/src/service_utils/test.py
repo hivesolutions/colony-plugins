@@ -66,6 +66,14 @@ class SelectPollingTestCase(colony.ColonyTestCase):
     def get_description():
         return "Select Polling test case"
 
+    def _skip_if_no_select(self):
+        """
+        Returns true if select is not available on the
+        current platform (select is universally available).
+        """
+
+        return not hasattr(select, "select")
+
     def test_initialization(self):
         polling = asynchronous.SelectPolling()
 
@@ -142,6 +150,9 @@ class SelectPollingTestCase(colony.ColonyTestCase):
         self.assertIn(10, polling.writeable_socket_list)
 
     def test_poll_with_real_socket(self):
+        if self._skip_if_no_select():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -327,12 +338,26 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
     def get_description():
         return "Epoll2 Polling test case"
 
+    def _skip_if_no_poll(self):
+        """
+        Returns true if poll is not available on the
+        current platform (not available on Windows).
+        """
+
+        return not hasattr(select, "poll")
+
     def test_initialization(self):
+        if self._skip_if_no_poll():
+            return
+
         polling = asynchronous.Epoll2Polling()
 
         self.assertEqual(polling.registered_map, {})
 
     def test_register_read(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -348,6 +373,9 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         server.close()
 
     def test_register_combined(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -363,6 +391,9 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         server.close()
 
     def test_unregister(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -378,6 +409,9 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         server.close()
 
     def test_unregister_partial(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -395,12 +429,18 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         server.close()
 
     def test_unregister_not_registered(self):
+        if self._skip_if_no_poll():
+            return
+
         polling = asynchronous.Epoll2Polling()
 
         # should not raise for unregistered fd's
         polling.unregister(999)
 
     def test_modify(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -417,6 +457,9 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         server.close()
 
     def test_poll_empty(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
@@ -437,6 +480,9 @@ class Epoll2PollingTestCase(colony.ColonyTestCase):
         server.close()
 
     def test_incremental_register(self):
+        if self._skip_if_no_poll():
+            return
+
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("127.0.0.1", 0))
