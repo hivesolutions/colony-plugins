@@ -59,13 +59,141 @@ RECEIVE_RETRIES = 3
 SEND_RETRIES = 3
 """ The send retries """
 
+RECONNECT_RETRIES = 3
+""" The reconnect retries """
+
+_EPOLLIN = 0x001
+_EPOLLOUT = 0x004
+_EPOLLERR = 0x008
+_EPOLLHUP = 0x010
+""" The various constant values that are going to be
+used in the detection of errors and states for the
+non blocking connection states """
+
+READ = _EPOLLIN
+""" Condition to be used for the read operation on a
+certain fd, alias to an existing epoll value """
+
+WRITE = _EPOLLOUT
+""" Write condition flag that may be used by one trying
+to register for write operation notifications """
+
+ERROR = _EPOLLERR | _EPOLLHUP
+""" The error condition that gathers all the possible
+errors from the epoll strategy """
+
 WSAEWOULDBLOCK = 10035
 """ Windows based value for the error raised when a non
 blocking connection is not able to read/write more, this
 error should be raised constantly in no blocking connections """
 
+SELECT_MAX_FD = 1024
+""" The maximum file descriptor value for select, above
+this value the select call is going to raise an error on
+most Linux based systems (FD_SETSIZE) """
+
 DEFAULT_TYPE = "connection"
 """ The default type client """
+
+
+def poll_socket(socket_fd, operations, timeout):
+    """
+    Polls a single socket file descriptor for the given operations
+    using the best available polling mechanism on the current platform.
+
+    Uses epoll on Linux, kqueue on BSD/macOS, poll as a portable
+    Unix fallback, and select as the final Windows-compatible fallback.
+    Unlike select, epoll/kqueue/poll have no file descriptor limit.
+
+    :type socket_fd: int
+    :param socket_fd: The socket file descriptor to poll.
+    :type operations: int
+    :param operations: The bitmask of operations to poll for (READ, WRITE).
+    :type timeout: float
+    :param timeout: The maximum time in seconds to wait for events.
+    :rtype: tuple
+    :return: A tuple of (readable, writeable) boolean values.
+    """
+
+    # uses epoll on Linux, which has no file descriptor limit
+    # and is more efficient than select for large numbers of fds
+    if hasattr(select, "epoll"):
+        epoll = select.epoll()
+        try:
+            event_mask = 0
+            if operations & READ:
+                event_mask |= _EPOLLIN
+            if operations & WRITE:
+                event_mask |= _EPOLLOUT
+            epoll.register(socket_fd, event_mask)
+            try:
+                events = epoll.poll(timeout)
+            finally:
+                epoll.unregister(socket_fd)
+        finally:
+            epoll.close()
+        readable = any(mask & _EPOLLIN for _fd, mask in events)
+        writeable = any(mask & _EPOLLOUT for _fd, mask in events)
+        return readable, writeable
+
+    # uses kqueue on BSD/macOS, which also has no file descriptor limit
+    # and is the native mechanism on those platforms
+    if hasattr(select, "kqueue"):
+        kqueue = select.kqueue()
+        try:
+            changelist = []
+            if operations & READ:
+                changelist.append(
+                    select.kevent(
+                        socket_fd,
+                        filter=select.KQ_FILTER_READ,
+                        flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
+                    )
+                )
+            if operations & WRITE:
+                changelist.append(
+                    select.kevent(
+                        socket_fd,
+                        filter=select.KQ_FILTER_WRITE,
+                        flags=select.KQ_EV_ADD | select.KQ_EV_ONESHOT,
+                    )
+                )
+            events = kqueue.control(changelist, len(changelist), timeout)
+        finally:
+            kqueue.close()
+        readable = any(e.filter == select.KQ_FILTER_READ for e in events)
+        writeable = any(e.filter == select.KQ_FILTER_WRITE for e in events)
+        return readable, writeable
+
+    # uses poll as a portable Unix fallback, which also has no
+    # file descriptor limit unlike select (available on most Unix systems)
+    if hasattr(select, "poll"):
+        poll_instance = select.poll()
+        event_mask = 0
+        if operations & READ:
+            event_mask |= _EPOLLIN
+        if operations & WRITE:
+            event_mask |= _EPOLLOUT
+        poll_instance.register(socket_fd, event_mask)
+        events = poll_instance.poll(timeout * 1000)
+        poll_instance.unregister(socket_fd)
+        readable = any(mask & _EPOLLIN for _fd, mask in events)
+        writeable = any(mask & _EPOLLOUT for _fd, mask in events)
+        return readable, writeable
+
+    # falls back to select, which is portable across all platforms
+    # including Windows but is limited to file descriptors below 1024
+    # (FD_SETSIZE) on Linux — rejects any fd that would cause select to fail
+    if socket_fd >= SELECT_MAX_FD:
+        raise exceptions.RequestClosed(
+            "invalid socket: filedescriptor %d out of range for select" % socket_fd
+        )
+    read_fds = [socket_fd] if operations & READ else []
+    write_fds = [socket_fd] if operations & WRITE else []
+    readable_fds, writeable_fds, _errors = select.select(
+        read_fds, write_fds, [], timeout
+    )
+    return bool(readable_fds), bool(writeable_fds)
 
 
 class ClientUtils(colony.System):
@@ -296,8 +424,26 @@ class AbstractClient(object):
 
         # in case the connection tuple is not present in the
         # client connections map or the current client connection
-        # is not open
+        # is not open, then we need to run proper close diligence
         if not client_connection or not client_connection.is_open():
+            # in case there's an existing (closed) client connection
+            # closes it explicitly to release the underlying socket
+            # file descriptor preventing accumulation of stale sockets
+            if client_connection:
+                if self.client_plugin:
+                    self.client_plugin.debug(
+                        "Closing stale connection to: %s"
+                        % str(client_connection.connection_address)
+                    )
+                try:
+                    client_connection.close()
+                except Exception as exception:
+                    if self.client_plugin:
+                        self.client_plugin.warning(
+                            "Problem closing stale connection: %s"
+                            % colony.legacy.UNICODE(exception)
+                        )
+
             # creates the a new client connection for the given connection tuple
             # and sets the client connection in the client connections map
             client_connection = self._create_client_connection(connection_tuple)
@@ -835,10 +981,15 @@ class ClientConnection(object):
 
         # iterates continuously
         while True:
+            # retrieves the file descriptor for the current connection
+            # socket, raising in case the socket is invalid or closed
+            file_descriptor = self._ensure_socket_fd()
+
             try:
-                # runs the select in the connection socket, with timeout
-                selected_values = select.select(
-                    [self.connection_socket], [], [], request_timeout
+                # polls the connection socket for read readiness using
+                # the best available polling mechanism on this platform
+                readable, _writeable = poll_socket(
+                    file_descriptor, READ, request_timeout
                 )
             except Exception as exception:
                 # closes the connection and then raises the
@@ -848,7 +999,7 @@ class ClientConnection(object):
                     "invalid socket: %s" % colony.legacy.UNICODE(exception)
                 )
 
-            if selected_values == ([], [], []):
+            if not readable:
                 # closes the connection and then raises the
                 # server request timeout exception
                 self.close()
@@ -938,6 +1089,10 @@ class ClientConnection(object):
         # retrieves the number of bytes in the message
         number_bytes = len(message)
 
+        # sets the initial number of reconnection retries available
+        # to be used to limit the number of reconnection attempts
+        reconnect_retries = RECONNECT_RETRIES
+
         # iterates over all the read buffer data read from the client
         # to make decisions on either reconnect or not
         for data in self._read_buffer:
@@ -949,18 +1104,20 @@ class ClientConnection(object):
                     "Received empty data (in read buffer), reconnecting socket"
                 )
                 self._reconnect_connection_socket()
+                reconnect_retries -= 1
                 break
 
-        # iterates continuously, trying to select
+        # iterates continuously, trying to poll
         while True:
+            # retrieves the file descriptor for the current connection
+            # socket, raising in case the socket is invalid or closed
+            file_descriptor = self._ensure_socket_fd()
+
             try:
-                # runs the select in the connection socket, with the timeout
-                # defined for the response (as expected)
-                selected_values = select.select(
-                    [self.connection_socket],
-                    [self.connection_socket],
-                    [],
-                    response_timeout,
+                # polls the connection socket for both read and write
+                # readiness using the best available polling mechanism
+                readable, writeable = poll_socket(
+                    file_descriptor, READ | WRITE, response_timeout
                 )
             except Exception as exception:
                 # closes the connection and raises a request closed exception
@@ -971,7 +1128,7 @@ class ClientConnection(object):
                 )
 
             # in case there is pending data to be received
-            if not selected_values[0] == []:
+            if readable:
                 try:
                     # receives the data from the socket
                     data = self.connection_socket.recv(CHUNK_SIZE)
@@ -979,12 +1136,21 @@ class ClientConnection(object):
                     # in case the data is invalid it means the connection has
                     # been dropped and a re-connection is required
                     if not data:
+                        # in case there are no more reconnection retries available
+                        # closes the connection and raises an exception
+                        if reconnect_retries <= 0:
+                            self.close()
+                            raise exceptions.RequestClosed(
+                                "max reconnection retries reached"
+                            )
+
                         # prints a debug message and then runs the re-connection
                         # operation to try to send the data
                         self.client_plugin.debug(
                             "Received empty data, reconnecting socket"
                         )
                         self._reconnect_connection_socket()
+                        reconnect_retries -= 1
 
                     # otherwise there are contents in it
                     else:
@@ -992,17 +1158,32 @@ class ClientConnection(object):
                         # into the queue to be handled latter
                         self.client_plugin.debug("Received extra data, returning it")
                         self.return_data(data)
+                except (
+                    exceptions.RequestClosed,
+                    exceptions.ClientUtilsException,
+                ):
+                    raise
                 except Exception as exception:
+                    # in case there are no more reconnection retries available
+                    # closes the connection and raises an exception
+                    if reconnect_retries <= 0:
+                        self.close()
+                        raise exceptions.RequestClosed(
+                            "max reconnection retries reached: "
+                            + colony.legacy.UNICODE(exception)
+                        )
+
                     # prints a debug message and then reconnects the connection socket
                     self.client_plugin.debug(
                         "Problem while receiving pending data: "
                         + colony.legacy.UNICODE(exception)
                     )
                     self._reconnect_connection_socket()
+                    reconnect_retries -= 1
 
-            # in case there are no selected values connection is closed as the timeout
-            # value has been reached (reason for unblocking)
-            elif selected_values == ([], [], []):
+            # in case there are no events the timeout has been reached
+            # (reason for unblocking) and the connection must be closed
+            elif not readable and not writeable:
                 # closes the connection, and then raises the server
                 # response timeout exception
                 self.close()
@@ -1010,7 +1191,7 @@ class ClientConnection(object):
 
             # in case the socket is ready to have data
             # sent through it
-            elif not selected_values[1] == []:
+            elif writeable:
                 try:
                     # checks if the connection is of type persistent
                     # this check changes the way the data is sent
@@ -1082,6 +1263,10 @@ class ClientConnection(object):
             self.connection_socket_name, self.connection_socket_parameters
         )
 
+        # updates the base connection socket reference to avoid
+        # holding a stale reference to the old (closed) socket
+        self._connection_socket = self.connection_socket
+
         # reconnects the socket to the connection address
         self.connection_socket.connect(self.connection_address)
 
@@ -1091,6 +1276,27 @@ class ClientConnection(object):
 
         # prints a debug message about reconnection
         self.client_plugin.debug("Reconnected to: %s" % str(self.connection_address))
+
+    def _ensure_socket_fd(self):
+        """
+        Retrieves the file descriptor for the current connection socket,
+        raising an exception in case the socket is invalid or closed.
+
+        :rtype: int
+        :return: The file descriptor for the current connection socket.
+        """
+
+        # retrieves the file descriptor for the current connection
+        # socket, raises in case the socket is invalid or closed
+        try:
+            file_descriptor = self.connection_socket.fileno()
+        except Exception:
+            self.close()
+            raise exceptions.RequestClosed(
+                "invalid socket: unable to retrieve file descriptor"
+            )
+
+        return file_descriptor
 
     def _process_exception(self, exception):
         """

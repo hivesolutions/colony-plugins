@@ -60,23 +60,34 @@ class MockSocketUpgraderPlugin(object):
 
 
 class MockSocket(object):
-    def __init__(self):
+    def __init__(self, fd=-1):
+        self._fd = fd
+        self._closed = False
         self.blocking = True
+        self._recv_data = [b""]
+        self._sent_data = []
+
+    def fileno(self):
+        return self._fd
 
     def connect(self, address):
         pass
 
     def close(self):
-        pass
+        self._closed = True
 
     def setblocking(self, blocking):
         self.blocking = blocking
 
     def recv(self, size):
+        if self._recv_data:
+            return self._recv_data.pop(0)
         return b""
 
     def send(self, data):
+        self._sent_data.append(data)
         return len(data)
 
     def sendto(self, data, address):
+        self._sent_data.append(data)
         return len(data)

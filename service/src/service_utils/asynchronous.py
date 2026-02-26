@@ -244,29 +244,50 @@ class AbstractService(object):
         self.address_fd_map[client_socket_fd] = (client_address, service_port)
         self.poll_instance.register(client_socket_fd, READ | ERROR)
 
-        client_connection = ClientConnection(
-            self, client_socket, client_address, service_port
-        )
-        client_connection.service_execution_thread = self.service_execution_thread
-        self.client_connection_map[client_socket] = client_connection
+        try:
+            client_connection = ClientConnection(
+                self, client_socket, client_address, service_port
+            )
+            client_connection.service_execution_thread = self.service_execution_thread
+            self.client_connection_map[client_socket] = client_connection
 
-        self.add_handler(client_socket_fd, client_connection.read_handler, READ)
-        self.add_handler(client_socket_fd, client_connection.write_handler, WRITE)
-        self.add_handler(client_socket_fd, client_connection.error_handler, ERROR)
+            self.add_handler(client_socket_fd, client_connection.read_handler, READ)
+            self.add_handler(client_socket_fd, client_connection.write_handler, WRITE)
+            self.add_handler(client_socket_fd, client_connection.error_handler, ERROR)
+        except Exception:
+            # removes the partially registered socket from the internal
+            # structures to avoid leaking the file descriptor
+            self.socket_fd_map.pop(client_socket_fd, None)
+            self.address_fd_map.pop(client_socket_fd, None)
+            self.poll_instance.unregister(client_socket_fd)
+            self.client_connection_map.pop(client_socket, None)
+            raise
 
     def remove_socket(self, client_socket):
         client_socket_fd = client_socket.fileno()
 
-        del self.socket_fd_map[client_socket_fd]
-        del self.address_fd_map[client_socket_fd]
+        self.socket_fd_map.pop(client_socket_fd, None)
+        self.address_fd_map.pop(client_socket_fd, None)
         self.poll_instance.unregister(client_socket_fd)
 
-        client_connection = self.client_connection_map[client_socket]
-        del self.client_connection_map[client_socket]
+        client_connection = self.client_connection_map.pop(client_socket, None)
 
-        self.remove_handler(client_socket_fd, client_connection.read_handler, READ)
-        self.remove_handler(client_socket_fd, client_connection.write_handler, WRITE)
-        self.remove_handler(client_socket_fd, client_connection.error_handler, ERROR)
+        # removes the handlers for the client connection, in case the
+        # client connection is not available (partial registration) the
+        # handler removal is skipped
+        if client_connection:
+            try:
+                self.remove_handler(
+                    client_socket_fd, client_connection.read_handler, READ
+                )
+                self.remove_handler(
+                    client_socket_fd, client_connection.write_handler, WRITE
+                )
+                self.remove_handler(
+                    client_socket_fd, client_connection.error_handler, ERROR
+                )
+            except Exception:
+                pass
 
         client_socket.close()
 
@@ -304,7 +325,9 @@ class AbstractService(object):
         # retrieves the socket fd and then retrieves
         # the socket from the socket fd map
         socket_fd = tuple[0]
-        socket = self.socket_fd_map[socket_fd]
+        socket = self.socket_fd_map.get(socket_fd, None)
+        if not socket:
+            return
 
         # iterates over all the handlers for the
         # tuple (to call them)
@@ -324,10 +347,17 @@ class AbstractService(object):
                 # retrieves the client connection from the client
                 # connection map using the socket and closes it, at
                 # this point the client connection may not exist in
-                # the client connection map, in such case no client
-                # connection is closed
+                # the client connection map, in such case tries to
+                # close the socket directly to avoid leaking file
+                # descriptors for pending or partially registered sockets
                 client_connection = self.client_connection_map.get(socket, None)
-                client_connection and client_connection.close()
+                if client_connection:
+                    client_connection.close()
+                else:
+                    try:
+                        socket.close()
+                    except Exception:
+                        pass
 
     def add_time_handler(self, time, callback_method):
         heapq.heappush(self.time_events, (time, callback_method))
@@ -512,8 +542,19 @@ class AbstractService(object):
         service, this includes setting the connection as active.
         """
 
-        # sets the initial poll instance
-        self.poll_instance = SelectPolling()
+        # sets the initial poll instance, using the best available
+        # polling mechanism for the current platform, epoll is
+        # preferred on Linux, kqueue on BSD/macOS, poll is used
+        # as a fallback on other Unix systems and select is used
+        # as the last resort
+        if hasattr(select, "epoll"):
+            self.poll_instance = EpollPolling()
+        elif hasattr(select, "kqueue"):
+            self.poll_instance = KqueuePolling()
+        elif hasattr(select, "poll"):
+            self.poll_instance = Epoll2Polling()
+        else:
+            self.poll_instance = SelectPolling()
 
         # sets the service connection active flag as true
         self.service_connection_active = True
@@ -617,6 +658,18 @@ class AbstractService(object):
             # internal structures
             self.remove_socket(client_socket)
 
+        # closes any remaining pending sockets that are still
+        # in the handshake state and were not yet promoted to
+        # the client connection map to avoid leaking file descriptors
+        for _socket_fd, pending_socket in colony.legacy.items(
+            dict(self.pending_fd_map)
+        ):
+            try:
+                pending_socket.close()
+            except Exception:
+                pass
+        self.pending_fd_map.clear()
+
     def _start_threads(self):
         """
         Stars the base threads for background execution.
@@ -639,6 +692,17 @@ class AbstractService(object):
 
 
 class SelectPolling(object):
+    """
+    Polling class that uses the select mechanism for event
+    notification, this is the most portable approach and is
+    available on all platforms (Linux, macOS, Windows).
+
+    The select mechanism has a file descriptor limit of 1024
+    (FD_SETSIZE) on most Linux based systems, meaning that
+    sockets with file descriptors above this value will cause
+    an error when passed to select.
+    """
+
     readable_socket_list = None
     writeable_socket_list = None
     errors_socket_list = None
@@ -705,31 +769,437 @@ class SelectPolling(object):
 
 
 class EpollPolling(object):
+    """
+    Polling class that uses the epoll mechanism for event
+    notification, this is the most efficient approach for
+    Linux based systems and has no file descriptor limit.
+
+    The epoll mechanism is only available on Linux based
+    systems (not available on macOS or Windows).
+    """
+
+    registered_map = {}
+    """ Map containing the currently registered event masks
+    for each socket fd, used to support partial register
+    and unregister operations """
+
     def __init__(self):
-        pass
+        self.epoll = select.epoll()
+        self.registered_map = {}
 
-    def register(self, socket):
-        pass
+    def register(self, socket_fd, operations):
+        # translates the internal operations into the epoll
+        # event mask flags, read operations are mapped to
+        # EPOLLIN and write to EPOLLOUT
+        event_mask = 0
+        if operations & READ:
+            event_mask |= _EPOLLIN
+        if operations & WRITE:
+            event_mask |= _EPOLLOUT
+        if operations & ERROR:
+            event_mask |= _EPOLLERR | _EPOLLHUP
 
-    def unregister(self, socket):
-        pass
+        # retrieves the current mask for the socket fd and
+        # combines it with the new operations, in case the
+        # socket fd is already registered modifies it
+        current_mask = self.registered_map.get(socket_fd, 0)
+        new_mask = current_mask | event_mask
 
-    def poll(self):
-        pass
+        # registers or modifies the socket fd in the epoll
+        # instance with the combined event mask
+        if current_mask:
+            self.epoll.modify(socket_fd, new_mask)
+        else:
+            self.epoll.register(socket_fd, new_mask)
+        self.registered_map[socket_fd] = new_mask
+
+    def unregister(self, socket_fd, operations=ALL):
+        # retrieves the current mask for the socket fd,
+        # in case there's no current registration returns
+        current_mask = self.registered_map.get(socket_fd, 0)
+        if not current_mask:
+            return
+
+        # in case all operations are being unregistered the
+        # socket fd is removed from the epoll instance completely
+        if operations == ALL:
+            try:
+                self.epoll.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+            return
+
+        # otherwise only the specified operations are removed
+        # from the current event mask for the socket fd
+        new_mask = current_mask
+        if operations & READ:
+            new_mask &= ~_EPOLLIN
+        if operations & WRITE:
+            new_mask &= ~_EPOLLOUT
+        if operations & ERROR:
+            new_mask &= ~(_EPOLLERR | _EPOLLHUP)
+
+        # in case the new mask is empty the socket fd is
+        # completely unregistered, otherwise it's modified
+        if new_mask == 0:
+            try:
+                self.epoll.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+        else:
+            try:
+                self.epoll.modify(socket_fd, new_mask)
+            except IOError:
+                pass
+            self.registered_map[socket_fd] = new_mask
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # polls the epoll instance with the given timeout
+        # and translates the results into the internal format
+        events = self.epoll.poll(timeout)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for socket_fd, event_mask in events:
+            if event_mask & _EPOLLIN:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+            if event_mask & _EPOLLOUT:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+            if event_mask & (_EPOLLERR | _EPOLLHUP):
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = colony.legacy.items(events_map)
+
+        # returns the events list
+        return events_list
+
+
+class Epoll2Polling(object):
+    """
+    Polling class that uses the poll mechanism for event
+    notification, this is a portable alternative to epoll
+    that has no file descriptor limit and is available on
+    most Unix based systems.
+    """
+
+    registered_map = {}
+    """ Map containing the currently registered event masks
+    for each socket fd, used to support partial register
+    and unregister operations """
+
+    def __init__(self):
+        self.poll_instance = select.poll()
+        self.registered_map = {}
+
+    def register(self, socket_fd, operations):
+        # translates the internal operations into the poll
+        # event mask flags, read operations are mapped to
+        # POLLIN and write to POLLOUT
+        event_mask = 0
+        if operations & READ:
+            event_mask |= _EPOLLIN
+        if operations & WRITE:
+            event_mask |= _EPOLLOUT
+        if operations & ERROR:
+            event_mask |= _EPOLLERR | _EPOLLHUP
+
+        # retrieves the current mask for the socket fd and
+        # combines it with the new operations, in case the
+        # socket fd is already registered modifies it
+        current_mask = self.registered_map.get(socket_fd, 0)
+        new_mask = current_mask | event_mask
+
+        # registers or modifies the socket fd in the poll
+        # instance with the combined event mask
+        if current_mask:
+            self.poll_instance.modify(socket_fd, new_mask)
+        else:
+            self.poll_instance.register(socket_fd, new_mask)
+        self.registered_map[socket_fd] = new_mask
+
+    def unregister(self, socket_fd, operations=ALL):
+        # retrieves the current mask for the socket fd,
+        # in case there's no current registration returns
+        current_mask = self.registered_map.get(socket_fd, 0)
+        if not current_mask:
+            return
+
+        # in case all operations are being unregistered the
+        # socket fd is removed from the poll instance completely
+        if operations == ALL:
+            try:
+                self.poll_instance.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+            return
+
+        # otherwise only the specified operations are removed
+        # from the current event mask for the socket fd
+        new_mask = current_mask
+        if operations & READ:
+            new_mask &= ~_EPOLLIN
+        if operations & WRITE:
+            new_mask &= ~_EPOLLOUT
+        if operations & ERROR:
+            new_mask &= ~(_EPOLLERR | _EPOLLHUP)
+
+        # in case the new mask is empty the socket fd is
+        # completely unregistered, otherwise it's modified
+        if new_mask == 0:
+            try:
+                self.poll_instance.unregister(socket_fd)
+            except (IOError, KeyError):
+                pass
+            self.registered_map.pop(socket_fd, None)
+        else:
+            self.poll_instance.modify(socket_fd, new_mask)
+            self.registered_map[socket_fd] = new_mask
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # polls the poll instance with the given timeout (in
+        # milliseconds as required by the poll interface) and
+        # translates the results into the internal format
+        events = self.poll_instance.poll(timeout * 1000)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for socket_fd, event_mask in events:
+            if event_mask & _EPOLLIN:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+            if event_mask & _EPOLLOUT:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+            if event_mask & (_EPOLLERR | _EPOLLHUP):
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = colony.legacy.items(events_map)
+
+        # returns the events list
+        return events_list
 
 
 class KqueuePolling(object):
+    """
+    Polling class that uses the kqueue mechanism for event
+    notification, this is the most efficient approach for
+    BSD based systems (including macOS) and has no file
+    descriptor limit.
+
+    The kqueue mechanism is only available on BSD based
+    systems (not available on Linux or Windows).
+    """
+
+    registered_map = {}
+    """ Map containing the currently registered event masks
+    for each socket fd, used to support partial register
+    and unregister operations """
+
     def __init__(self):
-        pass
+        self.kqueue = select.kqueue()
+        self.registered_map = {}
 
-    def register(self, socket):
-        pass
+    def register(self, socket_fd, operations):
+        # retrieves the current mask for the socket fd and
+        # combines it with the new operations
+        current_mask = self.registered_map.get(socket_fd, 0)
+        new_mask = current_mask | operations
 
-    def unregister(self, socket):
-        pass
+        # builds the list of kevent changes to apply to the
+        # kqueue instance based on the new operations being
+        # registered for the socket fd
+        changelist = self._build_changelist(socket_fd, current_mask, new_mask)
 
-    def poll(self):
-        pass
+        # applies the changes to the kqueue instance and
+        # updates the registered map with the new mask
+        if changelist:
+            self.kqueue.control(changelist, 0)
+        self.registered_map[socket_fd] = new_mask
+
+    def unregister(self, socket_fd, operations=ALL):
+        # retrieves the current mask for the socket fd,
+        # in case there's no current registration returns
+        current_mask = self.registered_map.get(socket_fd, 0)
+        if not current_mask:
+            return
+
+        # in case all operations are being unregistered the
+        # socket fd is removed from the kqueue instance completely
+        if operations == ALL:
+            changelist = self._build_delete_list(socket_fd, current_mask)
+            if changelist:
+                try:
+                    self.kqueue.control(changelist, 0)
+                except OSError:
+                    pass
+            self.registered_map.pop(socket_fd, None)
+            return
+
+        # otherwise only the specified operations are removed
+        # from the current event mask for the socket fd
+        new_mask = current_mask & ~operations
+
+        # in case the new mask is empty the socket fd is
+        # completely unregistered, otherwise it's modified
+        if new_mask == 0:
+            changelist = self._build_delete_list(socket_fd, current_mask)
+            if changelist:
+                try:
+                    self.kqueue.control(changelist, 0)
+                except OSError:
+                    pass
+            self.registered_map.pop(socket_fd, None)
+        else:
+            changelist = self._build_changelist(socket_fd, current_mask, new_mask)
+            if changelist:
+                try:
+                    self.kqueue.control(changelist, 0)
+                except OSError:
+                    pass
+            self.registered_map[socket_fd] = new_mask
+
+    def modify(self, socket_fd, operations):
+        self.unregister(socket_fd)
+        self.register(socket_fd, operations)
+
+    def poll(self, timeout):
+        # retrieves the maximum number of events to poll
+        # based on the number of registered socket fd's
+        max_events = max(len(self.registered_map), 1)
+
+        # polls the kqueue instance with the given timeout
+        # and translates the results into the internal format
+        events = self.kqueue.control(None, max_events, timeout)
+
+        # creates the events map to hold the socket fd's
+        events_map = {}
+
+        for event in events:
+            socket_fd = event.ident
+            if event.filter == select.KQ_FILTER_READ:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | READ
+            if event.filter == select.KQ_FILTER_WRITE:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | WRITE
+            if event.flags & select.KQ_EV_ERROR:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+            if event.flags & select.KQ_EV_EOF:
+                events_map[socket_fd] = events_map.get(socket_fd, 0) | ERROR
+
+        # retrieves the list of event tuples
+        events_list = colony.legacy.items(events_map)
+
+        # returns the events list
+        return events_list
+
+    def _build_changelist(self, socket_fd, current_mask, new_mask):
+        """
+        Builds the list of kevent changes required to transition
+        from the current mask to the new mask for the given socket fd.
+
+        :type socket_fd: int
+        :param socket_fd: The socket file descriptor.
+        :type current_mask: int
+        :param current_mask: The current event mask.
+        :type new_mask: int
+        :param new_mask: The new event mask.
+        :rtype: list
+        :return: The list of kevent changes.
+        """
+
+        changelist = []
+
+        # determines which read events need to be added or removed
+        # based on the difference between current and new masks
+        current_read = current_mask & READ
+        new_read = new_mask & READ
+        if new_read and not current_read:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_READ,
+                    flags=select.KQ_EV_ADD,
+                )
+            )
+        elif current_read and not new_read:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_READ,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+
+        # determines which write events need to be added or removed
+        # based on the difference between current and new masks
+        current_write = current_mask & WRITE
+        new_write = new_mask & WRITE
+        if new_write and not current_write:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_WRITE,
+                    flags=select.KQ_EV_ADD,
+                )
+            )
+        elif current_write and not new_write:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_WRITE,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+
+        return changelist
+
+    def _build_delete_list(self, socket_fd, current_mask):
+        """
+        Builds the list of kevent changes required to remove
+        all registered events for the given socket fd.
+
+        :type socket_fd: int
+        :param socket_fd: The socket file descriptor.
+        :type current_mask: int
+        :param current_mask: The current event mask.
+        :rtype: list
+        :return: The list of kevent delete changes.
+        """
+
+        changelist = []
+
+        # removes all currently registered filters for
+        # the socket fd from the kqueue instance
+        if current_mask & READ:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_READ,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+        if current_mask & WRITE:
+            changelist.append(
+                select.kevent(
+                    socket_fd,
+                    filter=select.KQ_FILTER_WRITE,
+                    flags=select.KQ_EV_DELETE,
+                )
+            )
+
+        return changelist
 
 
 class Connection(object):
@@ -916,11 +1386,17 @@ class ServiceConnection(Connection):
                     raise
 
             # sets the service connection to non blocking mode
-            # and then adds the service connection in the service
-            service_connection.setblocking(0)
-            self.service.add_socket(
-                service_connection, service_address, self.connection_port
-            )
+            # and then adds the service connection in the service,
+            # in case of an exception the accepted socket is closed
+            # to avoid leaking file descriptors
+            try:
+                service_connection.setblocking(0)
+                self.service.add_socket(
+                    service_connection, service_address, self.connection_port
+                )
+            except Exception:
+                service_connection.close()
+                raise
 
     def get_handshake_handler(self, service_connection, service_address, socket_fd):
         def handshake_handler(_socket):
