@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import time
+import errno
 import socket
 
 import colony
@@ -401,8 +403,6 @@ class ClientConnectionTestCase(colony.ColonyTestCase):
         self.assertEqual(conn._read_buffer, [])
 
     def test_cancel(self):
-        import time
-
         conn = self._create_connection()
         delta = 10.0
         before = time.time()
@@ -583,18 +583,14 @@ class ClientConnectionTestCase(colony.ColonyTestCase):
     def test_process_exception_eagain(self):
         # EAGAIN/EWOULDBLOCK are expected on non-blocking sockets
         # and should be treated as graceful (return True)
-        import errno as errno_module
-
         conn = self._create_connection()
-        exception = socket.error(errno_module.EAGAIN, "try again")
+        exception = socket.error(errno.EAGAIN, "try again")
 
         self.assertEqual(conn._process_exception(exception), True)
 
     def test_process_exception_ewouldblock(self):
-        import errno as errno_module
-
         conn = self._create_connection()
-        exception = socket.error(errno_module.EWOULDBLOCK, "would block")
+        exception = socket.error(errno.EWOULDBLOCK, "would block")
 
         self.assertEqual(conn._process_exception(exception), True)
 
@@ -615,10 +611,8 @@ class ClientConnectionTestCase(colony.ColonyTestCase):
     def test_process_exception_socket_error_critical(self):
         # a socket error with an unexpected error code should
         # also return False and be treated as critical
-        import errno as errno_module
-
         conn = self._create_connection()
-        exception = socket.error(errno_module.ECONNRESET, "connection reset")
+        exception = socket.error(errno.ECONNRESET, "connection reset")
 
         self.assertEqual(conn._process_exception(exception), False)
 
