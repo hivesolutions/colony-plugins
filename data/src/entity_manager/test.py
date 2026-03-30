@@ -2838,10 +2838,166 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         try:
             self.assertTrue(os.path.exists(backup_path))
             self.assertTrue(os.path.getsize(backup_path) > 0)
+
+            # verifies that the backup naming follows the expected
+            # convention of original_path.backup.timestamp
+            self.assertTrue(".backup." in backup_path)
         finally:
             # cleans up the backup file
             if os.path.exists(backup_path):
                 os.remove(backup_path)
+
+    def test_backup_data_integrity(self):
+        # creates the required entity classes and inserts data
+        # so the backup contains meaningful content
+        self.entity_manager.create(mocks.Person)
+
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "backup_test_person"
+        person.age = 42
+        self.entity_manager.save(person)
+
+        # forces the data to be committed to disk so the backup
+        # captures it (the entity manager may use deferred writes)
+        connection = self.entity_manager.get_connection()
+        inner_connection = connection._connection
+        file_path = inner_connection.get_file_path()
+        raw_connection = inner_connection.get_connection()
+        raw_connection.commit()
+
+        migration = self._load_migration_module()
+
+        # creates a backup and verifies the backup is a valid
+        # SQLite database containing the same data
+        import sqlite3
+
+        connection_params = dict(file_path=file_path)
+        backup_path = migration.backup_database(connection_params, "sqlite")
+
+        try:
+            # opens the backup database and verifies it contains
+            # the person table with the expected data
+            backup_conn = sqlite3.connect(backup_path)
+            cursor = backup_conn.cursor()
+            cursor.execute(
+                "select count(*) from sqlite_master "
+                "where type='table' and name='_root_entity'"
+            )
+            self.assertEqual(cursor.fetchone()[0], 1)
+
+            cursor.execute(
+                "select count(*) from sqlite_master "
+                "where type='table' and name='_person'"
+            )
+            self.assertEqual(cursor.fetchone()[0], 1)
+
+            # verifies the data in the backup matches the original
+            cursor.execute("select object_id, status from _root_entity")
+            row = cursor.fetchone()
+            self.assertNotEqual(row, None)
+            self.assertEqual(row[0], 1)
+            self.assertEqual(row[1], 1)
+
+            cursor.execute("select name, age from _person")
+            row = cursor.fetchone()
+            self.assertNotEqual(row, None)
+            self.assertEqual(row[0], "backup_test_person")
+            self.assertEqual(row[1], 42)
+
+            backup_conn.close()
+        finally:
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+
+    def test_migrate_creates_backup(self):
+        # creates the required entity classes with data
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "migrate_backup_test"
+        self.entity_manager.save(person)
+
+        migration = self._load_migration_module()
+
+        # retrieves the database file path for the backup
+        connection = self.entity_manager.get_connection()
+        inner_connection = connection._connection
+        file_path = inner_connection.get_file_path()
+
+        connection_params = dict(file_path=file_path)
+
+        # uses a failing connection so the migration itself will
+        # fail after the backup is created, this allows us to test
+        # that backup happens as part of the migrate() flow without
+        # actually altering the schema
+        class FailAfterBackupCursor(object):
+            def execute(self, query):
+                raise Exception("intentional failure after backup")
+
+        class FailAfterBackupConnection(object):
+            def cursor(self):
+                return FailAfterBackupCursor()
+
+            def commit(self):
+                pass
+
+            def rollback(self):
+                pass
+
+        failing_conn = FailAfterBackupConnection()
+
+        success, messages = migration.migrate(
+            entity_class=mocks.ConcreteRootEntity,
+            target_strategy="class_table",
+            connection=failing_conn,
+            engine="sqlite",
+            connection_params=connection_params,
+            skip_backup=False,
+        )
+
+        # the migration should fail but the backup should have been
+        # created before the migration queries were executed
+        self.assertFalse(success)
+
+        # verifies that a backup message was generated
+        backup_messages = [m for m in messages if "backup created" in m]
+        self.assertEqual(len(backup_messages), 1)
+
+        # extracts the backup path from the message and verifies
+        # the backup file was created and is valid
+        backup_msg = backup_messages[0]
+        backup_path = backup_msg.split("backup created at: ")[1]
+        try:
+            self.assertTrue(os.path.exists(backup_path))
+            self.assertTrue(os.path.getsize(backup_path) > 0)
+        finally:
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+
+    def test_migrate_aborts_on_backup_failure(self):
+        # creates the required entity classes
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        migration = self._load_migration_module()
+        raw_connection = self._get_connection()
+
+        # uses an invalid file path that will cause the backup to fail
+        connection_params = dict(file_path="/nonexistent/path/database.db")
+
+        success, messages = migration.migrate(
+            entity_class=mocks.ConcreteRootEntity,
+            target_strategy="class_table",
+            connection=raw_connection,
+            engine="sqlite",
+            connection_params=connection_params,
+            skip_backup=False,
+        )
+
+        # verifies that the migration was aborted due to backup failure
+        self.assertFalse(success)
+        self.assertTrue(any("failed to create backup" in m for m in messages))
 
     def test_migrate_cti_to_concrete_schema(self):
         # creates the CTI tables with data using the entity manager
