@@ -28,6 +28,10 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import os
+import sys
+import importlib.util
+
 import colony
 
 from . import mocks
@@ -44,6 +48,7 @@ class EntityManagerTest(colony.Test):
         return (
             EntityManagerBaseTestCase,
             EntityManagerConcreteTableTestCase,
+            EntityManagerMigrationTestCase,
             EntityManagerRsetTestCase,
         )
 
@@ -2607,6 +2612,369 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         self.assertTrue("status" in items)
         self.assertFalse("name" in items)
         self.assertFalse("salary" in items)
+
+
+class EntityManagerMigrationTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Entity Manager Migration test case"
+
+    @classmethod
+    def _load_migration_module(cls):
+        """
+        Loads the migration script module using importlib to avoid
+        path resolution issues across different execution contexts.
+        """
+
+        if hasattr(cls, "_migration_module"):
+            return cls._migration_module
+
+        # resolves the scripts directory relative to the project
+        # root, trying multiple possible base paths including
+        # the virtual environment root (derived from the Python
+        # executable) and traversing upwards from the test file
+        base_paths = []
+
+        # derives the project root from the Python executable path,
+        # when running inside a virtual environment the executable
+        # is at .venv/bin/python, going up three levels gives us
+        # the project root directory
+        venv_bin = os.path.dirname(sys.executable)
+        venv_root = os.path.dirname(venv_bin)
+        base_paths.append(os.path.dirname(venv_root))
+
+        base_paths.append(os.getcwd())
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        current = test_dir
+        for _i in range(8):
+            base_paths.append(current)
+            parent = os.path.dirname(current)
+            if parent == current:
+                break
+            current = parent
+
+        for base_path in base_paths:
+            script_path = os.path.join(base_path, "scripts", "migrate_inheritance.py")
+            if os.path.exists(script_path):
+                spec = importlib.util.spec_from_file_location(
+                    "migrate_inheritance", script_path
+                )
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                cls._migration_module = module
+                return module
+
+        raise ImportError("could not find scripts/migrate_inheritance.py")
+
+    def _get_connection(self):
+        """
+        Retrieves the underlying raw SQLite connection from the
+        entity manager for direct SQL operations.
+        """
+
+        connection = self.entity_manager.get_connection()
+        return connection._connection.get_connection()
+
+    def _table_exists(self, connection, table_name):
+        """
+        Checks if a table exists in the SQLite database.
+        """
+
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(*) from sqlite_master where type='table' and name=?",
+            (table_name,),
+        )
+        result = cursor.fetchone()[0]
+        cursor.close()
+        return result > 0
+
+    def _count_rows(self, connection, table_name):
+        """
+        Counts the number of rows in a table.
+        """
+
+        cursor = connection.cursor()
+        cursor.execute("select count(*) from %s" % table_name)
+        result = cursor.fetchone()[0]
+        cursor.close()
+        return result
+
+    def _get_columns(self, connection, table_name):
+        """
+        Retrieves the column names for a table.
+        """
+
+        cursor = connection.cursor()
+        cursor.execute("pragma table_info(%s)" % table_name)
+        columns = [row[1] for row in cursor.fetchall()]
+        cursor.close()
+        return columns
+
+    def test_validate_same_strategy(self):
+        # verifies that validating a hierarchy with the same strategy
+        # as the target returns a failure with an appropriate message
+        migration = self._load_migration_module()
+
+        is_valid, messages = migration.validate_hierarchy(
+            mocks.RootEntity, "class_table"
+        )
+        self.assertFalse(is_valid)
+        self.assertTrue(any("already uses" in m for m in messages))
+
+    def test_validate_concrete_same_strategy(self):
+        # verifies that validating a concrete table hierarchy with
+        # concrete_table as target returns a failure
+        migration = self._load_migration_module()
+
+        is_valid, messages = migration.validate_hierarchy(
+            mocks.ConcreteRootEntity, "concrete_table"
+        )
+        self.assertFalse(is_valid)
+        self.assertTrue(any("already uses" in m for m in messages))
+
+    def test_validate_cti_to_concrete(self):
+        # verifies that validating a CTI hierarchy for migration
+        # to concrete_table passes validation
+        migration = self._load_migration_module()
+
+        is_valid, messages = migration.validate_hierarchy(
+            mocks.RootEntity, "concrete_table"
+        )
+        self.assertTrue(is_valid)
+        self.assertTrue(any("validation passed" in m for m in messages))
+
+    def test_validate_concrete_to_cti(self):
+        # verifies that validating a concrete table hierarchy for
+        # migration to class_table passes validation
+        migration = self._load_migration_module()
+
+        is_valid, messages = migration.validate_hierarchy(
+            mocks.ConcreteRootEntity, "class_table"
+        )
+        self.assertTrue(is_valid)
+        self.assertTrue(any("validation passed" in m for m in messages))
+
+    def test_dry_run_cti_to_concrete(self):
+        # creates the required entity classes in the data source
+        # to have a real schema to test against
+        self.entity_manager.create(mocks.Person)
+
+        # saves a person entity to have data in the tables
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        # runs the migration in dry-run mode and verifies that
+        # SQL statements are generated but no changes are made
+        migration = self._load_migration_module()
+
+        connection = self._get_connection()
+
+        success, messages = migration.migrate(
+            entity_class=mocks.RootEntity,
+            target_strategy="concrete_table",
+            connection=connection,
+            engine="sqlite",
+            dry_run=True,
+            skip_backup=True,
+        )
+
+        self.assertTrue(success)
+        self.assertTrue(any("dry-run mode" in m for m in messages))
+        self.assertTrue(any("create table" in m for m in messages))
+
+        # verifies that the original tables still exist unchanged
+        self.assertTrue(self._table_exists(connection, "_root_entity"))
+        self.assertTrue(self._table_exists(connection, "_person"))
+
+    def test_dry_run_concrete_to_cti(self):
+        # creates the required concrete table entity classes
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        # saves a concrete person entity
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        # runs the migration in dry-run mode
+        migration = self._load_migration_module()
+
+        connection = self._get_connection()
+
+        success, messages = migration.migrate(
+            entity_class=mocks.ConcreteRootEntity,
+            target_strategy="class_table",
+            connection=connection,
+            engine="sqlite",
+            dry_run=True,
+            skip_backup=True,
+        )
+
+        self.assertTrue(success)
+        self.assertTrue(any("dry-run mode" in m for m in messages))
+        self.assertTrue(any("create table" in m for m in messages))
+
+        # verifies that the original table still exists unchanged
+        self.assertTrue(self._table_exists(connection, "_concrete_person"))
+
+    def test_backup_sqlite(self):
+        # creates the required entity classes to have a database file
+        self.entity_manager.create(mocks.Person)
+
+        migration = self._load_migration_module()
+
+        # retrieves the database file path from the entity manager
+        connection = self.entity_manager.get_connection()
+        inner_connection = connection._connection
+        file_path = inner_connection.get_file_path()
+
+        # creates a backup of the database and verifies it exists
+        connection_params = dict(file_path=file_path)
+        backup_path = migration.backup_database(connection_params, "sqlite")
+
+        try:
+            self.assertTrue(os.path.exists(backup_path))
+            self.assertTrue(os.path.getsize(backup_path) > 0)
+        finally:
+            # cleans up the backup file
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+
+    def test_migrate_cti_to_concrete_schema(self):
+        # creates the CTI tables with data using the entity manager
+        self.entity_manager.create(mocks.Person)
+
+        # saves a person and verifies the CTI table structure
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = 30
+        person.status = 1
+        self.entity_manager.save(person)
+
+        connection = self._get_connection()
+
+        # verifies the CTI tables exist before migration
+        self.assertTrue(self._table_exists(connection, "_root_entity"))
+        self.assertTrue(self._table_exists(connection, "_person"))
+
+        # verifies that the _person table does NOT contain inherited
+        # columns (status is in _root_entity, not _person)
+        person_columns = self._get_columns(connection, "_person")
+        self.assertTrue("name" in person_columns)
+        self.assertFalse("status" in person_columns)
+
+        # verifies the row counts in both tables
+        self.assertEqual(self._count_rows(connection, "_root_entity"), 1)
+        self.assertEqual(self._count_rows(connection, "_person"), 1)
+
+    def test_migrate_rollback_on_failure(self):
+        # creates the CTI tables with data
+        self.entity_manager.create(mocks.Person)
+
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        migration = self._load_migration_module()
+
+        connection = self._get_connection()
+
+        # attempts migration with an intentionally broken connection
+        # by wrapping the connection to fail after the first query
+        class FailingCursor(object):
+            def __init__(self, real_cursor):
+                self._real = real_cursor
+                self._count = 0
+
+            def execute(self, query):
+                self._count += 1
+                if self._count > 1:
+                    raise Exception("simulated failure")
+                return self._real.execute(query)
+
+        class FailingConnection(object):
+            def __init__(self, real_conn):
+                self._real = real_conn
+                self._rolled_back = False
+
+            def cursor(self):
+                return FailingCursor(self._real.cursor())
+
+            def commit(self):
+                return self._real.commit()
+
+            def rollback(self):
+                self._rolled_back = True
+                return self._real.rollback()
+
+        failing_conn = FailingConnection(connection)
+
+        success, messages = migration.migrate(
+            entity_class=mocks.RootEntity,
+            target_strategy="concrete_table",
+            connection=failing_conn,
+            engine="sqlite",
+            skip_backup=True,
+        )
+
+        # verifies that the migration failed and rollback was triggered
+        self.assertFalse(success)
+        self.assertTrue(any("migration failed" in m for m in messages))
+        self.assertTrue(any("rolled back" in m for m in messages))
+        self.assertTrue(failing_conn._rolled_back)
+
+    def test_generate_queries_cti_to_concrete(self):
+        # verifies that the query generation for CTI to concrete
+        # produces the expected SQL statements
+        migration = self._load_migration_module()
+
+        queries = migration.generate_cti_to_concrete_queries(mocks.RootEntity)
+
+        # verifies that queries were generated
+        self.assertNotEqual(queries, [])
+
+        # verifies that there are CREATE TABLE queries
+        create_queries = [q for q in queries if q.startswith("create table")]
+        self.assertTrue(len(create_queries) > 0)
+
+        # verifies that there are INSERT queries (data migration)
+        insert_queries = [q for q in queries if q.startswith("insert into")]
+        self.assertTrue(len(insert_queries) > 0)
+
+        # verifies that there are DROP TABLE queries (old tables)
+        drop_queries = [q for q in queries if q.startswith("drop table")]
+        self.assertTrue(len(drop_queries) > 0)
+
+        # verifies that there are ALTER TABLE queries (rename)
+        alter_queries = [q for q in queries if q.startswith("alter table")]
+        self.assertTrue(len(alter_queries) > 0)
+
+    def test_generate_queries_concrete_to_cti(self):
+        # verifies that the query generation for concrete to CTI
+        # produces the expected SQL statements
+        migration = self._load_migration_module()
+
+        queries = migration.generate_concrete_to_cti_queries(mocks.ConcreteRootEntity)
+
+        # verifies that queries were generated
+        self.assertNotEqual(queries, [])
+
+        # verifies that there are CREATE TABLE queries
+        create_queries = [q for q in queries if q.startswith("create table")]
+        self.assertTrue(len(create_queries) > 0)
+
+        # verifies that there are INSERT queries (data migration)
+        insert_queries = [q for q in queries if q.startswith("insert into")]
+        self.assertTrue(len(insert_queries) > 0)
+
+        # verifies that there are DROP TABLE queries
+        drop_queries = [q for q in queries if q.startswith("drop table")]
+        self.assertTrue(len(drop_queries) > 0)
 
 
 class EntityManagerRsetTestCase(colony.ColonyTestCase):
