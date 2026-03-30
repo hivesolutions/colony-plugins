@@ -27,7 +27,7 @@ The key design principle: **each table in the hierarchy is a complete, self-cont
 
 Given a hierarchy `ConcreteRootEntity -> ConcretePerson -> ConcreteEmployee`:
 
-```
+```text
 _concrete_root_entity table:
   object_id (PK), status, metadata, _class, _mtime
   Contains: ALL entities (root, person, employee rows)
