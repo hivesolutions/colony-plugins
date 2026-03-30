@@ -41,7 +41,11 @@ class EntityManagerTest(colony.Test):
     """
 
     def get_bundle(self):
-        return (EntityManagerBaseTestCase, EntityManagerRsetTestCase)
+        return (
+            EntityManagerBaseTestCase,
+            EntityManagerConcreteTableTestCase,
+            EntityManagerRsetTestCase,
+        )
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -1714,6 +1718,308 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
                 order_by=(("dogs.enemies.name", "descending"),),
             ),
         )
+
+
+class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Entity Manager Concrete Table Inheritance test case"
+
+    def test_create(self):
+        # creates the concrete table entities and verifies that the
+        # data source references have been created successfully
+        self.entity_manager.create(mocks.ConcreteRootEntity)
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+        self.entity_manager.create(mocks.ConcreteAddress)
+
+        # verifies that all the data source references for the entity
+        # classes have been created successfully
+        self.assertTrue(self.entity_manager.exists(mocks.ConcreteRootEntity))
+        self.assertTrue(self.entity_manager.exists(mocks.ConcretePerson))
+        self.assertTrue(self.entity_manager.exists(mocks.ConcreteEmployee))
+        self.assertTrue(self.entity_manager.exists(mocks.ConcreteAddress))
+
+    def test_save(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        # creates the person entity that is going to be used
+        # for the verification of the save method and saves it
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = 30
+        self.entity_manager.save(person)
+
+        # verifies that the data remains unchanged after
+        # the saving (persistence)
+        self.assertEqual(person.object_id, 1)
+        self.assertEqual(person.name, "name_person")
+        self.assertEqual(person.age, 30)
+
+        # retrieves the saved person by the unique identifier
+        # of it and verifies that the object is not modified
+        saved_person = self.entity_manager.get(mocks.ConcretePerson, 1)
+        self.assertNotEqual(saved_person, None)
+
+        # verifies that the entity values of the retrieved entity
+        # are the same as the original entity, including the
+        # inherited fields from the concrete root entity
+        self.assertEqual(saved_person.object_id, person.object_id)
+        self.assertEqual(saved_person.name, person.name)
+        self.assertEqual(saved_person.age, person.age)
+        self.assertEqual(saved_person.status, 1)
+
+    def test_update(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        # creates the person entity and saves it
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = 30
+        self.entity_manager.save(person)
+
+        # updates the person entity with new values
+        person.name = "updated_name"
+        person.age = 31
+        self.entity_manager.update(person)
+
+        # retrieves the updated person and verifies the changes
+        saved_person = self.entity_manager.get(mocks.ConcretePerson, 1)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.name, "updated_name")
+        self.assertEqual(saved_person.age, 31)
+        self.assertEqual(saved_person.status, 1)
+
+    def test_delete(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        # creates the person entity and saves it
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        # verifies the person exists
+        saved_person = self.entity_manager.get(mocks.ConcretePerson, 1)
+        self.assertNotEqual(saved_person, None)
+
+        # removes the person entity and verifies it no longer exists
+        self.entity_manager.remove(person)
+        saved_person = self.entity_manager.get(mocks.ConcretePerson, 1)
+        self.assertEqual(saved_person, None)
+
+    def test_find(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        # creates multiple person entities and saves them
+        person_a = mocks.ConcretePerson()
+        person_a.object_id = 1
+        person_a.name = "name_person_a"
+        person_a.age = 30
+        person_b = mocks.ConcretePerson()
+        person_b.object_id = 2
+        person_b.name = "name_person_b"
+        person_b.age = 25
+        self.entity_manager.save(person_a)
+        self.entity_manager.save(person_b)
+
+        # retrieves all persons and verifies the results
+        persons = self.entity_manager.find(mocks.ConcretePerson)
+        self.assertEqual(len(persons), 2)
+
+        # retrieves persons with a filter on age
+        persons = self.entity_manager.find(
+            mocks.ConcretePerson,
+            dict(filters=[dict(name="age", value=30)]),
+        )
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(persons[0].name, "name_person_a")
+
+    def test_save_hierarchy(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+
+        # creates an employee entity (child of person) and saves it,
+        # the employee table should contain all inherited fields
+        employee = mocks.ConcreteEmployee()
+        employee.object_id = 1
+        employee.name = "name_employee"
+        employee.age = 28
+        employee.salary = 500
+        self.entity_manager.save(employee)
+
+        # retrieves the saved employee by the unique identifier
+        # and verifies all attributes including inherited ones
+        saved_employee = self.entity_manager.get(mocks.ConcreteEmployee, 1)
+        self.assertNotEqual(saved_employee, None)
+        self.assertEqual(saved_employee.object_id, 1)
+        self.assertEqual(saved_employee.name, "name_employee")
+        self.assertEqual(saved_employee.age, 28)
+        self.assertEqual(saved_employee.salary, 500)
+        self.assertEqual(saved_employee.status, 1)
+
+    def test_update_hierarchy(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+
+        # creates an employee entity and saves it
+        employee = mocks.ConcreteEmployee()
+        employee.object_id = 1
+        employee.name = "name_employee"
+        employee.age = 28
+        employee.salary = 500
+        self.entity_manager.save(employee)
+
+        # updates the employee entity with new values across
+        # multiple hierarchy levels (inherited + own)
+        employee.name = "updated_name"
+        employee.salary = 600
+        employee.status = 2
+        self.entity_manager.update(employee)
+
+        # retrieves the updated employee and verifies the changes
+        saved_employee = self.entity_manager.get(mocks.ConcreteEmployee, 1)
+        self.assertNotEqual(saved_employee, None)
+        self.assertEqual(saved_employee.name, "updated_name")
+        self.assertEqual(saved_employee.salary, 600)
+        self.assertEqual(saved_employee.status, 2)
+
+    def test_delete_hierarchy(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+
+        # creates an employee entity and saves it
+        employee = mocks.ConcreteEmployee()
+        employee.object_id = 1
+        employee.name = "name_employee"
+        employee.salary = 500
+        self.entity_manager.save(employee)
+
+        # removes the employee entity and verifies it no longer exists
+        self.entity_manager.remove(employee)
+        saved_employee = self.entity_manager.get(mocks.ConcreteEmployee, 1)
+        self.assertEqual(saved_employee, None)
+
+    def test_one_to_one(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteAddress)
+
+        # creates the person and address entities and populates
+        # them with some values, then sets the relation and saves
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "name_person"
+
+        address = mocks.ConcreteAddress()
+        address.object_id = 2
+        address.street = "street_address"
+        address.number = 100
+        address.country = "country_address"
+
+        person.address = address
+        self.entity_manager.save(person)
+        self.entity_manager.save(address)
+
+        # retrieves both the person and address to verify the
+        # relation is correctly persisted
+        saved_person = self.entity_manager.get(
+            mocks.ConcretePerson, 1, dict(eager=dict(address={}))
+        )
+        self.assertNotEqual(saved_person, None)
+        self.assertNotEqual(saved_person.address, None)
+        self.assertEqual(saved_person.address.object_id, address.object_id)
+        self.assertEqual(saved_person.address.street, "street_address")
+
+    def test_one_to_many(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+
+        # creates a parent person and child persons
+        parent = mocks.ConcretePerson()
+        parent.object_id = 1
+        parent.name = "parent_person"
+
+        child_a = mocks.ConcretePerson()
+        child_a.object_id = 2
+        child_a.name = "child_a"
+        child_a.parent = parent
+
+        child_b = mocks.ConcretePerson()
+        child_b.object_id = 3
+        child_b.name = "child_b"
+        child_b.parent = parent
+
+        self.entity_manager.save(parent)
+        self.entity_manager.save(child_a)
+        self.entity_manager.save(child_b)
+
+        # retrieves the parent and verifies the children relation
+        saved_parent = self.entity_manager.get(
+            mocks.ConcretePerson, 1, dict(eager=dict(children={}))
+        )
+        self.assertNotEqual(saved_parent, None)
+        self.assertEqual(len(saved_parent.children), 2)
+
+    def test_strategy_selector(self):
+        # verifies that the inheritance strategy is correctly resolved
+        # for the concrete table hierarchy
+        self.assertEqual(
+            mocks.ConcreteRootEntity.get_inheritance_strategy(), "concrete_table"
+        )
+        self.assertEqual(
+            mocks.ConcretePerson.get_inheritance_strategy(), "concrete_table"
+        )
+        self.assertEqual(
+            mocks.ConcreteEmployee.get_inheritance_strategy(), "concrete_table"
+        )
+
+        # verifies the is_concrete_table helper method
+        self.assertTrue(mocks.ConcreteRootEntity.is_concrete_table())
+        self.assertTrue(mocks.ConcretePerson.is_concrete_table())
+        self.assertTrue(mocks.ConcreteEmployee.is_concrete_table())
+
+        # verifies that the existing class table entities are
+        # not affected by the new strategy
+        self.assertEqual(mocks.RootEntity.get_inheritance_strategy(), "class_table")
+        self.assertEqual(mocks.Person.get_inheritance_strategy(), "class_table")
+        self.assertFalse(mocks.RootEntity.is_concrete_table())
+        self.assertFalse(mocks.Person.is_concrete_table())
+
+    def test_get_all_items(self):
+        # verifies that get_all_items returns all inherited items
+        # for a concrete table entity class
+        items = mocks.ConcretePerson.get_all_items()
+        self.assertTrue("object_id" in items)
+        self.assertTrue("status" in items)
+        self.assertTrue("name" in items)
+        self.assertTrue("age" in items)
+        self.assertTrue("weight" in items)
+
+        # verifies that employee includes all items from the
+        # complete hierarchy
+        items = mocks.ConcreteEmployee.get_all_items()
+        self.assertTrue("object_id" in items)
+        self.assertTrue("status" in items)
+        self.assertTrue("name" in items)
+        self.assertTrue("age" in items)
+        self.assertTrue("salary" in items)
+
+        # verifies that the root entity only has its own items
+        items = mocks.ConcreteRootEntity.get_all_items()
+        self.assertTrue("object_id" in items)
+        self.assertTrue("status" in items)
+        self.assertFalse("name" in items)
+        self.assertFalse("salary" in items)
 
 
 class EntityManagerRsetTestCase(colony.ColonyTestCase):

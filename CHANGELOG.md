@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Concrete Table Inheritance (CTI per-class) as an alternative inheritance strategy for entity hierarchies, selectable via `inheritance = "concrete_table"` class attribute
+* New `get_inheritance_strategy()` and `is_concrete_table()` classmethods on `EntityClass` for strategy resolution across the hierarchy
+* New `get_all_items()` classmethod on `EntityClass` that returns all items (own + inherited) flattened into a single dictionary for concrete table support
+* Concrete table support in query generation: `_create_definition_query`, `_save_query`, `_update_query`, `_remove_query`, and `_find_query` branch on inheritance strategy to produce single-table operations
+* Standalone migration script (`scripts/migrate_inheritance.py`) for converting entity hierarchies between `class_table` and `concrete_table` strategies with backup, validation, dry-run, and transactional execution
+* Test entities (`ConcreteRootEntity`, `ConcretePerson`, `ConcreteEmployee`, `ConcreteAddress`) and unit tests for the concrete table inheritance strategy
 * New `get_connection_address()` method in `RESTRequest` with proxy header resolution (`X-Forwarded-For`, `X-Client-IP`, `X-Real-IP`) and IPv6-mapped IPv4 cleanup (`::ffff:` prefix removal)
 * New `get_connection_address()` method in `HTTPRequest` and `WSGIRequest` to provide a uniform interface for retrieving client connection address
 * Optional `resolve` and `cleanup` parameters in `RESTRequest.get_address()` for controlling proxy resolution and IPv6 cleanup

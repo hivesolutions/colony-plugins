@@ -1225,6 +1225,12 @@ class EntityManager(object):
             self._exists[entity_class] = True
             return
 
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy, in which case parent tables
+        # are not created as part of this hierarchy (each concrete
+        # class has its own complete table)
+        is_concrete = entity_class.is_concrete_table()
+
         # retrieves the parent classes of the entity class
         # to be able to check if they are already defined
         # in the data source
@@ -1232,7 +1238,9 @@ class EntityManager(object):
 
         # iterates over all the parent classes of the
         # entity class to check (and create if necessary)
-        # the entity definition
+        # the entity definition, for concrete table inheritance
+        # parent tables are skipped as their columns are already
+        # included in the current entity's table
         for parent_class in parent_classes:
             # in case the entity class definition
             # already exists (no need to create it
@@ -1240,6 +1248,13 @@ class EntityManager(object):
             if self.exists(parent_class):
                 # continues the loop (no creation
                 # required)
+                continue
+
+            # for concrete table inheritance the parent class
+            # is marked as existing but no table is created for
+            # it (the columns are flattened into the child table)
+            if is_concrete:
+                self._exists[parent_class] = True
                 continue
 
             # creates the parent (entity) class in
@@ -3033,6 +3048,11 @@ class EntityManager(object):
         return query, next_id
 
     def _create_definition_query(self, entity_class):
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy, in which case the table
+        # must contain all inherited columns in a single table
+        is_concrete = entity_class.is_concrete_table()
+
         # creates the list to hold the various queries
         # to be used to create indexes
         index_queries = []
@@ -3049,9 +3069,13 @@ class EntityManager(object):
 
         # retrieves the associated table name
         # as the "name" of the entity class and then
-        # retrieves the items (map) for the entity class
+        # retrieves the items (map) for the entity class,
+        # for concrete table inheritance all items (own +
+        # inherited) are retrieved as a single flattened map
         table_name = entity_class.get_name()
-        table_items = entity_class.get_items()
+        table_items = (
+            entity_class.get_all_items() if is_concrete else entity_class.get_items()
+        )
 
         # creates the buffer to hold the query and populates it with the
         # base values of the query (base creation of the table)
@@ -3144,11 +3168,11 @@ class EntityManager(object):
             # in case the id attribute is found
             id_set = id_set or item_value.get("id", False)
 
-        # in case the entity class does not have any
-        # parents (it's the top level class) the "discriminator"
-        # attribute must be written into it for latter
-        # type discovery in retrieval of values
-        if not entity_class.has_parents():
+        # for concrete table inheritance the discriminator attribute
+        # is always written into the table regardless of the class
+        # hierarchy position, for class table inheritance the
+        # discriminator is only written for the top level class
+        if is_concrete or not entity_class.has_parents():
             # writes the comma to the query buffer only in case the
             # is first flag is not set
             is_first = not is_first and query_buffer.write(", ")
@@ -3163,10 +3187,12 @@ class EntityManager(object):
         is_first = not is_first and query_buffer.write(", ")
         query_buffer.write("_mtime double precision")
 
-        # in case the id attribute was not set (this is
-        # a child class without id, so no direct id field
-        # is available (need to create upper reference)
-        if not id_set:
+        # in case the id attribute was not set and the concrete
+        # table strategy is not being used (this is a child class
+        # without id in class table mode, so no direct id field
+        # is available and need to create upper reference), for
+        # concrete table the id is always included via get_all_items
+        if not id_set and not is_concrete:
             # writes the comma to the query buffer only in case the
             # is first flag is not set
             is_first = not is_first and query_buffer.write(", ")
@@ -3261,6 +3287,11 @@ class EntityManager(object):
         # the entity
         entity_class = entity.__class__
 
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy, in which case a single
+        # insert query is generated for all attributes
+        is_concrete = entity_class.is_concrete_table()
+
         # retrieves the table (primary) id name
         # from the entity class (may use recursion)
         table_id = entity_class.get_id()
@@ -3271,8 +3302,14 @@ class EntityManager(object):
 
         # retrieves the map that associates an entity
         # class with the map of items that are contained
-        # inside it's scope
-        items_map = entity_class.get_items_map()
+        # inside it's scope, for concrete table inheritance
+        # a single entry map is used with all items flattened
+        if is_concrete:
+            all_items = entity_class.get_all_items()
+            items_map = colony.OrderedMap()
+            items_map[entity_class] = all_items
+        else:
+            items_map = entity_class.get_items_map()
 
         # creates the list to hold the set of queries
         # generated for saving a set of data
@@ -3300,8 +3337,14 @@ class EntityManager(object):
 
             # in case the entity class contains parents, no base id is set
             # and must be retrieved from the upper parents, in this case
-            # an "upper reference" value must be inserted with the id
-            if _entity_class.has_parents() and table_id in entity.__dict__:
+            # an "upper reference" value must be inserted with the id,
+            # for concrete table this is not needed as the id is already
+            # part of the flattened items
+            if (
+                not is_concrete
+                and _entity_class.has_parents()
+                and table_id in entity.__dict__
+            ):
                 # sets the id attribute in the entity fields to create
                 # the appropriate "upper reference"
                 _entity_fields[table_id] = getattr(entity, table_id)
@@ -3339,10 +3382,10 @@ class EntityManager(object):
                 # insert field reference
                 query_buffer.write(field_name)
 
-            # in case the entity class has no parents (it's
-            # the top level class) time to write the class
-            # (discriminator) column reference
-            if not _entity_class.has_parents():
+            # for concrete table inheritance the discriminator
+            # column is always written, for class table inheritance
+            # it is only written for the top level class
+            if is_concrete or not _entity_class.has_parents():
                 # writes the comma to the query buffer only in case the
                 # is first flag is not set
                 is_first = not is_first and query_buffer.write(", ")
@@ -3415,10 +3458,10 @@ class EntityManager(object):
                 sql_value = entity.get_sql_value(field_name, field_value, force=True)
                 query_buffer.write(sql_value)
 
-            # in case the entity class has no parents (it's
-            # the top level class) time to write the class
-            # (discriminator) column value
-            if not _entity_class.has_parents():
+            # for concrete table inheritance the discriminator
+            # column value is always written, for class table
+            # inheritance it is only written for the top level class
+            if is_concrete or not _entity_class.has_parents():
                 # writes the comma to the query buffer only in case the
                 # is first flag is not set
                 is_first = not is_first and query_buffer.write(", ")
@@ -3455,6 +3498,11 @@ class EntityManager(object):
         # the entity
         entity_class = entity.__class__
 
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy, in which case a single
+        # update query is generated for all attributes
+        is_concrete = entity_class.is_concrete_table()
+
         # retrieves "all" the fields available
         # on the entity definition
         entity_fields = entity.get_fields()
@@ -3477,8 +3525,14 @@ class EntityManager(object):
 
         # retrieves the map that associates an entity
         # class with the map of items that are contained
-        # inside it's scope
-        items_map = entity_class.get_items_map()
+        # inside it's scope, for concrete table inheritance
+        # a single entry map is used with all items flattened
+        if is_concrete:
+            all_items = entity_class.get_all_items()
+            items_map = colony.OrderedMap()
+            items_map[entity_class] = all_items
+        else:
+            items_map = entity_class.get_items_map()
 
         # retrieves the map that associates the various
         # field names with the value for its immutable
@@ -3627,6 +3681,11 @@ class EntityManager(object):
         # the entity
         entity_class = entity.__class__
 
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy, in which case a single
+        # delete query is generated
+        is_concrete = entity_class.is_concrete_table()
+
         # retrieves the associated table name
         # as the "name" of the entity class
         table_name = entity_class.get_name()
@@ -3650,13 +3709,19 @@ class EntityManager(object):
         # generated for removing a set of data
         queries = []
 
-        # retrieves "all" the parents from the entity
-        # class, to be able to remove all the references
-        # of the entity in the data source then creates
-        # list of entity classes to be used in the removal
-        # from the parents and the current entity
-        all_parents = entity_class.get_all_parents()
-        entity_classes = all_parents + [entity_class]
+        # for concrete table inheritance only a single delete
+        # is needed from the entity's own table, for class table
+        # inheritance all parent tables must also be cleaned
+        if is_concrete:
+            entity_classes = [entity_class]
+        else:
+            # retrieves "all" the parents from the entity
+            # class, to be able to remove all the references
+            # of the entity in the data source then creates
+            # list of entity classes to be used in the removal
+            # from the parents and the current entity
+            all_parents = entity_class.get_all_parents()
+            entity_classes = all_parents + [entity_class]
 
         # iterates over all the entity classes from
         # which the data should be removed in the
@@ -4130,6 +4195,10 @@ class EntityManager(object):
         # of the table representing it
         table_name = entity_class.get_name()
 
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy
+        is_concrete = entity_class.is_concrete_table()
+
         # allocates the list to hold the various field names
         # to be inserted into the query, this list will be used
         # latter to know in advance the sequence of values
@@ -4138,8 +4207,15 @@ class EntityManager(object):
 
         # retrieves the map containing the various
         # (upper) parent classes associated with the
-        # items contained in them
-        items_map = entity_class.get_items_map()
+        # items contained in them, for concrete table
+        # inheritance a single entry map with all items
+        # is used since all columns reside in one table
+        if is_concrete:
+            all_items = entity_class.get_all_items()
+            items_map = colony.OrderedMap()
+            items_map[entity_class] = all_items
+        else:
+            items_map = entity_class.get_items_map()
 
         # retrieves the count flag from the options, if
         # the count flag is set the objective of the query
@@ -4346,8 +4422,15 @@ class EntityManager(object):
                         _names = []
 
                     # retrieves the map of items of the target class to use them
-                    # as the base structure for population of the names in the query
-                    target_items_map = target_class.get_items_map()
+                    # as the base structure for population of the names in the
+                    # query, for concrete table targets all items are flattened
+                    # into a single entry map
+                    if target_class.is_concrete_table():
+                        _target_all_items = target_class.get_all_items()
+                        target_items_map = colony.OrderedMap()
+                        target_items_map[target_class] = _target_all_items
+                    else:
+                        target_items_map = target_class.get_items_map()
 
                     # normalizes the prefix by replacing the query "oriented"
                     # separator with the "normal" path separator, this prefix
@@ -4537,6 +4620,11 @@ class EntityManager(object):
         table_name = entity_class.get_name()
         table_id = entity_class.get_id()
 
+        # checks if the current entity class uses the concrete
+        # table inheritance strategy, in which case no parent
+        # table joins are required
+        is_concrete = entity_class.is_concrete_table()
+
         # retrieves all the parent classes from the entity
         # classes, to provide a way of joining the values in
         # a bottom up strategy
@@ -4580,29 +4668,34 @@ class EntityManager(object):
             # on parent tables and on relation tables
             return
 
-        # iterates over all the parents to provide
-        # the necessary (inner) join of them into
-        # the current query context, this is a main step
-        # in achieving inheritance compliance in the query
-        for parent in all_parents:
-            # in case the parent class is abstract no need to join
-            # it into the current query
-            if parent.is_abstract():
-                continue
+        # for concrete table inheritance the parent table joins
+        # are skipped as all columns reside in the entity's own
+        # table, for class table inheritance the joins are required
+        # to reconstruct the full entity from multiple tables
+        if not is_concrete:
+            # iterates over all the parents to provide
+            # the necessary (inner) join of them into
+            # the current query context, this is a main step
+            # in achieving inheritance compliance in the query
+            for parent in all_parents:
+                # in case the parent class is abstract no need to join
+                # it into the current query
+                if parent.is_abstract():
+                    continue
 
-            # retrieves the parent name, assumes the
-            # associated table has the same value
-            parent_name = parent.get_name()
+                # retrieves the parent name, assumes the
+                # associated table has the same value
+                parent_name = parent.get_name()
 
-            # writes the table inheritance inner join
-            # part of the query, ensuring data coherence
-            # in the complete inheritance chain
-            query_buffer.write(" inner join ")
-            query_buffer.write(parent_name)
-            query_buffer.write(" on ")
-            query_buffer.write(table_name + "." + table_id)
-            query_buffer.write(" = ")
-            query_buffer.write(parent_name + "." + table_id)
+                # writes the table inheritance inner join
+                # part of the query, ensuring data coherence
+                # in the complete inheritance chain
+                query_buffer.write(" inner join ")
+                query_buffer.write(parent_name)
+                query_buffer.write(" on ")
+                query_buffer.write(table_name + "." + table_id)
+                query_buffer.write(" = ")
+                query_buffer.write(parent_name + "." + table_id)
 
         def join_tables(entity_class, options, prefix=""):
             # retrieves the complete map of relations (ordered
@@ -4746,31 +4839,34 @@ class EntityManager(object):
                     # retrieves all the parent class for the target
                     # relation class, these are going to be used for
                     # joining the relation with it's parents (parent
-                    # joining process)
-                    target_all_parents = target_class.get_all_parents()
+                    # joining process), for concrete table targets no
+                    # parent joins are needed as all columns are in
+                    # the target's own table
+                    if not target_class.is_concrete_table():
+                        target_all_parents = target_class.get_all_parents()
 
-                    # iterates over all the (target) parents to create the
-                    # proper joins to retrieve it's values
-                    for parent in target_all_parents:
-                        # in case the parent class is abstract no need to join
-                        # it into the current query
-                        if parent.is_abstract():
-                            continue
+                        # iterates over all the (target) parents to create the
+                        # proper joins to retrieve it's values
+                        for parent in target_all_parents:
+                            # in case the parent class is abstract no need to join
+                            # it into the current query
+                            if parent.is_abstract():
+                                continue
 
-                        # retrieves the name of the parent table
-                        # and uses it to construct the (fqn) name of
-                        # the parent target table
-                        parent_name = parent.get_name()
-                        fqn_parent = fqn + "___" + parent_name
+                            # retrieves the name of the parent table
+                            # and uses it to construct the (fqn) name of
+                            # the parent target table
+                            parent_name = parent.get_name()
+                            fqn_parent = fqn + "___" + parent_name
 
-                        query_buffer.write(" left join ")
-                        query_buffer.write(parent_name)
-                        query_buffer.write(" ")
-                        query_buffer.write(fqn_parent)
-                        query_buffer.write(" on ")
-                        query_buffer.write(fqn + "." + target_table_id)
-                        query_buffer.write(" = ")
-                        query_buffer.write(fqn_parent + "." + target_table_id)
+                            query_buffer.write(" left join ")
+                            query_buffer.write(parent_name)
+                            query_buffer.write(" ")
+                            query_buffer.write(fqn_parent)
+                            query_buffer.write(" on ")
+                            query_buffer.write(fqn + "." + target_table_id)
+                            query_buffer.write(" = ")
+                            query_buffer.write(fqn_parent + "." + target_table_id)
 
                     # retrieves and normalizes "new" options for the current
                     # relation and uses them in conjunction with the new prefix
