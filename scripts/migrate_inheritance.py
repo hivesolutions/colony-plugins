@@ -36,10 +36,6 @@ import sqlite3
 import argparse
 import subprocess
 
-SAFE_CHARACTER = "_"
-""" The character to be used in table names as the prefix that
-provides safety to the creation of them (no reserved names) """
-
 SQL_TYPES_MAP = dict(
     text="text",
     string="varchar(255)",
@@ -55,88 +51,92 @@ SQL_TYPES_MAP = dict(
 when generating migration queries """
 
 
-def get_table_name(entity_class):
+def get_hierarchy_classes(entity_class):
     """
-    Retrieves the safe table name for the given entity class,
-    using the same convention as the entity manager.
-
-    :type entity_class: EntityClass
-    :param entity_class: The entity class to retrieve the name for.
-    :rtype: String
-    :return: The safe table name.
-    """
-
-    name = entity_class.__name__
-    # converts CamelCase to snake_case
-    result = ""
-    for i, char in enumerate(name):
-        if char.isupper() and i > 0:
-            result += "_"
-        result += char.lower()
-    return SAFE_CHARACTER + result
-
-
-def get_concrete_descendants(entity_class):
-    """
-    Retrieves all concrete (non-abstract) descendant classes
-    of the given entity class, traversing the full hierarchy
-    downward.
+    Retrieves the complete list of concrete (non-abstract) classes
+    in the hierarchy, ordered from root to leaf. Includes the root
+    class itself if it is not abstract.
 
     :type entity_class: EntityClass
     :param entity_class: The root entity class.
     :rtype: list
-    :return: The list of concrete descendant classes.
+    :return: The ordered list of concrete classes in the hierarchy.
     """
 
-    descendants = []
-    for subclass in entity_class.__subclasses__():
-        if not getattr(subclass, "abstract", False):
-            descendants.append(subclass)
-        descendants.extend(get_concrete_descendants(subclass))
-    return descendants
+    classes = []
+    if not entity_class.is_abstract():
+        classes.append(entity_class)
+
+    def _collect(cls):
+        for subclass in cls.__subclasses__():
+            # avoids duplicates from multiple inheritance paths
+            # (e.g. Employee inherits from both Person and Taxable)
+            if subclass in classes:
+                continue
+            if not subclass.is_abstract():
+                classes.append(subclass)
+            _collect(subclass)
+
+    _collect(entity_class)
+    return classes
 
 
-def get_all_items(entity_class):
+def get_column_definitions(entity_class, types_map):
     """
-    Retrieves all items (own + inherited) for the given entity
-    class, flattened into a single dictionary.
+    Builds the column definitions for a concrete table at the
+    given hierarchy level. Returns a list of (name, sql_type, is_pk)
+    tuples for all items including inherited ones.
+
+    Uses the entity class's own get_all_items() to retrieve the
+    flattened set of fields, and resolves SQL types using the
+    entity class's own type metadata.
 
     :type entity_class: EntityClass
     :param entity_class: The entity class.
-    :rtype: dict
-    :return: The map of all items.
-    """
-
-    if hasattr(entity_class, "get_all_items"):
-        return entity_class.get_all_items()
-    return entity_class.get_items()
-
-
-def get_items(entity_class):
-    """
-    Retrieves the items for the given entity class at the
-    current depth level only.
-
-    :type entity_class: EntityClass
-    :param entity_class: The entity class.
-    :rtype: dict
-    :return: The map of items.
-    """
-
-    return entity_class.get_items()
-
-
-def get_all_parents(entity_class):
-    """
-    Retrieves all parent classes for the given entity class.
-
-    :type entity_class: EntityClass
-    :param entity_class: The entity class.
+    :type types_map: dict
+    :param types_map: The SQL types map.
     :rtype: list
-    :return: The list of parent classes.
+    :return: List of (name, sql_type, is_pk) tuples.
     """
 
-    return entity_class.get_all_parents()
+    columns = []
+    all_items = entity_class.get_all_items()
+
+    for item_name, item_value in all_items.items():
+        # skips unmapped relations (they use indirect/junction tables
+        # which are independent of the inheritance strategy)
+        if entity_class.is_relation(item_name):
+            if not entity_class.is_mapped(item_name):
+                continue
+            target_class = entity_class.get_target(item_name)
+            target_id = target_class.get_id()
+            target_id_value = getattr(target_class, target_id)
+            sql_type = types_map.get(target_id_value.get("type", "integer"), "integer")
+        else:
+            sql_type = types_map.get(item_value.get("type", "integer"), "integer")
+
+        is_pk = item_value.get("id", False)
+        columns.append((item_name, sql_type, is_pk))
+
+    return columns
+
+
+def get_source_table_for_column(entity_class, item_name):
+    """
+    Determines which CTI table a column originates from, by
+    walking the names_map to find the declaring class.
+
+    :type entity_class: EntityClass
+    :param entity_class: The entity class.
+    :type item_name: String
+    :param item_name: The column name.
+    :rtype: String
+    :return: The table name where the column is defined.
+    """
+
+    names_map = entity_class.get_names_map()
+    declaring_class = names_map.get(item_name, entity_class)
+    return declaring_class.get_name()
 
 
 def backup_database(connection_params, engine):
@@ -214,12 +214,12 @@ def validate_hierarchy(entity_class, target_strategy):
         )
         return False, messages
 
-    # retrieves all concrete descendants
-    descendants = get_concrete_descendants(entity_class)
+    # retrieves all concrete classes in the hierarchy
+    hierarchy = get_hierarchy_classes(entity_class)
 
     # verifies that there are concrete classes to migrate
-    if not descendants and getattr(entity_class, "abstract", False):
-        messages.append("no concrete descendants found for migration")
+    if not hierarchy:
+        messages.append("no concrete classes found for migration")
         is_valid = False
 
     # verifies that the entity class has an id field
@@ -228,13 +228,13 @@ def validate_hierarchy(entity_class, target_strategy):
         messages.append("entity class has no id field defined")
         is_valid = False
 
-    # verifies that all descendants use the same strategy
-    for descendant in descendants:
-        desc_strategy = descendant.get_inheritance_strategy()
-        if not desc_strategy == current_strategy:
+    # verifies that all classes use the same strategy
+    for cls in hierarchy:
+        cls_strategy = cls.get_inheritance_strategy()
+        if not cls_strategy == current_strategy:
             messages.append(
-                "descendant '%s' uses '%s' strategy, expected '%s'"
-                % (descendant.__name__, desc_strategy, current_strategy)
+                "class '%s' uses '%s' strategy, expected '%s'"
+                % (cls.__name__, cls_strategy, current_strategy)
             )
             is_valid = False
 
@@ -244,188 +244,304 @@ def validate_hierarchy(entity_class, target_strategy):
     return is_valid, messages
 
 
-def generate_cti_to_concrete_queries(entity_class, types_map=None):
+def validate_data(connection, entity_class, messages):
+    """
+    Validates the existing data in the data source before
+    migration, checking for orphaned rows and referential
+    consistency across the CTI table hierarchy.
+
+    :type connection: Connection
+    :param connection: The database connection.
+    :type entity_class: EntityClass
+    :param entity_class: The root entity class.
+    :type messages: list
+    :param messages: The list to append validation messages to.
+    :rtype: bool
+    :return: True if the data is valid for migration.
+    """
+
+    is_valid = True
+    hierarchy = get_hierarchy_classes(entity_class)
+    table_id = entity_class.get_id()
+    root_table = entity_class.get_name()
+
+    for cls in hierarchy:
+        if cls == entity_class:
+            continue
+
+        table_name = cls.get_name()
+        all_parents = cls.get_all_parents()
+
+        # checks that every row in a child table has a matching
+        # row in each parent table (referential integrity)
+        for parent in all_parents:
+            if parent.is_abstract():
+                continue
+            parent_table = parent.get_name()
+
+            cursor = connection.cursor()
+            try:
+                cursor.execute(
+                    "select count(*) from %s where %s not in "
+                    "(select %s from %s)"
+                    % (table_name, table_id, table_id, parent_table)
+                )
+                orphan_count = cursor.fetchone()[0]
+            finally:
+                cursor.close()
+
+            if orphan_count > 0:
+                messages.append(
+                    "found %d orphaned rows in '%s' with no match in '%s'"
+                    % (orphan_count, table_name, parent_table)
+                )
+                is_valid = False
+
+    return is_valid
+
+
+def generate_cti_to_concrete_queries(entity_class, types_map=None, connection=None):
     """
     Generates the SQL queries to migrate an entity hierarchy
     from class table inheritance to concrete table inheritance.
 
-    This involves joining parent tables into flat tables, copying
-    data, and rebuilding indexes.
+    For each class in the hierarchy (root to leaf), creates a
+    new flat table with all columns at that level, copies data
+    from the joined CTI tables, drops the old tables, and
+    renames the new ones. Recreates all indexes.
+
+    The indirect relation (junction) tables are NOT modified
+    because their column names reference entity table names
+    which remain unchanged between strategies.
+
+    When a connection is provided, only classes whose tables
+    exist in the data source are included in the migration.
 
     :type entity_class: EntityClass
     :param entity_class: The root entity class of the hierarchy.
     :type types_map: dict
     :param types_map: The SQL types map to use for column types.
+    :type connection: Connection
+    :param connection: Optional connection for table existence checks.
     :rtype: list
     :return: The list of SQL queries to execute.
     """
 
     types_map = types_map or SQL_TYPES_MAP
     queries = []
+    hierarchy = get_hierarchy_classes(entity_class)
     table_id = entity_class.get_id()
-    table_id_value = getattr(entity_class, table_id)
-    table_id_type = types_map.get(table_id_value.get("type", "integer"), "integer")
+    root_table = entity_class.get_name()
 
-    # collects all concrete classes in the hierarchy including the
-    # root entity class itself (if it's not abstract)
-    concrete_classes = []
-    if not getattr(entity_class, "abstract", False):
-        concrete_classes.append(entity_class)
-    concrete_classes.extend(get_concrete_descendants(entity_class))
+    # when a connection is available, filters the hierarchy to only
+    # include classes whose tables actually exist in the data source
+    if connection:
+        _hierarchy = []
+        for cls in hierarchy:
+            cursor = connection.cursor()
+            cursor.execute(
+                "select count(*) from sqlite_master where type='table' and name=?",
+                (cls.get_name(),),
+            )
+            exists = cursor.fetchone()[0] > 0
+            cursor.close()
+            if exists:
+                _hierarchy.append(cls)
+        hierarchy = _hierarchy
 
-    for concrete_class in concrete_classes:
-        table_name = get_table_name(concrete_class)
-        new_table_name = table_name + "_concrete"
-        all_items = get_all_items(concrete_class)
-        all_parents = get_all_parents(concrete_class)
+    # phase 1: create new flat tables and copy data
+    for cls in hierarchy:
+        table_name = cls.get_name()
+        new_table_name = table_name + "__concrete_tmp"
+        columns = get_column_definitions(cls, types_map)
+        all_parents = cls.get_all_parents()
 
-        # builds the column definitions for the new flat table
-        columns = []
-        select_columns = []
-        for item_name, item_value in all_items.items():
-            if concrete_class.is_relation(item_name):
-                if not concrete_class.is_mapped(item_name):
-                    continue
-                target_class = concrete_class.get_target(item_name)
-                target_id = target_class.get_id()
-                target_id_value = getattr(target_class, target_id)
-                sql_type = types_map.get(
-                    target_id_value.get("type", "integer"), "integer"
-                )
-            else:
-                sql_type = types_map.get(item_value.get("type", "integer"), "integer")
+        # builds the CREATE TABLE statement with all flattened
+        # columns plus the _class discriminator and _mtime
+        col_defs = []
+        for col_name, sql_type, is_pk in columns:
+            pk = " primary key" if is_pk else ""
+            col_defs.append("%s %s%s" % (col_name, sql_type, pk))
+        col_defs.append("_class text")
+        col_defs.append("_mtime double precision")
+        queries.append("create table %s(%s)" % (new_table_name, ", ".join(col_defs)))
 
-            pk = " primary key" if item_value.get("id", False) else ""
-            columns.append("%s %s%s" % (item_name, sql_type, pk))
+        # builds the SELECT to copy data from the old CTI tables,
+        # each column is qualified with the table it originates from
+        select_cols = []
+        for col_name, sql_type, is_pk in columns:
+            source_table = get_source_table_for_column(cls, col_name)
+            select_cols.append("%s.%s" % (source_table, col_name))
 
-            # determines which table this column comes from
-            # for the data migration SELECT query
-            source_table = table_name
-            for parent in all_parents:
-                if not getattr(parent, "abstract", False):
-                    parent_items = get_items(parent)
-                    if item_name in parent_items:
-                        source_table = get_table_name(parent)
-                        break
-            select_columns.append("%s.%s" % (source_table, item_name))
+        # adds the discriminator and mtime from the appropriate tables,
+        # _class always lives in the root table, _mtime in the leaf
+        select_cols.append("%s._class" % root_table)
+        select_cols.append("%s._mtime" % table_name)
 
-        # adds the discriminator and mtime columns
-        columns.append("_class text")
-        columns.append("_mtime double precision")
-
-        # creates the new flat table
-        queries.append("create table %s(%s)" % (new_table_name, ", ".join(columns)))
-
-        # builds the join query to copy data from the old tables
-        join_parts = ["select %s" % ", ".join(select_columns)]
-        join_parts.append(", %s._class" % get_table_name(entity_class))
-        join_parts.append(", %s._mtime" % table_name)
-        join_parts.append(" from %s" % table_name)
-
+        # builds the FROM clause with the leaf table and INNER JOINs
+        # to all non-abstract parent tables
+        from_clause = table_name
         for parent in all_parents:
-            if getattr(parent, "abstract", False):
+            if parent.is_abstract():
                 continue
-            parent_name = get_table_name(parent)
-            join_parts.append(
-                " inner join %s on %s.%s = %s.%s"
-                % (parent_name, table_name, table_id, parent_name, table_id)
+            parent_table = parent.get_name()
+            from_clause += " inner join %s on %s.%s = %s.%s" % (
+                parent_table,
+                table_name,
+                table_id,
+                parent_table,
+                table_id,
             )
 
-        # filters by the discriminator to only get rows belonging
-        # to this concrete class
-        if concrete_class != entity_class:
-            join_parts.append(
-                " where %s._class = '%s'"
-                % (get_table_name(entity_class), concrete_class.__name__)
-            )
+        # for non-root classes, filters by _class to only get rows
+        # belonging to this class and its descendants
+        where_clause = ""
+        if not cls == entity_class:
+            # collects the class names that should be included at
+            # this hierarchy level (this class + all descendants)
+            class_names = [cls.__name__]
+            for desc in get_hierarchy_classes(cls):
+                if not desc == cls and desc.__name__ not in class_names:
+                    class_names.append(desc.__name__)
+            quoted_names = ", ".join(["'%s'" % n for n in class_names])
+            where_clause = " where %s._class in (%s)" % (root_table, quoted_names)
 
-        insert_query = "insert into %s %s" % (
+        insert_query = "insert into %s select %s from %s%s" % (
             new_table_name,
-            "".join(join_parts),
+            ", ".join(select_cols),
+            from_clause,
+            where_clause,
         )
         queries.append(insert_query)
 
-        # drops the old table and renames the new one
-        queries.append("drop table %s" % table_name)
+    # phase 2: drop old CTI tables (leaf first, then parents)
+    # collects all unique tables that need to be dropped
+    tables_to_drop = []
+    for cls in reversed(hierarchy):
+        table_name = cls.get_name()
+        if table_name not in tables_to_drop:
+            tables_to_drop.append(table_name)
+        for parent in cls.get_all_parents():
+            if parent.is_abstract():
+                continue
+            parent_table = parent.get_name()
+            if parent_table not in tables_to_drop:
+                tables_to_drop.append(parent_table)
+
+    for table_name in tables_to_drop:
+        queries.append("drop table if exists %s" % table_name)
+
+    # phase 3: rename new tables to the original names
+    for cls in hierarchy:
+        table_name = cls.get_name()
+        new_table_name = table_name + "__concrete_tmp"
         queries.append("alter table %s rename to %s" % (new_table_name, table_name))
 
-    # drops the parent tables that are no longer needed
-    # (only if they are not used by other hierarchies)
-    root_table_name = get_table_name(entity_class)
-    for concrete_class in concrete_classes:
-        if concrete_class == entity_class:
-            continue
-        for parent in get_all_parents(concrete_class):
-            if getattr(parent, "abstract", False):
-                continue
-            parent_table = get_table_name(parent)
-            if parent_table == root_table_name:
-                continue
-            queries.append("drop table if exists %s" % parent_table)
+    # phase 4: recreate indexes on all new tables
+    for cls in hierarchy:
+        table_name = cls.get_name()
 
-    # drops the root table if it has been handled
-    if not getattr(entity_class, "abstract", False):
-        # root table was already renamed above
-        pass
+        # creates indexes on the primary key field (hash + btree)
+        pk_name = cls.get_id()
+        queries.append(
+            "create index %s_%s_hash on %s(%s)"
+            % (table_name, pk_name, table_name, pk_name)
+        )
+        queries.append(
+            "create index %s_%s_btree on %s(%s)"
+            % (table_name, pk_name, table_name, pk_name)
+        )
+
+        # creates indexes on the _mtime field (hash + btree)
+        queries.append(
+            "create index %s__mtime_hash on %s(_mtime)" % (table_name, table_name)
+        )
+        queries.append(
+            "create index %s__mtime_btree on %s(_mtime)" % (table_name, table_name)
+        )
+
+        # creates indexes on mapped relation (foreign key) fields
+        all_items = cls.get_all_items()
+        for item_name in all_items:
+            if cls.is_relation(item_name) and cls.is_mapped(item_name):
+                queries.append(
+                    "create index %s_%s_hash on %s(%s)"
+                    % (table_name, item_name, table_name, item_name)
+                )
 
     return queries
 
 
-def generate_concrete_to_cti_queries(entity_class, types_map=None):
+def generate_concrete_to_cti_queries(entity_class, types_map=None, connection=None):
     """
     Generates the SQL queries to migrate an entity hierarchy
     from concrete table inheritance to class table inheritance.
 
-    This involves splitting flat tables into per-class-level
-    tables, distributing columns and data accordingly.
+    Splits the flat concrete tables into per-class-level tables
+    where each table contains only its own columns plus a foreign
+    key reference to the parent table.
+
+    When a connection is provided, only classes whose tables
+    exist in the data source are included in the migration.
 
     :type entity_class: EntityClass
     :param entity_class: The root entity class of the hierarchy.
     :type types_map: dict
     :param types_map: The SQL types map to use for column types.
+    :type connection: Connection
+    :param connection: Optional connection for table existence checks.
     :rtype: list
     :return: The list of SQL queries to execute.
     """
 
     types_map = types_map or SQL_TYPES_MAP
     queries = []
+    hierarchy = get_hierarchy_classes(entity_class)
+
+    # when a connection is available, filters the hierarchy to only
+    # include classes whose tables actually exist in the data source
+    if connection:
+        _hierarchy = []
+        for cls in hierarchy:
+            cursor = connection.cursor()
+            cursor.execute(
+                "select count(*) from sqlite_master where type='table' and name=?",
+                (cls.get_name(),),
+            )
+            exists = cursor.fetchone()[0] > 0
+            cursor.close()
+            if exists:
+                _hierarchy.append(cls)
+        hierarchy = _hierarchy
     table_id = entity_class.get_id()
     table_id_value = getattr(entity_class, table_id)
     table_id_type = types_map.get(table_id_value.get("type", "integer"), "integer")
 
-    # collects all concrete classes in the hierarchy
-    concrete_classes = []
-    if not getattr(entity_class, "abstract", False):
-        concrete_classes.append(entity_class)
-    concrete_classes.extend(get_concrete_descendants(entity_class))
-
-    # collects all unique class levels that need their own tables
-    # in class table inheritance mode
+    # collects all unique class levels that need their own CTI table,
+    # ordered from root to leaf
     class_levels = []
-    if not getattr(entity_class, "abstract", False):
-        class_levels.append(entity_class)
-    for concrete_class in concrete_classes:
-        for parent in get_all_parents(concrete_class):
-            if getattr(parent, "abstract", False):
+    for cls in hierarchy:
+        for parent in cls.get_all_parents():
+            if parent.is_abstract():
                 continue
             if parent not in class_levels:
                 class_levels.append(parent)
-        if concrete_class not in class_levels:
-            class_levels.append(concrete_class)
+        if cls not in class_levels:
+            class_levels.append(cls)
 
-    # creates the per-class-level tables
-    for class_level in class_levels:
-        level_table_name = get_table_name(class_level)
-        level_items = get_items(class_level)
-        new_table_name = level_table_name + "_cti"
+    # phase 1: create new per-level CTI tables
+    for cls in class_levels:
+        table_name = cls.get_name()
+        new_table_name = table_name + "__cti_tmp"
+        own_items = cls.get_items()
 
-        columns = []
+        col_defs = []
         id_set = False
-        for item_name, item_value in level_items.items():
-            if class_level.is_relation(item_name):
-                if not class_level.is_mapped(item_name):
+        for item_name, item_value in own_items.items():
+            if cls.is_relation(item_name):
+                if not cls.is_mapped(item_name):
                     continue
-                target_class = class_level.get_target(item_name)
+                target_class = cls.get_target(item_name)
                 target_id = target_class.get_id()
                 target_id_value = getattr(target_class, target_id)
                 sql_type = types_map.get(
@@ -438,40 +554,40 @@ def generate_concrete_to_cti_queries(entity_class, types_map=None):
             if item_value.get("id", False):
                 pk = " primary key"
                 id_set = True
-            columns.append("%s %s%s" % (item_name, sql_type, pk))
+            col_defs.append("%s %s%s" % (item_name, sql_type, pk))
 
-        # adds discriminator for the top-level class
-        if not class_level.has_parents():
-            columns.append("_class text")
+        # adds _class discriminator for the root level
+        if not cls.has_parents():
+            col_defs.append("_class text")
 
-        # adds mtime
-        columns.append("_mtime double precision")
+        # adds _mtime
+        col_defs.append("_mtime double precision")
 
-        # adds upper reference for child classes
+        # adds upper reference for non-root classes (FK to parent)
         if not id_set:
-            columns.append("%s %s primary key" % (table_id, table_id_type))
+            col_defs.append("%s %s primary key" % (table_id, table_id_type))
 
-        queries.append("create table %s(%s)" % (new_table_name, ", ".join(columns)))
+        queries.append("create table %s(%s)" % (new_table_name, ", ".join(col_defs)))
 
-    # populates the per-class-level tables from the flat tables
-    for concrete_class in concrete_classes:
-        flat_table_name = get_table_name(concrete_class)
+    # phase 2: copy data from the concrete tables into the CTI tables,
+    # uses the leaf-most concrete table that contains each entity
+    for cls in hierarchy:
+        concrete_table = cls.get_name()
 
-        for class_level in class_levels:
-            level_table_name = get_table_name(class_level)
-            new_table_name = level_table_name + "_cti"
-            level_items = get_items(class_level)
-
-            # checks if this class level is relevant to this concrete class
-            all_parents = get_all_parents(concrete_class)
-            if class_level != concrete_class and class_level not in all_parents:
+        for level in class_levels:
+            # checks if this level is an ancestor (or self) of cls
+            all_parents = cls.get_all_parents()
+            if not level == cls and level not in all_parents:
                 continue
 
-            # builds the select columns for this class level
+            level_table = level.get_name()
+            new_table_name = level_table + "__cti_tmp"
+            own_items = level.get_items()
+
             select_cols = []
-            for item_name in level_items:
-                if class_level.is_relation(item_name):
-                    if not class_level.is_mapped(item_name):
+            for item_name in own_items:
+                if level.is_relation(item_name):
+                    if not level.is_mapped(item_name):
                         continue
                 select_cols.append(item_name)
 
@@ -479,32 +595,67 @@ def generate_concrete_to_cti_queries(entity_class, types_map=None):
             if table_id not in select_cols:
                 select_cols.append(table_id)
 
-            # adds discriminator for top-level class
-            if not class_level.has_parents():
+            # adds _class for root level
+            if not level.has_parents():
                 select_cols.append("_class")
 
-            # adds mtime
+            # adds _mtime
             select_cols.append("_mtime")
 
-            insert_query = "insert into %s(%s) select %s from %s" % (
-                new_table_name,
-                ", ".join(select_cols),
-                ", ".join(select_cols),
-                flat_table_name,
+            # filters to only get rows for this specific class to
+            # avoid duplicates when multiple concrete classes map
+            # to the same CTI level
+            insert_query = (
+                "insert or ignore into %s(%s) select %s from %s "
+                "where _class = '%s'"
+                % (
+                    new_table_name,
+                    ", ".join(select_cols),
+                    ", ".join(select_cols),
+                    concrete_table,
+                    cls.__name__,
+                )
             )
             queries.append(insert_query)
 
-    # drops the old flat tables and renames the new ones
-    for concrete_class in concrete_classes:
-        flat_table_name = get_table_name(concrete_class)
-        queries.append("drop table %s" % flat_table_name)
+    # phase 3: drop old concrete tables
+    for cls in reversed(hierarchy):
+        table_name = cls.get_name()
+        queries.append("drop table if exists %s" % table_name)
 
-    for class_level in class_levels:
-        level_table_name = get_table_name(class_level)
-        new_table_name = level_table_name + "_cti"
+    # phase 4: rename new tables
+    for level in class_levels:
+        level_table = level.get_name()
+        new_table_name = level_table + "__cti_tmp"
+        queries.append("alter table %s rename to %s" % (new_table_name, level_table))
+
+    # phase 5: recreate indexes on all CTI tables
+    for level in class_levels:
+        table_name = level.get_name()
+        pk_name = level.get_id() or table_id
+
         queries.append(
-            "alter table %s rename to %s" % (new_table_name, level_table_name)
+            "create index %s_%s_hash on %s(%s)"
+            % (table_name, pk_name, table_name, pk_name)
         )
+        queries.append(
+            "create index %s_%s_btree on %s(%s)"
+            % (table_name, pk_name, table_name, pk_name)
+        )
+        queries.append(
+            "create index %s__mtime_hash on %s(_mtime)" % (table_name, table_name)
+        )
+        queries.append(
+            "create index %s__mtime_btree on %s(_mtime)" % (table_name, table_name)
+        )
+
+        own_items = level.get_items()
+        for item_name in own_items:
+            if level.is_relation(item_name) and level.is_mapped(item_name):
+                queries.append(
+                    "create index %s_%s_hash on %s(%s)"
+                    % (table_name, item_name, table_name, item_name)
+                )
 
     return queries
 
@@ -568,9 +719,9 @@ def migrate(
     current_strategy = entity_class.get_inheritance_strategy()
 
     if current_strategy == "class_table" and target_strategy == "concrete_table":
-        queries = generate_cti_to_concrete_queries(entity_class, types_map)
+        queries = generate_cti_to_concrete_queries(entity_class, types_map, connection)
     elif current_strategy == "concrete_table" and target_strategy == "class_table":
-        queries = generate_concrete_to_cti_queries(entity_class, types_map)
+        queries = generate_concrete_to_cti_queries(entity_class, types_map, connection)
     else:
         messages.append(
             "unsupported migration direction: %s -> %s"

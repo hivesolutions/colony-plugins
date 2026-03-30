@@ -3007,8 +3007,18 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # that backup happens as part of the migrate() flow without
         # actually altering the schema
         class FailAfterBackupCursor(object):
-            def execute(self, query):
+            def execute(self, query, *args):
+                # allows table existence check queries through,
+                # only fails on actual migration queries
+                if query.startswith("select count"):
+                    return
                 raise Exception("intentional failure after backup")
+
+            def fetchone(self):
+                return (1,)
+
+            def close(self):
+                pass
 
         class FailAfterBackupConnection(object):
             def cursor(self):
@@ -3120,12 +3130,27 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             def __init__(self, real_cursor):
                 self._real = real_cursor
                 self._count = 0
+                self._in_migration = False
 
-            def execute(self, query):
-                self._count += 1
-                if self._count > 1:
-                    raise Exception("simulated failure")
-                return self._real.execute(query)
+            def execute(self, query, *args):
+                # allows the table existence check queries to pass
+                # through, only fails on actual migration queries
+                # (CREATE, INSERT, DROP, ALTER)
+                is_migration_query = any(
+                    query.startswith(k)
+                    for k in ("create ", "insert ", "drop ", "alter ")
+                )
+                if is_migration_query:
+                    self._count += 1
+                    if self._count > 1:
+                        raise Exception("simulated failure")
+                return self._real.execute(query, *args)
+
+            def fetchone(self):
+                return self._real.fetchone()
+
+            def close(self):
+                return self._real.close()
 
         class FailingConnection(object):
             def __init__(self, real_conn):
@@ -3198,13 +3223,298 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         create_queries = [q for q in queries if q.startswith("create table")]
         self.assertTrue(len(create_queries) > 0)
 
-        # verifies that there are INSERT queries (data migration)
-        insert_queries = [q for q in queries if q.startswith("insert into")]
+        # verifies that there are INSERT queries (data migration),
+        # concrete to CTI uses "insert or ignore" to handle duplicates
+        insert_queries = [q for q in queries if q.startswith("insert")]
         self.assertTrue(len(insert_queries) > 0)
 
         # verifies that there are DROP TABLE queries
         drop_queries = [q for q in queries if q.startswith("drop table")]
         self.assertTrue(len(drop_queries) > 0)
+
+    def test_end_to_end_cti_to_concrete(self):
+        # creates the CTI tables using the entity manager
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Employee)
+
+        # inserts data via the ORM using the CTI strategy
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "person_one"
+        person.age = 25
+        person.status = 1
+        self.entity_manager.save(person)
+
+        employee = mocks.Employee()
+        employee.object_id = 2
+        employee.name = "employee_one"
+        employee.age = 30
+        employee.salary = 500
+        employee.status = 1
+        self.entity_manager.save(employee)
+
+        # commits the ORM transaction to flush data to disk,
+        # then re-begins a new transaction so that teardown's
+        # rollback does not fail
+        self.entity_manager.commit()
+        self.entity_manager.begin()
+
+        # retrieves the raw connection to run the migration
+        connection = self._get_connection()
+        try:
+            connection.execute("PRAGMA wal_checkpoint(FULL)")
+        except Exception:
+            pass
+
+        migration = self._load_migration_module()
+
+        # verifies the CTI table structure before migration:
+        # _root_entity, _person, _employee should all exist with
+        # their own subset of columns
+        self.assertTrue(self._table_exists(connection, "_root_entity"))
+        self.assertTrue(self._table_exists(connection, "_person"))
+        self.assertTrue(self._table_exists(connection, "_employee"))
+
+        # verifies row counts in each CTI table
+        self.assertEqual(self._count_rows(connection, "_root_entity"), 2)
+        self.assertEqual(self._count_rows(connection, "_person"), 2)
+        self.assertEqual(self._count_rows(connection, "_employee"), 1)
+
+        # verifies that _person does NOT have status column (it's in
+        # _root_entity only in CTI mode)
+        person_cols = self._get_columns(connection, "_person")
+        self.assertFalse("status" in person_cols)
+
+        # runs the migration from CTI to concrete table
+        success, messages = migration.migrate(
+            entity_class=mocks.RootEntity,
+            target_strategy="concrete_table",
+            connection=connection,
+            engine="sqlite",
+            skip_backup=True,
+        )
+        self.assertTrue(success, "migration failed: %s" % "; ".join(messages))
+        self.assertTrue(any("completed successfully" in m for m in messages))
+
+        # verifies the new concrete table structure:
+        # each table should now have ALL columns at its level
+        self.assertTrue(self._table_exists(connection, "_root_entity"))
+        self.assertTrue(self._table_exists(connection, "_person"))
+        self.assertTrue(self._table_exists(connection, "_employee"))
+
+        # verifies that _person NOW has the inherited status column
+        person_cols = self._get_columns(connection, "_person")
+        self.assertTrue("status" in person_cols)
+        self.assertTrue("name" in person_cols)
+        self.assertTrue("object_id" in person_cols)
+
+        # verifies that _employee has ALL columns from the hierarchy
+        employee_cols = self._get_columns(connection, "_employee")
+        self.assertTrue("status" in employee_cols)
+        self.assertTrue("name" in employee_cols)
+        self.assertTrue("salary" in employee_cols)
+        self.assertTrue("object_id" in employee_cols)
+
+        # verifies data integrity: row counts at each level
+        # _root_entity should have 2 rows (person + employee)
+        # _person should have 2 rows (person + employee)
+        # _employee should have 1 row (employee only)
+        self.assertEqual(self._count_rows(connection, "_root_entity"), 2)
+        self.assertEqual(self._count_rows(connection, "_person"), 2)
+        self.assertEqual(self._count_rows(connection, "_employee"), 1)
+
+        # verifies data integrity: reads the actual values from
+        # the migrated concrete tables to ensure nothing was lost
+        cursor = connection.cursor()
+
+        # checks the employee row in _employee (should have all fields)
+        cursor.execute(
+            "select object_id, status, name, age, salary, _class "
+            "from _employee where object_id = 2"
+        )
+        row = cursor.fetchone()
+        self.assertNotEqual(row, None)
+        self.assertEqual(row[0], 2)
+        self.assertEqual(row[1], 1)
+        self.assertEqual(row[2], "employee_one")
+        self.assertEqual(row[3], 30)
+        self.assertEqual(row[4], 500)
+        self.assertEqual(row[5], "Employee")
+
+        # checks the employee row also exists in _person (polymorphic)
+        cursor.execute(
+            "select object_id, status, name, age, _class "
+            "from _person where object_id = 2"
+        )
+        row = cursor.fetchone()
+        self.assertNotEqual(row, None)
+        self.assertEqual(row[0], 2)
+        self.assertEqual(row[2], "employee_one")
+        self.assertEqual(row[4], "Employee")
+
+        # checks the person row in _person
+        cursor.execute(
+            "select object_id, status, name, age, _class "
+            "from _person where object_id = 1"
+        )
+        row = cursor.fetchone()
+        self.assertNotEqual(row, None)
+        self.assertEqual(row[0], 1)
+        self.assertEqual(row[2], "person_one")
+        self.assertEqual(row[4], "Person")
+
+        # checks both entities exist in _root_entity
+        cursor.execute("select count(*) from _root_entity")
+        self.assertEqual(cursor.fetchone()[0], 2)
+
+        cursor.close()
+
+    def test_end_to_end_concrete_to_cti(self):
+        # creates all concrete table entities via the ORM,
+        # including ConcreteAddress which is a sibling hierarchy
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+        self.entity_manager.create(mocks.ConcreteAddress)
+
+        # inserts data via the ORM using the concrete strategy
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "person_one"
+        person.age = 25
+        person.status = 1
+        self.entity_manager.save(person)
+
+        employee = mocks.ConcreteEmployee()
+        employee.object_id = 2
+        employee.name = "employee_one"
+        employee.age = 30
+        employee.salary = 500
+        employee.status = 1
+        self.entity_manager.save(employee)
+
+        # commits the ORM transaction to flush data to disk,
+        # then re-begins a new transaction so that teardown's
+        # rollback does not fail
+        self.entity_manager.commit()
+        self.entity_manager.begin()
+        connection = self._get_connection()
+        try:
+            connection.execute("PRAGMA wal_checkpoint(FULL)")
+        except Exception:
+            pass
+
+        migration = self._load_migration_module()
+
+        # verifies the concrete table structure before migration:
+        # each table should have ALL columns at its level
+        self.assertTrue(self._table_exists(connection, "_concrete_root_entity"))
+        self.assertTrue(self._table_exists(connection, "_concrete_person"))
+        self.assertTrue(self._table_exists(connection, "_concrete_employee"))
+
+        # verifies that _concrete_person has the inherited status column
+        person_cols = self._get_columns(connection, "_concrete_person")
+        self.assertTrue("status" in person_cols)
+        self.assertTrue("name" in person_cols)
+
+        # runs the migration from concrete to CTI
+        success, messages = migration.migrate(
+            entity_class=mocks.ConcreteRootEntity,
+            target_strategy="class_table",
+            connection=connection,
+            engine="sqlite",
+            skip_backup=True,
+        )
+        self.assertTrue(success, "migration failed: %s" % "; ".join(messages))
+        self.assertTrue(any("completed successfully" in m for m in messages))
+
+        # verifies the CTI table structure after migration:
+        # each table should have only its OWN columns
+        self.assertTrue(self._table_exists(connection, "_concrete_root_entity"))
+        self.assertTrue(self._table_exists(connection, "_concrete_person"))
+        self.assertTrue(self._table_exists(connection, "_concrete_employee"))
+
+        # verifies that _concrete_person in CTI mode does NOT have
+        # the status column (it belongs to _concrete_root_entity)
+        person_cols = self._get_columns(connection, "_concrete_person")
+        self.assertTrue("name" in person_cols)
+        self.assertFalse("status" in person_cols)
+
+        # verifies data integrity: checks the actual values
+        cursor = connection.cursor()
+
+        # checks the root entity table has both rows
+        cursor.execute("select count(*) from _concrete_root_entity")
+        self.assertEqual(cursor.fetchone()[0], 2)
+
+        # checks the employee row in its own table
+        cursor.execute(
+            "select object_id, salary from _concrete_employee " "where object_id = 2"
+        )
+        row = cursor.fetchone()
+        self.assertNotEqual(row, None)
+        self.assertEqual(row[0], 2)
+        self.assertEqual(row[1], 500)
+
+        # checks the person row in _concrete_person
+        cursor.execute(
+            "select object_id, name, age from _concrete_person " "where object_id = 1"
+        )
+        row = cursor.fetchone()
+        self.assertNotEqual(row, None)
+        self.assertEqual(row[0], 1)
+        self.assertEqual(row[1], "person_one")
+        self.assertEqual(row[2], 25)
+
+        # checks the _class discriminator is in the root table
+        cursor.execute(
+            "select _class from _concrete_root_entity " "where object_id = 2"
+        )
+        row = cursor.fetchone()
+        self.assertNotEqual(row, None)
+        self.assertEqual(row[0], "ConcreteEmployee")
+
+        cursor.close()
+
+    def test_migration_preserves_indexes(self):
+        # creates the CTI tables using the entity manager
+        self.entity_manager.create(mocks.Person)
+
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "person_one"
+        self.entity_manager.save(person)
+
+        self.entity_manager.commit()
+        self.entity_manager.begin()
+        connection = self._get_connection()
+        try:
+            connection.execute("PRAGMA wal_checkpoint(FULL)")
+        except Exception:
+            pass
+
+        migration = self._load_migration_module()
+
+        # runs the migration
+        success, messages = migration.migrate(
+            entity_class=mocks.RootEntity,
+            target_strategy="concrete_table",
+            connection=connection,
+            engine="sqlite",
+            skip_backup=True,
+        )
+        self.assertTrue(success)
+
+        # verifies that indexes were recreated on the migrated tables
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(*) from sqlite_master where type='index' "
+            "and tbl_name='_person'"
+        )
+        index_count = cursor.fetchone()[0]
+        cursor.close()
+
+        # should have at least: pk_hash, pk_btree, mtime_hash, mtime_btree
+        self.assertTrue(index_count >= 4)
 
 
 class EntityManagerRsetTestCase(colony.ColonyTestCase):
