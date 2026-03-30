@@ -126,6 +126,23 @@ class ConcreteEmployee(ConcretePerson):
 
 No changes are needed to the entity manager API — `save()`, `update()`, `remove()`, `find()`, `get()`, and `count()` work transparently.
 
+### Global Override
+
+The `DATA_INHERITANCE` environment variable provides a system-wide override for the inheritance strategy, taking precedence over all class-level `inheritance` attributes. This is useful for debugging and testing migrations without modifying entity code.
+
+```bash
+# force all entities to use concrete table inheritance
+export DATA_INHERITANCE=concrete_table
+
+# force all entities back to class table inheritance
+export DATA_INHERITANCE=class_table
+
+# no override, use class-level attributes (default)
+unset DATA_INHERITANCE
+```
+
+The override is resolved via `colony.conf("DATA_INHERITANCE", None)` at module load time in `structures.py` and checked as the first step in `get_inheritance_strategy()`.
+
 ---
 
 **Document Classification**: Internal Technical Documentation

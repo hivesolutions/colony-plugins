@@ -55,6 +55,14 @@ RESERVED_NAMES = ("_class", "_mtime")
 """ The tuple containing the names that are considered to be
 reserved (special cases) for the queries """
 
+DATA_INHERITANCE = None
+""" The global override for the inheritance strategy to be used
+across all entity hierarchies, when set this value takes precedence
+over the class-level inheritance attribute allowing a system-wide
+switch between strategies without changing entity code, valid values
+are "class_table", "concrete_table" or None (no override), resolved
+at runtime from the DATA_INHERITANCE environment variable """
+
 PYTHON_TYPES_MAP = dict(
     text=(str, colony.legacy.UNICODE, type(None)),
     string=(str, colony.legacy.UNICODE, type(None)),
@@ -2597,8 +2605,14 @@ class EntityClass(object):
     def get_inheritance_strategy(cls):
         """
         Retrieves the inheritance strategy for the current entity
-        class hierarchy. The strategy is resolved by traversing
-        the hierarchy upwards until a class explicitly defines it.
+        class hierarchy. The strategy is resolved in the following
+        order of precedence:
+
+        1. The DATA_INHERITANCE global config value (environment
+           variable override for debugging/migration)
+        2. The class-level inheritance attribute
+        3. The parent class hierarchy (traversed upwards)
+        4. The default "class_table" strategy
 
         Valid values are "class_table" (default) and "concrete_table".
 
@@ -2609,6 +2623,16 @@ class EntityClass(object):
         # in case the inheritance strategy is already "cached"
         # in the current class (fast retrieval)
         if "_inheritance_strategy" in cls.__dict__:
+            return cls._inheritance_strategy
+
+        # checks if there is a global override for the inheritance
+        # strategy, resolved at runtime from the DATA_INHERITANCE
+        # environment variable (or the module-level value if set
+        # programmatically), when set this takes precedence over
+        # everything else allowing a system-wide switch
+        data_inheritance = colony.conf("DATA_INHERITANCE", DATA_INHERITANCE)
+        if data_inheritance:
+            cls._inheritance_strategy = data_inheritance
             return cls._inheritance_strategy
 
         # checks if the current class defines the inheritance
@@ -2622,9 +2646,10 @@ class EntityClass(object):
         parents = cls.get_parents()
         for parent in parents:
             strategy = parent.get_inheritance_strategy()
-            if not strategy == "class_table":
-                cls._inheritance_strategy = strategy
-                return cls._inheritance_strategy
+            if strategy == "class_table":
+                continue
+            cls._inheritance_strategy = strategy
+            return cls._inheritance_strategy
 
         # defaults to the class table inheritance strategy
         cls._inheritance_strategy = "class_table"
