@@ -222,9 +222,55 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(saved_person.dogs[0].object_id, dog.object_id)
 
     def test_self_relation(self):
-        # tests relations with himself
-        # should include many-to-many (problem)
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates the parent person and child person entities
+        # using the self-referencing parent/children relation
+        parent = mocks.Person()
+        parent.object_id = 1
+        parent.name = "parent_person"
+        child_a = mocks.Person()
+        child_a.object_id = 2
+        child_a.name = "child_a"
+        child_a.parent = parent
+        child_b = mocks.Person()
+        child_b.object_id = 3
+        child_b.name = "child_b"
+        child_b.parent = parent
+        self.entity_manager.save(parent)
+        self.entity_manager.save(child_a)
+        self.entity_manager.save(child_b)
+
+        # retrieves the parent person and verifies that the children
+        # relation is correctly populated via the reverse side
+        saved_parent = self.entity_manager.get(mocks.Person, 1)
+        self.assertNotEqual(saved_parent, None)
+        self.assertNotEqual(saved_parent.children, [])
+        self.assertEqual(len(saved_parent.children), 2)
+
+        # retrieves a child and verifies that the parent relation
+        # is correctly set on the mapped side
+        saved_child = self.entity_manager.get(mocks.Person, 2)
+        self.assertNotEqual(saved_child, None)
+        self.assertNotEqual(saved_child.parent, None)
+        self.assertEqual(saved_child.parent.object_id, parent.object_id)
+
+        # updates the parent reference of a child (re-parent)
+        # and verifies the update is persisted correctly
+        new_parent = mocks.Person()
+        new_parent.object_id = 4
+        new_parent.name = "new_parent"
+        self.entity_manager.save(new_parent)
+        child_a.parent = new_parent
+        self.entity_manager.update(child_a)
+
+        # retrieves the re-parented child and verifies the new
+        # parent reference is correctly persisted
+        saved_child = self.entity_manager.get(mocks.Person, 2)
+        self.assertNotEqual(saved_child, None)
+        self.assertNotEqual(saved_child.parent, None)
+        self.assertEqual(saved_child.parent.object_id, new_parent.object_id)
 
     def test_metadata(self):
         # creates the required entity classes in the data source
@@ -929,14 +975,48 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assert_raises(exceptions.ValidationError, self.entity_manager.save, car)
 
     def test_database_integrity(self):
-        # test that the database retains reference
-        # integrity through
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Dog)
+
+        # creates and saves a person, then creates a dog associated
+        # with the person and saves it to verify referential integrity
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        dog = mocks.Dog()
+        dog.object_id = 2
+        dog.name = "name_dog"
+        dog.owner = person
+        self.entity_manager.save(dog)
+
+        # removes the dog and verifies that the person still exists
+        # in the data source (removing a child should not affect parent)
+        self.entity_manager.remove(dog)
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.name, "name_person")
+
+        # verifies the dog has been removed
+        saved_dog = self.entity_manager.get(mocks.Dog, 2)
+        self.assertEqual(saved_dog, None)
 
     def test_invalid_type(self):
-        # tests that the persistence fails when an
-        # invalid type is set in one of the fields
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person entity with an invalid type for the
+        # age field (should be integer but setting a list instead)
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = [1, 2, 3]
+
+        # verifies that a validation error is raised because the
+        # age field has an invalid type
+        self.assert_raises(exceptions.ValidationError, self.entity_manager.save, person)
 
     def test_polymorphism(self):
         # creates the required entity classes in the data source
@@ -992,10 +1072,32 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(saved_person.status, 1)
 
     def test_map(self):
-        # tests that the map feature of the options
-        # map should be working and that the return
-        # is a serialized map
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a series of person entities and saves them
+        person_a = mocks.Person()
+        person_a.object_id = 1
+        person_a.name = "name_person_a"
+        person_a.age = 30
+        person_b = mocks.Person()
+        person_b.object_id = 2
+        person_b.name = "name_person_b"
+        person_b.age = 25
+        self.entity_manager.save(person_a)
+        self.entity_manager.save(person_b)
+
+        # retrieves all persons using the map option so that the
+        # result is returned as a list of dictionaries
+        persons = self.entity_manager.find(mocks.Person, dict(map=True))
+
+        # verifies that the result is a list of maps (dictionaries)
+        # and that the values are correctly set
+        self.assertNotEqual(persons, [])
+        self.assertEqual(len(persons), 2)
+        self.assertEqual(type(persons[0]), dict)
+        self.assertTrue("name" in persons[0])
+        self.assertTrue("object_id" in persons[0])
 
     def test_order_by(self):
         # creates the required entity classes in the data source
@@ -1127,9 +1229,43 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(persons[2].object_id, person_a.object_id)
 
     def test_range(self):
-        # tests that the range part of the query
-        # work correctly in every way
-        pass
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a series of person entities to test pagination
+        for i in range(1, 6):
+            person = mocks.Person()
+            person.object_id = i
+            person.name = "name_person_%d" % i
+            self.entity_manager.save(person)
+
+        # retrieves all persons without pagination and verifies count
+        persons = self.entity_manager.find(mocks.Person)
+        self.assertEqual(len(persons), 5)
+
+        # retrieves persons using pagination (first page of 2 items)
+        persons = self.entity_manager.find(
+            mocks.Person, dict(start_record=0, number_records=2)
+        )
+        self.assertEqual(len(persons), 2)
+
+        # retrieves persons using pagination (second page of 2 items)
+        persons = self.entity_manager.find(
+            mocks.Person, dict(start_record=2, number_records=2)
+        )
+        self.assertEqual(len(persons), 2)
+
+        # retrieves persons using pagination (last page with 1 item)
+        persons = self.entity_manager.find(
+            mocks.Person, dict(start_record=4, number_records=2)
+        )
+        self.assertEqual(len(persons), 1)
+
+        # retrieves persons using pagination beyond range (empty result)
+        persons = self.entity_manager.find(
+            mocks.Person, dict(start_record=10, number_records=2)
+        )
+        self.assertEqual(len(persons), 0)
 
     def test_reload(self):
         # creates the required entity classes in the data source
@@ -1719,6 +1855,450 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             ),
         )
 
+    def test_get_nonexistent(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # tries to retrieve a person that does not exist in the
+        # data source and verifies that the result is none
+        person = self.entity_manager.get(mocks.Person, 999)
+        self.assertEqual(person, None)
+
+    def test_find_empty(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # retrieves all persons from an empty table and verifies
+        # that the result is an empty list
+        persons = self.entity_manager.find(mocks.Person)
+        self.assertEqual(persons, [])
+
+        # counts the persons and verifies the count is zero
+        count = self.entity_manager.count(mocks.Person)
+        self.assertEqual(count, 0)
+
+    def test_find_filters(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a series of person entities with different attributes
+        person_a = mocks.Person()
+        person_a.object_id = 1
+        person_a.name = "name_person_a"
+        person_a.age = 20
+        person_b = mocks.Person()
+        person_b.object_id = 2
+        person_b.name = "name_person_b"
+        person_b.age = 30
+        person_c = mocks.Person()
+        person_c.object_id = 3
+        person_c.name = "name_person_c"
+        person_c.age = 40
+        self.entity_manager.save(person_a)
+        self.entity_manager.save(person_b)
+        self.entity_manager.save(person_c)
+
+        # retrieves persons using an equals filter on name
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(
+                filters=[
+                    dict(
+                        type="equals",
+                        fields=[dict(name="name", value="name_person_b")],
+                    )
+                ]
+            ),
+        )
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(persons[0].object_id, 2)
+
+        # retrieves persons using a greater than filter on age
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(filters=[dict(type="greater", fields=[dict(name="age", value=25)])]),
+        )
+        self.assertEqual(len(persons), 2)
+
+        # retrieves persons using a lesser filter on age
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(filters=[dict(type="lesser", fields=[dict(name="age", value=25)])]),
+        )
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(persons[0].object_id, 1)
+
+        # retrieves persons using multiple combined filters
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(
+                filters=[
+                    dict(
+                        type="greater",
+                        fields=[dict(name="age", value=15)],
+                    ),
+                    dict(
+                        type="lesser",
+                        fields=[dict(name="age", value=35)],
+                    ),
+                ]
+            ),
+        )
+        self.assertEqual(len(persons), 2)
+
+    def test_count_with_filters(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a series of person entities with different ages
+        for i in range(1, 6):
+            person = mocks.Person()
+            person.object_id = i
+            person.name = "name_person_%d" % i
+            person.age = i * 10
+            self.entity_manager.save(person)
+
+        # counts all persons
+        count = self.entity_manager.count(mocks.Person)
+        self.assertEqual(count, 5)
+
+        # counts persons with a filter on age
+        count = self.entity_manager.count(
+            mocks.Person,
+            dict(
+                filters=[
+                    dict(
+                        type="greater",
+                        fields=[dict(name="age", value=25)],
+                    )
+                ]
+            ),
+        )
+        self.assertEqual(count, 3)
+
+    def test_update_nullify_field(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person with a name and age set and saves it
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = 30
+        self.entity_manager.save(person)
+
+        # updates the person setting the age to none (null)
+        person.age = None
+        self.entity_manager.update(person)
+
+        # retrieves the updated person and verifies that the
+        # age field has been set to none
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.name, "name_person")
+        self.assertEqual(saved_person.age, None)
+
+    def test_update_relation_change(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Dog)
+
+        # creates two persons and a dog, initially owned by person_a
+        person_a = mocks.Person()
+        person_a.object_id = 1
+        person_a.name = "person_a"
+        person_b = mocks.Person()
+        person_b.object_id = 2
+        person_b.name = "person_b"
+        dog = mocks.Dog()
+        dog.object_id = 3
+        dog.name = "name_dog"
+        dog.owner = person_a
+        self.entity_manager.save(person_a)
+        self.entity_manager.save(person_b)
+        self.entity_manager.save(dog)
+
+        # verifies the initial relation
+        saved_dog = self.entity_manager.get(mocks.Dog, 3)
+        self.assertEqual(saved_dog.owner.object_id, 1)
+
+        # updates the dog's owner to person_b
+        dog.owner = person_b
+        self.entity_manager.update(dog)
+
+        # retrieves the dog and verifies the owner has changed
+        saved_dog = self.entity_manager.get(mocks.Dog, 3)
+        self.assertEqual(saved_dog.owner.object_id, 2)
+
+        # verifies that person_b now has the dog and person_a doesn't
+        saved_person_b = self.entity_manager.get(mocks.Person, 2)
+        self.assertNotEqual(saved_person_b.dogs, [])
+        self.assertEqual(saved_person_b.dogs[0].object_id, 3)
+        saved_person_a = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(saved_person_a.dogs, [])
+
+    def test_update_nullify_relation(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Dog)
+
+        # creates a person and a dog with an owner relation
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        dog = mocks.Dog()
+        dog.object_id = 2
+        dog.name = "name_dog"
+        dog.owner = person
+        self.entity_manager.save(person)
+        self.entity_manager.save(dog)
+
+        # verifies the initial relation is set
+        saved_dog = self.entity_manager.get(mocks.Dog, 2)
+        self.assertNotEqual(saved_dog.owner, None)
+
+        # nullifies the owner relation and updates
+        dog.owner = None
+        self.entity_manager.update(dog)
+
+        # retrieves the dog and verifies the relation has been removed
+        saved_dog = self.entity_manager.get(mocks.Dog, 2)
+        self.assertEqual(saved_dog.owner, None)
+
+        # verifies that the person no longer has the dog
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(saved_person.dogs, [])
+
+    def test_multiple_inheritance(self):
+        # creates the required entity classes in the data source
+        # to test the Employee class which inherits from Person,
+        # Loggable, and Taxable (multiple inheritance)
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Employee)
+
+        # creates an employee entity with fields from all parent
+        # classes and saves it into the data source
+        employee = mocks.Employee()
+        employee.object_id = 1
+        employee.name = "name_employee"
+        employee.age = 30
+        employee.salary = 500
+        employee.tax_number = 12345
+        self.entity_manager.save(employee)
+
+        # retrieves the employee and verifies that all fields from
+        # all parent classes are correctly persisted
+        saved_employee = self.entity_manager.get(mocks.Employee, 1)
+        self.assertNotEqual(saved_employee, None)
+        self.assertEqual(saved_employee.object_id, 1)
+        self.assertEqual(saved_employee.name, "name_employee")
+        self.assertEqual(saved_employee.age, 30)
+        self.assertEqual(saved_employee.salary, 500)
+        self.assertEqual(saved_employee.tax_number, 12345)
+        self.assertEqual(saved_employee.status, 1)
+
+    def test_polymorphism_employee(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Employee)
+
+        # creates an employee and a regular person and saves them
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "regular_person"
+        employee = mocks.Employee()
+        employee.object_id = 2
+        employee.name = "employee_person"
+        employee.salary = 500
+        self.entity_manager.save(person)
+        self.entity_manager.save(employee)
+
+        # queries using the parent class (Person) to retrieve both
+        # the person and the employee
+        all_persons = self.entity_manager.find(mocks.Person)
+        self.assertEqual(len(all_persons), 2)
+
+        # queries using the RootEntity to retrieve both entities
+        all_roots = self.entity_manager.find(mocks.RootEntity)
+        self.assertEqual(len(all_roots), 2)
+
+        # queries using Employee to retrieve only the employee
+        all_employees = self.entity_manager.find(mocks.Employee)
+        self.assertEqual(len(all_employees), 1)
+        self.assertEqual(all_employees[0].name, "employee_person")
+        self.assertEqual(all_employees[0].salary, 500)
+
+    def test_save_update_remove_cycle(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person entity and saves it
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = 25
+        self.entity_manager.save(person)
+
+        # verifies the initial state
+        saved = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(saved.name, "name_person")
+        self.assertEqual(saved.age, 25)
+
+        # updates the person entity multiple times
+        person.name = "updated_1"
+        self.entity_manager.update(person)
+        person.name = "updated_2"
+        self.entity_manager.update(person)
+        person.name = "updated_3"
+        self.entity_manager.update(person)
+
+        # verifies that only the last update is persisted
+        saved = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(saved.name, "updated_3")
+        self.assertEqual(saved.age, 25)
+
+        # removes the entity
+        self.entity_manager.remove(person)
+        saved = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(saved, None)
+
+        # verifies that saving a new entity with the same id
+        # works after the previous one was removed
+        person_new = mocks.Person()
+        person_new.object_id = 1
+        person_new.name = "new_person"
+        self.entity_manager.save(person_new)
+        saved = self.entity_manager.get(mocks.Person, 1)
+        self.assertNotEqual(saved, None)
+        self.assertEqual(saved.name, "new_person")
+
+    def test_file_data_type(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.File)
+
+        # creates a file entity with binary/text data and saves it
+        file = mocks.File()
+        file.object_id = 1
+        file.filename = "test_file.txt"
+        file.data = "Hello World - data content"
+        self.entity_manager.save(file)
+
+        # retrieves the file and verifies the data field is
+        # correctly persisted and retrieved
+        saved_file = self.entity_manager.get(mocks.File, 1)
+        self.assertNotEqual(saved_file, None)
+        self.assertEqual(saved_file.filename, "test_file.txt")
+        self.assertEqual(saved_file.data, "Hello World - data content")
+
+    def test_unicode_fields(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person with unicode characters in the name
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = colony.legacy.u("José Магалхес 学生")
+        self.entity_manager.save(person)
+
+        # retrieves the person and verifies the unicode name is
+        # correctly persisted and retrieved
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.name, colony.legacy.u("José Магалхес 学生"))
+
+    def test_find_with_set(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person entity and saves it
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.age = 30
+        self.entity_manager.save(person)
+
+        # retrieves the person using the set option to get raw
+        # result set with headers instead of entity instances
+        result = self.entity_manager.find(mocks.Person, dict(set=True))
+        self.assertNotEqual(result, None)
+
+        # verifies that the result set contains data
+        data = result.data()
+        self.assertEqual(len(data), 1)
+
+        # verifies that the header contains the expected field names
+        header = result.header()
+        self.assertTrue("name" in header)
+        self.assertTrue("object_id" in header)
+
+    def test_breeder_subclass(self):
+        # creates the required entity classes in the data source
+        # to test the Breeder (subclass of Person) and BreedDog
+        # (subclass of Dog) specialized relation overriding
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Dog)
+        self.entity_manager.create(mocks.Breeder)
+        self.entity_manager.create(mocks.BreedDog)
+
+        # creates a breeder with a license number and saves it
+        breeder = mocks.Breeder()
+        breeder.object_id = 1
+        breeder.name = "breeder_person"
+        breeder.license_number = "LIC-12345"
+        self.entity_manager.save(breeder)
+
+        # creates a breed dog associated with the breeder
+        breed_dog = mocks.BreedDog()
+        breed_dog.object_id = 2
+        breed_dog.name = "breed_dog"
+        breed_dog.digital_tag = "TAG-9876"
+        breed_dog.owner = breeder
+        self.entity_manager.save(breed_dog)
+
+        # retrieves the breeder and verifies it is correct
+        saved_breeder = self.entity_manager.get(mocks.Breeder, 1)
+        self.assertNotEqual(saved_breeder, None)
+        self.assertEqual(saved_breeder.license_number, "LIC-12345")
+
+        # retrieves the breed dog and verifies the relation
+        saved_dog = self.entity_manager.get(mocks.BreedDog, 2)
+        self.assertNotEqual(saved_dog, None)
+        self.assertEqual(saved_dog.digital_tag, "TAG-9876")
+        self.assertNotEqual(saved_dog.owner, None)
+        self.assertEqual(saved_dog.owner.object_id, breeder.object_id)
+
+    def test_remove_with_relations(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Dog)
+
+        # creates a person with two dogs (mapped relations)
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        dog_a = mocks.Dog()
+        dog_a.object_id = 2
+        dog_a.name = "dog_a"
+        dog_a.owner = person
+        dog_b = mocks.Dog()
+        dog_b.object_id = 3
+        dog_b.name = "dog_b"
+        dog_b.owner = person
+        self.entity_manager.save(person)
+        self.entity_manager.save(dog_a)
+        self.entity_manager.save(dog_b)
+
+        # verifies the person has two dogs
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(len(saved_person.dogs), 2)
+
+        # removes one of the dogs and verifies the person now
+        # has only one dog
+        self.entity_manager.remove(dog_a)
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(len(saved_person.dogs), 1)
+        self.assertEqual(saved_person.dogs[0].object_id, 3)
+
 
 class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
     @staticmethod
@@ -1836,7 +2416,14 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         # retrieves persons with a filter on age
         persons = self.entity_manager.find(
             mocks.ConcretePerson,
-            dict(filters=[dict(name="age", value=30)]),
+            dict(
+                filters=[
+                    dict(
+                        type="equals",
+                        fields=[dict(name="age", value=30)],
+                    )
+                ]
+            ),
         )
         self.assertEqual(len(persons), 1)
         self.assertEqual(persons[0].name, "name_person_a")
