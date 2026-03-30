@@ -2569,6 +2569,51 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         self.assertNotEqual(saved_parent, None)
         self.assertEqual(len(saved_parent.children), 2)
 
+    def test_polymorphic_query(self):
+        # creates the required entity classes in the data source,
+        # the concrete table strategy creates tables for all levels
+        # in the hierarchy with flattened columns
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+
+        # creates a person and an employee and saves them, this
+        # should insert rows into all ancestor tables
+        person = mocks.ConcretePerson()
+        person.object_id = 1
+        person.name = "regular_person"
+        person.age = 25
+        employee = mocks.ConcreteEmployee()
+        employee.object_id = 2
+        employee.name = "employee_person"
+        employee.age = 30
+        employee.salary = 500
+        self.entity_manager.save(person)
+        self.entity_manager.save(employee)
+
+        # queries using the root entity class to retrieve all
+        # entities in the hierarchy (polymorphic query), both
+        # the person and the employee should appear
+        all_roots = self.entity_manager.find(mocks.ConcreteRootEntity)
+        self.assertEqual(len(all_roots), 2)
+
+        # queries using the person class, the employee should
+        # also appear since it has a row in the person table
+        all_persons = self.entity_manager.find(mocks.ConcretePerson)
+        self.assertEqual(len(all_persons), 2)
+
+        # queries using the employee class, only the employee
+        # should appear
+        all_employees = self.entity_manager.find(mocks.ConcreteEmployee)
+        self.assertEqual(len(all_employees), 1)
+        self.assertEqual(all_employees[0].name, "employee_person")
+        self.assertEqual(all_employees[0].salary, 500)
+
+        # retrieves a specific entity by ID at the root level
+        # and verifies the root-level fields are accessible
+        root_entity = self.entity_manager.get(mocks.ConcreteRootEntity, 2)
+        self.assertNotEqual(root_entity, None)
+        self.assertEqual(root_entity.status, 1)
+
     def test_strategy_selector(self):
         # verifies that the inheritance strategy is correctly resolved
         # for the concrete table hierarchy

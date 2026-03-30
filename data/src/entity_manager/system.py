@@ -1225,12 +1225,6 @@ class EntityManager(object):
             self._exists[entity_class] = True
             return
 
-        # checks if the current entity class uses the concrete
-        # table inheritance strategy, in which case parent tables
-        # are not created as part of this hierarchy (each concrete
-        # class has its own complete table)
-        is_concrete = entity_class.is_concrete_table()
-
         # retrieves the parent classes of the entity class
         # to be able to check if they are already defined
         # in the data source
@@ -1238,9 +1232,9 @@ class EntityManager(object):
 
         # iterates over all the parent classes of the
         # entity class to check (and create if necessary)
-        # the entity definition, for concrete table inheritance
-        # parent tables are skipped as their columns are already
-        # included in the current entity's table
+        # the entity definition, for both class table and concrete
+        # table inheritance all parent classes are created (concrete
+        # table parents contain flattened columns at their level)
         for parent_class in parent_classes:
             # in case the entity class definition
             # already exists (no need to create it
@@ -1248,13 +1242,6 @@ class EntityManager(object):
             if self.exists(parent_class):
                 # continues the loop (no creation
                 # required)
-                continue
-
-            # for concrete table inheritance the parent class
-            # is marked as existing but no table is created for
-            # it (the columns are flattened into the child table)
-            if is_concrete:
-                self._exists[parent_class] = True
                 continue
 
             # creates the parent (entity) class in
@@ -3303,11 +3290,17 @@ class EntityManager(object):
         # retrieves the map that associates an entity
         # class with the map of items that are contained
         # inside it's scope, for concrete table inheritance
-        # a single entry map is used with all items flattened
+        # each ancestor class gets an entry with all items
+        # flattened down to that hierarchy level (enabling
+        # writes to all ancestor tables)
         if is_concrete:
-            all_items = entity_class.get_all_items()
             items_map = colony.OrderedMap()
-            items_map[entity_class] = all_items
+            all_parents = entity_class.get_all_parents()
+            for parent in all_parents:
+                if parent.is_abstract():
+                    continue
+                items_map[parent] = parent.get_all_items()
+            items_map[entity_class] = entity_class.get_all_items()
         else:
             items_map = entity_class.get_items_map()
 
@@ -3526,11 +3519,16 @@ class EntityManager(object):
         # retrieves the map that associates an entity
         # class with the map of items that are contained
         # inside it's scope, for concrete table inheritance
-        # a single entry map is used with all items flattened
+        # each ancestor class gets an entry with all items
+        # flattened down to that hierarchy level
         if is_concrete:
-            all_items = entity_class.get_all_items()
             items_map = colony.OrderedMap()
-            items_map[entity_class] = all_items
+            all_parents = entity_class.get_all_parents()
+            for parent in all_parents:
+                if parent.is_abstract():
+                    continue
+                items_map[parent] = parent.get_all_items()
+            items_map[entity_class] = entity_class.get_all_items()
         else:
             items_map = entity_class.get_items_map()
 
@@ -3681,11 +3679,6 @@ class EntityManager(object):
         # the entity
         entity_class = entity.__class__
 
-        # checks if the current entity class uses the concrete
-        # table inheritance strategy, in which case a single
-        # delete query is generated
-        is_concrete = entity_class.is_concrete_table()
-
         # retrieves the associated table name
         # as the "name" of the entity class
         table_name = entity_class.get_name()
@@ -3709,19 +3702,14 @@ class EntityManager(object):
         # generated for removing a set of data
         queries = []
 
-        # for concrete table inheritance only a single delete
-        # is needed from the entity's own table, for class table
-        # inheritance all parent tables must also be cleaned
-        if is_concrete:
-            entity_classes = [entity_class]
-        else:
-            # retrieves "all" the parents from the entity
-            # class, to be able to remove all the references
-            # of the entity in the data source then creates
-            # list of entity classes to be used in the removal
-            # from the parents and the current entity
-            all_parents = entity_class.get_all_parents()
-            entity_classes = all_parents + [entity_class]
+        # retrieves "all" the parents from the entity class, to
+        # be able to remove all the references of the entity in
+        # the data source then creates list of entity classes to
+        # be used in the removal from the parents and the current
+        # entity, for both strategies all ancestor tables must be
+        # cleaned (concrete table duplicates data across ancestors)
+        all_parents = entity_class.get_all_parents()
+        entity_classes = all_parents + [entity_class]
 
         # iterates over all the entity classes from
         # which the data should be removed in the
