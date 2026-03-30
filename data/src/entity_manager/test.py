@@ -34,8 +34,10 @@ import sqlite3
 
 try:
     import importlib.util
+
+    HAS_IMPORTLIB_UTIL = True
 except ImportError:
-    pass
+    HAS_IMPORTLIB_UTIL = False
 
 import colony
 
@@ -2624,15 +2626,31 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
     def get_description():
         return "Entity Manager Migration test case"
 
+    def setUp(self):
+        colony.ColonyTestCase.setUp(self)
+
+        # skips all migration tests when importlib.util is not
+        # available (Python 2.7) since the migration module
+        # requires it for dynamic loading
+        if not HAS_IMPORTLIB_UTIL:
+            self.skipTest("importlib.util not available")
+
     @classmethod
     def _load_migration_module(cls):
         """
         Loads the migration script module using importlib to avoid
         path resolution issues across different execution contexts.
+        Returns None if importlib.util is not available (Python 2.7).
         """
 
         if hasattr(cls, "_migration_module"):
             return cls._migration_module
+
+        # importlib.util is not available in Python 2.7, in that
+        # case the migration module cannot be loaded and the
+        # migration tests should be skipped
+        if not HAS_IMPORTLIB_UTIL:
+            return None
 
         # resolves the scripts directory relative to the project
         # root, trying multiple possible base paths including
