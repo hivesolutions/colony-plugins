@@ -50,6 +50,126 @@ SQL_TYPES_MAP = dict(
 """ The default SQL types map, used for column type resolution
 when generating migration queries """
 
+INDEX_NAME_LIMITS = dict(sqlite=None, mysql=64, pgsql=63)
+""" The maximum length for index names per engine, None means
+no limit (SQLite has no practical limit) """
+
+
+def has_table(connection, table_name, engine="sqlite"):
+    """
+    Checks if a table exists in the data source using the
+    appropriate engine-specific catalog query.
+
+    :type connection: Connection
+    :param connection: The database connection.
+    :type table_name: String
+    :param table_name: The name of the table to check.
+    :type engine: String
+    :param engine: The database engine name.
+    :rtype: bool
+    :return: If the table exists in the data source.
+    """
+
+    cursor = connection.cursor()
+    try:
+        if engine == "sqlite":
+            cursor.execute(
+                "select count(*) from sqlite_master " "where type='table' and name=?",
+                (table_name,),
+            )
+        elif engine == "mysql":
+            cursor.execute(
+                "select count(*) from information_schema.tables "
+                "where table_name = %s",
+                (table_name,),
+            )
+        elif engine == "pgsql":
+            cursor.execute(
+                "select count(*) from pg_tables " "where tablename = %s",
+                (table_name,),
+            )
+        else:
+            return True
+        return cursor.fetchone()[0] > 0
+    finally:
+        cursor.close()
+
+
+def index_query(table_name, attribute_name, index_type, engine="sqlite"):
+    """
+    Generates a CREATE INDEX query using the appropriate syntax
+    for the given database engine, matching the naming convention
+    used by the entity manager's engine implementations.
+
+    :type table_name: String
+    :param table_name: The name of the table.
+    :type attribute_name: String
+    :param attribute_name: The name of the column to index.
+    :type index_type: String
+    :param index_type: The type of index ("hash" or "btree").
+    :type engine: String
+    :param engine: The database engine name.
+    :rtype: String
+    :return: The CREATE INDEX query.
+    """
+
+    index_name = "%s_%s_%s" % (table_name, attribute_name, index_type)
+
+    # truncates the index name to the engine-specific limit
+    limit = INDEX_NAME_LIMITS.get(engine, None)
+    if limit:
+        index_name = index_name[-limit:]
+
+    if engine == "mysql":
+        return "create index %s on %s(%s) using %s" % (
+            index_name,
+            table_name,
+            attribute_name,
+            index_type,
+        )
+    elif engine == "pgsql":
+        return "create index %s on %s using %s (%s)" % (
+            index_name,
+            table_name,
+            index_type,
+            attribute_name,
+        )
+    else:
+        return "create index %s on %s(%s)" % (
+            index_name,
+            table_name,
+            attribute_name,
+        )
+
+
+def insert_ignore_query(table_name, columns, select_sql, engine="sqlite"):
+    """
+    Generates an INSERT query that ignores duplicate key conflicts
+    using the appropriate engine-specific syntax.
+
+    :type table_name: String
+    :param table_name: The target table name.
+    :type columns: String
+    :param columns: The comma-separated column list.
+    :type select_sql: String
+    :param select_sql: The SELECT statement to use as data source.
+    :type engine: String
+    :param engine: The database engine name.
+    :rtype: String
+    :return: The INSERT IGNORE query.
+    """
+
+    if engine == "mysql":
+        return "insert ignore into %s(%s) %s" % (table_name, columns, select_sql)
+    elif engine == "pgsql":
+        return "insert into %s(%s) %s on conflict do nothing" % (
+            table_name,
+            columns,
+            select_sql,
+        )
+    else:
+        return "insert or ignore into %s(%s) %s" % (table_name, columns, select_sql)
+
 
 def get_hierarchy_classes(entity_class):
     """
@@ -300,7 +420,9 @@ def validate_data(connection, entity_class, messages):
     return is_valid
 
 
-def generate_cti_to_concrete_queries(entity_class, types_map=None, connection=None):
+def generate_cti_to_concrete_queries(
+    entity_class, types_map=None, connection=None, engine="sqlite"
+):
     """
     Generates the SQL queries to migrate an entity hierarchy
     from class table inheritance to concrete table inheritance.
@@ -338,14 +460,7 @@ def generate_cti_to_concrete_queries(entity_class, types_map=None, connection=No
     if connection:
         _hierarchy = []
         for cls in hierarchy:
-            cursor = connection.cursor()
-            cursor.execute(
-                "select count(*) from sqlite_master where type='table' and name=?",
-                (cls.get_name(),),
-            )
-            exists = cursor.fetchone()[0] > 0
-            cursor.close()
-            if exists:
+            if has_table(connection, cls.get_name(), engine):
                 _hierarchy.append(cls)
         hierarchy = _hierarchy
 
@@ -443,36 +558,25 @@ def generate_cti_to_concrete_queries(entity_class, types_map=None, connection=No
 
         # creates indexes on the primary key field (hash + btree)
         pk_name = cls.get_id()
-        queries.append(
-            "create index %s_%s_hash on %s(%s)"
-            % (table_name, pk_name, table_name, pk_name)
-        )
-        queries.append(
-            "create index %s_%s_btree on %s(%s)"
-            % (table_name, pk_name, table_name, pk_name)
-        )
+        queries.append(index_query(table_name, pk_name, "hash", engine))
+        queries.append(index_query(table_name, pk_name, "btree", engine))
 
         # creates indexes on the _mtime field (hash + btree)
-        queries.append(
-            "create index %s__mtime_hash on %s(_mtime)" % (table_name, table_name)
-        )
-        queries.append(
-            "create index %s__mtime_btree on %s(_mtime)" % (table_name, table_name)
-        )
+        queries.append(index_query(table_name, "_mtime", "hash", engine))
+        queries.append(index_query(table_name, "_mtime", "btree", engine))
 
         # creates indexes on mapped relation (foreign key) fields
         all_items = cls.get_all_items()
         for item_name in all_items:
             if cls.is_relation(item_name) and cls.is_mapped(item_name):
-                queries.append(
-                    "create index %s_%s_hash on %s(%s)"
-                    % (table_name, item_name, table_name, item_name)
-                )
+                queries.append(index_query(table_name, item_name, "hash", engine))
 
     return queries
 
 
-def generate_concrete_to_cti_queries(entity_class, types_map=None, connection=None):
+def generate_concrete_to_cti_queries(
+    entity_class, types_map=None, connection=None, engine="sqlite"
+):
     """
     Generates the SQL queries to migrate an entity hierarchy
     from concrete table inheritance to class table inheritance.
@@ -503,14 +607,7 @@ def generate_concrete_to_cti_queries(entity_class, types_map=None, connection=No
     if connection:
         _hierarchy = []
         for cls in hierarchy:
-            cursor = connection.cursor()
-            cursor.execute(
-                "select count(*) from sqlite_master where type='table' and name=?",
-                (cls.get_name(),),
-            )
-            exists = cursor.fetchone()[0] > 0
-            cursor.close()
-            if exists:
+            if has_table(connection, cls.get_name(), engine):
                 _hierarchy.append(cls)
         hierarchy = _hierarchy
     table_id = entity_class.get_id()
@@ -605,16 +702,13 @@ def generate_concrete_to_cti_queries(entity_class, types_map=None, connection=No
             # filters to only get rows for this specific class to
             # avoid duplicates when multiple concrete classes map
             # to the same CTI level
-            insert_query = (
-                "insert or ignore into %s(%s) select %s from %s "
-                "where _class = '%s'"
-                % (
-                    new_table_name,
-                    ", ".join(select_cols),
-                    ", ".join(select_cols),
-                    concrete_table,
-                    cls.__name__,
-                )
+            select_sql = "select %s from %s where _class = '%s'" % (
+                ", ".join(select_cols),
+                concrete_table,
+                cls.__name__,
+            )
+            insert_query = insert_ignore_query(
+                new_table_name, ", ".join(select_cols), select_sql, engine
             )
             queries.append(insert_query)
 
@@ -634,28 +728,15 @@ def generate_concrete_to_cti_queries(entity_class, types_map=None, connection=No
         table_name = level.get_name()
         pk_name = level.get_id() or table_id
 
-        queries.append(
-            "create index %s_%s_hash on %s(%s)"
-            % (table_name, pk_name, table_name, pk_name)
-        )
-        queries.append(
-            "create index %s_%s_btree on %s(%s)"
-            % (table_name, pk_name, table_name, pk_name)
-        )
-        queries.append(
-            "create index %s__mtime_hash on %s(_mtime)" % (table_name, table_name)
-        )
-        queries.append(
-            "create index %s__mtime_btree on %s(_mtime)" % (table_name, table_name)
-        )
+        queries.append(index_query(table_name, pk_name, "hash", engine))
+        queries.append(index_query(table_name, pk_name, "btree", engine))
+        queries.append(index_query(table_name, "_mtime", "hash", engine))
+        queries.append(index_query(table_name, "_mtime", "btree", engine))
 
         own_items = level.get_items()
         for item_name in own_items:
             if level.is_relation(item_name) and level.is_mapped(item_name):
-                queries.append(
-                    "create index %s_%s_hash on %s(%s)"
-                    % (table_name, item_name, table_name, item_name)
-                )
+                queries.append(index_query(table_name, item_name, "hash", engine))
 
     return queries
 
@@ -719,9 +800,13 @@ def migrate(
     current_strategy = entity_class.get_inheritance_strategy()
 
     if current_strategy == "class_table" and target_strategy == "concrete_table":
-        queries = generate_cti_to_concrete_queries(entity_class, types_map, connection)
+        queries = generate_cti_to_concrete_queries(
+            entity_class, types_map, connection, engine
+        )
     elif current_strategy == "concrete_table" and target_strategy == "class_table":
-        queries = generate_concrete_to_cti_queries(entity_class, types_map, connection)
+        queries = generate_concrete_to_cti_queries(
+            entity_class, types_map, connection, engine
+        )
     else:
         messages.append(
             "unsupported migration direction: %s -> %s"
