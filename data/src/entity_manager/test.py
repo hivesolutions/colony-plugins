@@ -2639,6 +2639,79 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         self.assertFalse(mocks.RootEntity.is_concrete_table())
         self.assertFalse(mocks.Person.is_concrete_table())
 
+    def test_global_inheritance_override(self):
+        # verifies that the DATA_INHERITANCE global config value
+        # overrides the class-level inheritance attribute, allowing
+        # a system-wide switch without changing entity code
+
+        # collects the test classes whose strategy cache will be
+        # cleared during the test to allow re-resolution
+        test_classes = [
+            mocks.RootEntity,
+            mocks.Person,
+            mocks.ConcreteRootEntity,
+            mocks.ConcretePerson,
+        ]
+
+        # saves the original values for restoration
+        original = structures.DATA_INHERITANCE
+        saved_caches = {}
+        for cls in test_classes:
+            if "_inheritance_strategy" in cls.__dict__:
+                saved_caches[cls] = cls._inheritance_strategy
+
+        try:
+            # clears the cached strategy so re-resolution picks
+            # up the global override
+            for cls in test_classes:
+                if "_inheritance_strategy" in cls.__dict__:
+                    del cls._inheritance_strategy
+
+            structures.DATA_INHERITANCE = "concrete_table"
+
+            # verifies that a class_table entity now reports
+            # concrete_table due to the global override
+            self.assertEqual(
+                mocks.RootEntity.get_inheritance_strategy(), "concrete_table"
+            )
+            self.assertTrue(mocks.RootEntity.is_concrete_table())
+
+            # clears caches again and switches to class_table
+            for cls in test_classes:
+                if "_inheritance_strategy" in cls.__dict__:
+                    del cls._inheritance_strategy
+
+            structures.DATA_INHERITANCE = "class_table"
+
+            # verifies that concrete_table entities now report
+            # class_table due to the global override
+            self.assertEqual(
+                mocks.ConcreteRootEntity.get_inheritance_strategy(), "class_table"
+            )
+            self.assertFalse(mocks.ConcreteRootEntity.is_concrete_table())
+
+            # clears caches and removes the override, verifies
+            # that the class-level attribute takes effect again
+            for cls in test_classes:
+                if "_inheritance_strategy" in cls.__dict__:
+                    del cls._inheritance_strategy
+
+            structures.DATA_INHERITANCE = None
+
+            self.assertEqual(mocks.RootEntity.get_inheritance_strategy(), "class_table")
+            self.assertEqual(
+                mocks.ConcreteRootEntity.get_inheritance_strategy(), "concrete_table"
+            )
+        finally:
+            # restores the original values to avoid affecting
+            # other tests in the suite
+            structures.DATA_INHERITANCE = original
+            for cls in test_classes:
+                if "_inheritance_strategy" in cls.__dict__:
+                    del cls._inheritance_strategy
+            for cls, value in saved_caches.items():
+                cls._inheritance_strategy = value
+
     def test_get_all_items(self):
         # verifies that get_all_items returns all inherited items
         # for a concrete table entity class
