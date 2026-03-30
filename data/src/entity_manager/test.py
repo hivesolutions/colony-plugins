@@ -30,7 +30,12 @@ __license__ = "Apache License, Version 2.0"
 
 import os
 import sys
-import importlib.util
+import sqlite3
+
+try:
+    import importlib.util
+except ImportError:
+    pass
 
 import colony
 
@@ -2859,22 +2864,26 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.entity_manager.save(person)
 
         # forces the data to be committed to disk so the backup
-        # captures it (the entity manager may use deferred writes)
+        # captures it, uses checkpoint on WAL mode for Windows
+        # compatibility where WAL data may not be in the main file
         connection = self.entity_manager.get_connection()
         inner_connection = connection._connection
         file_path = inner_connection.get_file_path()
         raw_connection = inner_connection.get_connection()
         raw_connection.commit()
+        try:
+            raw_connection.execute("PRAGMA wal_checkpoint(FULL)")
+        except Exception:
+            pass
 
         migration = self._load_migration_module()
 
         # creates a backup and verifies the backup is a valid
         # SQLite database containing the same data
-        import sqlite3
-
         connection_params = dict(file_path=file_path)
         backup_path = migration.backup_database(connection_params, "sqlite")
 
+        backup_conn = None
         try:
             # opens the backup database and verifies it contains
             # the person table with the expected data
@@ -2904,9 +2913,11 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             self.assertNotEqual(row, None)
             self.assertEqual(row[0], "backup_test_person")
             self.assertEqual(row[1], 42)
-
-            backup_conn.close()
         finally:
+            # closes the backup connection before removing the
+            # file (required on Windows to release file handle)
+            if backup_conn:
+                backup_conn.close()
             if os.path.exists(backup_path):
                 os.remove(backup_path)
 
