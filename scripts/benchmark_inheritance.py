@@ -315,6 +315,201 @@ def delete_concrete(connection, object_id):
     cursor.close()
 
 
+def create_wide_cti_schema(connection):
+    """
+    Creates a wide class table inheritance schema where each level
+    has 20 columns, simulating a real-world entity with many
+    attributes per class level (60 total columns for the leaf).
+    """
+
+    cursor = connection.cursor()
+
+    # builds the root level with 20 columns
+    root_cols = ", ".join(["root_col_%d text" % i for i in range(20)])
+    cursor.execute(
+        "create table _wide_root("
+        "object_id integer primary key, "
+        "status integer, "
+        "%s, "
+        "_class text, "
+        "_mtime double precision)" % root_cols
+    )
+
+    # builds the middle level with 20 columns
+    mid_cols = ", ".join(["mid_col_%d text" % i for i in range(20)])
+    cursor.execute(
+        "create table _wide_middle("
+        "%s, "
+        "_mtime double precision, "
+        "object_id integer primary key)" % mid_cols
+    )
+
+    # builds the leaf level with 20 columns
+    leaf_cols = ", ".join(["leaf_col_%d text" % i for i in range(20)])
+    cursor.execute(
+        "create table _wide_leaf("
+        "%s, "
+        "_mtime double precision, "
+        "object_id integer primary key)" % leaf_cols
+    )
+
+    connection.commit()
+    cursor.close()
+
+
+def create_wide_concrete_schema(connection):
+    """
+    Creates a wide concrete table inheritance schema where the
+    leaf table contains all 60 columns (20 from each level).
+    """
+
+    cursor = connection.cursor()
+
+    # builds the leaf table with all 60 columns from all levels
+    root_cols = ", ".join(["root_col_%d text" % i for i in range(20)])
+    mid_cols = ", ".join(["mid_col_%d text" % i for i in range(20)])
+    leaf_cols = ", ".join(["leaf_col_%d text" % i for i in range(20)])
+    cursor.execute(
+        "create table _wide_concrete_leaf("
+        "object_id integer primary key, "
+        "status integer, "
+        "%s, %s, %s, "
+        "_class text, "
+        "_mtime double precision)" % (root_cols, mid_cols, leaf_cols)
+    )
+
+    connection.commit()
+    cursor.close()
+
+
+def insert_wide_cti(connection, object_id):
+    """
+    Inserts a single row across the three wide CTI tables.
+    """
+
+    mtime = time.time()
+    cursor = connection.cursor()
+
+    root_values = ", ".join(["'rv_%d'" % i for i in range(20)])
+    cursor.execute(
+        "insert into _wide_root(object_id, status, %s, _class, _mtime) "
+        "values(?, 1, %s, 'WideLeaf', ?)"
+        % (
+            ", ".join(["root_col_%d" % i for i in range(20)]),
+            root_values,
+        ),
+        (object_id, mtime),
+    )
+
+    mid_values = ", ".join(["'mv_%d'" % i for i in range(20)])
+    cursor.execute(
+        "insert into _wide_middle(object_id, %s, _mtime) "
+        "values(?, %s, ?)"
+        % (
+            ", ".join(["mid_col_%d" % i for i in range(20)]),
+            mid_values,
+        ),
+        (object_id, mtime),
+    )
+
+    leaf_values = ", ".join(["'lv_%d'" % i for i in range(20)])
+    cursor.execute(
+        "insert into _wide_leaf(object_id, %s, _mtime) "
+        "values(?, %s, ?)"
+        % (
+            ", ".join(["leaf_col_%d" % i for i in range(20)]),
+            leaf_values,
+        ),
+        (object_id, mtime),
+    )
+
+    cursor.close()
+
+
+def insert_wide_concrete(connection, object_id):
+    """
+    Inserts a single row into the wide concrete flat table
+    with all 60 columns.
+    """
+
+    mtime = time.time()
+    cursor = connection.cursor()
+
+    all_cols = (
+        ", ".join(["root_col_%d" % i for i in range(20)])
+        + ", "
+        + ", ".join(["mid_col_%d" % i for i in range(20)])
+        + ", "
+        + ", ".join(["leaf_col_%d" % i for i in range(20)])
+    )
+    all_values = (
+        ", ".join(["'rv_%d'" % i for i in range(20)])
+        + ", "
+        + ", ".join(["'mv_%d'" % i for i in range(20)])
+        + ", "
+        + ", ".join(["'lv_%d'" % i for i in range(20)])
+    )
+    cursor.execute(
+        "insert into _wide_concrete_leaf("
+        "object_id, status, %s, _class, _mtime"
+        ") values(?, 1, %s, 'WideConcreteLeaf', ?)" % (all_cols, all_values),
+        (object_id, mtime),
+    )
+
+    cursor.close()
+
+
+def select_by_id_wide_cti(connection, object_id):
+    """
+    Retrieves a single row by ID using the wide CTI three-table join.
+    """
+
+    cursor = connection.cursor()
+
+    root_cols = ", ".join(["_wide_root.root_col_%d" % i for i in range(20)])
+    mid_cols = ", ".join(["_wide_middle.mid_col_%d" % i for i in range(20)])
+    leaf_cols = ", ".join(["_wide_leaf.leaf_col_%d" % i for i in range(20)])
+
+    cursor.execute(
+        "select _wide_leaf.object_id, _wide_root.status, "
+        "%s, %s, %s, _wide_root._class, _wide_leaf._mtime "
+        "from _wide_leaf "
+        "inner join _wide_middle on _wide_leaf.object_id = _wide_middle.object_id "
+        "inner join _wide_root on _wide_leaf.object_id = _wide_root.object_id "
+        "where _wide_leaf.object_id = ?" % (root_cols, mid_cols, leaf_cols),
+        (object_id,),
+    )
+    row = cursor.fetchone()
+    cursor.close()
+    return row
+
+
+def select_by_id_wide_concrete(connection, object_id):
+    """
+    Retrieves a single row by ID from the wide concrete flat table.
+    """
+
+    cursor = connection.cursor()
+
+    all_cols = (
+        "object_id, status, "
+        + ", ".join(["root_col_%d" % i for i in range(20)])
+        + ", "
+        + ", ".join(["mid_col_%d" % i for i in range(20)])
+        + ", "
+        + ", ".join(["leaf_col_%d" % i for i in range(20)])
+        + ", _class, _mtime"
+    )
+
+    cursor.execute(
+        "select %s from _wide_concrete_leaf where object_id = ?" % all_cols,
+        (object_id,),
+    )
+    row = cursor.fetchone()
+    cursor.close()
+    return row
+
+
 def count_cti(connection):
     """
     Counts all employees using the CTI join.
@@ -481,9 +676,74 @@ def run_benchmarks(iterations=None):
         concrete_ms, _ = benchmark("bulk_delete", bulk_delete_concrete)
         results.append(("Bulk DELETE (%d rows)" % iterations, cti_ms, concrete_ms))
 
-        # closes the connections
+        # closes the narrow benchmark connections
         cti_conn.close()
         concrete_conn.close()
+
+        # adds a separator for the wide hierarchy benchmarks
+        results.append(None)
+
+        # creates the temporary database files for the wide
+        # hierarchy benchmarks (20 columns per level, 60 total)
+        wide_cti_fd, wide_cti_path = tempfile.mkstemp(suffix=".db")
+        wide_concrete_fd, wide_concrete_path = tempfile.mkstemp(suffix=".db")
+        os.close(wide_cti_fd)
+        os.close(wide_concrete_fd)
+
+        wide_cti_conn = sqlite3.connect(wide_cti_path)
+        wide_concrete_conn = sqlite3.connect(wide_concrete_path)
+
+        # benchmarks the wide schema creation
+        cti_ms, _ = benchmark(
+            "wide_create_schema", create_wide_cti_schema, wide_cti_conn
+        )
+        concrete_ms, _ = benchmark(
+            "wide_create_schema", create_wide_concrete_schema, wide_concrete_conn
+        )
+        results.append(("Wide Schema Creation (60 cols)", cti_ms, concrete_ms))
+
+        # benchmarks the wide bulk insert
+        def wide_bulk_insert_cti():
+            for i in range(1, iterations + 1):
+                insert_wide_cti(wide_cti_conn, i)
+            wide_cti_conn.commit()
+
+        def wide_bulk_insert_concrete():
+            for i in range(1, iterations + 1):
+                insert_wide_concrete(wide_concrete_conn, i)
+            wide_concrete_conn.commit()
+
+        cti_ms, _ = benchmark("wide_bulk_insert", wide_bulk_insert_cti)
+        concrete_ms, _ = benchmark("wide_bulk_insert", wide_bulk_insert_concrete)
+        results.append(
+            ("Wide INSERT (%d rows, 60 cols)" % iterations, cti_ms, concrete_ms)
+        )
+
+        # benchmarks the wide select by ID
+        target_id = iterations // 2
+
+        def wide_repeat_select_cti():
+            for _i in range(iterations):
+                select_by_id_wide_cti(wide_cti_conn, target_id)
+
+        def wide_repeat_select_concrete():
+            for _i in range(iterations):
+                select_by_id_wide_concrete(wide_concrete_conn, target_id)
+
+        cti_ms, _ = benchmark("wide_select_by_id", wide_repeat_select_cti)
+        concrete_ms, _ = benchmark("wide_select_by_id", wide_repeat_select_concrete)
+        results.append(
+            ("Wide SELECT by ID (%d, 60 cols)" % iterations, cti_ms, concrete_ms)
+        )
+
+        # closes the wide benchmark connections
+        wide_cti_conn.close()
+        wide_concrete_conn.close()
+
+        if os.path.exists(wide_cti_path):
+            os.remove(wide_cti_path)
+        if os.path.exists(wide_concrete_path):
+            os.remove(wide_concrete_path)
 
     finally:
         # removes the temporary database files
@@ -522,7 +782,14 @@ def print_report(results, iterations=None):
     )
     print("  " + "-" * 73)
 
-    for operation, cti_ms, concrete_ms in results:
+    for entry in results:
+        # handles the section separator between narrow and
+        # wide hierarchy benchmarks
+        if entry == None:
+            print("  " + "-" * 73)
+            continue
+
+        operation, cti_ms, concrete_ms = entry
         if cti_ms > 0:
             speedup = cti_ms / concrete_ms if concrete_ms > 0 else float("inf")
         else:
