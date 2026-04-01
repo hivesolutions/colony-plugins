@@ -147,6 +147,7 @@ class PgSQLEngine(object):
         isolation = colony.conf("DB_ISOLATION", isolation)
         show_sql = colony.conf("SHOW_SQL", False, cast=bool)
         show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast=bool)
+        debug_sql = colony.conf("DEBUG_SQL", True, cast=bool)
         connection._connection = PgSQLConnection(
             host=host,
             user=user,
@@ -161,6 +162,7 @@ class PgSQLEngine(object):
         connection._isolation = isolation
         connection._show_sql = show_sql
         connection._show_slow_sql = show_slow_sql
+        connection._debug_sql = debug_sql
         connection.open()
 
     def disconnect(self, connection):
@@ -360,7 +362,8 @@ class PgSQLEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the PgSQL engine (for debugging purposes)
-            self.pgsql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
+            if connection._debug_sql:
+                self.pgsql_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
 
             # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly
