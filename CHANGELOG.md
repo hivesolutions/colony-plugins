@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Model logging methods (`debug`, `info`, `warning`, `error`, `critical`) and their class-level counterparts now accept `*args` and `**kwargs` for lazy evaluation support
 * Service polling in `service_utils` now auto-selects the best available mechanism: `epoll` on Linux, `kqueue` on BSD/macOS, `poll` on other Unix systems, and `select` as fallback
 * Implemented `EpollPolling` using `select.epoll()`, `KqueuePolling` using `select.kqueue()`, and `Epoll2Polling` using `select.poll()` as alternatives to `SelectPolling`, removing the 1024 file descriptor limit on supported platforms
 * Client I/O polling in `client_utils` now uses the same platform-aware strategy via a new `poll_socket()` function, replacing direct `select.select()` calls in `_receive()` and `_send()` and removing the 1024 fd limit for epoll/kqueue/poll backends while preserving the guard for the `select` fallback
