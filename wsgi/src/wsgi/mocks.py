@@ -36,13 +36,13 @@ class MockPlugin(object):
         self.manager = MockManager()
         self.rest_plugin = MockRESTPlugin()
 
-    def debug(self, message):
+    def debug(self, message, *args, **kwargs):
         pass
 
-    def info(self, message):
+    def info(self, message, *args, **kwargs):
         pass
 
-    def warning(self, message):
+    def warning(self, message, *args, **kwargs):
         pass
 
 

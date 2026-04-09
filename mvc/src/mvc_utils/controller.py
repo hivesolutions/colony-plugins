@@ -6159,21 +6159,21 @@ def get_process_method(controller, request, process_method_name):
 # creates the various methods that are going to be used for
 # the logging capabilities, this methods are "just" pipelined
 # calls the to the plugin instance associated with the controller
-def debug(self, message):
-    self.plugin.debug(message)
+def debug(self, message, *args, **kwargs):
+    self.plugin.debug(message, *args, **kwargs)
 
 
-def info(self, message):
-    self.plugin.info(message)
+def info(self, message, *args, **kwargs):
+    self.plugin.info(message, *args, **kwargs)
 
 
-def warning(self, message):
-    self.plugin.warning(message)
+def warning(self, message, *args, **kwargs):
+    self.plugin.warning(message, *args, **kwargs)
 
 
-def error(self, message):
-    self.plugin.error(message)
+def error(self, message, *args, **kwargs):
+    self.plugin.error(message, *args, **kwargs)
 
 
-def critical(self, message):
-    self.plugin.critical(message)
+def critical(self, message, *args, **kwargs):
+    self.plugin.critical(message, *args, **kwargs)

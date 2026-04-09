@@ -33,13 +33,13 @@ class MockPlugin(object):
     def __init__(self):
         self.manager = None
 
-    def debug(self, message):
+    def debug(self, message, *args, **kwargs):
         pass
 
-    def info(self, message):
+    def info(self, message, *args, **kwargs):
         pass
 
-    def warning(self, message):
+    def warning(self, message, *args, **kwargs):
         pass
 
 

@@ -38,10 +38,10 @@ class MockPlugin(object):
         self.resources_manager_plugin = MockResourcesManagerPlugin()
         self.manager = MockManager()
 
-    def debug(self, message):
+    def debug(self, message, *args, **kwargs):
         pass
 
-    def info(self, message):
+    def info(self, message, *args, **kwargs):
         pass
 
 

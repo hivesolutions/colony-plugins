@@ -2463,44 +2463,44 @@ def _get_complete_name(name, namespace_name=None):
 # creates the various methods that are going to be used for
 # the logging capabilities, this methods are "just" pipelined
 # calls the to the plugin instance associated with the model
-def debug(self, message):
-    self._system_instance.plugin.debug(message)
+def debug(self, message, *args, **kwargs):
+    self._system_instance.plugin.debug(message, *args, **kwargs)
 
 
-def info(self, message):
-    self._system_instance.plugin.info(message)
+def info(self, message, *args, **kwargs):
+    self._system_instance.plugin.info(message, *args, **kwargs)
 
 
-def warning(self, message):
-    self._system_instance.plugin.warning(message)
+def warning(self, message, *args, **kwargs):
+    self._system_instance.plugin.warning(message, *args, **kwargs)
 
 
-def error(self, message):
-    self._system_instance.plugin.error(message)
+def error(self, message, *args, **kwargs):
+    self._system_instance.plugin.error(message, *args, **kwargs)
 
 
-def critical(self, message):
-    self._system_instance.plugin.critical(message)
+def critical(self, message, *args, **kwargs):
+    self._system_instance.plugin.critical(message, *args, **kwargs)
 
 
-def _class_debug(cls, message):
-    cls._system_instance.plugin.debug(message)
+def _class_debug(cls, message, *args, **kwargs):
+    cls._system_instance.plugin.debug(message, *args, **kwargs)
 
 
-def _class_info(cls, message):
-    cls._system_instance.plugin.info(message)
+def _class_info(cls, message, *args, **kwargs):
+    cls._system_instance.plugin.info(message, *args, **kwargs)
 
 
-def _class_warning(cls, message):
-    cls._system_instance.plugin.warning(message)
+def _class_warning(cls, message, *args, **kwargs):
+    cls._system_instance.plugin.warning(message, *args, **kwargs)
 
 
-def _class_error(cls, message):
-    cls._system_instance.plugin.error(message)
+def _class_error(cls, message, *args, **kwargs):
+    cls._system_instance.plugin.error(message, *args, **kwargs)
 
 
-def _class_critical(cls, message):
-    cls._system_instance.plugin.critical(message)
+def _class_critical(cls, message, *args, **kwargs):
+    cls._system_instance.plugin.critical(message, *args, **kwargs)
 
 
 class ModelProxy(list):
@@ -2515,7 +2515,7 @@ class ModelProxy(list):
 
     class_reference = None
     """ The reference to the model classes to be used
-    int he current model """
+    in the current model """
 
     count = 0
     """ The number of models to be created and represented
