@@ -419,7 +419,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
 
     def test_one_to_many(self):
         """
-        Tests the on-to-many relations saving and retrieval
+        Tests the one-to-many relations saving and retrieval
         of values.
 
         == Objectives ==
@@ -429,7 +429,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         one to many relations.
         * Tests that both sides of the (one-to-many) relation
         can be used for saving of the relation.
-        * Test that parent (on-to-many) relations are correctly
+        * Test that parent (one-to-many) relations are correctly
         persisted and retrieved.
 
         == Steps ==
