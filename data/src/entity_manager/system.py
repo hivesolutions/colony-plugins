@@ -44,6 +44,9 @@ from . import mocks
 from . import analysis
 from . import exceptions
 from . import structures
+from . import mapping_strategies
+from . import query_builder
+from . import inheritance_strategies
 
 DEFAULT_ENCODING = "utf-8"
 """ The default encoding to be used during the encoding
@@ -378,6 +381,11 @@ class EntityManager(object):
         self.rollback_callbacks = {}
         self._exists = {}
 
+        # Initialize mapping strategy from options or use default
+        self.mapping_strategy = options.get(
+            "mapping_strategy", mapping_strategies.DEFAULT_STRATEGY
+        )
+
         self.apply_types()
 
     def apply_types(self):
@@ -429,6 +437,28 @@ class EntityManager(object):
         """
 
         return self.entities_map.get(entity_name, None)
+
+    def query(self, entity_class):
+        """
+        Creates a new query builder for the given entity class.
+
+        This provides a fluent interface for building queries instead
+        of using nested dictionaries.
+
+        Usage:
+            entity_manager.query(Person)
+                .filter(age__gt=18)
+                .order_by("name")
+                .limit(10)
+                .all()
+
+        :type entity_class: Class
+        :param entity_class: The entity class to query.
+        :rtype: QueryBuilder
+        :return: A new query builder instance.
+        """
+
+        return query_builder.QueryBuilder(self, entity_class)
 
     def get_entity_class(self):
         """
@@ -1953,6 +1983,15 @@ class EntityManager(object):
         # in case the provided entity class is not ready, missing
         # values or not ready for persistence, must return immediately
         if not entity_class.is_ready():
+            return
+
+        # Check inheritance strategy to see if table should be created
+        # This allows strategies like SingleTableStrategy to only create
+        # a table for the root class in the hierarchy
+        strategy = inheritance_strategies.get_inheritance_strategy(entity_class)
+        if not strategy.should_create_table(entity_class):
+            # Strategy says not to create a table for this class
+            # (e.g., in single-table inheritance, only root creates table)
             return
 
         # generates the create definition query, general
@@ -4527,6 +4566,23 @@ class EntityManager(object):
             query_buffer.write(table_name + "._mtime")
             field_names.append("_mtime")
 
+        # retrieves the inheritance strategy for the entity class
+        # to include discriminator column for single table inheritance
+        strategy = inheritance_strategies.get_inheritance_strategy(entity_class)
+        discriminator_column = strategy.get_discriminator_column(entity_class)
+
+        # for single table inheritance, include the discriminator column
+        # in the select statement so we can identify the entity type
+        if discriminator_column and discriminator_column not in ("_class", "_mtime"):
+            # writes the comma to the query buffer only in case the
+            # is first flag is not set
+            is_first = not is_first and query_buffer.write(", ")
+
+            # writes the discriminator column reference to the select query
+            # and adds it to the list of fields
+            query_buffer.write(table_name + "." + discriminator_column)
+            field_names.append(discriminator_column)
+
         # returns the list of select fields, this list is normalized
         # and so it's easy to understand for a parser perspective
         return field_names
@@ -4565,6 +4621,10 @@ class EntityManager(object):
         has_filters = "filters" in options
         has_eager = "eager" in options
 
+        # retrieves the inheritance strategy for the entity class
+        # to determine if parent tables need to be joined
+        strategy = inheritance_strategies.get_inheritance_strategy(entity_class)
+
         # writes the "from" table reference part
         # of the select query
         query_buffer.write(" from ")
@@ -4580,29 +4640,33 @@ class EntityManager(object):
             # on parent tables and on relation tables
             return
 
-        # iterates over all the parents to provide
-        # the necessary (inner) join of them into
-        # the current query context, this is a main step
-        # in achieving inheritance compliance in the query
-        for parent in all_parents:
-            # in case the parent class is abstract no need to join
-            # it into the current query
-            if parent.is_abstract():
-                continue
+        # only join parent tables if the inheritance strategy requires it
+        # (e.g., joined table inheritance needs joins, but single table
+        # and table per class do not)
+        if strategy.requires_joins(entity_class):
+            # iterates over all the parents to provide
+            # the necessary (inner) join of them into
+            # the current query context, this is a main step
+            # in achieving inheritance compliance in the query
+            for parent in all_parents:
+                # in case the parent class is abstract no need to join
+                # it into the current query
+                if parent.is_abstract():
+                    continue
 
-            # retrieves the parent name, assumes the
-            # associated table has the same value
-            parent_name = parent.get_name()
+                # retrieves the parent name, assumes the
+                # associated table has the same value
+                parent_name = parent.get_name()
 
-            # writes the table inheritance inner join
-            # part of the query, ensuring data coherence
-            # in the complete inheritance chain
-            query_buffer.write(" inner join ")
-            query_buffer.write(parent_name)
-            query_buffer.write(" on ")
-            query_buffer.write(table_name + "." + table_id)
-            query_buffer.write(" = ")
-            query_buffer.write(parent_name + "." + table_id)
+                # writes the table inheritance inner join
+                # part of the query, ensuring data coherence
+                # in the complete inheritance chain
+                query_buffer.write(" inner join ")
+                query_buffer.write(parent_name)
+                query_buffer.write(" on ")
+                query_buffer.write(table_name + "." + table_id)
+                query_buffer.write(" = ")
+                query_buffer.write(parent_name + "." + table_id)
 
         def join_tables(entity_class, options, prefix=""):
             # retrieves the complete map of relations (ordered
@@ -4743,34 +4807,42 @@ class EntityManager(object):
                         query_buffer.write(" = ")
                         query_buffer.write(fqn + "." + reverse)
 
-                    # retrieves all the parent class for the target
-                    # relation class, these are going to be used for
-                    # joining the relation with it's parents (parent
-                    # joining process)
-                    target_all_parents = target_class.get_all_parents()
+                    # retrieves the inheritance strategy for the target class
+                    # to determine if parent tables need to be joined
+                    target_strategy = inheritance_strategies.get_inheritance_strategy(
+                        target_class
+                    )
 
-                    # iterates over all the (target) parents to create the
-                    # proper joins to retrieve it's values
-                    for parent in target_all_parents:
-                        # in case the parent class is abstract no need to join
-                        # it into the current query
-                        if parent.is_abstract():
-                            continue
+                    # only join parent tables if the inheritance strategy requires it
+                    if target_strategy.requires_joins(target_class):
+                        # retrieves all the parent class for the target
+                        # relation class, these are going to be used for
+                        # joining the relation with it's parents (parent
+                        # joining process)
+                        target_all_parents = target_class.get_all_parents()
 
-                        # retrieves the name of the parent table
-                        # and uses it to construct the (fqn) name of
-                        # the parent target table
-                        parent_name = parent.get_name()
-                        fqn_parent = fqn + "___" + parent_name
+                        # iterates over all the (target) parents to create the
+                        # proper joins to retrieve it's values
+                        for parent in target_all_parents:
+                            # in case the parent class is abstract no need to join
+                            # it into the current query
+                            if parent.is_abstract():
+                                continue
 
-                        query_buffer.write(" left join ")
-                        query_buffer.write(parent_name)
-                        query_buffer.write(" ")
-                        query_buffer.write(fqn_parent)
-                        query_buffer.write(" on ")
-                        query_buffer.write(fqn + "." + target_table_id)
-                        query_buffer.write(" = ")
-                        query_buffer.write(fqn_parent + "." + target_table_id)
+                            # retrieves the name of the parent table
+                            # and uses it to construct the (fqn) name of
+                            # the parent target table
+                            parent_name = parent.get_name()
+                            fqn_parent = fqn + "___" + parent_name
+
+                            query_buffer.write(" left join ")
+                            query_buffer.write(parent_name)
+                            query_buffer.write(" ")
+                            query_buffer.write(fqn_parent)
+                            query_buffer.write(" on ")
+                            query_buffer.write(fqn + "." + target_table_id)
+                            query_buffer.write(" = ")
+                            query_buffer.write(fqn_parent + "." + target_table_id)
 
                     # retrieves and normalizes "new" options for the current
                     # relation and uses them in conjunction with the new prefix
@@ -4837,6 +4909,36 @@ class EntityManager(object):
         for filter in filters:
             is_first = self._process_filter(
                 entity_class, None, filter, query_buffer, is_first
+            )
+
+        # retrieves the inheritance strategy for the entity class
+        # to add discriminator filtering for single table inheritance
+        strategy = inheritance_strategies.get_inheritance_strategy(entity_class)
+
+        # for single table inheritance, add a filter for the discriminator column
+        # to ensure we only get rows for this specific class type
+        discriminator_column = strategy.get_discriminator_column(entity_class)
+        if discriminator_column:
+            discriminator_value = strategy.get_discriminator_value(entity_class)
+
+            # writes the where clause or the "and" conjunction
+            # in case the where clause is already set
+            if is_first:
+                query_buffer.write(" where ")
+                is_first = False
+            else:
+                query_buffer.write(" and ")
+
+            # writes the discriminator filter condition
+            table_name = entity_class.get_name()
+            query_buffer.write(table_name)
+            query_buffer.write(".")
+            query_buffer.write(discriminator_column)
+            query_buffer.write(" = ")
+            query_buffer.write(
+                self.engine._escape_slash_string(
+                    self.engine._quote_identifier(discriminator_value)
+                )
             )
 
     def _order_query_f(self, entity_class, options, query_buffer):
