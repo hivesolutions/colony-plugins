@@ -114,6 +114,7 @@ class SQLiteEngine(object):
         synchronous = parameters.get("synchronous", 2)
         show_sql = colony.conf("SHOW_SQL", False, cast=bool)
         show_slow_sql = colony.conf("SHOW_SLOW_SQL", True, cast=bool)
+        debug_sql = colony.conf("DEBUG_SQL", True, cast=bool)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
         connection._connection = SQLiteConnection(
@@ -121,6 +122,7 @@ class SQLiteEngine(object):
         )
         connection._show_sql = show_sql
         connection._show_slow_sql = show_slow_sql
+        connection._debug_sql = debug_sql
         connection.open()
 
     def disconnect(self, connection):
@@ -262,7 +264,10 @@ class SQLiteEngine(object):
         try:
             # prints a debug message about the query that is going to be
             # executed under the SQLite engine (for debugging purposes)
-            self.sqlite_system.debug("[%s] [%s] %s" % (ENGINE_NAME, database, query))
+            if connection._debug_sql:
+                self.sqlite_system.debug(
+                    "[%s] [%s] %s" % (ENGINE_NAME, database, query)
+                )
 
             # in case the current connections requests that the SQL string
             # should be displayed it's printed to the logger properly

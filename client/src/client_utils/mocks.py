@@ -33,7 +33,7 @@ class MockPlugin(object):
     def __init__(self):
         self.manager = None
 
-    def debug(self, message):
+    def debug(self, message, *args, **kwargs):
         pass
 
 

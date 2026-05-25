@@ -2515,7 +2515,7 @@ class ModelProxy(list):
 
     class_reference = None
     """ The reference to the model classes to be used
-    int he current model """
+    in the current model """
 
     count = 0
     """ The number of models to be created and represented
