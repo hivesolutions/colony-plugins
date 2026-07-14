@@ -289,7 +289,7 @@ def _class_get_controller_g(cls, request):
     """
     Retrieves the controller instance that is currently set
     in the current environment (request) falling back
-    to an invalid (unset)  value in case no controller was
+    to an invalid (unset) value in case no controller was
     found for the current environment.
 
     This is the global method equivalent to the instance
