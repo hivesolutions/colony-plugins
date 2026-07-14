@@ -3015,6 +3015,7 @@ def process_template_file(self, request, template_file, variable_encoding=None):
         user_acl = self.get_session_attribute(request, DEFAULT_SESSION_ATTRIBUTE) or {}
         permissions = self.process_acl_values((user_acl,), name)
         return permissions <= value
+
     template_file.assign("acl", acl)
 
     # processes the template file, returning the resulting
