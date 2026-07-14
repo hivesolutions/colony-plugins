@@ -48,7 +48,9 @@ class MVCUtilsTest(colony.Test):
             MVCUtilsBaseTestCase,
             RawModelTestCase,
             ValidatedDecoratorTestCase,
+            ValidateACLSessionTestCase,
             TemplateFileACLTestCase,
+            TemplateProcessMethodsTestCase,
             ExceptionsTestCase,
         )
 
@@ -329,6 +331,91 @@ class ValidatedDecoratorTestCase(colony.ColonyTestCase):
         self.assertEqual(my_action.__name__, "my_action")
 
 
+class ValidateACLSessionTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Validate ACL Session test case"
+
+    def test_validate_acl_session(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "entity.action"
+        )
+        self.assertEqual(result, True)
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "entity.other"
+        )
+        self.assertEqual(result, False)
+
+    def test_validate_acl_session_value(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 20})
+        request = mocks.MockRequest()
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "entity.action"
+        )
+        self.assertEqual(result, False)
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "entity.action", value=20
+        )
+        self.assertEqual(result, True)
+
+    def test_validate_acl_session_wildcard(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"*": 10})
+        request = mocks.MockRequest()
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "entity.action"
+        )
+        self.assertEqual(result, True)
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "other.action"
+        )
+        self.assertEqual(result, True)
+
+    def test_validate_acl_session_key_list(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+
+        result = controller.validate_acl_session(
+            controller_mock, request, ["entity.other", "entity.action"]
+        )
+        self.assertEqual(result, True)
+
+        result = controller.validate_acl_session(
+            controller_mock, request, ["entity.other", "entity.extra"]
+        )
+        self.assertEqual(result, False)
+
+    def test_validate_acl_session_session_attribute(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+
+        controller.validate_acl_session(controller_mock, request, "entity.action")
+        self.assertEqual(controller_mock._session_attribute_names, ["user_acl"])
+
+        controller.validate_acl_session(
+            controller_mock, request, "entity.action", session_attribute="admin_acl"
+        )
+        self.assertEqual(
+            controller_mock._session_attribute_names, ["user_acl", "admin_acl"]
+        )
+
+    def test_validate_acl_session_no_session(self):
+        controller_mock = mocks.MockTemplateController(user_acl=None)
+        request = mocks.MockRequest()
+
+        result = controller.validate_acl_session(
+            controller_mock, request, "entity.action"
+        )
+        self.assertEqual(result, False)
+
+
 class TemplateFileACLTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
@@ -391,6 +478,169 @@ class TemplateFileACLTestCase(colony.ColonyTestCase):
 
         acl = template_file.assigns["acl"]
         self.assertEqual(acl("entity.action"), False)
+
+
+class TemplateProcessMethodsTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Template Process Methods test case"
+
+    def test_process_ifacl(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.action"}, children=[child_node]
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, True)
+
+    def test_process_ifacl_denied(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.other"}, children=[child_node]
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, False)
+
+    def test_process_ifacl_value(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 20})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.action"}, children=[child_node]
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, False)
+
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.action", "value": 20},
+            children=[child_node],
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, True)
+
+    def test_process_ifacl_session_attribute(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        node = mocks.MockTemplateNode(
+            attributes={
+                "permission": "entity.action",
+                "session_attribute": "admin_acl",
+            }
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(controller_mock._session_attribute_names, ["admin_acl"])
+
+    def test_process_ifacl_no_visit_childs(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor(visit_childs=False)
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.action"}, children=[child_node]
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, False)
+
+    def test_process_ifaclp(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.action"}, children=[child_node]
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifaclp"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, True)
+
+    def test_process_ifaclp_denied(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.other"}, children=[child_node]
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifaclp"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, False)
+
+    def test_process_ifnotacl(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.other", "value": 10},
+            children=[child_node],
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifnotacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, True)
+
+    def test_process_ifnotacl_granted(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        visitor = mocks.MockTemplateVisitor()
+        child_node = mocks.MockTemplateNode()
+        node = mocks.MockTemplateNode(
+            attributes={"permission": "entity.action", "value": 10},
+            children=[child_node],
+        )
+
+        process_method = controller.get_process_method(
+            controller_mock, request, "process_ifnotacl"
+        )
+        process_method(visitor, node)
+
+        self.assertEqual(child_node.accepted, False)
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

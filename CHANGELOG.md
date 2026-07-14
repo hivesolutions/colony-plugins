@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Test case for certificate PEM loading in PKCS1 module
 * Regression tests for session GC and translate_result fixes in REST plugin
 * New `DEBUG_SQL` configuration option (default `True`) to control debug-level SQL query logging in MySQL, SQLite, and PostgreSQL engine plugins
+* Tests covering session ACL validation and the ACL template predicates in the MVC utilities
 
 ### Changed
 

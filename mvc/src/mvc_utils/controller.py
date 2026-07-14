@@ -5977,19 +5977,14 @@ def get_process_method(controller, request, process_method_name):
         else:
             attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
-        # retrieves the user ACL value
-        user_acl = (
-            controller.get_session_attribute(request, attribute_session_attribute_value)
-            or {}
+        # sets the initial accept node value by validating the
+        # session ACL against the permission key and value
+        accept_node = controller.validate_acl_session(
+            request,
+            attribute_permission_value,
+            value=attribute_value_value,
+            session_attribute=attribute_session_attribute_value,
         )
-
-        # process the ACL values, retrieving the permissions value
-        permissions = controller.process_acl_values(
-            (user_acl,), attribute_permission_value
-        )
-
-        # sets the initial accept node value
-        accept_node = permissions <= attribute_value_value
 
         # in case the visit child is set
         if self.visit_childs:
@@ -6042,19 +6037,14 @@ def get_process_method(controller, request, process_method_name):
         else:
             attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
-        # retrieves the user ACL value
-        user_acl = (
-            controller.get_session_attribute(request, attribute_session_attribute_value)
-            or {}
+        # sets the initial accept node value by validating the
+        # session ACL against the permission key and value
+        accept_node = controller.validate_acl_session(
+            request,
+            attribute_permission_value,
+            value=attribute_value_value,
+            session_attribute=attribute_session_attribute_value,
         )
-
-        # process the ACL values, retrieving the permissions value
-        permissions = controller.process_acl_values(
-            (user_acl,), attribute_permission_value
-        )
-
-        # sets the initial accept node value
-        accept_node = permissions <= attribute_value_value
 
         # in case the visit child is set
         if self.visit_childs:
@@ -6111,19 +6101,14 @@ def get_process_method(controller, request, process_method_name):
         else:
             attribute_session_attribute_value = DEFAULT_SESSION_ATTRIBUTE
 
-        # retrieves the user ACL value
-        user_acl = (
-            controller.get_session_attribute(request, attribute_session_attribute_value)
-            or {}
+        # sets the initial accept node value by negating the validation
+        # of the session ACL against the permission key and value
+        accept_node = not controller.validate_acl_session(
+            request,
+            attribute_permission_value,
+            value=attribute_value_value,
+            session_attribute=attribute_session_attribute_value,
         )
-
-        # process the ACL values, retrieving the permissions value
-        permissions = controller.process_acl_values(
-            (user_acl,), attribute_permission_value
-        )
-
-        # sets the initial accept node value
-        accept_node = permissions > attribute_value_value
 
         # in case the visit child is set
         if self.visit_childs:

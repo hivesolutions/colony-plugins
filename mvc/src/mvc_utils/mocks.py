@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+from . import controller
+
 
 class MockPlugin(object):
     def __init__(self):
@@ -108,14 +110,56 @@ class MockTemplateFile(object):
 class MockTemplateController(object):
     def __init__(self, user_acl=None):
         self._user_acl = user_acl
+        self._session_attribute_names = []
 
     def get_process_method(self, request, method_name):
         return None
 
     def get_session_attribute(self, request, session_attribute_name):
+        self._session_attribute_names.append(session_attribute_name)
         return self._user_acl
 
-    def process_acl_values(self, acl_list, key):
-        from . import controller
+    def process_acl_values(
+        self, acl_list, key, wildcard_value="*", maximum_value=10000
+    ):
+        return controller.process_acl_values(
+            self,
+            acl_list,
+            key,
+            wildcard_value=wildcard_value,
+            maximum_value=maximum_value,
+        )
 
-        return controller.process_acl_values(self, acl_list, key)
+    def validate_acl_session(
+        self, request, key, value=10, session_attribute="user_acl"
+    ):
+        return controller.validate_acl_session(
+            self, request, key, value=value, session_attribute=session_attribute
+        )
+
+
+class MockTemplateNode(object):
+    def __init__(self, attributes=None, children=None):
+        self.attributes = attributes or {}
+        self.children = children or []
+        self.accepted = False
+
+    def get_attributes(self):
+        return self.attributes
+
+    def accept(self, visitor):
+        self.accepted = True
+
+
+class MockTemplateVisitor(object):
+    def __init__(self, visit_childs=True):
+        self.visit_childs = visit_childs
+
+    def get_value(self, value):
+        return value
+
+    def get_literal_value(self, value):
+        return value
+
+    def _validate_accept_node(self, node, accept_node):
+        return accept_node
