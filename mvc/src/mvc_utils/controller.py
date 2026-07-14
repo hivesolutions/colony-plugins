@@ -793,21 +793,20 @@ def save_entity_relations(
             # adds the relation entity to the list
             # in case the entity was created and the
             # relation in meant to be associated
-            relation_entity and associate_relation and relation_entities.append(
-                relation_entity
-            )
+            if relation_entity and associate_relation:
+                relation_entities.append(relation_entity)
 
         # adds an error to the relation name in case
         # the validation in one of its entities failed
-        relation_validation_failed and entity.add_error(
-            relation_name, "relation validation failed"
-        )
+        if relation_validation_failed:
+            entity.add_error(relation_name, "relation validation failed")
 
         # in case it is a to one relation
         if relation_type == 1:
             # sets the relation entity in the entity, only
             # in case the associate relation flag is set
-            associate_relation and setattr(entity, relation_name, relation_entity)
+            if associate_relation:
+                setattr(entity, relation_name, relation_entity)
         # in case it is a to many relation
         else:
             # sets the relation entities in the entity
@@ -3012,9 +3011,7 @@ def process_template_file(self, request, template_file, variable_encoding=None):
     # assigns it to the template file so that it may be called using
     # the function call syntax (eg: acl("entity.action"))
     def acl(name, value=DEFAULT_VALUE_ATTRIBUTE):
-        user_acl = self.get_session_attribute(request, DEFAULT_SESSION_ATTRIBUTE) or {}
-        permissions = self.process_acl_values((user_acl,), name)
-        return permissions <= value
+        return self.validate_acl_session(request, name, value=value)
 
     template_file.assign("acl", acl)
 
@@ -3123,12 +3120,14 @@ def retrieve_template_file(
     # retrieves the global bundle for the locale and adds it to the
     # template file in case it's a valid bundle (successful retrieval)
     global_bundle = self._get_bundle(locale)
-    global_bundle and template_file.add_bundle(global_bundle)
+    if global_bundle:
+        template_file.add_bundle(global_bundle)
 
     # tries to gather the countries locale bundle and in case it's found
     # adds it to the current template file (default operation)
     countries_bundle = self._get_bundle(locale, bundle_name="countries")
-    countries_bundle and template_file.add_bundle(countries_bundle)
+    if countries_bundle:
+        template_file.add_bundle(countries_bundle)
 
     # iterates over the complete set of extra arguments provided in the
     # proper dictionary and assigns each of these values to the proper
@@ -3556,7 +3555,8 @@ def get_session_attribute(
 
     # in case the unset the session attribute flag is set
     # the session attribute is unset
-    unset_session_attribute and request_session.unset_attribute(session_attribute_name)
+    if unset_session_attribute:
+        request_session.unset_attribute(session_attribute_name)
 
     # returns the session attribute to the caller method as expected
     # by the current infra-structure
@@ -4295,7 +4295,8 @@ def set_resources_path(self, resources_path, update_resources=True, parameters={
 
     # in case the update resources flag is set (the updating
     # of the resources path uses the parameters)
-    update_resources and self.update_resources_path(parameters)
+    if update_resources:
+        self.update_resources_path(parameters)
 
 
 def get_extras_path(self):
@@ -6005,7 +6006,8 @@ def get_process_method(controller, request, process_method_name):
 
                 # in case the accept node flag is set
                 # accepts the node child node
-                accept_node and node.accept(self)
+                if accept_node:
+                    node.accept(self)
 
     def __process_ifaclp(self, node):
         # retrieves the attributes map
@@ -6069,7 +6071,8 @@ def get_process_method(controller, request, process_method_name):
 
                 # in case the accept node flag is set
                 # accepts the node child node
-                accept_node and node.accept(self)
+                if accept_node:
+                    node.accept(self)
 
     def __process_ifnotacl(self, node):
         # retrieves the attributes map
@@ -6137,7 +6140,8 @@ def get_process_method(controller, request, process_method_name):
 
                 # in case the accept node flag is set
                 # accepts the node child node
-                accept_node and node.accept(self)
+                if accept_node:
+                    node.accept(self)
 
     def __process_request_time(self, node):
         # retrieves the current time to be able to calculate
