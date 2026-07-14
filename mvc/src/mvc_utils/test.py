@@ -33,6 +33,7 @@ import colony
 from . import utils
 from . import mocks
 from . import system
+from . import controller
 from . import exceptions
 
 
@@ -47,6 +48,7 @@ class MVCUtilsTest(colony.Test):
             MVCUtilsBaseTestCase,
             RawModelTestCase,
             ValidatedDecoratorTestCase,
+            TemplateFileACLTestCase,
             ExceptionsTestCase,
         )
 
@@ -325,6 +327,70 @@ class ValidatedDecoratorTestCase(colony.ColonyTestCase):
             return "success"
 
         self.assertEqual(my_action.__name__, "my_action")
+
+
+class TemplateFileACLTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Template File ACL test case"
+
+    def test_process_template_file(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        request = mocks.MockRequest()
+        template_file = mocks.MockTemplateFile()
+
+        result = controller.process_template_file(
+            controller_mock, request, template_file
+        )
+
+        self.assertEqual(result, "processed")
+        method_names = [name for name, _method in template_file.process_methods_list]
+        self.assertTrue("process_ifacl" in method_names)
+        self.assertTrue("process_ifnotacl" in method_names)
+        self.assertTrue("acl" in template_file.assigns)
+
+    def test_acl_function(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 10})
+        template_file = mocks.MockTemplateFile()
+        controller.process_template_file(
+            controller_mock, mocks.MockRequest(), template_file
+        )
+
+        acl = template_file.assigns["acl"]
+        self.assertEqual(acl("entity.action"), True)
+        self.assertEqual(acl("entity.other"), False)
+
+    def test_acl_function_wildcard(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"*": 10})
+        template_file = mocks.MockTemplateFile()
+        controller.process_template_file(
+            controller_mock, mocks.MockRequest(), template_file
+        )
+
+        acl = template_file.assigns["acl"]
+        self.assertEqual(acl("entity.action"), True)
+        self.assertEqual(acl("other.action"), True)
+
+    def test_acl_function_value(self):
+        controller_mock = mocks.MockTemplateController(user_acl={"entity.action": 20})
+        template_file = mocks.MockTemplateFile()
+        controller.process_template_file(
+            controller_mock, mocks.MockRequest(), template_file
+        )
+
+        acl = template_file.assigns["acl"]
+        self.assertEqual(acl("entity.action"), False)
+        self.assertEqual(acl("entity.action", 20), True)
+
+    def test_acl_function_no_session(self):
+        controller_mock = mocks.MockTemplateController(user_acl=None)
+        template_file = mocks.MockTemplateFile()
+        controller.process_template_file(
+            controller_mock, mocks.MockRequest(), template_file
+        )
+
+        acl = template_file.assigns["acl"]
+        self.assertEqual(acl("entity.action"), False)
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

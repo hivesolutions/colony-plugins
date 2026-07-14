@@ -84,3 +84,38 @@ class MockValidatedControllerNoHandler(object):
 
     def validate(self, request, parameters, validation_parameters):
         return self._validate_reasons
+
+
+class MockTemplateFile(object):
+    def __init__(self):
+        self.assigns = {}
+        self.process_methods_list = []
+        self.variable_encoding = None
+
+    def set_variable_encoding(self, variable_encoding):
+        self.variable_encoding = variable_encoding
+
+    def attach_process_methods(self, process_methods_list):
+        self.process_methods_list = process_methods_list
+
+    def assign(self, name, value):
+        self.assigns[name] = value
+
+    def process(self):
+        return "processed"
+
+
+class MockTemplateController(object):
+    def __init__(self, user_acl=None):
+        self._user_acl = user_acl
+
+    def get_process_method(self, request, method_name):
+        return None
+
+    def get_session_attribute(self, request, session_attribute_name):
+        return self._user_acl
+
+    def process_acl_values(self, acl_list, key):
+        from . import controller
+
+        return controller.process_acl_values(self, acl_list, key)

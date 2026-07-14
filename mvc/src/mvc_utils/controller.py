@@ -3006,6 +3006,17 @@ def process_template_file(self, request, template_file, variable_encoding=None):
     # they may be used for "extra" composite operations
     template_file.attach_process_methods(process_methods_list)
 
+    # creates the ACL verification function, closed over the current
+    # request, that verifies if the session ACL holds the permission
+    # with the provided name (equivalent to the ifacl operation) and
+    # assigns it to the template file so that it may be called using
+    # the function call syntax (eg: acl("entity.action"))
+    def acl(name, value=DEFAULT_VALUE_ATTRIBUTE):
+        user_acl = self.get_session_attribute(request, DEFAULT_SESSION_ATTRIBUTE) or {}
+        permissions = self.process_acl_values((user_acl,), name)
+        return permissions <= value
+    template_file.assign("acl", acl)
+
     # processes the template file, returning the resulting
     # contents to the caller function, the returning value
     # should be a string containing the results
