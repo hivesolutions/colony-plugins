@@ -1133,6 +1133,7 @@ class EntityManager(object):
     def destroy(self):
         self.engine.destroy()
         self._reset_exists()
+        self._reset_hilo()
 
     def begin(self):
         self.engine.begin()
@@ -3024,6 +3025,35 @@ class EntityManager(object):
 
         # store the pool state as (current_id, max_id)
         self._hilo_pools[field_name] = (low, high)
+
+        # in case a transaction is currently open the pool must be
+        # discarded once the transaction is "rollbacked" as the
+        # reservation of the range in the data source is going to
+        # be undone (would generate duplicated identifiers)
+        if self.has_transaction():
+            self.after_rollback(lambda: self._hilo_discard_pool(field_name))
+
+    def _hilo_discard_pool(self, field_name):
+        """
+        Discards the current Hi-Lo pool associated with the given
+        field name, forcing a new pool allocation from the database
+        on the next ID retrieval for the field.
+
+        This method should be used whenever the reservation of the
+        pool range in the data source is no longer considered valid
+        (eg: the transaction that allocated it was "rollbacked").
+
+        :type field_name: String
+        :param field_name: The name of the field for which the
+        pool is going to be discarded.
+        """
+
+        # acquires the lock to ensure thread-safe access to the
+        # Hi-Lo pools and then removes the pool state associated
+        # with the field name (in case it exists)
+        with self._hilo_lock:
+            if field_name in self._hilo_pools:
+                del self._hilo_pools[field_name]
 
     def _create_generator_query(self):
         # creates the list to hold the various queries
@@ -7849,6 +7879,19 @@ class EntityManager(object):
         """
 
         self._exists.clear()
+
+    def _reset_hilo(self):
+        """
+        Resets the current Hi-Lo pools state discarding any
+        previously allocated (in-memory) pool ranges.
+
+        This method should be used whenever the underlying data
+        source is destroyed or re-created, as the pool ranges
+        are no longer considered to be reserved in it.
+        """
+
+        with self._hilo_lock:
+            self._hilo_pools.clear()
 
     def _get_entities_map(self, module):
         """
