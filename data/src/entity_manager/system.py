@@ -1960,8 +1960,8 @@ class EntityManager(object):
             cursor.close()
         return next_id
 
-    def increment_id(self, name):
-        query, next_id = self._increment_id_query(name)
+    def increment_id(self, name, increment=1):
+        query, next_id = self._increment_id_query(name, increment)
         self.execute_query(query)
         return next_id
 
@@ -3014,88 +3014,16 @@ class EntityManager(object):
         # to allocate a pool
         self.create_generator()
 
-        # atomically increment the generator counter by pool_size
-        # and retrieve the new high value
-        new_high = self._hilo_atomic_increment(field_name, pool_size)
-
-        # our allocated range is [new_high - pool_size, new_high - 1]
-        # since new_high is the next available value after our range
-        low = new_high - pool_size
-        high = new_high - 1
+        # atomically increments the generator counter by the pool
+        # size retrieving the new next id value, the allocated range
+        # becomes [next_id - pool_size, next_id - 1] as the next id
+        # is the next available value after the allocated range
+        next_id = self.increment_id(field_name, pool_size)
+        low = next_id - pool_size
+        high = next_id - 1
 
         # store the pool state as (current_id, max_id)
         self._hilo_pools[field_name] = (low, high)
-
-    def _hilo_atomic_increment(self, field_name, increment):
-        """
-        Atomically increments the generator counter for the given
-        field by the specified increment amount and returns the
-        new `next_id` value.
-
-        This method uses database locking to ensure atomicity
-        across concurrent processes/threads, but the lock is only
-        held for the duration of the pool allocation, not for each
-        individual ID.
-
-        :type field_name: String
-        :param field_name: The name of the field for which to
-        increment the generator counter.
-        :type increment: int
-        :param increment: The amount by which to increment the
-        counter (typically the pool size).
-        :rtype: int
-        :return: The new `next_id` value after incrementing.
-        """
-
-        # escapes the field name value to avoid possible
-        # security problems (SQL injection)
-        name = self._escape_text(field_name)
-
-        # retrieves the current modification time for
-        # the generator as the current system time
-        _mtime = time.time()
-
-        # locks the generator table row and retrieves the current
-        # next_id value, this uses SELECT ... FOR UPDATE on MySQL
-        # or equivalent locking on other engines
-        self.lock_table(
-            GENERATOR_VALUE, {"field_name": "name", "field_value": "'" + name + "'"}
-        )
-        query = (
-            "select name, next_id from " + GENERATOR_VALUE + " where name = '%s'" % name
-        )
-        cursor = self.execute_query(query, False)
-        try:
-            rows = [value[1] for value in cursor]
-        finally:
-            cursor.close()
-
-        # checks if a row exists for this field name
-        if not rows or rows[0] == None:
-            # first allocation for this field, start at 1 and
-            # reserve IDs up to 1 + increment (so next available
-            # after our pool is 1 + increment)
-            next_id = 1 + increment
-            query = "insert into %s(name, next_id, _mtime) values('%s', %d, %f)" % (
-                GENERATOR_VALUE,
-                name,
-                next_id,
-                _mtime,
-            )
-            self.execute_query(query)
-            return next_id
-        else:
-            # increment the existing counter by the pool size
-            current_next = rows[0]
-            new_next = current_next + increment
-            query = "update %s set next_id = %d, _mtime = %f where name = '%s'" % (
-                GENERATOR_VALUE,
-                new_next,
-                _mtime,
-                name,
-            )
-            self.execute_query(query)
-            return new_next
 
     def _create_generator_query(self):
         # creates the list to hold the various queries
@@ -3176,7 +3104,7 @@ class EntityManager(object):
         # (casted into a single value)
         return id_value
 
-    def _increment_id_query(self, name):
+    def _increment_id_query(self, name, increment=1):
         # retrieves the current next id value
         next_id = self.next_id(name)
 
@@ -3193,11 +3121,11 @@ class EntityManager(object):
         # and so it must be created (insert query)
         if next_id == None:
             # sets the initial id value, the value should
-            # be greater or equal to one plus one in order to avoid
-            # enumeration validation collision, this value should
-            # reflect the second value in the chain (because it's
-            # the next value in chain)
-            next_id = 2
+            # be greater or equal to one plus the increment in
+            # order to avoid enumeration validation collision,
+            # this value should reflect the next value in the
+            # chain (after the incremented range)
+            next_id = 1 + increment
 
             # creates the query to save a new entry in the generator
             # table setting the initial next id value and the initial
@@ -3212,9 +3140,9 @@ class EntityManager(object):
         # table in the data source, and so an update is the
         # necessary operation (update query)
         else:
-            # increments the next id value by one, this will
-            # be the "new" next id value
-            next_id += 1
+            # increments the next id value by the increment
+            # amount, this will be the "new" next id value
+            next_id += increment
 
             # creates the query to update the generator table set
             # the new next id and update the modification time
