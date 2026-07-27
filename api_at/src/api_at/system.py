@@ -677,7 +677,7 @@ class ATClient(object):
         username = (
             "599999993/0037" if self.test_mode else str(self.at_structure.username)
         )
-        password = "testes1234" if self.test_mode else str(self.at_structure.password)
+        password = "Testes1234!" if self.test_mode else str(self.at_structure.password)
         username = str(username)
         password = str(password)
         password_b = colony.legacy.bytes(password)
@@ -785,7 +785,7 @@ class ATClient(object):
         username = (
             "599999993/0037" if self.test_mode else str(self.at_structure.username)
         )
-        password = "testes1234" if self.test_mode else str(self.at_structure.password)
+        password = "Testes1234!" if self.test_mode else str(self.at_structure.password)
         username = str(username)
         password = str(password)
         password_b = colony.legacy.bytes(password)
