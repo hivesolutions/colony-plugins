@@ -37,6 +37,7 @@ import zipfile
 import calendar
 import datetime
 import tempfile
+import threading
 
 import colony
 
@@ -61,6 +62,11 @@ PAGE_SIZE = 4096
 """ The size of a page for the paging mode based loading of
 entities where a queries is splitted in multiple queries for
 the yield based loading of entities (spares memory) """
+
+HILO_POOL_SIZE = 100
+""" The default pool size for the Hi-Lo generator strategy,
+meaning the number of IDs to pre-allocate per pool request,
+reducing database round trips by a factor of pool size """
 
 SAVED_STATE_VALUE = 1
 """ The saved state value, set in the entity after the save
@@ -344,6 +350,14 @@ class EntityManager(object):
     schema created in the underlying data source and are considered
     to exist in the data source """
 
+    _hilo_pools = {}
+    """ Map associating field names with their respective Hi-Lo pool
+    state as a tuple of (current_id, max_id) for the pool range """
+
+    _hilo_lock = None
+    """ Lock for thread-safe access to the Hi-Lo pools, ensures
+    that pool allocation and ID consumption are atomic """
+
     def __init__(
         self, entity_manager_plugin, engine_plugin, id, entities_map, options={}
     ):
@@ -377,6 +391,8 @@ class EntityManager(object):
         self.commit_callbacks = {}
         self.rollback_callbacks = {}
         self._exists = {}
+        self._hilo_pools = {}
+        self._hilo_lock = threading.Lock()
 
         self.apply_types()
 
@@ -1117,6 +1133,7 @@ class EntityManager(object):
     def destroy(self):
         self.engine.destroy()
         self._reset_exists()
+        self._reset_hilo()
 
     def begin(self):
         self.engine.begin()
@@ -1944,8 +1961,8 @@ class EntityManager(object):
             cursor.close()
         return next_id
 
-    def increment_id(self, name):
-        query, next_id = self._increment_id_query(name)
+    def increment_id(self, name, increment=1):
+        query, next_id = self._increment_id_query(name, increment)
         self.execute_query(query)
         return next_id
 
@@ -2897,6 +2914,147 @@ class EntityManager(object):
         # of the identifier value
         entity.set_value(name, value)
 
+    def _generate_hilo(self, entity, name):
+        # retrieves the (entity) class associated with
+        # the entity to generate the value
+        entity_class = entity.__class__
+
+        # uses the name to retrieve the value (map)
+        # containing the definition of the attribute
+        value = getattr(entity_class, name)
+
+        # retrieves the map containing the various entity names
+        # associated with their respective classes and then
+        # retrieves the entity class that "owns" the value
+        names_map = entity_class.get_names_map()
+        name_class = names_map[name]
+
+        # retrieves the name of the table associated with the
+        # current name and uses it to create the default field
+        # name for the generation table (class name and field name)
+        table_name = name_class.get_name()
+        field_name = "%s_%s" % (table_name, name)
+
+        # tries to retrieve the (generator) field name defaulting
+        # to the name of the default field name, the pool size can
+        # also be customized per field via the generator_pool_size
+        field_name = value.get("generator_field_name", field_name)
+        pool_size = value.get("generator_pool_size", HILO_POOL_SIZE)
+
+        # grabs an id value using the Hi-Lo pool allocation strategy
+        # which reduces database contention by pre-allocating ranges
+        value = self._hilo_grab_id(field_name, pool_size)
+        value = int(value)
+
+        # sets the generated value in the entity, final setting
+        # of the generated value
+        entity.set_value(name, value)
+
+    def _hilo_grab_id(self, field_name, pool_size):
+        """
+        Retrieves the next available ID using the Hi-Lo pool
+        allocation strategy, allocating a new pool from the
+        database when the current pool is exhausted.
+
+        This method significantly reduces database contention
+        by acquiring pool_size IDs per database access instead
+        of one ID per access (as the table generator does).
+
+        :type field_name: String
+        :param field_name: The name of the field for which to
+        retrieve the next ID value.
+        :type pool_size: int
+        :param pool_size: The number of IDs to pre-allocate
+        when the pool is exhausted.
+        :rtype: int
+        :return: The next available ID for the field.
+        """
+
+        # acquires the lock to ensure thread-safe access to the
+        # Hi-Lo pools, this is a local lock that does not involve
+        # any database locking during normal ID consumption
+        with self._hilo_lock:
+            # checks if a pool exists for this field and if so
+            # retrieves the current state of the pool
+            if field_name in self._hilo_pools:
+                current_id, max_id = self._hilo_pools[field_name]
+            else:
+                # no pool exists, force allocation by setting
+                # current above max
+                current_id = 1
+                max_id = 0
+
+            # if the current id exceeds the max id, the pool is
+            # exhausted and a new pool must be allocated from
+            # the database
+            if current_id > max_id:
+                self._hilo_allocate_pool(field_name, pool_size)
+                current_id, max_id = self._hilo_pools[field_name]
+
+            # consume one ID from the pool and update the pool state
+            self._hilo_pools[field_name] = (current_id + 1, max_id)
+            return current_id
+
+    def _hilo_allocate_pool(self, field_name, pool_size):
+        """
+        Allocates a new pool of IDs from the database by atomically
+        incrementing the generator counter by pool_size.
+
+        The pool is stored as (low, high) where low is the first
+        ID to use and high is the last ID in the pool range.
+
+        :type field_name: String
+        :param field_name: The name of the field for which to
+        allocate a new pool.
+        :type pool_size: int
+        :param pool_size: The number of IDs to allocate in
+        the new pool.
+        """
+
+        # ensures the generator table exists before attempting
+        # to allocate a pool
+        self.create_generator()
+
+        # atomically increments the generator counter by the pool
+        # size retrieving the new next id value, the allocated range
+        # becomes [next_id - pool_size, next_id - 1] as the next id
+        # is the next available value after the allocated range
+        next_id = self.increment_id(field_name, pool_size)
+        low = next_id - pool_size
+        high = next_id - 1
+
+        # store the pool state as (current_id, max_id)
+        self._hilo_pools[field_name] = (low, high)
+
+        # in case a transaction is currently open the pool must be
+        # discarded once the transaction is "rollbacked" as the
+        # reservation of the range in the data source is going to
+        # be undone (would generate duplicated identifiers)
+        if self.has_transaction():
+            self.after_rollback(lambda: self._hilo_discard_pool(field_name))
+
+    def _hilo_discard_pool(self, field_name):
+        """
+        Discards the current Hi-Lo pool associated with the given
+        field name, forcing a new pool allocation from the database
+        on the next ID retrieval for the field.
+
+        This method should be used whenever the reservation of the
+        pool range in the data source is no longer considered valid
+        (eg: the transaction that allocated it was "rollbacked").
+
+        :type field_name: String
+        :param field_name: The name of the field for which the
+        pool is going to be discarded.
+        """
+
+        # acquires the lock to ensure thread-safe access to the
+        # Hi-Lo pools and then removes the pool state associated
+        # with the field name (in case it exists)
+        with self._hilo_lock:
+            if field_name in self._hilo_pools:
+                del self._hilo_pools[field_name]
+
     def _create_generator_query(self):
         # creates the list to hold the various queries
         # to be used to create indexes
@@ -2976,7 +3134,7 @@ class EntityManager(object):
         # (casted into a single value)
         return id_value
 
-    def _increment_id_query(self, name):
+    def _increment_id_query(self, name, increment=1):
         # retrieves the current next id value
         next_id = self.next_id(name)
 
@@ -2993,11 +3151,11 @@ class EntityManager(object):
         # and so it must be created (insert query)
         if next_id == None:
             # sets the initial id value, the value should
-            # be greater or equal to one plus one in order to avoid
-            # enumeration validation collision, this value should
-            # reflect the second value in the chain (because it's
-            # the next value in chain)
-            next_id = 2
+            # be greater or equal to one plus the increment in
+            # order to avoid enumeration validation collision,
+            # this value should reflect the next value in the
+            # chain (after the incremented range)
+            next_id = 1 + increment
 
             # creates the query to save a new entry in the generator
             # table setting the initial next id value and the initial
@@ -3012,9 +3170,9 @@ class EntityManager(object):
         # table in the data source, and so an update is the
         # necessary operation (update query)
         else:
-            # increments the next id value by one, this will
-            # be the "new" next id value
-            next_id += 1
+            # increments the next id value by the increment
+            # amount, this will be the "new" next id value
+            next_id += increment
 
             # creates the query to update the generator table set
             # the new next id and update the modification time
@@ -7721,6 +7879,19 @@ class EntityManager(object):
         """
 
         self._exists.clear()
+
+    def _reset_hilo(self):
+        """
+        Resets the current Hi-Lo pools state discarding any
+        previously allocated (in-memory) pool ranges.
+
+        This method should be used whenever the underlying data
+        source is destroyed or re-created, as the pool ranges
+        are no longer considered to be reserved in it.
+        """
+
+        with self._hilo_lock:
+            self._hilo_pools.clear()
 
     def _get_entities_map(self, module):
         """

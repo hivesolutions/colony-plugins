@@ -1715,6 +1715,160 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             ),
         )
 
+    def test_grab_id(self):
+        # grabs a series of id values for the same field name and
+        # verifies that the returned values are sequential starting
+        # at the initial value of the chain (one)
+        id_value = self.entity_manager.grab_id("test_field_id")
+        self.assertEqual(id_value, 1)
+        id_value = self.entity_manager.grab_id("test_field_id")
+        self.assertEqual(id_value, 2)
+
+        # grabs an id value for a different field name and verifies
+        # that its sequence is independent from the previous one
+        id_value = self.entity_manager.grab_id("other_field_id")
+        self.assertEqual(id_value, 1)
+
+    def test_increment_id(self):
+        # increments the id value for the field name and verifies
+        # that the initial next id value is two (the next value in
+        # the chain after the first grabbed value)
+        next_id = self.entity_manager.increment_id("test_field_id")
+        self.assertEqual(next_id, 2)
+
+        # re-increments the id value using the default increment
+        # and verifies that the next id value is now three
+        next_id = self.entity_manager.increment_id("test_field_id")
+        self.assertEqual(next_id, 3)
+
+        # increments the id value by a larger amount (as done by
+        # pool based strategies) and verifies the resulting value
+        next_id = self.entity_manager.increment_id("test_field_id", 10)
+        self.assertEqual(next_id, 13)
+
+        # verifies that the next id value stored in the data source
+        # reflects the complete set of increment operations
+        next_id = self.entity_manager.next_id("test_field_id")
+        self.assertEqual(next_id, 13)
+
+    def test_generate_hilo(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Ticket)
+
+        # creates a ticket entity with it's default attributes
+        # (but no ticket id) saves it into the data source
+        ticket = mocks.Ticket()
+        self.entity_manager.save(ticket)
+
+        # retrieves the ticket id value for the ticket, uses
+        # the safest method to avoid possible set problems
+        ticket_id = ticket.get_value("ticket_id")
+
+        # verifies that the ticket id is correctly set with the
+        # first value of the initial pool range
+        self.assertEqual(ticket_id, 1)
+
+        # creates a second ticket entity and saves it, verifying
+        # that the id value is consumed from the (in-memory) pool
+        # in a sequential fashion
+        ticket = mocks.Ticket()
+        self.entity_manager.save(ticket)
+        self.assertEqual(ticket.get_value("ticket_id"), 2)
+
+        # verifies that the complete pool range has been reserved
+        # in the generator table (a single database allocation)
+        next_id = self.entity_manager.next_id("ticket_ticket_id")
+        self.assertEqual(next_id, 11)
+
+    def test_hilo_grab_id(self):
+        # grabs the complete initial pool of id values using the
+        # Hi-Lo strategy and verifies that they are sequential,
+        # note that only the first grab operation is expected to
+        # allocate a pool from the data source
+        for index in range(1, 4):
+            id_value = self.entity_manager._hilo_grab_id("test_field_id", 3)
+            self.assertEqual(id_value, index)
+
+        # verifies that the next id value in the data source
+        # reflects a single pool allocation (one database access
+        # for the complete set of grabbed values)
+        next_id = self.entity_manager.next_id("test_field_id")
+        self.assertEqual(next_id, 4)
+
+        # grabs one id value beyond the pool range forcing the
+        # allocation of a new pool and verifies both the continuity
+        # of the sequence and the new reservation in the data source
+        id_value = self.entity_manager._hilo_grab_id("test_field_id", 3)
+        self.assertEqual(id_value, 4)
+        next_id = self.entity_manager.next_id("test_field_id")
+        self.assertEqual(next_id, 7)
+
+        # grabs an id value for a different field name and verifies
+        # that its sequence is independent from the previous one
+        id_value = self.entity_manager._hilo_grab_id("other_field_id", 3)
+        self.assertEqual(id_value, 1)
+
+    def test_hilo_allocate_pool(self):
+        # allocates an initial pool for the field name and verifies
+        # that the pool state is set with the expected range
+        self.entity_manager._hilo_allocate_pool("test_field_id", 10)
+        pool = self.entity_manager._hilo_pools["test_field_id"]
+        self.assertEqual(pool, (1, 10))
+
+        # verifies that the pool range reservation is correctly
+        # reflected in the generator table in the data source
+        next_id = self.entity_manager.next_id("test_field_id")
+        self.assertEqual(next_id, 11)
+
+        # allocates a second pool for the same field name and
+        # verifies that the new range is contiguous to the first
+        self.entity_manager._hilo_allocate_pool("test_field_id", 10)
+        pool = self.entity_manager._hilo_pools["test_field_id"]
+        self.assertEqual(pool, (11, 20))
+        next_id = self.entity_manager.next_id("test_field_id")
+        self.assertEqual(next_id, 21)
+
+    def test_hilo_discard_pool(self):
+        # allocates a pool for the field name and verifies that
+        # the pool state is correctly set (pool exists)
+        self.entity_manager._hilo_allocate_pool("test_field_id", 10)
+        exists = "test_field_id" in self.entity_manager._hilo_pools
+        self.assertEqual(exists, True)
+
+        # discards the pool for the field name and verifies that
+        # the pool state is removed (forcing a new allocation)
+        self.entity_manager._hilo_discard_pool("test_field_id")
+        exists = "test_field_id" in self.entity_manager._hilo_pools
+        self.assertEqual(exists, False)
+
+        # re-discards the pool for the field name, no error should
+        # be raised as the operation is considered idempotent
+        self.entity_manager._hilo_discard_pool("test_field_id")
+
+        # allocates a new pool inside the current transaction and
+        # then "rollsback" the transaction, the pool must have been
+        # discarded as the range reservation has been undone
+        self.entity_manager._hilo_allocate_pool("test_field_id", 10)
+        self.entity_manager.rollback()
+        exists = "test_field_id" in self.entity_manager._hilo_pools
+        self.assertEqual(exists, False)
+
+        # begins a new transaction so that the test infra-structure
+        # is able to terminate the current test gracefully
+        self.entity_manager.begin()
+
+    def test_reset_hilo(self):
+        # allocates a series of pools for a series of field names
+        # and verifies that the pools state is correctly set
+        self.entity_manager._hilo_allocate_pool("test_field_id", 10)
+        self.entity_manager._hilo_allocate_pool("other_field_id", 10)
+        self.assertEqual(len(self.entity_manager._hilo_pools), 2)
+
+        # resets the complete Hi-Lo pools state and verifies that
+        # no pool state remains (empty map)
+        self.entity_manager._reset_hilo()
+        self.assertEqual(self.entity_manager._hilo_pools, {})
+
 
 class EntityManagerRsetTestCase(colony.ColonyTestCase):
     @staticmethod
