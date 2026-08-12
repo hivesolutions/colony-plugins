@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Regression tests for session GC and translate_result fixes in REST plugin
 * New `DEBUG_SQL` configuration option (default `True`) to control debug-level SQL query logging in MySQL, SQLite, and PostgreSQL engine plugins
 * Tests covering session ACL validation and the ACL template predicates in the MVC utilities
+* Optional `section` parameter in the entity redirect helpers of the MVC utilities (`redirect_list`, `redirect_action`, `redirect_create`, `redirect_show`, `redirect_edit` and `redirect_delete`), resolving the target against the MVC path (instead of the base path) so that the redirection may reach an entity served under a different section (cross section redirection)
+* Tests for the entity redirect helpers covering the base path resolution and the cross section (`section` parameter) resolution
 
 ### Changed
 

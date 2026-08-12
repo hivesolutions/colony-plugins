@@ -55,8 +55,9 @@ class MockModelWithErrors(object):
 
 
 class MockRequest(object):
-    def __init__(self, parameters=None):
+    def __init__(self, parameters=None, path_list=None):
         self.parameters = parameters or {}
+        self.path_list = path_list or []
 
 
 class MockValidatedController(object):
@@ -163,3 +164,47 @@ class MockTemplateVisitor(object):
 
     def _validate_accept_node(self, node, accept_node):
         return accept_node
+
+
+class MockRedirectEntity(object):
+    def __init__(self, object_id=1):
+        self.object_id = object_id
+
+    def _get_entity_class_pluralized(self, entity_class=None):
+        return "mock_redirect_entities"
+
+    def get_id_attribute_value(self):
+        return self.object_id
+
+
+class MockRedirectController(object):
+    def __init__(self):
+        self.redirect_target = None
+        self.redirect_status_code = None
+
+    def get_base_path(self, request):
+        return controller.get_base_path(self, request)
+
+    def get_mvc_path(self, request, delta_value=1):
+        return controller.get_mvc_path(self, request, delta_value)
+
+    def redirect_action(self, request, entity, **kwargs):
+        controller.redirect_action(self, request, entity, **kwargs)
+
+    def redirect_base_path(self, request, target, **kwargs):
+        controller.redirect_base_path(self, request, target, **kwargs)
+
+    def redirect_mvc_path(self, request, target, **kwargs):
+        controller.redirect_mvc_path(self, request, target, **kwargs)
+
+    def redirect(
+        self,
+        request,
+        target,
+        status_code=302,
+        quote=False,
+        keep=False,
+        attributes_map=None,
+    ):
+        self.redirect_target = target
+        self.redirect_status_code = status_code

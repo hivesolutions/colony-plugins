@@ -2079,6 +2079,7 @@ def redirect_list(
     request,
     entity,
     level=None,
+    section=None,
     status_code=302,
     quote=True,
     keep=False,
@@ -2095,6 +2096,12 @@ def redirect_list(
     :type level: Class
     :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
+    :type section: String
+    :param section: The name of the section (root path element)
+    under which the target is going to be resolved, when provided
+    the target is resolved against the MVC path (instead of the
+    base path) allowing the redirection to reach an entity that
+    is served under a different section.
     :type status_code: int
     :param status_code: The status code to be used.
     :type quote: bool
@@ -2117,17 +2124,30 @@ def redirect_list(
 
     # converts the entity class name to pluralized version, then
     # creates the target (list URL) from the pluralized entity name
-    # and redirects the request to the defined target
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class=level)
     target = entity_class_pluralized
-    self.redirect_base_path(
-        request,
-        target,
-        status_code=status_code,
-        quote=quote,
-        keep=keep,
-        attributes_map=attributes_map,
-    )
+
+    # redirects the request to the defined target, the redirection
+    # is done against the MVC path in case a section is provided
+    # (allowing cross section redirection) or the base path otherwise
+    if section:
+        self.redirect_mvc_path(
+            request,
+            section + "/" + target,
+            status_code=status_code,
+            quote=quote,
+            keep=keep,
+            attributes_map=attributes_map,
+        )
+    else:
+        self.redirect_base_path(
+            request,
+            target,
+            status_code=status_code,
+            quote=quote,
+            keep=keep,
+            attributes_map=attributes_map,
+        )
 
 
 def redirect_action(
@@ -2137,6 +2157,7 @@ def redirect_action(
     action=None,
     id_string=None,
     level=None,
+    section=None,
     status_code=302,
     quote=True,
     keep=False,
@@ -2164,6 +2185,12 @@ def redirect_action(
     :type level: Class
     :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
+    :type section: String
+    :param section: The name of the section (root path element)
+    under which the target is going to be resolved, when provided
+    the target is resolved against the MVC path (instead of the
+    base path) allowing the redirection to reach an entity that
+    is served under a different section.
     :type status_code: int
     :param status_code: The status code to be used.
     :type quote: bool
@@ -2196,19 +2223,32 @@ def redirect_action(
         id_string = entity_id_attribute_value_string
 
     # creates the target (edit URL) from the pluralized entity name
-    # and the entity id attribute value string and redirects the
-    # request to the target (path)
+    # and the entity id attribute value string
     target = (
         entity_class_pluralized + "/" + id_string + ("/" + action if action else "")
     )
-    self.redirect_base_path(
-        request,
-        target,
-        status_code=status_code,
-        quote=quote,
-        keep=keep,
-        attributes_map=attributes_map,
-    )
+
+    # redirects the request to the defined target, the redirection
+    # is done against the MVC path in case a section is provided
+    # (allowing cross section redirection) or the base path otherwise
+    if section:
+        self.redirect_mvc_path(
+            request,
+            section + "/" + target,
+            status_code=status_code,
+            quote=quote,
+            keep=keep,
+            attributes_map=attributes_map,
+        )
+    else:
+        self.redirect_base_path(
+            request,
+            target,
+            status_code=status_code,
+            quote=quote,
+            keep=keep,
+            attributes_map=attributes_map,
+        )
 
 
 def redirect_create(
@@ -2216,6 +2256,7 @@ def redirect_create(
     request,
     entity,
     level=None,
+    section=None,
     status_code=302,
     quote=True,
     keep=False,
@@ -2232,6 +2273,12 @@ def redirect_create(
     :type level: Class
     :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
+    :type section: String
+    :param section: The name of the section (root path element)
+    under which the target is going to be resolved, when provided
+    the target is resolved against the MVC path (instead of the
+    base path) allowing the redirection to reach an entity that
+    is served under a different section.
     :type status_code: int
     :param status_code: The status code to be used.
     :type quote: bool
@@ -2254,17 +2301,30 @@ def redirect_create(
 
     # converts the entity class name to pluralized version then
     # creates the target (create URL) from the pluralized entity name
-    # and redirects the request to the target (path)
     entity_class_pluralized = entity._get_entity_class_pluralized(entity_class=level)
     target = entity_class_pluralized + "/new"
-    self.redirect_base_path(
-        request,
-        target,
-        status_code=status_code,
-        quote=quote,
-        keep=keep,
-        attributes_map=attributes_map,
-    )
+
+    # redirects the request to the defined target, the redirection
+    # is done against the MVC path in case a section is provided
+    # (allowing cross section redirection) or the base path otherwise
+    if section:
+        self.redirect_mvc_path(
+            request,
+            section + "/" + target,
+            status_code=status_code,
+            quote=quote,
+            keep=keep,
+            attributes_map=attributes_map,
+        )
+    else:
+        self.redirect_base_path(
+            request,
+            target,
+            status_code=status_code,
+            quote=quote,
+            keep=keep,
+            attributes_map=attributes_map,
+        )
 
 
 def redirect_show(
@@ -2272,6 +2332,7 @@ def redirect_show(
     request,
     entity,
     level=None,
+    section=None,
     status_code=302,
     quote=True,
     keep=False,
@@ -2288,6 +2349,12 @@ def redirect_show(
     :type level: Class
     :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
+    :type section: String
+    :param section: The name of the section (root path element)
+    under which the target is going to be resolved, when provided
+    the target is resolved against the MVC path (instead of the
+    base path) allowing the redirection to reach an entity that
+    is served under a different section.
     :type status_code: int
     :param status_code: The status code to be used.
     :type quote: bool
@@ -2306,6 +2373,7 @@ def redirect_show(
         request,
         entity,
         level=level,
+        section=section,
         status_code=status_code,
         quote=quote,
         keep=keep,
@@ -2318,6 +2386,7 @@ def redirect_edit(
     request,
     entity,
     level=None,
+    section=None,
     status_code=302,
     quote=True,
     keep=False,
@@ -2334,6 +2403,12 @@ def redirect_edit(
     :type level: Class
     :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
+    :type section: String
+    :param section: The name of the section (root path element)
+    under which the target is going to be resolved, when provided
+    the target is resolved against the MVC path (instead of the
+    base path) allowing the redirection to reach an entity that
+    is served under a different section.
     :type status_code: int
     :param status_code: The status code to be used.
     :type quote: bool
@@ -2353,6 +2428,7 @@ def redirect_edit(
         entity,
         action="edit",
         level=level,
+        section=section,
         status_code=status_code,
         quote=quote,
         keep=keep,
@@ -2365,6 +2441,7 @@ def redirect_delete(
     request,
     entity,
     level=None,
+    section=None,
     status_code=302,
     quote=True,
     keep=False,
@@ -2381,6 +2458,12 @@ def redirect_delete(
     :type level: Class
     :param level: Optional class level to be used to retrieve
     custom redirection names for upper inheritance.
+    :type section: String
+    :param section: The name of the section (root path element)
+    under which the target is going to be resolved, when provided
+    the target is resolved against the MVC path (instead of the
+    base path) allowing the redirection to reach an entity that
+    is served under a different section.
     :type status_code: int
     :param status_code: The status code to be used.
     :type quote: bool
@@ -2400,6 +2483,7 @@ def redirect_delete(
         entity,
         action="delete",
         level=level,
+        section=section,
         status_code=status_code,
         quote=quote,
         keep=keep,

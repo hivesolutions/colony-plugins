@@ -49,6 +49,7 @@ class MVCUtilsTest(colony.Test):
             RawModelTestCase,
             ValidatedDecoratorTestCase,
             ValidateACLSessionTestCase,
+            RedirectTestCase,
             TemplateFileACLTestCase,
             TemplateProcessMethodsTestCase,
             ExceptionsTestCase,
@@ -414,6 +415,110 @@ class ValidateACLSessionTestCase(colony.ColonyTestCase):
             controller_mock, request, "entity.action"
         )
         self.assertEqual(result, False)
+
+
+class RedirectTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Redirect test case"
+
+    def test_redirect_list(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities"])
+
+        controller.redirect_list(controller_mock, request, entity)
+        self.assertEqual(controller_mock.redirect_target, "mock_redirect_entities")
+        self.assertEqual(controller_mock.redirect_status_code, 302)
+
+    def test_redirect_list_nested(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities", "action"])
+
+        controller.redirect_list(controller_mock, request, entity)
+        self.assertEqual(controller_mock.redirect_target, "../mock_redirect_entities")
+
+    def test_redirect_list_section(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities", "action"])
+
+        controller.redirect_list(controller_mock, request, entity, section="other")
+        self.assertEqual(
+            controller_mock.redirect_target, "../../other/mock_redirect_entities"
+        )
+
+    def test_redirect_action(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities"])
+
+        controller.redirect_action(controller_mock, request, entity, action="custom")
+        self.assertEqual(
+            controller_mock.redirect_target, "mock_redirect_entities/1/custom"
+        )
+
+    def test_redirect_action_section(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities", "action"])
+
+        controller.redirect_action(
+            controller_mock, request, entity, action="custom", section="other"
+        )
+        self.assertEqual(
+            controller_mock.redirect_target,
+            "../../other/mock_redirect_entities/1/custom",
+        )
+
+    def test_redirect_create_section(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities"])
+
+        controller.redirect_create(controller_mock, request, entity, section="other")
+        self.assertEqual(
+            controller_mock.redirect_target, "../other/mock_redirect_entities/new"
+        )
+
+    def test_redirect_show(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity(object_id=42)
+        request = mocks.MockRequest(path_list=["section", "entities"])
+
+        controller.redirect_show(controller_mock, request, entity)
+        self.assertEqual(controller_mock.redirect_target, "mock_redirect_entities/42")
+
+    def test_redirect_show_section(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity(object_id=42)
+        request = mocks.MockRequest(path_list=["section", "entities", "action"])
+
+        controller.redirect_show(controller_mock, request, entity, section="other")
+        self.assertEqual(
+            controller_mock.redirect_target, "../../other/mock_redirect_entities/42"
+        )
+
+    def test_redirect_edit_section(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities"])
+
+        controller.redirect_edit(controller_mock, request, entity, section="other")
+        self.assertEqual(
+            controller_mock.redirect_target, "../other/mock_redirect_entities/1/edit"
+        )
+
+    def test_redirect_delete_section(self):
+        controller_mock = mocks.MockRedirectController()
+        entity = mocks.MockRedirectEntity()
+        request = mocks.MockRequest(path_list=["section", "entities"])
+
+        controller.redirect_delete(controller_mock, request, entity, section="other")
+        self.assertEqual(
+            controller_mock.redirect_target, "../other/mock_redirect_entities/1/delete"
+        )
 
 
 class TemplateFileACLTestCase(colony.ColonyTestCase):
