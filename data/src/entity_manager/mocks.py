@@ -431,6 +431,152 @@ class Chair(RootEntityAbstract):
         self.legs = 4
 
 
+class ConcreteRootEntity(structures.EntityClass):
+    """
+    The concrete root entity class, this class represents
+    a typical base class for a model hierarchy using the
+    concrete table inheritance strategy.
+    """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, each concrete
+    class stores all attributes in a single table """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the concrete root entity """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    metadata = dict(type="metadata")
+    """ Simple metadata value that is going to be used
+    for storage of structured data (maps and lists) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class ConcretePerson(ConcreteRootEntity):
+    """
+    The concrete person entity class, represents the set of
+    typical attributes of a person using concrete table
+    inheritance.
+    """
+
+    name = dict(type="text")
+    """ The name of the person """
+
+    age = dict(type="integer")
+    """ The age of the person """
+
+    weight = dict(type="decimal")
+    """ The weight of the person """
+
+    parent = dict(type="relation")
+    """ The parent for the current person """
+
+    children = dict(type="relation")
+    """ The children of the current person """
+
+    address = dict(type="relation")
+    """ The address associated with the person """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ConcreteRootEntity.__init__(self)
+        self.name = "Anonymous"
+        self.age = 18
+
+    @staticmethod
+    def _relation_parent():
+        return dict(
+            type="to-one", target=ConcretePerson, reverse="children", is_mapper=True
+        )
+
+    @staticmethod
+    def _relation_children():
+        return dict(type="to-many", target=ConcretePerson, reverse="parent")
+
+    @staticmethod
+    def _relation_address():
+        return dict(
+            type="to-one",
+            target=ConcreteAddress,
+            reverse="person",
+            is_mapper=True,
+        )
+
+
+class ConcreteEmployee(ConcretePerson):
+    """
+    The concrete employee entity class, the set of attributes
+    contained in this class should be able to represent
+    an employee using concrete table inheritance.
+    """
+
+    salary = dict(type="integer")
+    """ The salary of the employee """
+
+    boss = dict(type="relation")
+    """ The boss of the employee (only one is allowed) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ConcretePerson.__init__(self)
+        self.salary = 200
+
+    @staticmethod
+    def _relation_boss():
+        return dict(
+            type="to-one", target=ConcretePerson, reverse="children", is_mapper=True
+        )
+
+
+class ConcreteAddress(ConcreteRootEntity):
+    """
+    The concrete address entity class, representing the typical
+    set of attributes for a postal address using concrete table
+    inheritance.
+    """
+
+    street = dict(type="text")
+    """ The street of the address """
+
+    number = dict(type="integer")
+    """ The door number of the address """
+
+    country = dict(type="text")
+    """ The country of the address """
+
+    person = dict(type="relation")
+    """ The person associated with the address """
+
+    def __init__(self):
+        """
+        Constructor for the class.
+        """
+
+        ConcreteRootEntity.__init__(self)
+        self.street = "N/A"
+        self.number = 0
+        self.country = "N/A"
+
+    @staticmethod
+    def _relation_person():
+        return dict(type="to-one", target=ConcretePerson, reverse="address")
+
+
 class File(RootEntity):
     """
     The file entity class, that represent a typical file
