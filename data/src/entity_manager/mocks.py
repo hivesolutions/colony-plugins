@@ -450,3 +450,29 @@ class File(RootEntity):
 
         RootEntity.__init__(self)
         self.filename = "undefined"
+
+
+class Ticket(RootEntity):
+    """
+    The ticket entity class, representing a simple entity
+    that makes use of the Hi-Lo strategy for the generation
+    of one of its identifier values.
+    """
+
+    ticket_id = dict(
+        type="integer",
+        generated=True,
+        generator_type="hilo",
+        generator_field_name="ticket_ticket_id",
+        generator_pool_size=10,
+    )
+    """ The id of the ticket (generated using the Hi-Lo
+    pool based strategy) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        RootEntity.__init__(self)
+        self.ticket_id = None

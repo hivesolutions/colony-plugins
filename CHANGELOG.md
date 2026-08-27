@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* New Hi-Lo strategy for the generation of entity identifiers, greatly reducing database accesses when creating large amounts of entities
+* Tests covering the Hi-Lo generation strategy and the entity identifier generation helpers
 * New `get_connection_address()` method in `RESTRequest` with proxy header resolution (`X-Forwarded-For`, `X-Client-IP`, `X-Real-IP`) and IPv6-mapped IPv4 cleanup (`::ffff:` prefix removal)
 * New `get_connection_address()` method in `HTTPRequest` and `WSGIRequest` to provide a uniform interface for retrieving client connection address
 * Optional `resolve` and `cleanup` parameters in `RESTRequest.get_address()` for controlling proxy resolution and IPv6 cleanup
