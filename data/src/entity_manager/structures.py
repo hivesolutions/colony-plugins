@@ -37,6 +37,7 @@ import threading
 import colony
 
 from . import exceptions
+from . import fields
 
 SERIALIZERS = ("json", "pickle")
 """ The list to hold the various serializers
@@ -1738,6 +1739,11 @@ class EntityClass(object):
             ):
                 continue
 
+            # Support for Field descriptors - convert to dict
+            if isinstance(value, fields.Field):
+                _items[key] = value.to_dict()
+                continue
+
             # in case value is not a dictionary (or a dictionary like object)
             # it should be ignored (not an item)
             if not hasattr(value, "get"):
@@ -2650,6 +2656,19 @@ class EntityClass(object):
 
     @classmethod
     def get_mapper(cls, relation_name, get_mapper_name=False):
+        # Check for class-level mapping strategy override
+        # This allows entities to specify custom mapping strategies
+        if hasattr(cls, "__mapping_strategy__"):
+            strategy = cls.__mapping_strategy__
+            return strategy.get_mapper(cls, relation_name, get_mapper_name)
+
+        # Check parent classes for mapping strategy
+        for base in cls.__mro__:
+            if hasattr(base, "__mapping_strategy__"):
+                strategy = base.__mapping_strategy__
+                return strategy.get_mapper(cls, relation_name, get_mapper_name)
+
+        # Fall back to default Colony mapping logic (existing behavior)
         # starts the "mapper" name value with an initial
         # invalid value
         mapper_name = None
@@ -2813,6 +2832,13 @@ class EntityClass(object):
         :return: The map containing the various attributes for the requested
         relation in the class.
         """
+
+        # Check if the attribute is a RelationField descriptor (new style)
+        if hasattr(cls, relation_name):
+            attr = getattr(cls, relation_name)
+            if isinstance(attr, fields.RelationField):
+                # Return the relation dict from the RelationField descriptor
+                return attr.to_dict()
 
         # in case the class contains the relations attributes method in
         # the "old fashioned" mode
