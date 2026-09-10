@@ -4305,11 +4305,14 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
         try:
             # creates the backup with no password defined and verifies
-            # that no credentials are set in the environment, so that
-            # the ambient ones remain the ones in use
+            # that the environment is handed over untouched, so that the
+            # ambient credentials remain the ones in use
             migration.backup_database(dict(database=database), "pgsql")
             _args, kwargs = subprocess.calls[0]
-            self.assertFalse("PGPASSWORD" in kwargs["env"])
+            self.assertEqual(
+                kwargs["env"].get("PGPASSWORD", None),
+                os.environ.get("PGPASSWORD", None),
+            )
         finally:
             migration.subprocess = original
             shutil.rmtree(directory_path)
