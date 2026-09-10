@@ -138,7 +138,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - run: python --version
@@ -146,7 +146,7 @@ jobs:
       - run: |
           pip install black
           black . --check
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.14'
       - run: python setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com
@@ -167,7 +167,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - run: python --version
@@ -175,7 +175,7 @@ jobs:
       - run: |
           pip install black
           black . --check
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.14'
       - run: python setup.py test
         env:
           HTTPBIN: httpbin.bemisc.com

@@ -28,6 +28,7 @@ __license__ = "Apache License, Version 2.0"
 from . import analysis
 from . import decorators
 from . import exceptions
+from . import migration
 from . import structures
 from . import system
 from . import test
@@ -42,6 +43,22 @@ from .exceptions import (
     ValidationError,
     RelationValidationError,
     InvalidSerializerError,
+)
+from .migration import (
+    has_table,
+    index_query,
+    insert_ignore_query,
+    get_hierarchy_classes,
+    get_root_class,
+    get_column_definitions,
+    get_source_table_for_column,
+    checkpoint_database,
+    backup_database,
+    validate_hierarchy,
+    validate_data,
+    generate_cti_to_concrete_queries,
+    generate_concrete_to_cti_queries,
+    migrate,
 )
 from .structures import Connection, EntityClass, rset, load_serializers
 from .system import DataEntityManager

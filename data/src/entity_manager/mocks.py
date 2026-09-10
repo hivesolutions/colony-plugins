@@ -134,7 +134,7 @@ class Person(RootEntity):
     attributes of a person.
     """
 
-    name = dict(type="text")
+    name = dict(type="text", indexed=True)
     """ The name of the person """
 
     age = dict(type="integer")
@@ -431,6 +431,568 @@ class Chair(RootEntityAbstract):
         self.legs = 4
 
 
+class ConcreteRootEntity(structures.EntityClass):
+    """
+    The concrete root entity class, this class represents
+    a typical base class for a model hierarchy using the
+    concrete table inheritance strategy.
+    """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, each concrete
+    class stores all attributes in a single table """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the concrete root entity """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    metadata = dict(type="metadata")
+    """ Simple metadata value that is going to be used
+    for storage of structured data (maps and lists) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class ConcretePerson(ConcreteRootEntity):
+    """
+    The concrete person entity class, represents the set of
+    typical attributes of a person using concrete table
+    inheritance.
+    """
+
+    name = dict(type="text", indexed=True)
+    """ The name of the person """
+
+    age = dict(type="integer")
+    """ The age of the person """
+
+    weight = dict(type="decimal")
+    """ The weight of the person """
+
+    parent = dict(type="relation")
+    """ The parent for the current person """
+
+    children = dict(type="relation")
+    """ The children of the current person """
+
+    employees = dict(type="relation")
+    """ The employees associated with the person """
+
+    address = dict(type="relation")
+    """ The address associated with the person """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ConcreteRootEntity.__init__(self)
+        self.name = "Anonymous"
+        self.age = 18
+
+    @staticmethod
+    def _relation_parent():
+        return dict(
+            type="to-one", target=ConcretePerson, reverse="children", is_mapper=True
+        )
+
+    @staticmethod
+    def _relation_children():
+        return dict(type="to-many", target=ConcretePerson, reverse="parent")
+
+    @staticmethod
+    def _relation_employees():
+        return dict(type="to-many", target=ConcreteEmployee, reverse="boss")
+
+    @staticmethod
+    def _relation_address():
+        return dict(
+            type="to-one",
+            target=ConcreteAddress,
+            reverse="person",
+            is_mapper=True,
+        )
+
+
+class ConcreteEmployee(ConcretePerson):
+    """
+    The concrete employee entity class, the set of attributes
+    contained in this class should be able to represent
+    an employee using concrete table inheritance.
+    """
+
+    salary = dict(type="integer")
+    """ The salary of the employee """
+
+    boss = dict(type="relation")
+    """ The boss of the employee (only one is allowed) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ConcretePerson.__init__(self)
+        self.salary = 200
+
+    @staticmethod
+    def _relation_boss():
+        return dict(
+            type="to-one", target=ConcretePerson, reverse="employees", is_mapper=True
+        )
+
+
+class ConcreteAddress(ConcreteRootEntity):
+    """
+    The concrete address entity class, representing the typical
+    set of attributes for a postal address using concrete table
+    inheritance.
+    """
+
+    street = dict(type="text")
+    """ The street of the address """
+
+    number = dict(type="integer")
+    """ The door number of the address """
+
+    country = dict(type="text")
+    """ The country of the address """
+
+    person = dict(type="relation")
+    """ The person associated with the address """
+
+    def __init__(self):
+        """
+        Constructor for the class.
+        """
+
+        ConcreteRootEntity.__init__(self)
+        self.street = "N/A"
+        self.number = 0
+        self.country = "N/A"
+
+    @staticmethod
+    def _relation_person():
+        return dict(type="to-one", target=ConcretePerson, reverse="address")
+
+
+class ConcreteAbstract(structures.EntityClass):
+    """
+    The concrete abstract entity class, this class represents the
+    root of a concrete table hierarchy that starts with an abstract
+    class, so that no representation of it is created in the data
+    source but its attributes are still inherited downwards.
+    """
+
+    abstract = True
+    """ Abstract class flag, indicating that this class is not
+    meant to be stored in the data source """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, each concrete
+    class stores all attributes in a single table """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the concrete abstract """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class ConcreteAbstractPerson(ConcreteAbstract):
+    """
+    The concrete abstract person entity class, the first concrete
+    class of a hierarchy whose root is abstract, used to verify that
+    abstract ancestors are skipped in the write operations.
+    """
+
+    name = dict(type="text")
+    """ The name of the concrete abstract person """
+
+    age = dict(type="integer")
+    """ The age of the concrete abstract person """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ConcreteAbstract.__init__(self)
+        self.name = "Anonymous"
+        self.age = 18
+
+
+class ConcreteAbstractEmployee(ConcreteAbstractPerson):
+    """
+    The concrete abstract employee entity class, the second concrete
+    level of a hierarchy whose root is abstract.
+    """
+
+    salary = dict(type="integer")
+    """ The salary of the concrete abstract employee """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        ConcreteAbstractPerson.__init__(self)
+        self.salary = 200
+
+
+class MigrationRootEntity(structures.EntityClass):
+    """
+    The migration root entity class, the root of a narrow class
+    table hierarchy used to exercise the inheritance strategy
+    migration operations.
+    """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration root entity """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class MigrationPerson(MigrationRootEntity):
+    """
+    The migration person entity class, the intermediate level of
+    the class table hierarchy used for the migration operations.
+    """
+
+    name = dict(type="text", indexed=True)
+    """ The name of the migration person """
+
+    age = dict(type="integer")
+    """ The age of the migration person """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationRootEntity.__init__(self)
+        self.name = "Anonymous"
+        self.age = 18
+
+
+class MigrationEmployee(MigrationPerson):
+    """
+    The migration employee entity class, the bottom level of the
+    class table hierarchy used for the migration operations.
+    """
+
+    salary = dict(type="integer")
+    """ The salary of the migration employee """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationPerson.__init__(self)
+        self.salary = 200
+
+
+class MigrationConcreteRoot(structures.EntityClass):
+    """
+    The migration concrete root entity class, the root of a narrow
+    concrete table hierarchy used to exercise the inheritance
+    strategy migration operations in the reverse direction.
+    """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, each concrete
+    class stores all attributes in a single table """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration concrete root """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class MigrationConcretePerson(MigrationConcreteRoot):
+    """
+    The migration concrete person entity class, the intermediate
+    level of the concrete table hierarchy used for the migration
+    operations.
+    """
+
+    name = dict(type="text", indexed=True)
+    """ The name of the migration concrete person """
+
+    age = dict(type="integer")
+    """ The age of the migration concrete person """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationConcreteRoot.__init__(self)
+        self.name = "Anonymous"
+        self.age = 18
+
+
+class MigrationConcreteEmployee(MigrationConcretePerson):
+    """
+    The migration concrete employee entity class, the bottom level
+    of the concrete table hierarchy used for the migration
+    operations.
+    """
+
+    salary = dict(type="integer")
+    """ The salary of the migration concrete employee """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationConcretePerson.__init__(self)
+        self.salary = 200
+
+
+class MigrationMixedRoot(structures.EntityClass):
+    """
+    The migration mixed root entity class, the root of a hierarchy
+    whose descendant declares a different inheritance strategy, used
+    to verify that such a misconfiguration is rejected before any
+    migration is attempted.
+    """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration mixed root """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class MigrationMixedChild(MigrationMixedRoot):
+    """
+    The migration mixed child entity class, declares an inheritance
+    strategy that conflicts with the one of its own root class.
+    """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, deliberately conflicting
+    with the strategy of the root of the hierarchy """
+
+    name = dict(type="text")
+    """ The name of the migration mixed child """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationMixedRoot.__init__(self)
+        self.name = "Anonymous"
+
+
+class MigrationBranchRoot(structures.EntityClass):
+    """
+    The migration branch root entity class, an abstract root that
+    branches into more than one independent chain of classes, used to
+    verify that the discriminator column is resolved for the chain of
+    each class and not for the root of the migration alone.
+    """
+
+    abstract = True
+    """ Abstract class flag, indicating that this class is not
+    meant to be stored in the data source """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration branch root """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class MigrationBranchAlpha(MigrationBranchRoot):
+    """
+    The migration branch alpha entity class, the root of the first
+    of the chains that descend from the abstract root.
+    """
+
+    alpha = dict(type="text")
+    """ The alpha value of the migration branch alpha """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationBranchRoot.__init__(self)
+        self.alpha = "N/A"
+
+
+class MigrationBranchBeta(MigrationBranchRoot):
+    """
+    The migration branch beta entity class, the root of the second
+    of the chains that descend from the abstract root.
+    """
+
+    beta = dict(type="text")
+    """ The beta value of the migration branch beta """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationBranchRoot.__init__(self)
+        self.beta = "N/A"
+
+
+class MigrationBranchLeaf(MigrationBranchBeta):
+    """
+    The migration branch leaf entity class, the bottom level of the
+    second of the chains that descend from the abstract root.
+    """
+
+    gamma = dict(type="text")
+    """ The gamma value of the migration branch leaf """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationBranchBeta.__init__(self)
+        self.gamma = "N/A"
+
+
+class MigrationOverrideRoot(structures.EntityClass):
+    """
+    The migration override root entity class, the root of a concrete
+    table hierarchy whose descendant redefines an inherited relation,
+    used to verify the resolution of the relations of a flattened
+    class during the migration.
+    """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, each concrete
+    class stores all attributes in a single table """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration override root """
+
+    children = dict(type="relation")
+    """ The children of the current entity """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+
+    @staticmethod
+    def _relation_children():
+        return dict(type="to-many", target=MigrationOverrideParent, reverse="parent")
+
+
+class MigrationOverrideParent(MigrationOverrideRoot):
+    """
+    The migration override parent entity class, declares the mapped
+    relation that the descendant is going to redefine.
+    """
+
+    parent = dict(type="relation")
+    """ The parent of the current entity """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationOverrideRoot.__init__(self)
+
+    @staticmethod
+    def _relation_parent():
+        return dict(
+            type="to-one",
+            target=MigrationOverrideRoot,
+            reverse="children",
+            is_mapper=True,
+        )
+
+
+class MigrationOverrideChild(MigrationOverrideParent):
+    """
+    The migration override child entity class, redefines the relation
+    inherited from its parent using the name of the target class
+    instead of the class itself, the pattern used by the models that
+    are not able to import the target.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationOverrideParent.__init__(self)
+
+    @staticmethod
+    def _relation_parent():
+        return dict(
+            type="to-one",
+            target="MigrationOverrideRoot",
+            reverse="children",
+            is_mapper=True,
+        )
+
+
 class File(RootEntity):
     """
     The file entity class, that represent a typical file
@@ -450,3 +1012,185 @@ class File(RootEntity):
 
         RootEntity.__init__(self)
         self.filename = "undefined"
+
+
+class MockFailingCursor(object):
+    """
+    The mock cursor class that fails the execution of the queries
+    that change the structure (or the contents) of the data source,
+    used to simulate a failure in the middle of a migration.
+    """
+
+    MIGRATION_PREFIXES = ("create ", "insert ", "drop ", "alter ")
+    """ The tuple containing the prefixes of the queries that are
+    considered to be part of a migration, the ones that are going
+    to be failed once the failure threshold has been reached """
+
+    def __init__(self, cursor, fail_after=0):
+        """
+        Constructor of the class.
+
+        :type cursor: Cursor
+        :param cursor: The concrete cursor to which the operations
+        are going to be delegated.
+        :type fail_after: int
+        :param fail_after: The number of migration queries that are
+        allowed to be executed before the failure is triggered.
+        """
+
+        self.cursor = cursor
+        self.fail_after = fail_after
+        self.count = 0
+        self.closed = False
+
+    def execute(self, query, *args):
+        # verifies if the query is one of the queries that change the
+        # data source, the other ones are always allowed as they are
+        # part of the inspection of the current structure
+        is_migration = query.startswith(MockFailingCursor.MIGRATION_PREFIXES)
+
+        # in case the query is a migration one increments the counter
+        # and raises an exception once the threshold is exceeded
+        if is_migration:
+            self.count += 1
+            if self.count > self.fail_after:
+                raise RuntimeError("simulated migration failure")
+
+        return self.cursor.execute(query, *args)
+
+    def fetchone(self):
+        return self.cursor.fetchone()
+
+    def fetchall(self):
+        return self.cursor.fetchall()
+
+    def close(self):
+        self.closed = True
+        return self.cursor.close()
+
+
+class MockFailingConnection(object):
+    """
+    The mock connection class that creates cursors that fail the
+    execution of the migration queries, used to verify both the
+    backup and the rollback steps of a migration.
+    """
+
+    def __init__(self, connection, fail_after=0, rollback_fails=False):
+        """
+        Constructor of the class.
+
+        :type connection: Connection
+        :param connection: The concrete connection to which the
+        operations are going to be delegated.
+        :type fail_after: int
+        :param fail_after: The number of migration queries that are
+        allowed to be executed before the failure is triggered.
+        :type rollback_fails: bool
+        :param rollback_fails: If the rollback operation should also
+        fail, simulating a connection that is no longer usable.
+        """
+
+        self.connection = connection
+        self.fail_after = fail_after
+        self.rollback_fails = rollback_fails
+        self.rolled_back = False
+        self.cursors = []
+
+    def cursor(self):
+        cursor = MockFailingCursor(self.connection.cursor(), self.fail_after)
+        self.cursors.append(cursor)
+        return cursor
+
+    def commit(self):
+        return self.connection.commit()
+
+    def rollback(self):
+        self.rolled_back = True
+        if self.rollback_fails:
+            raise RuntimeError("simulated rollback failure")
+        return self.connection.rollback()
+
+
+class MockRecordingCursor(object):
+    """
+    The mock cursor class that records the queries executed through
+    it and answers them with a fixed result, used to verify the
+    engine specific queries without the corresponding data source.
+    """
+
+    def __init__(self, queries, result=(1,)):
+        """
+        Constructor of the class.
+
+        :type queries: List
+        :param queries: The list where the executed queries are
+        going to be recorded.
+        :type result: Tuple
+        :param result: The row that is going to be answered for
+        every one of the executed queries.
+        """
+
+        self.queries = queries
+        self.result = result
+
+    def execute(self, query, *args):
+        self.queries.append(query)
+
+    def fetchone(self):
+        return self.result
+
+    def fetchall(self):
+        return [self.result]
+
+    def close(self):
+        pass
+
+
+class MockRecordingConnection(object):
+    """
+    The mock connection class that creates cursors recording the
+    queries executed through them, used to verify the queries that
+    target data sources other than the one in use.
+    """
+
+    def __init__(self, result=(1,)):
+        """
+        Constructor of the class.
+
+        :type result: Tuple
+        :param result: The row that is going to be answered for
+        every one of the executed queries.
+        """
+
+        self.queries = []
+        self.result = result
+
+    def cursor(self):
+        return MockRecordingCursor(self.queries, self.result)
+
+    def commit(self):
+        pass
+
+    def rollback(self):
+        pass
+
+
+class MockRecordingSubprocess(object):
+    """
+    The mock subprocess module that records the commands issued
+    through it instead of running them, used to verify the external
+    commands of the backup operations without the corresponding
+    database utilities.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.calls = []
+
+    def check_call(self, args, **kwargs):
+        self.calls.append((args, kwargs))
+        return 0
