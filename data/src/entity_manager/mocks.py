@@ -134,7 +134,7 @@ class Person(RootEntity):
     attributes of a person.
     """
 
-    name = dict(type="text")
+    name = dict(type="text", indexed=True)
     """ The name of the person """
 
     age = dict(type="integer")
@@ -468,7 +468,7 @@ class ConcretePerson(ConcreteRootEntity):
     inheritance.
     """
 
-    name = dict(type="text")
+    name = dict(type="text", indexed=True)
     """ The name of the person """
 
     age = dict(type="integer")
@@ -684,7 +684,7 @@ class MigrationPerson(MigrationRootEntity):
     the class table hierarchy used for the migration operations.
     """
 
-    name = dict(type="text")
+    name = dict(type="text", indexed=True)
     """ The name of the migration person """
 
     age = dict(type="integer")
@@ -751,7 +751,7 @@ class MigrationConcretePerson(MigrationConcreteRoot):
     operations.
     """
 
-    name = dict(type="text")
+    name = dict(type="text", indexed=True)
     """ The name of the migration concrete person """
 
     age = dict(type="integer")
@@ -831,6 +831,168 @@ class MigrationMixedChild(MigrationMixedRoot):
         self.name = "Anonymous"
 
 
+class MigrationBranchRoot(structures.EntityClass):
+    """
+    The migration branch root entity class, an abstract root that
+    branches into more than one independent chain of classes, used to
+    verify that the discriminator column is resolved for the chain of
+    each class and not for the root of the migration alone.
+    """
+
+    abstract = True
+    """ Abstract class flag, indicating that this class is not
+    meant to be stored in the data source """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration branch root """
+
+    status = dict(type="integer")
+    """ The status of the entity (1-enabled, 2-disabled) """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+        self.status = 1
+
+
+class MigrationBranchAlpha(MigrationBranchRoot):
+    """
+    The migration branch alpha entity class, the root of the first
+    of the chains that descend from the abstract root.
+    """
+
+    alpha = dict(type="text")
+    """ The alpha value of the migration branch alpha """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationBranchRoot.__init__(self)
+        self.alpha = "N/A"
+
+
+class MigrationBranchBeta(MigrationBranchRoot):
+    """
+    The migration branch beta entity class, the root of the second
+    of the chains that descend from the abstract root.
+    """
+
+    beta = dict(type="text")
+    """ The beta value of the migration branch beta """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationBranchRoot.__init__(self)
+        self.beta = "N/A"
+
+
+class MigrationBranchLeaf(MigrationBranchBeta):
+    """
+    The migration branch leaf entity class, the bottom level of the
+    second of the chains that descend from the abstract root.
+    """
+
+    gamma = dict(type="text")
+    """ The gamma value of the migration branch leaf """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationBranchBeta.__init__(self)
+        self.gamma = "N/A"
+
+
+class MigrationOverrideRoot(structures.EntityClass):
+    """
+    The migration override root entity class, the root of a concrete
+    table hierarchy whose descendant redefines an inherited relation,
+    used to verify the resolution of the relations of a flattened
+    class during the migration.
+    """
+
+    inheritance = "concrete_table"
+    """ Concrete table inheritance strategy, each concrete
+    class stores all attributes in a single table """
+
+    object_id = dict(id=True, type="integer", generated=True)
+    """ The object id of the migration override root """
+
+    children = dict(type="relation")
+    """ The children of the current entity """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.object_id = None
+
+    @staticmethod
+    def _relation_children():
+        return dict(type="to-many", target=MigrationOverrideParent, reverse="parent")
+
+
+class MigrationOverrideParent(MigrationOverrideRoot):
+    """
+    The migration override parent entity class, declares the mapped
+    relation that the descendant is going to redefine.
+    """
+
+    parent = dict(type="relation")
+    """ The parent of the current entity """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationOverrideRoot.__init__(self)
+
+    @staticmethod
+    def _relation_parent():
+        return dict(
+            type="to-one",
+            target=MigrationOverrideRoot,
+            reverse="children",
+            is_mapper=True,
+        )
+
+
+class MigrationOverrideChild(MigrationOverrideParent):
+    """
+    The migration override child entity class, redefines the relation
+    inherited from its parent using the name of the target class
+    instead of the class itself, the pattern used by the models that
+    are not able to import the target.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        MigrationOverrideParent.__init__(self)
+
+    @staticmethod
+    def _relation_parent():
+        return dict(
+            type="to-one",
+            target="MigrationOverrideRoot",
+            reverse="children",
+            is_mapper=True,
+        )
+
+
 class File(RootEntity):
     """
     The file entity class, that represent a typical file
@@ -879,6 +1041,7 @@ class MockFailingCursor(object):
         self.cursor = cursor
         self.fail_after = fail_after
         self.count = 0
+        self.closed = False
 
     def execute(self, query, *args):
         # verifies if the query is one of the queries that change the
@@ -902,6 +1065,7 @@ class MockFailingCursor(object):
         return self.cursor.fetchall()
 
     def close(self):
+        self.closed = True
         return self.cursor.close()
 
 
@@ -931,9 +1095,12 @@ class MockFailingConnection(object):
         self.fail_after = fail_after
         self.rollback_fails = rollback_fails
         self.rolled_back = False
+        self.cursors = []
 
     def cursor(self):
-        return MockFailingCursor(self.connection.cursor(), self.fail_after)
+        cursor = MockFailingCursor(self.connection.cursor(), self.fail_after)
+        self.cursors.append(cursor)
+        return cursor
 
     def commit(self):
         return self.connection.commit()
@@ -1007,3 +1174,23 @@ class MockRecordingConnection(object):
 
     def rollback(self):
         pass
+
+
+class MockRecordingSubprocess(object):
+    """
+    The mock subprocess module that records the commands issued
+    through it instead of running them, used to verify the external
+    commands of the backup operations without the corresponding
+    database utilities.
+    """
+
+    def __init__(self):
+        """
+        Constructor of the class.
+        """
+
+        self.calls = []
+
+    def check_call(self, args, **kwargs):
+        self.calls.append((args, kwargs))
+        return 0

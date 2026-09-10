@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import os
 import sys
+import shutil
 import sqlite3
 import tempfile
 
@@ -37,7 +38,6 @@ import colony
 
 from . import mocks
 from . import migration
-from . import benchmark
 from . import structures
 from . import exceptions
 
@@ -52,7 +52,6 @@ class EntityManagerTest(colony.Test):
             EntityManagerBaseTestCase,
             EntityManagerConcreteTableTestCase,
             EntityManagerMigrationTestCase,
-            EntityManagerBenchmarkTestCase,
             EntityManagerRsetTestCase,
         )
 
@@ -2704,6 +2703,42 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         self.assertTrue("object_id" in items)
         self.assertTrue("status" in items)
 
+    def test_get_all_indexed(self):
+        # verifies that a concrete table entity class reports the items
+        # declared at its own level as meant to be indexed
+        self.assertEqual(mocks.ConcretePerson.get_all_indexed(), ["name"])
+
+        # verifies that a descendant of it also reports the inherited
+        # item, as the column is flattened into its own table and so it
+        # has to be indexed there as well
+        self.assertEqual(mocks.ConcreteEmployee.get_all_indexed(), ["name"])
+
+        # verifies that the "native" (non flattened) retrieval keeps
+        # reporting only the items declared at the level of the class
+        # itself, so that both of the retrievals remain independent
+        self.assertEqual(mocks.ConcretePerson.get_indexed(), ["name"])
+        self.assertEqual(mocks.ConcreteEmployee.get_indexed(), [])
+
+        # verifies that a class whose hierarchy declares no indexed
+        # items reports an empty set of items
+        self.assertEqual(mocks.ConcreteAddress.get_all_indexed(), [])
+
+    def test_get_all_indexed_cache(self):
+        # retrieves the indexed items twice and verifies that the very
+        # same list is returned, meaning that the resolution is cached
+        # instead of being rebuilt on every retrieval
+        indexed = mocks.ConcreteEmployee.get_all_indexed()
+        self.assertTrue(indexed is mocks.ConcreteEmployee.get_all_indexed())
+
+        # verifies that the cache is stored in the class itself, so that
+        # the levels of the hierarchy do not shadow each other
+        self.assertTrue("_all_indexed" in mocks.ConcreteEmployee.__dict__)
+
+        # verifies that the cache attribute is not mistaken for a field
+        # of the entity, which would create a spurious column
+        self.assertFalse("_all_indexed" in mocks.ConcreteEmployee.get_names())
+        self.assertFalse("_all_indexed" in mocks.ConcreteEmployee.get_all_items())
+
     def test_get_cls_tables(self):
         # verifies that for the concrete table strategy the tables that
         # hold a copy of an inherited column are the ones of every non
@@ -2908,6 +2943,28 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
             self.entity_manager.has_definition(mocks.ConcreteAbstractEmployee)
         )
         self.assertFalse(self.entity_manager.has_definition(mocks.ConcreteAbstract))
+
+    def test_index_fields(self):
+        # creates the entity classes of a concrete table hierarchy in
+        # the data source, the indexes of the fields declared as indexed
+        # are created as part of the operation
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+
+        # verifies that the indexed field is indexed both in the table
+        # of the class that declares it and in the one of the descendant
+        # class, as the column is flattened into both of them
+        self.assertTrue(self._has_index("_concrete_person_name_hash"))
+        self.assertTrue(self._has_index("_concrete_employee_name_hash"))
+
+        # creates the entity classes of a class table hierarchy and
+        # verifies that the indexed field is only indexed in the table
+        # of the class that declares it, the descendant shares the row
+        # of the parent and so it holds no copy of the column
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Employee)
+        self.assertTrue(self._has_index("_person_name_hash"))
+        self.assertFalse(self._has_index("_employee_name_hash"))
 
     def test_get_items_map(self):
         # retrieves the items map for a concrete table entity including
@@ -3312,6 +3369,69 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         self.assertEqual(root_entity.name, "real_employee")
         self.assertEqual(root_entity.salary, 1500)
 
+    def test_get_descendant_tables(self):
+        # retrieves the tables of a concrete table entity class that has
+        # descendants, the column copies live in the table of the class
+        # itself and in the ones of every class below it
+        tables = self.entity_manager._get_descendant_tables(mocks.ConcretePerson)
+        self.assertEqual(sorted(tables), ["_concrete_employee", "_concrete_person"])
+
+        # retrieves the tables of a leaf class of the same hierarchy and
+        # verifies that only its own table is reported, the levels above
+        # it are not to be considered
+        tables = self.entity_manager._get_descendant_tables(mocks.ConcreteEmployee)
+        self.assertEqual(tables, ["_concrete_employee"])
+
+        # retrieves the tables of the root of the hierarchy and verifies
+        # that the complete set of descendants is reported, no matter the
+        # depth at which they are declared
+        tables = self.entity_manager._get_descendant_tables(mocks.ConcreteRootEntity)
+        self.assertEqual(
+            sorted(tables),
+            [
+                "_concrete_address",
+                "_concrete_employee",
+                "_concrete_person",
+                "_concrete_root_entity",
+            ],
+        )
+
+    def test_get_descendant_tables_abstract(self):
+        # retrieves the tables of an abstract class of a concrete table
+        # hierarchy and verifies that its own table is not reported, as
+        # no representation of it exists in the data source
+        tables = self.entity_manager._get_descendant_tables(mocks.ConcreteAbstract)
+        self.assertEqual(
+            sorted(tables),
+            ["_concrete_abstract_employee", "_concrete_abstract_person"],
+        )
+
+    def test_get_descendant_tables_class_table(self):
+        # retrieves the tables of a class table entity class that has
+        # descendants and verifies that only its own table is reported,
+        # the descendants share the row of their ancestors and so they
+        # hold no copy of the columns
+        tables = self.entity_manager._get_descendant_tables(mocks.Person)
+        self.assertEqual(tables, ["_person"])
+
+    def test_get_descendant_tables_unregistered(self):
+        # removes one of the descendants from the entity manager so that
+        # it becomes a class with no representation in the data source
+        self.entity_manager.shrink(dict(ConcreteEmployee=mocks.ConcreteEmployee))
+
+        # verifies that the unregistered descendant is not reported, as
+        # writing to a table that does not exist would fail
+        try:
+            tables = self.entity_manager._get_descendant_tables(mocks.ConcretePerson)
+            self.assertEqual(tables, ["_concrete_person"])
+        finally:
+            self.entity_manager.extend(dict(ConcreteEmployee=mocks.ConcreteEmployee))
+
+        # verifies that the descendant is reported again once it has
+        # been registered back in the entity manager
+        tables = self.entity_manager._get_descendant_tables(mocks.ConcretePerson)
+        self.assertEqual(sorted(tables), ["_concrete_employee", "_concrete_person"])
+
     def test_one_to_one(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.ConcretePerson)
@@ -3466,6 +3586,121 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         saved_person = self.entity_manager.get(mocks.ConcretePerson, 1)
         self.assertEqual(saved_person.address.object_id, other_address.object_id)
 
+    def test_one_to_many_reverse_unset(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+
+        # creates a parent person and two employees (a level below the
+        # class that declares the reverse relation) to be associated
+        # with it through the "to many" side of the relation
+        parent = mocks.ConcretePerson()
+        parent.object_id = 1
+        parent.name = "parent_person"
+        child_a = mocks.ConcreteEmployee()
+        child_a.object_id = 2
+        child_a.name = "child_a"
+        child_b = mocks.ConcreteEmployee()
+        child_b.object_id = 3
+        child_b.name = "child_b"
+        self.entity_manager.save(child_a)
+        self.entity_manager.save(child_b)
+
+        # associates both of the employees with the parent and verifies
+        # that the relation is visible from both levels of the hierarchy
+        parent.children = [child_a, child_b]
+        self.entity_manager.save(parent)
+
+        saved_child = self.entity_manager.get(mocks.ConcreteEmployee, 2)
+        self.assertEqual(saved_child.parent.object_id, parent.object_id)
+        saved_child = self.entity_manager.get(mocks.ConcretePerson, 2)
+        self.assertEqual(saved_child.parent.object_id, parent.object_id)
+
+        # re-assigns the relation so that only one of the employees
+        # remains associated with the parent, the previous values must
+        # be unset in every table that holds a copy of the column
+        parent.children = [child_b]
+        self.entity_manager.update(parent)
+
+        saved_child = self.entity_manager.get(mocks.ConcreteEmployee, 2)
+        self.assertEqual(saved_child.parent, None)
+        saved_child = self.entity_manager.get(mocks.ConcretePerson, 2)
+        self.assertEqual(saved_child.parent, None)
+
+        # verifies that the remaining association is untouched, the
+        # unset must be followed by the set of the new values
+        saved_child = self.entity_manager.get(mocks.ConcreteEmployee, 3)
+        self.assertEqual(saved_child.parent.object_id, parent.object_id)
+
+        # verifies that the reverse side of the relation reports the
+        # very same set of children, so that both sides agree
+        saved_parent = self.entity_manager.get(
+            mocks.ConcretePerson, 1, dict(eager=dict(children={}))
+        )
+        self.assertEqual(len(saved_parent.children), 1)
+        self.assertEqual(saved_parent.children[0].object_id, child_b.object_id)
+
+    def test_map_relations(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.ConcretePerson)
+        self.entity_manager.create(mocks.ConcreteEmployee)
+        self.entity_manager.create(mocks.ConcreteAddress)
+
+        # creates an employee with an address associated, so that the
+        # map based retrieval has to unpack a relation whose target is
+        # part of a concrete table hierarchy
+        address = mocks.ConcreteAddress()
+        address.object_id = 1
+        address.street = "street_address"
+        employee = mocks.ConcreteEmployee()
+        employee.object_id = 2
+        employee.name = "name_employee"
+        employee.address = address
+        self.entity_manager.save(address)
+        self.entity_manager.save(employee)
+
+        # retrieves the employee as a map, eagerly loading the relation,
+        # and verifies that it is unpacked as a nested map
+        employees = self.entity_manager.find(
+            mocks.ConcreteEmployee, dict(map=True, eager=("address",))
+        )
+        self.assertEqual(len(employees), 1)
+        self.assertEqual(type(employees[0]), dict)
+        self.assertEqual(type(employees[0]["address"]), dict)
+        self.assertEqual(employees[0]["address"]["object_id"], 1)
+        self.assertEqual(employees[0]["address"]["street"], "street_address")
+
+        # verifies that the discriminator is unpacked both for the entity
+        # and for the eagerly loaded relation, for the concrete table
+        # strategy it is held in the table of the target itself
+        self.assertEqual(employees[0]["_class"], "ConcreteEmployee")
+        self.assertEqual(employees[0]["address"]["_class"], "ConcreteAddress")
+
+        # creates a plain person to be the boss of the employee, so that
+        # the reverse ("to many") side of a relation may also be part of
+        # the map based retrieval
+        boss = mocks.ConcretePerson()
+        boss.object_id = 3
+        boss.name = "name_boss"
+        employee.boss = boss
+        self.entity_manager.save(boss)
+        self.entity_manager.update(employee)
+
+        # retrieves the boss as a map, eagerly loading the "to many"
+        # relation, and verifies that it is unpacked as a list of maps
+        persons = self.entity_manager.find(
+            mocks.ConcretePerson,
+            dict(
+                map=True,
+                eager=("employees",),
+                filters=[dict(type="equals", fields=[dict(name="object_id", value=3)])],
+            ),
+        )
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(type(persons[0]["employees"]), list)
+        self.assertEqual(len(persons[0]["employees"]), 1)
+        self.assertEqual(persons[0]["employees"][0]["name"], "name_employee")
+
     def test_find_filter_inherited_field(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.ConcretePerson)
@@ -3524,6 +3759,23 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         self.assertEqual(found[0].age, 40)
         self.assertEqual(found[2].age, 20)
 
+    def _has_index(self, index_name):
+        """
+        Verifies if an index with the provided name is currently
+        defined in the data source that backs the entity manager.
+
+        :type index_name: String
+        :param index_name: The name of the index to be verified.
+        :rtype: bool
+        :return: If the index is defined in the data source.
+        """
+
+        result_set = self.entity_manager.execute(
+            "select count(*) from sqlite_master where type = 'index' "
+            "and name = '%s'" % index_name
+        )
+        return result_set[0][0] == 1
+
 
 class EntityManagerMigrationTestCase(colony.ColonyTestCase):
     @staticmethod
@@ -3564,9 +3816,15 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertTrue(migration.has_table(connection, "_person", "mysql"))
         self.assertTrue("information_schema.tables" in connection.queries[0])
 
+        # verifies that the catalog query is scoped to the schema that
+        # is currently in use, otherwise a table with the same name in
+        # another schema of the server would be reported as existing
+        self.assertTrue("table_schema = database()" in connection.queries[0])
+
         connection = mocks.MockRecordingConnection()
         self.assertTrue(migration.has_table(connection, "_person", "pgsql"))
         self.assertTrue("pg_tables" in connection.queries[0])
+        self.assertTrue("schemaname = current_schema()" in connection.queries[0])
 
         # verifies that the SQLite catalog is used by default, and that
         # a zero count is correctly reported as a missing table
@@ -3615,9 +3873,20 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         index_name = query.split(" on ")[0].replace("create index ", "")
         self.assertEqual(len(index_name), 63)
 
-        # verifies that the truncation keeps the suffix of the name, so
-        # that the index type remains part of the resulting name
-        self.assertTrue(index_name.endswith("_hash"))
+        # verifies that two names that only differ in their beginning
+        # do not collapse into the same index name once truncated, as
+        # the resulting names would collide in the data source
+        other_table = "_another_long_table_name_that_exceeds_the_engine_limits"
+        other = migration.index_query(other_table, attribute_name, "hash", "pgsql")
+        other_name = other.split(" on ")[0].replace("create index ", "")
+        self.assertEqual(len(other_name), 63)
+        self.assertNotEqual(index_name, other_name)
+
+        # verifies that the index type is still part of the name of the
+        # indexes that do not require any truncation at all
+        query = migration.index_query("_person", "age", "btree", "pgsql")
+        index_name = query.split(" on ")[0].replace("create index ", "")
+        self.assertTrue(index_name.endswith("_btree"))
 
         # verifies that a name within the limits is not truncated
         query = migration.index_query("_person", "age", "hash", "mysql")
@@ -3688,6 +3957,40 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # relied upon when the tables are created
         self.assertEqual(classes[0], mocks.RootEntity)
 
+    def test_get_chain_root(self):
+        # verifies that the chain root of a class of a hierarchy whose
+        # root is not abstract is the root of the hierarchy itself
+        self.assertEqual(
+            migration.get_chain_root(mocks.MigrationEmployee),
+            mocks.MigrationRootEntity,
+        )
+
+        # verifies that a class with no parents is its own chain root
+        self.assertEqual(
+            migration.get_chain_root(mocks.MigrationRootEntity),
+            mocks.MigrationRootEntity,
+        )
+
+    def test_get_chain_root_abstract(self):
+        # verifies that an abstract ancestor is not considered, as it
+        # has no table to hold the discriminator column
+        self.assertEqual(
+            migration.get_chain_root(mocks.MigrationBranchAlpha),
+            mocks.MigrationBranchAlpha,
+        )
+
+        # verifies that each of the chains that descend from the same
+        # abstract root resolves to the top of its own chain, and not
+        # to the first one of them
+        self.assertEqual(
+            migration.get_chain_root(mocks.MigrationBranchLeaf),
+            mocks.MigrationBranchBeta,
+        )
+        self.assertEqual(
+            migration.get_chain_root(mocks.MigrationBranchBeta),
+            mocks.MigrationBranchBeta,
+        )
+
     def test_get_column_definitions(self):
         # retrieves the column definitions for the intermediate level
         # of the hierarchy and indexes them by name for verification
@@ -3735,6 +4038,22 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # identifier attribute of the target class
         columns_map = dict((name, type) for name, type, _is_pk in columns)
         self.assertEqual(columns_map["parent"], "integer")
+
+    def test_get_column_definitions_relation_override(self):
+        # retrieves the column definitions for a class that redefines an
+        # inherited relation using the name of the target class instead
+        # of the class itself, the relation has to be read from the
+        # class that declares it, otherwise the name would be used as
+        # if it were the class and the resolution would fail
+        columns = migration.get_column_definitions(
+            mocks.MigrationOverrideChild, migration.SQL_TYPES_MAP
+        )
+        columns_map = dict((name, type) for name, type, _is_pk in columns)
+
+        # verifies that the relation column is present and that it takes
+        # the SQL type of the identifier of the target class
+        self.assertEqual(columns_map["parent"], "integer")
+        self.assertEqual(columns_map["object_id"], "integer")
 
     def test_get_source_table_for_column(self):
         # verifies that a column declared by the root class resolves
@@ -3932,6 +4251,69 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             os.remove(backup_path)
             os.remove(file_path)
 
+    def test_backup_database_credentials(self):
+        # replaces the subprocess module by one that records the issued
+        # commands, so that the backup of the "external" engines may be
+        # verified without the corresponding database utilities
+        subprocess = mocks.MockRecordingSubprocess()
+        original = migration.subprocess
+        migration.subprocess = subprocess
+
+        # creates the temporary directory that is going to hold the
+        # backup file, the database name is used as its path
+        directory_path = tempfile.mkdtemp()
+        database = os.path.join(directory_path, "database")
+
+        try:
+            # creates the backup of a PostgreSQL data source and
+            # verifies that the password is passed to the utility
+            # through the environment, as it does not accept it as
+            # a command line argument
+            backup_path = migration.backup_database(
+                dict(database=database, user="user", password="password"), "pgsql"
+            )
+            args, kwargs = subprocess.calls[0]
+            self.assertEqual(args[0], "pg_dump")
+            self.assertEqual(kwargs["env"]["PGPASSWORD"], "password")
+            self.assertTrue(backup_path.startswith(database))
+
+            # creates the backup of a MySQL data source and verifies
+            # that the password is passed through the environment, as
+            # providing it in the command line would expose it in the
+            # process listing
+            backup_path = migration.backup_database(
+                dict(database=database, user="user", password="password"), "mysql"
+            )
+            args, kwargs = subprocess.calls[1]
+            self.assertEqual(args[0], "mysqldump")
+            self.assertEqual(kwargs["env"]["MYSQL_PWD"], "password")
+            self.assertFalse(self._any_matching(args, "password"))
+        finally:
+            migration.subprocess = original
+            shutil.rmtree(directory_path)
+
+    def test_backup_database_credentials_undefined(self):
+        # replaces the subprocess module by one that records the issued
+        # commands so that the backup may be verified without the
+        # corresponding database utilities
+        subprocess = mocks.MockRecordingSubprocess()
+        original = migration.subprocess
+        migration.subprocess = subprocess
+
+        directory_path = tempfile.mkdtemp()
+        database = os.path.join(directory_path, "database")
+
+        try:
+            # creates the backup with no password defined and verifies
+            # that no credentials are set in the environment, so that
+            # the ambient ones remain the ones in use
+            migration.backup_database(dict(database=database), "pgsql")
+            _args, kwargs = subprocess.calls[0]
+            self.assertFalse("PGPASSWORD" in kwargs["env"])
+        finally:
+            migration.subprocess = original
+            shutil.rmtree(directory_path)
+
     def test_backup_database_unsupported_engine(self):
         # verifies that an unsupported engine raises an error instead
         # of silently skipping the backup step
@@ -4035,6 +4417,22 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertFalse(is_valid)
         self.assertTrue(self._any_matching(messages, "orphaned"))
 
+    def test_validate_data_engine(self):
+        # runs the validation against a cursor that records the queries
+        # executed through it, so that the catalog query used to filter
+        # the hierarchy may be verified for an engine other than the
+        # one that backs the current entity manager
+        connection = mocks.MockRecordingConnection(result=(0,))
+        messages = []
+        is_valid = migration.validate_data(
+            connection, mocks.MigrationRootEntity, messages, "mysql"
+        )
+
+        # verifies that the engine is honoured, otherwise the SQLite
+        # catalog would be queried in a data source that has none
+        self.assertTrue(is_valid)
+        self.assertTrue("information_schema.tables" in connection.queries[0])
+
     def test_generate_cti_to_concrete_queries(self):
         # generates the queries for the migration and groups them by
         # the statement type so that each group may be verified
@@ -4116,6 +4514,33 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         create = self._first_matching(queries, "create table _chair__concrete_tmp")
         self.assertTrue("status" in create)
         self.assertTrue("legs" in create)
+
+    def test_generate_cti_to_concrete_queries_branches(self):
+        # generates the queries for a hierarchy whose abstract root
+        # branches into more than one independent chain of classes
+        queries = migration.generate_cti_to_concrete_queries(mocks.MigrationBranchRoot)
+        self.assertNotEqual(queries, [])
+
+        # verifies that the discriminator of a class of the second of
+        # the chains is read from the table at the top of its own chain
+        # and not from the one of the first, which is not joined
+        insert = self._first_matching(
+            queries, "insert into _migration_branch_leaf__concrete_tmp"
+        )
+        self.assertTrue("_migration_branch_beta._class" in insert)
+        self.assertFalse("_migration_branch_alpha" in insert)
+
+        # verifies that the filtering by the discriminator is also
+        # scoped to the table at the top of the chain of the class
+        self.assertTrue("where _migration_branch_beta._class in" in insert)
+
+        # verifies that the class at the top of a chain reads the
+        # discriminator from its own table, as it holds it
+        insert = self._first_matching(
+            queries, "insert into _migration_branch_alpha__concrete_tmp"
+        )
+        self.assertTrue("_migration_branch_alpha._class" in insert)
+        self.assertFalse("where" in insert)
 
     def test_generate_concrete_to_cti_queries(self):
         # generates the queries for the reverse migration and verifies
@@ -4228,6 +4653,41 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertFalse(success)
         self.assertTrue(self._any_matching(messages, "already uses"))
 
+    def test_migrate_aborts_on_orphaned_data(self):
+        # creates the required entity classes in the data source and
+        # saves an entity so that rows exist at both levels
+        self.entity_manager.create(mocks.MigrationPerson)
+        self.entity_manager.create(mocks.MigrationEmployee)
+        employee = mocks.MigrationEmployee()
+        employee.object_id = 1
+        employee.name = "orphan_to_be"
+        self.entity_manager.save(employee)
+
+        # removes the root level row directly, leaving the descendant
+        # rows orphaned, the join that copies the rows into the new
+        # tables would otherwise drop them silently
+        connection = self._get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("delete from _migration_root_entity where object_id = 1")
+        finally:
+            cursor.close()
+
+        # runs the migration and verifies that it is aborted before any
+        # of the tables is touched, the data loss must be reported
+        success, messages = migration.migrate(
+            entity_class=mocks.MigrationRootEntity,
+            target_strategy="concrete_table",
+            connection=connection,
+            skip_backup=True,
+        )
+        self.assertFalse(success)
+        self.assertTrue(self._any_matching(messages, "orphaned"))
+
+        # verifies that the class table structure is left untouched, so
+        # that the inconsistency may be resolved before retrying
+        self.assertFalse("name" in self._get_columns("_migration_employee"))
+
     def test_migrate_unsupported_direction(self):
         # runs the migration towards a strategy that is not one of the
         # supported ones, so that no migration direction resolves
@@ -4266,6 +4726,46 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             migration.has_table(self._get_connection(), "_migration_person")
         )
         self.assertFalse("status" in self._get_columns("_migration_person"))
+
+    def test_migrate_skip_backup_unsupported_engine(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.MigrationPerson)
+
+        # runs the migration for an engine that commits the schema
+        # changes implicitly, asking for the backup to be skipped
+        success, messages = migration.migrate(
+            entity_class=mocks.MigrationBranchAlpha,
+            target_strategy="concrete_table",
+            connection=mocks.MockRecordingConnection(),
+            engine="mysql",
+            skip_backup=True,
+        )
+
+        # verifies that the request is refused, as the roll back is not
+        # able to undo the schema changes under such engines and the
+        # backup is then the only way back from a failure
+        self.assertFalse(success)
+        self.assertTrue(self._any_matching(messages, "may not be skipped"))
+
+    def test_migrate_skip_backup_supported_engine(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.MigrationPerson)
+        self.entity_manager.create(mocks.MigrationEmployee)
+
+        # runs the migration for the engine that treats the schema
+        # changes as part of the transaction, asking for the backup
+        # to be skipped
+        success, messages = migration.migrate(
+            entity_class=mocks.MigrationRootEntity,
+            target_strategy="concrete_table",
+            connection=self._get_connection(),
+            skip_backup=True,
+        )
+
+        # verifies that the request is honoured, the roll back is able
+        # to undo the schema changes under it
+        self.assertTrue(success, "; ".join(messages))
+        self.assertFalse(self._any_matching(messages, "backup created at"))
 
     def test_migrate_creates_backup(self):
         # creates the required entity classes so that the database
@@ -4344,6 +4844,51 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertTrue(self._any_matching(messages, "rolled back"))
         self.assertTrue(connection.rolled_back)
 
+        # verifies that every cursor created by the migration was
+        # closed, so that no reference to them is leaked
+        for cursor in connection.cursors:
+            self.assertTrue(cursor.closed)
+
+    def test_migrate_rollback_not_transactional(self):
+        # replaces the subprocess module by one that records the issued
+        # commands, so that the backup of the "external" engine may be
+        # created without the corresponding database utility
+        subprocess = mocks.MockRecordingSubprocess()
+        original = migration.subprocess
+        migration.subprocess = subprocess
+
+        # creates the temporary directory that is going to hold the
+        # backup file, the database name is used as its path
+        directory_path = tempfile.mkdtemp()
+        database = os.path.join(directory_path, "database")
+
+        # wraps a recording connection so that it fails after the first
+        # of the migration queries, leaving the migration partially
+        # applied in a data source that is not able to roll it back
+        connection = mocks.MockFailingConnection(
+            mocks.MockRecordingConnection(), fail_after=1
+        )
+
+        try:
+            success, messages = migration.migrate(
+                entity_class=mocks.MigrationBranchAlpha,
+                target_strategy="concrete_table",
+                connection=connection,
+                engine="mysql",
+                connection_params=dict(database=database),
+            )
+        finally:
+            migration.subprocess = original
+            shutil.rmtree(directory_path)
+
+        # verifies that the roll back was attempted and that the report
+        # of the failure is honest about the schema changes it was not
+        # able to undo, so that the backup is known to be required
+        self.assertFalse(success)
+        self.assertTrue(connection.rolled_back)
+        self.assertTrue(self._any_matching(messages, "not transactional"))
+        self.assertTrue(self._any_matching(messages, "restore the backup"))
+
     def test_migrate_rollback_failure(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.MigrationPerson)
@@ -4368,6 +4913,31 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertFalse(success)
         self.assertTrue(self._any_matching(messages, "migration failed"))
         self.assertTrue(self._any_matching(messages, "rolled back"))
+
+    def test_migrate_closes_cursor(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.MigrationPerson)
+        self.entity_manager.create(mocks.MigrationEmployee)
+
+        # wraps the connection so that the cursors it creates keep track
+        # of their own state, the failure threshold is set high enough
+        # for the migration to be allowed to run to completion
+        connection = mocks.MockFailingConnection(
+            self._get_connection(), fail_after=1000
+        )
+
+        success, messages = migration.migrate(
+            entity_class=mocks.MigrationRootEntity,
+            target_strategy="concrete_table",
+            connection=connection,
+            skip_backup=True,
+        )
+        self.assertTrue(success, "; ".join(messages))
+
+        # verifies that every cursor created by the migration was
+        # closed, so that no reference to them is leaked
+        for cursor in connection.cursors:
+            self.assertTrue(cursor.closed)
 
     def test_migrate_cti_to_concrete(self):
         # creates the required entity classes in the data source and
@@ -4527,6 +5097,33 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         )
         self.assertTrue(row[0] >= 4)
 
+        # verifies that the index of the field declared as indexed by
+        # the model is recreated in the table of the class that declares
+        # it and in the one of the descendant, as the column is
+        # flattened into both of them
+        self.assertTrue(self._has_index("_migration_person_name_hash"))
+        self.assertTrue(self._has_index("_migration_employee_name_hash"))
+
+    def test_migrate_preserves_indexes_reverse(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.MigrationConcretePerson)
+        self.entity_manager.create(mocks.MigrationConcreteEmployee)
+
+        # runs the migration towards the class table strategy
+        success, messages = migration.migrate(
+            entity_class=mocks.MigrationConcreteRoot,
+            target_strategy="class_table",
+            connection=self._get_connection(),
+            skip_backup=True,
+        )
+        self.assertTrue(success, "; ".join(messages))
+
+        # verifies that the index of the field declared as indexed by
+        # the model is recreated in the table of the class that declares
+        # it, and only in it, as the descendant now shares its row
+        self.assertTrue(self._has_index("_migration_concrete_person_name_hash"))
+        self.assertFalse(self._has_index("_migration_concrete_employee_name_hash"))
+
     def _get_connection(self):
         """
         Retrieves the underlying (raw) connection object of the entity
@@ -4583,6 +5180,23 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         """
 
         return self._fetch_row("select count(*) from %s" % table_name)[0]
+
+    def _has_index(self, index_name):
+        """
+        Verifies if an index with the provided name is currently
+        defined in the data source that backs the entity manager.
+
+        :type index_name: String
+        :param index_name: The name of the index to be verified.
+        :rtype: bool
+        :return: If the index is defined in the data source.
+        """
+
+        row = self._fetch_row(
+            "select count(*) from sqlite_master where type = 'index' "
+            "and name = '%s'" % index_name
+        )
+        return row[0] == 1
 
     def _fetch_row(self, query):
         """
@@ -4655,395 +5269,6 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             if value in query:
                 return query
         return ""
-
-
-class EntityManagerBenchmarkTestCase(colony.ColonyTestCase):
-    @staticmethod
-    def get_description():
-        return "Entity Manager Benchmark test case"
-
-    def setUp(self):
-        colony.ColonyTestCase.setUp(self)
-
-        # creates the connections that back the two schemas used by
-        # the benchmark operations, both are kept in memory so that
-        # no temporary files are left behind by the tests
-        self.connection = sqlite3.connect(":memory:")
-        self.wide_connection = sqlite3.connect(":memory:")
-
-    def tearDown(self):
-        # closes the connections created for the current test, the
-        # in memory databases are discarded along with them
-        self.connection.close()
-        self.wide_connection.close()
-
-        colony.ColonyTestCase.tearDown(self)
-
-    def test_create_cti_schema(self):
-        # creates the class table schema and verifies that one table
-        # exists for each of the levels of the hierarchy
-        benchmark.create_cti_schema(self.connection)
-        self.assertTrue(self._has_table("_root_entity"))
-        self.assertTrue(self._has_table("_person"))
-        self.assertTrue(self._has_table("_employee"))
-
-        # verifies that each table only holds the columns declared at
-        # its own level of the hierarchy (normalized structure)
-        columns = self._get_columns("_person")
-        self.assertTrue("name" in columns)
-        self.assertFalse("status" in columns)
-        self.assertFalse("salary" in columns)
-
-        columns = self._get_columns("_employee")
-        self.assertTrue("salary" in columns)
-        self.assertFalse("name" in columns)
-
-    def test_create_concrete_schema(self):
-        # creates the concrete table schema and verifies that a table
-        # exists for each of the levels of the hierarchy
-        benchmark.create_concrete_schema(self.connection)
-        self.assertTrue(self._has_table("_concrete_root_entity"))
-        self.assertTrue(self._has_table("_concrete_person"))
-        self.assertTrue(self._has_table("_concrete_employee"))
-
-        # verifies that the leaf table holds the complete set of
-        # columns flattened down from the root of the hierarchy
-        columns = self._get_columns("_concrete_employee")
-        self.assertTrue("status" in columns)
-        self.assertTrue("name" in columns)
-        self.assertTrue("salary" in columns)
-
-    def test_insert_and_select_cti(self):
-        # creates the schema and inserts a single row across the
-        # three tables of the hierarchy
-        benchmark.create_cti_schema(self.connection)
-        benchmark.insert_cti(self.connection, 1, "cti_employee", 30, 500)
-
-        # retrieves the row through the joined select and verifies
-        # that the values of every level are reconstructed
-        row = benchmark.select_by_id_cti(self.connection, 1)
-        self.assertNotEqual(row, None)
-        self.assertEqual(row[0], 1)
-        self.assertEqual(row[1], 1)
-        self.assertEqual(row[2], "cti_employee")
-        self.assertEqual(row[3], 30)
-        self.assertEqual(row[5], 500)
-        self.assertEqual(row[6], "Employee")
-
-        # verifies that a missing identifier resolves to no row
-        self.assertEqual(benchmark.select_by_id_cti(self.connection, 99), None)
-
-    def test_insert_and_select_concrete(self):
-        # creates the schema and inserts a single row into the
-        # flattened leaf table
-        benchmark.create_concrete_schema(self.connection)
-        benchmark.insert_concrete(self.connection, 1, "concrete_employee", 30, 500)
-
-        # retrieves the row through the single table select and
-        # verifies that all the values are present
-        row = benchmark.select_by_id_concrete(self.connection, 1)
-        self.assertNotEqual(row, None)
-        self.assertEqual(row[0], 1)
-        self.assertEqual(row[2], "concrete_employee")
-        self.assertEqual(row[5], 500)
-        self.assertEqual(row[6], "ConcreteEmployee")
-
-        # verifies that a missing identifier resolves to no row
-        self.assertEqual(benchmark.select_by_id_concrete(self.connection, 99), None)
-
-    def test_select_all(self):
-        # creates both schemas and inserts the same number of rows
-        # into each one of them
-        benchmark.create_cti_schema(self.connection)
-        benchmark.create_concrete_schema(self.connection)
-        for index in range(3):
-            benchmark.insert_cti(
-                self.connection, index + 1, "employee_%d" % index, 30, 500
-            )
-            benchmark.insert_concrete(
-                self.connection, index + 1, "employee_%d" % index, 30, 500
-            )
-
-        # verifies that both strategies retrieve the complete set of
-        # rows, with the same number of columns per row
-        cti_rows = benchmark.select_all_cti(self.connection)
-        concrete_rows = benchmark.select_all_concrete(self.connection)
-        self.assertEqual(len(cti_rows), 3)
-        self.assertEqual(len(concrete_rows), 3)
-        self.assertEqual(len(cti_rows[0]), len(concrete_rows[0]))
-
-    def test_update(self):
-        # creates both schemas and inserts a row into each one of
-        # them so that they may be updated afterwards
-        benchmark.create_cti_schema(self.connection)
-        benchmark.create_concrete_schema(self.connection)
-        benchmark.insert_cti(self.connection, 1, "before", 30, 500)
-        benchmark.insert_concrete(self.connection, 1, "before", 30, 500)
-
-        # updates a column of the intermediate level and one of the
-        # leaf level, for both of the strategies
-        benchmark.update_cti(self.connection, 1, "after", 900)
-        benchmark.update_concrete(self.connection, 1, "after", 900)
-
-        # verifies that the class table update reached both of the
-        # tables that hold the updated columns
-        row = benchmark.select_by_id_cti(self.connection, 1)
-        self.assertEqual(row[2], "after")
-        self.assertEqual(row[5], 900)
-
-        # verifies that the concrete table update reached the single
-        # table that holds both of the columns
-        row = benchmark.select_by_id_concrete(self.connection, 1)
-        self.assertEqual(row[2], "after")
-        self.assertEqual(row[5], 900)
-
-    def test_delete(self):
-        # creates both schemas and inserts a row into each one of
-        # them so that they may be removed afterwards
-        benchmark.create_cti_schema(self.connection)
-        benchmark.create_concrete_schema(self.connection)
-        benchmark.insert_cti(self.connection, 1, "employee", 30, 500)
-        benchmark.insert_concrete(self.connection, 1, "employee", 30, 500)
-
-        # removes the rows using both of the strategies
-        benchmark.delete_cti(self.connection, 1)
-        benchmark.delete_concrete(self.connection, 1)
-
-        # verifies that the rows are no longer retrievable and that
-        # the class table removal cleaned every ancestor table
-        self.assertEqual(benchmark.select_by_id_cti(self.connection, 1), None)
-        self.assertEqual(benchmark.select_by_id_concrete(self.connection, 1), None)
-        self.assertEqual(self._count("_root_entity"), 0)
-        self.assertEqual(self._count("_person"), 0)
-        self.assertEqual(self._count("_concrete_employee"), 0)
-
-    def test_wide_schemas(self):
-        # creates the wide variants of both schemas, used to verify
-        # the behaviour of the strategies with a larger column count
-        benchmark.create_wide_cti_schema(self.wide_connection)
-        benchmark.create_wide_concrete_schema(self.wide_connection)
-
-        # verifies that the wide class table schema spreads the sixty
-        # data columns across the three levels of the hierarchy
-        self.assertEqual(len(self._get_columns("_wide_root", True)), 24)
-        self.assertEqual(len(self._get_columns("_wide_middle", True)), 22)
-        self.assertEqual(len(self._get_columns("_wide_leaf", True)), 22)
-
-        # verifies that the wide concrete table schema concentrates
-        # the complete set of columns in a single leaf table
-        self.assertEqual(len(self._get_columns("_wide_concrete_leaf", True)), 64)
-
-    def test_insert_and_select_wide(self):
-        # creates the wide variants of both schemas and inserts a
-        # single row into each one of them
-        benchmark.create_wide_cti_schema(self.wide_connection)
-        benchmark.create_wide_concrete_schema(self.wide_connection)
-        benchmark.insert_wide_cti(self.wide_connection, 1)
-        benchmark.insert_wide_concrete(self.wide_connection, 1)
-
-        # retrieves the rows using both of the strategies and verifies
-        # that the same number of columns is reconstructed, which is
-        # what makes the timing comparison between them meaningful
-        cti_row = benchmark.select_by_id_wide_cti(self.wide_connection, 1)
-        concrete_row = benchmark.select_by_id_wide_concrete(self.wide_connection, 1)
-        self.assertNotEqual(cti_row, None)
-        self.assertNotEqual(concrete_row, None)
-        self.assertEqual(len(cti_row), 64)
-        self.assertEqual(len(concrete_row), 64)
-
-        # verifies that the identifier, the status and the complete set
-        # of sixty data columns hold the same values in both strategies
-        self.assertEqual(cti_row[0], concrete_row[0])
-        self.assertEqual(cti_row[1], concrete_row[1])
-        self.assertEqual(cti_row[2:62], concrete_row[2:62])
-
-        # verifies that each strategy keeps its own discriminator value
-        self.assertEqual(cti_row[62], "WideLeaf")
-        self.assertEqual(concrete_row[62], "WideConcreteLeaf")
-
-    def test_count(self):
-        # creates both schemas and inserts a distinct number of rows
-        # into each one of them
-        benchmark.create_cti_schema(self.connection)
-        benchmark.create_concrete_schema(self.connection)
-        for index in range(4):
-            benchmark.insert_cti(self.connection, index + 1, "employee", 30, 500)
-        for index in range(2):
-            benchmark.insert_concrete(self.connection, index + 1, "employee", 30, 500)
-
-        # verifies that each of the counting strategies reports the
-        # number of rows of its own schema
-        self.assertEqual(benchmark.count_cti(self.connection), 4)
-        self.assertEqual(benchmark.count_concrete(self.connection), 2)
-
-    def test_benchmark(self):
-        # runs a trivial function through the timing helper and
-        # verifies that both the elapsed time and the result of the
-        # function are returned
-        elapsed, result = benchmark.benchmark("sum", lambda x, y: x + y, 2, 3)
-        self.assertEqual(result, 5)
-        self.assertTrue(elapsed >= 0.0)
-
-    def test_run_benchmarks(self):
-        # runs the complete set of benchmarks with a minimal number
-        # of iterations, so that the harness is exercised end to end
-        # without a meaningful execution time cost
-        results = benchmark.run_benchmarks(iterations=2)
-        self.assertNotEqual(results, [])
-
-        # verifies that a section separator is present, it splits the
-        # narrow hierarchy results from the wide hierarchy ones
-        self.assertTrue(None in results)
-
-        # verifies that every result carries an operation label and
-        # the elapsed time of both of the strategies
-        entries = [result for result in results if not result == None]
-        for entry in entries:
-            self.assertEqual(len(entry), 3)
-            operation, cti_ms, concrete_ms = entry
-            self.assertTrue(len(operation) > 0)
-            self.assertTrue(cti_ms >= 0.0)
-            self.assertTrue(concrete_ms >= 0.0)
-
-        # verifies that the expected operations are covered by the
-        # report, both for the narrow and the wide hierarchies
-        operations = " ".join(operation for operation, _cti, _c in entries)
-        self.assertTrue("Schema Creation" in operations)
-        self.assertTrue("INSERT" in operations)
-        self.assertTrue("SELECT by ID" in operations)
-        self.assertTrue("COUNT" in operations)
-        self.assertTrue("UPDATE" in operations)
-        self.assertTrue("DELETE" in operations)
-        self.assertTrue("Wide" in operations)
-
-    def test_run_benchmarks_default_iterations(self):
-        # verifies that the module level default is used when no
-        # explicit number of iterations is provided, the value is
-        # temporarily lowered to keep the test execution fast
-        original = benchmark.ITERATIONS
-        try:
-            benchmark.ITERATIONS = 1
-            results = benchmark.run_benchmarks()
-            self.assertNotEqual(results, [])
-            entries = [result for result in results if not result == None]
-            operations = " ".join(operation for operation, _cti, _c in entries)
-            self.assertTrue("(1 rows)" in operations)
-        finally:
-            benchmark.ITERATIONS = original
-
-    def test_print_report(self):
-        # prints a report for a synthetic set of results, capturing
-        # the standard output so that it may be verified
-        results = [
-            ("Schema creation", 1.0, 2.0),
-            ("Bulk INSERT (2)", 4.0, 2.0),
-            None,
-            ("Wide SELECT (2)", 2.0, 4.0),
-            ("COUNT (2)", 0.0, 0.0),
-        ]
-        output = self._capture_report(results, 2)
-
-        # verifies that the report carries the header, the operation
-        # labels and the name of both of the strategies
-        self.assertTrue("Schema creation" in output)
-        self.assertTrue("Bulk INSERT (2)" in output)
-        self.assertTrue("Class Table" in output)
-        self.assertTrue("Concrete Table" in output)
-
-        # verifies that a faster concrete operation is reported as a
-        # speedup and a slower one as a slowdown, using the ratio
-        self.assertTrue("2.00x faster" in output)
-        self.assertTrue("2.00x slower" in output)
-
-        # verifies that an operation with no measurable time is
-        # reported as equivalent instead of breaking the report
-        self.assertTrue("COUNT (2)" in output)
-        self.assertTrue("~same" in output)
-
-    def test_print_report_default_iterations(self):
-        # verifies that the report may be printed without an explicit
-        # number of iterations, falling back to the module default
-        original = benchmark.ITERATIONS
-        try:
-            benchmark.ITERATIONS = 7
-            output = self._capture_report([("Schema creation", 1.0, 1.0)])
-            self.assertTrue("7" in output)
-        finally:
-            benchmark.ITERATIONS = original
-
-    def _capture_report(self, results, iterations=None):
-        """
-        Prints the report for the provided results while capturing
-        the standard output, so that it may be verified.
-
-        :type results: List
-        :param results: The list of result tuples to be reported.
-        :type iterations: int
-        :param iterations: The number of iterations to be reported.
-        :rtype: String
-        :return: The complete output of the report.
-        """
-
-        buffer = colony.legacy.StringIO()
-        stdout = sys.stdout
-        sys.stdout = buffer
-        try:
-            benchmark.print_report(results, iterations)
-        finally:
-            sys.stdout = stdout
-        return buffer.getvalue()
-
-    def _has_table(self, table_name):
-        """
-        Verifies if the provided table exists in the data source
-        that backs the current test.
-
-        :type table_name: String
-        :param table_name: The name of the table to be verified.
-        :rtype: bool
-        :return: If the table exists in the data source.
-        """
-
-        return migration.has_table(self.connection, table_name)
-
-    def _get_columns(self, table_name, wide=False):
-        """
-        Retrieves the names of the columns of the provided table.
-
-        :type table_name: String
-        :param table_name: The name of the table to be inspected.
-        :type wide: bool
-        :param wide: If the table belongs to the wide hierarchy, and
-        so the wide connection should be used instead.
-        :rtype: List
-        :return: The list containing the names of the columns.
-        """
-
-        connection = self.wide_connection if wide else self.connection
-        cursor = connection.cursor()
-        try:
-            cursor.execute("pragma table_info(%s)" % table_name)
-            return [row[1] for row in cursor.fetchall()]
-        finally:
-            cursor.close()
-
-    def _count(self, table_name):
-        """
-        Counts the number of rows currently present in the provided
-        table of the data source.
-
-        :type table_name: String
-        :param table_name: The name of the table to be counted.
-        :rtype: int
-        :return: The number of rows in the table.
-        """
-
-        cursor = self.connection.cursor()
-        try:
-            cursor.execute("select count(*) from %s" % table_name)
-            return cursor.fetchone()[0]
-        finally:
-            cursor.close()
 
 
 class EntityManagerRsetTestCase(colony.ColonyTestCase):

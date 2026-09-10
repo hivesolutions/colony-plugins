@@ -149,6 +149,7 @@ INVALID_NAMES = set(
         "_inheritance_strategy",
         "_all_items",
         "_all_non_foreign_items",
+        "_all_indexed",
         "abstract",
         "inheritance",
         "data_state",
@@ -1874,6 +1875,45 @@ class EntityClass(object):
         # returns the map containing all the items
         # from the complete hierarchy
         return all_items
+
+    @classmethod
+    def get_all_indexed(cls):
+        """
+        Retrieves the names of all the items (fields) of the current
+        entity class that are meant to be indexed, including the ones
+        inherited from the parent classes.
+
+        This is the flattened counterpart of the get_indexed method and
+        should be used for the concrete table inheritance strategy,
+        where the inherited items are part of the entity's own table
+        and so must be indexed in it.
+
+        :rtype: List
+        :return: The names of the items to be indexed for the current
+        entity class including the inherited ones.
+        """
+
+        # in case the indexed are already "cached" in the current
+        # class (fast retrieval)
+        if "_all_indexed" in cls.__dict__:
+            return cls._all_indexed
+
+        # iterates over the complete set of (flattened) items to
+        # collect the ones that are meant to be indexed
+        indexed = []
+        for key in cls.get_all_items():
+            if not cls.is_indexed(key):
+                continue
+
+            indexed.append(key)
+
+        # caches the indexed names in the class to provide
+        # fast access in latter access
+        cls._all_indexed = indexed
+
+        # returns the names of the items to be indexed
+        # for the complete hierarchy
+        return indexed
 
     @classmethod
     def get_names(cls, foreign_relations=False):

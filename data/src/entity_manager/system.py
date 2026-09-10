@@ -2660,10 +2660,14 @@ class EntityManager(object):
         # the (current) entity class
         table_name = entity_class.get_name()
 
-        # retrieves a list containing the field names of
-        # the fields that are meant to be indexed in the
-        # target data source
-        indexed = entity_class.get_indexed()
+        # retrieves a list containing the field names of the fields
+        # that are meant to be indexed in the target data source, for
+        # the concrete table strategy the inherited fields are part of
+        # the entity's own table and so they must be indexed in it
+        if entity_class.is_concrete_table():
+            indexed = entity_class.get_all_indexed()
+        else:
+            indexed = entity_class.get_indexed()
 
         # iterates over all the indexed names to generate
         # their index queries (and generate them in the data
@@ -3343,8 +3347,8 @@ class EntityManager(object):
         entity_class = entity.__class__
 
         # checks if the current entity class uses the concrete
-        # table inheritance strategy, in which case a single
-        # insert query is generated for all attributes
+        # table inheritance strategy, in which case an insert query
+        # is generated for each one of the ancestor tables
         is_concrete = entity_class.is_concrete_table()
 
         # retrieves the table (primary) id name
@@ -3548,8 +3552,8 @@ class EntityManager(object):
         entity_class = entity.__class__
 
         # checks if the current entity class uses the concrete
-        # table inheritance strategy, in which case a single
-        # update query is generated for all attributes
+        # table inheritance strategy, in which case an update query
+        # is generated for each one of the ancestor tables
         is_concrete = entity_class.is_concrete_table()
 
         # retrieves "all" the fields available
@@ -3784,6 +3788,71 @@ class EntityManager(object):
         # queries (multiple deletes)
         return queries
 
+    def _get_descendant_tables(self, entity_class):
+        """
+        Retrieves the complete set of (table) names of the provided
+        entity class and of the classes that inherit from it, meaning
+        the tables that hold a copy of the columns declared at the
+        level of the provided class.
+
+        For the class table strategy the descendant classes share the
+        row of their ancestors and so only the table of the provided
+        class holds such columns. For the concrete table strategy the
+        columns are duplicated into the table of every descendant, so
+        all of them must be considered whenever one of the columns is
+        written to (otherwise the duplicated values would become out
+        of sync).
+
+        :type entity_class: EntityClass
+        :param entity_class: The entity class for which the tables
+        holding a copy of its columns are to be retrieved.
+        :rtype: List
+        :return: The list containing the names of the tables that hold
+        a copy of the columns of the provided entity class.
+        """
+
+        # for the class table strategy the columns declared by the
+        # entity class only exist in the table of the class itself
+        if not entity_class.is_concrete_table():
+            return [entity_class.get_name()]
+
+        # creates the list of tables and the list of the classes whose
+        # descendants are still pending resolution, the walking of the
+        # hierarchy starts at the provided entity class
+        tables = []
+        pending = [entity_class]
+
+        # iterates while there are classes pending resolution, collecting
+        # the table of each one of them and scheduling the resolution of
+        # their own descendants (hierarchy walking)
+        while pending:
+            _entity_class = pending.pop()
+
+            # in case the current class is not abstract it has an
+            # associated table that holds a copy of the columns and
+            # so it's added to the list of tables
+            if not _entity_class.is_abstract():
+                table = _entity_class.get_name()
+                if not table in tables:
+                    tables.append(table)
+
+            # iterates over the direct descendants of the current class
+            # to schedule them for the resolution of their own tables
+            # and descendants (proper hierarchy walking)
+            for subclass in _entity_class.__subclasses__():
+                # in case the class registered under the name of the
+                # subclass is not the subclass itself, it does not
+                # belong to the current entity manager and so it has
+                # no associated table (nor have its descendants)
+                if not self.entities_map.get(subclass.__name__, None) == subclass:
+                    continue
+
+                pending.append(subclass)
+
+        # returns the complete set of tables that hold a copy
+        # of the columns of the provided entity class
+        return tables
+
     def _map_query(self, entity):
         # retrieves the entity class associated with
         # the entity
@@ -3995,17 +4064,26 @@ class EntityManager(object):
                 if not is_to_many:
                     relation_value = [relation_value]
 
-                # creates the query to update the foreign key values in
-                # the target relation table to null values, it will unset
-                # the relations for the current values, then adds the query
+                # retrieves the complete set of (table) names that hold a
+                # column for the reverse relation, note that under the
+                # concrete table strategy the column is flattened into the
+                # table of every descendant of the class that declares it
+                # and so all of them must be unset (otherwise the
+                # duplicated values would become out of sync)
+                _target_names = self._get_descendant_tables(target_class)
+
+                # creates the queries to update the foreign key values in
+                # the target relation tables to null values, they will unset
+                # the relations for the current values, then adds the queries
                 # to the list of queries to be executed
-                query = "update %s set %s = null where %s = %s" % (
-                    target_name,
-                    reverse,
-                    reverse,
-                    id_sql_value,
-                )
-                queries.append(query)
+                for _target_name in _target_names:
+                    query = "update %s set %s = null where %s = %s" % (
+                        _target_name,
+                        reverse,
+                        reverse,
+                        id_sql_value,
+                    )
+                    queries.append(query)
 
                 # iterates over all the relation values to update the
                 # appropriate target table

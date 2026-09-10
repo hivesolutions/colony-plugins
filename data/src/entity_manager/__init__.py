@@ -26,7 +26,6 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 from . import analysis
-from . import benchmark
 from . import decorators
 from . import exceptions
 from . import migration
@@ -35,7 +34,6 @@ from . import system
 from . import test
 
 from .analysis import EntityManagerAnalyzer
-from .benchmark import run_benchmarks, print_report
 from .decorators import transaction, lock_table
 from .exceptions import (
     EntityManagerException,

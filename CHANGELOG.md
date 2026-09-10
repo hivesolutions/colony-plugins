@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Concrete table inheritance as an alternative strategy for entity hierarchies, trading storage for reads without joins - [#25](https://github.com/hivesolutions/colony-plugins/issues/25)
 * Support for switching the inheritance strategy of every entity hierarchy at once, for migration and debugging purposes
 * Tool to migrate existing entity hierarchies between inheritance strategies, with backup, validation and dry-run
-* Tool to compare the performance of both inheritance strategies
 * New `get_connection_address()` method in `RESTRequest` with proxy header resolution (`X-Forwarded-For`, `X-Client-IP`, `X-Real-IP`) and IPv6-mapped IPv4 cleanup (`::ffff:` prefix removal)
 * New `get_connection_address()` method in `HTTPRequest` and `WSGIRequest` to provide a uniform interface for retrieving client connection address
 * Optional `resolve` and `cleanup` parameters in `RESTRequest.get_address()` for controlling proxy resolution and IPv6 cleanup

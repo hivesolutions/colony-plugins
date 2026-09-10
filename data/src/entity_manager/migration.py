@@ -28,8 +28,10 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import os
 import time
 import shutil
+import hashlib
 import sqlite3
 import subprocess
 
@@ -77,12 +79,13 @@ def has_table(connection, table_name, engine="sqlite"):
         elif engine == "mysql":
             cursor.execute(
                 "select count(*) from information_schema.tables "
-                "where table_name = %s",
+                "where table_schema = database() and table_name = %s",
                 (table_name,),
             )
         elif engine == "pgsql":
             cursor.execute(
-                "select count(*) from pg_tables " "where tablename = %s",
+                "select count(*) from pg_tables "
+                "where schemaname = current_schema() and tablename = %s",
                 (table_name,),
             )
         else:
@@ -112,10 +115,13 @@ def index_query(table_name, attribute_name, index_type, engine="sqlite"):
 
     index_name = "%s_%s_%s" % (table_name, attribute_name, index_type)
 
-    # truncates the index name to the engine-specific limit
+    # truncates the index name to the engine specific limit, replacing
+    # the trailing part of it by a digest of the complete name so that
+    # two long names do not collapse into the same index name
     limit = INDEX_NAME_LIMITS.get(engine, None)
-    if limit:
-        index_name = index_name[-limit:]
+    if limit and len(index_name) > limit:
+        digest = hashlib.md5(index_name.encode("utf-8")).hexdigest()[:8]
+        index_name = index_name[: limit - 9] + "_" + digest
 
     if engine == "mysql":
         return "create index %s on %s(%s) using %s" % (
@@ -174,6 +180,11 @@ def get_hierarchy_classes(entity_class):
     in the hierarchy, ordered from root to leaf. Includes the root
     class itself if it is not abstract.
 
+    The hierarchy is resolved through the sub classes of the provided
+    class, meaning that only the classes that have already been
+    imported are taken into account, the complete set of models of the
+    application must then be loaded before the migration is run.
+
     :type entity_class: EntityClass
     :param entity_class: The root entity class.
     :rtype: list
@@ -223,6 +234,36 @@ def get_root_class(entity_class, hierarchy):
     return hierarchy[0]
 
 
+def get_chain_root(entity_class):
+    """
+    Retrieves the class at the top of the chain of the provided entity
+    class, meaning its highest non abstract ancestor.
+
+    An abstract root may branch into more than one independent chain,
+    each one of them with its own table holding the discriminator, so
+    the chain of a class may not be resolved from the root of the
+    migration alone.
+
+    :type entity_class: EntityClass
+    :param entity_class: The entity class whose chain root is going
+    to be resolved.
+    :rtype: EntityClass
+    :return: The highest non abstract ancestor of the entity class,
+    the entity class itself in case it has none.
+    """
+
+    chain_root = entity_class
+    for parent in entity_class.get_all_parents():
+        if parent.is_abstract():
+            continue
+        if not issubclass(entity_class, parent):
+            continue
+        if issubclass(chain_root, parent):
+            chain_root = parent
+
+    return chain_root
+
+
 def get_column_definitions(entity_class, types_map):
     """
     Builds the column definitions for a concrete table at the
@@ -243,14 +284,20 @@ def get_column_definitions(entity_class, types_map):
 
     columns = []
     all_items = entity_class.get_all_items()
+    names_map = entity_class.get_names_map()
 
     for item_name, item_value in all_items.items():
+        # resolves the class that declares the item, the relations must
+        # be read from it and not from the (flattened) entity class, as
+        # a descendant may redefine an inherited relation
+        item_class = names_map.get(item_name, entity_class)
+
         # skips unmapped relations (they use indirect/junction tables
         # which are independent of the inheritance strategy)
-        if entity_class.is_relation(item_name):
-            if not entity_class.is_mapped(item_name):
+        if item_class.is_relation(item_name):
+            if not item_class.is_mapped(item_name):
                 continue
-            target_class = entity_class.get_target(item_name)
+            target_class = item_class.get_target(item_name)
             target_id = target_class.get_id()
             target_id_value = getattr(target_class, target_id)
             sql_type = types_map.get(target_id_value.get("type", "integer"), "integer")
@@ -353,18 +400,40 @@ def backup_database(connection_params, engine):
     elif engine == "pgsql":
         host = connection_params.get("host", "localhost")
         database = connection_params.get("database", "")
+        user = connection_params.get("user", "postgres")
+        password = connection_params.get("password", None)
         backup_path = "%s.backup.%d.sql" % (database, timestamp)
-        subprocess.check_call(["pg_dump", "-h", host, "-f", backup_path, database])
+
+        # passes the password through the environment, as the utility
+        # does not accept it as a command line argument
+        environ = dict(os.environ)
+        if password:
+            environ["PGPASSWORD"] = password
+
+        subprocess.check_call(
+            ["pg_dump", "-h", host, "-U", user, "-f", backup_path, database],
+            env=environ,
+        )
         return backup_path
 
     elif engine == "mysql":
         host = connection_params.get("host", "localhost")
         database = connection_params.get("database", "")
         user = connection_params.get("user", "root")
+        password = connection_params.get("password", None)
         backup_path = "%s.backup.%d.sql" % (database, timestamp)
-        with open(backup_path, "w") as f:
+
+        # passes the password through the environment, as providing it
+        # in the command line would expose it in the process listing
+        environ = dict(os.environ)
+        if password:
+            environ["MYSQL_PWD"] = password
+
+        with open(backup_path, "w") as file:
             subprocess.check_call(
-                ["mysqldump", "-h", host, "-u", user, database], stdout=f
+                ["mysqldump", "-h", host, "-u", user, database],
+                stdout=file,
+                env=environ,
             )
         return backup_path
 
@@ -433,7 +502,7 @@ def validate_hierarchy(entity_class, target_strategy):
     return is_valid, messages
 
 
-def validate_data(connection, entity_class, messages):
+def validate_data(connection, entity_class, messages, engine="sqlite"):
     """
     Validates the existing data in the data source before
     migration, checking for orphaned rows and referential
@@ -445,12 +514,17 @@ def validate_data(connection, entity_class, messages):
     :param entity_class: The root entity class.
     :type messages: list
     :param messages: The list to append validation messages to.
+    :type engine: String
+    :param engine: The database engine name.
     :rtype: bool
     :return: True if the data is valid for migration.
     """
 
     is_valid = True
     hierarchy = get_hierarchy_classes(entity_class)
+    hierarchy = [
+        cls for cls in hierarchy if has_table(connection, cls.get_name(), engine)
+    ]
     root_class = get_root_class(entity_class, hierarchy)
     table_id = root_class.get_id()
     root_table = root_class.get_name()
@@ -560,8 +634,10 @@ def generate_cti_to_concrete_queries(
             select_cols.append("%s.%s" % (source_table, col_name))
 
         # adds the discriminator and mtime from the appropriate tables,
-        # _class always lives in the root table, _mtime in the leaf
-        select_cols.append("%s._class" % root_table)
+        # _class lives in the table of the chain root of the class and
+        # _mtime in the leaf one
+        chain_table = get_chain_root(cls).get_name()
+        select_cols.append("%s._class" % chain_table)
         select_cols.append("%s._mtime" % table_name)
 
         # builds the FROM clause with the leaf table and INNER JOINs
@@ -582,7 +658,7 @@ def generate_cti_to_concrete_queries(
         # for non-root classes, filters by _class to only get rows
         # belonging to this class and its descendants
         where_clause = ""
-        if not cls == root_class:
+        if not cls == get_chain_root(cls):
             # collects the class names that should be included at
             # this hierarchy level (this class + all descendants)
             class_names = [cls.__name__]
@@ -590,7 +666,7 @@ def generate_cti_to_concrete_queries(
                 if not desc == cls and desc.__name__ not in class_names:
                     class_names.append(desc.__name__)
             quoted_names = ", ".join(["'%s'" % n for n in class_names])
-            where_clause = " where %s._class in (%s)" % (root_table, quoted_names)
+            where_clause = " where %s._class in (%s)" % (chain_table, quoted_names)
 
         insert_query = "insert into %s select %s from %s%s" % (
             new_table_name,
@@ -636,10 +712,17 @@ def generate_cti_to_concrete_queries(
         queries.append(index_query(table_name, "_mtime", "hash", engine))
         queries.append(index_query(table_name, "_mtime", "btree", engine))
 
-        # creates indexes on mapped relation (foreign key) fields
-        all_items = cls.get_all_items()
-        for item_name in all_items:
-            if cls.is_relation(item_name) and cls.is_mapped(item_name):
+        # creates indexes on the mapped relation (foreign key) fields
+        # and on the fields declared as indexed by the model, as the
+        # dropping of the old tables also dropped their indexes
+        names_map = cls.get_names_map()
+        for item_name in cls.get_all_items():
+            item_class = names_map.get(item_name, cls)
+            if item_class.is_relation(item_name):
+                if not item_class.is_mapped(item_name):
+                    continue
+                queries.append(index_query(table_name, item_name, "hash", engine))
+            elif item_class.is_indexed(item_name):
                 queries.append(index_query(table_name, item_name, "hash", engine))
 
     return queries
@@ -805,9 +888,16 @@ def generate_concrete_to_cti_queries(
         queries.append(index_query(table_name, "_mtime", "hash", engine))
         queries.append(index_query(table_name, "_mtime", "btree", engine))
 
+        # creates indexes on the mapped relation (foreign key) fields
+        # and on the fields declared as indexed by the model, only for
+        # the ones declared at the current level of the hierarchy
         own_items = level.get_items()
         for item_name in own_items:
-            if level.is_relation(item_name) and level.is_mapped(item_name):
+            if level.is_relation(item_name):
+                if not level.is_mapped(item_name):
+                    continue
+                queries.append(index_query(table_name, item_name, "hash", engine))
+            elif level.is_indexed(item_name):
                 queries.append(index_query(table_name, item_name, "hash", engine))
 
     return queries
@@ -830,6 +920,12 @@ def migrate(
 
     The migration runs inside a transaction for atomic rollback
     on failure. A backup is automatically created before migrating.
+
+    Note that only SQLite treats the schema changes as part of the
+    transaction, both MySQL and PostgreSQL commit them implicitly, so
+    under those engines a failure may leave the schema partially
+    migrated and the backup is the only way back, which is why it may
+    not be skipped for them.
 
     :type entity_class: EntityClass
     :param entity_class: The root entity class of the hierarchy.
@@ -864,6 +960,14 @@ def migrate(
     if not is_valid:
         return False, messages
 
+    # validates the data that is stored in the data source, an orphaned
+    # row would otherwise be silently dropped by the join that copies
+    # the rows into the new tables (data loss on a successful migration)
+    if connection:
+        is_valid = validate_data(connection, entity_class, messages, engine)
+        if not is_valid:
+            return False, messages
+
     if validate_only:
         return True, messages
 
@@ -893,6 +997,16 @@ def migrate(
             messages.append("  %s;" % query)
         return True, messages
 
+    # under the engines that commit the schema changes implicitly the
+    # roll back is not able to undo them, so the backup is the only way
+    # back from a failure and may not be skipped
+    if skip_backup and not engine == "sqlite":
+        messages.append(
+            "the backup may not be skipped under '%s', as the schema "
+            "changes are not transactional in it" % engine
+        )
+        return False, messages
+
     # creates a backup before migrating
     if not skip_backup:
         try:
@@ -903,6 +1017,8 @@ def migrate(
             return False, messages
 
     # executes the migration queries inside a transaction
+    cursor = None
+
     try:
         cursor = connection.cursor()
 
@@ -910,16 +1026,32 @@ def migrate(
             messages.append("executing: %s" % query)
             cursor.execute(query)
 
+        cursor.close()
+        cursor = None
+
         connection.commit()
         messages.append("migration completed successfully")
         return True, messages
 
     except Exception as exception:
-        # rolls back the transaction on failure
+        # rolls back the transaction on failure, closing the cursor
+        # beforehand so that no reference to it is leaked
+        try:
+            if cursor:
+                cursor.close()
+        except Exception:
+            pass
         try:
             connection.rollback()
         except Exception:
             pass
         messages.append("migration failed: %s" % str(exception))
-        messages.append("transaction rolled back")
+        if engine == "sqlite":
+            messages.append("transaction rolled back")
+        else:
+            messages.append(
+                "transaction rolled back, note that the schema changes "
+                "are not transactional under '%s' and so the ones "
+                "already applied were kept, restore the backup" % engine
+            )
         return False, messages
