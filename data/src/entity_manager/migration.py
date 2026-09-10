@@ -304,11 +304,20 @@ def checkpoint_database(file_path):
     except Exception:
         return
 
+    cursor = None
+
     try:
-        connection.execute("pragma wal_checkpoint(full)")
+        # runs the flushing of the log consuming the result of it, as
+        # some of the runtimes consider the statement to be still in
+        # progress while its result has not been read
+        cursor = connection.cursor()
+        cursor.execute("pragma wal_checkpoint(full)")
+        cursor.fetchall()
     except Exception:
         pass
     finally:
+        if cursor:
+            cursor.close()
         connection.close()
 
 

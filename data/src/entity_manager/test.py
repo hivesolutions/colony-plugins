@@ -3775,9 +3775,17 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
         connection = sqlite3.connect(file_path)
         try:
-            connection.execute("pragma journal_mode = wal")
-            connection.execute("create table _logged(object_id integer primary key)")
-            connection.execute("insert into _logged values(1)")
+            cursor = connection.cursor()
+            try:
+                # consumes the result of the journal mode change, as some
+                # of the runtimes consider the statement to be still in
+                # progress while its result has not been read
+                cursor.execute("pragma journal_mode = wal")
+                cursor.fetchall()
+                cursor.execute("create table _logged(object_id integer primary key)")
+                cursor.execute("insert into _logged values(1)")
+            finally:
+                cursor.close()
             connection.commit()
 
             # flushes the log and verifies that the database file has
@@ -3883,11 +3891,19 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
         connection = sqlite3.connect(file_path)
         try:
-            connection.execute("pragma journal_mode = wal")
-            connection.execute(
-                "create table _logged(object_id integer primary key, name text)"
-            )
-            connection.execute("insert into _logged values(1, 'logged_name')")
+            cursor = connection.cursor()
+            try:
+                # consumes the result of the journal mode change, as some
+                # of the runtimes consider the statement to be still in
+                # progress while its result has not been read
+                cursor.execute("pragma journal_mode = wal")
+                cursor.fetchall()
+                cursor.execute(
+                    "create table _logged(" "object_id integer primary key, name text)"
+                )
+                cursor.execute("insert into _logged values(1, 'logged_name')")
+            finally:
+                cursor.close()
             connection.commit()
 
             # creates the backup while the connection is still open, so
