@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import time
 import shutil
+import sqlite3
 import subprocess
 
 SQL_TYPES_MAP = dict(
@@ -280,6 +281,37 @@ def get_source_table_for_column(entity_class, item_name):
     return declaring_class.get_name()
 
 
+def checkpoint_database(file_path):
+    """
+    Flushes the write ahead log of the SQLite database into the database
+    file, so that a file based copy of it contains the complete set of
+    the committed data.
+
+    Some of the platforms run the database in write ahead log mode, under
+    which the committed data may still be held in the log by the time the
+    database file is copied, which would leave it out of the copy.
+
+    This is a best effort operation, as the database may not be using the
+    write ahead log or may be locked by another connection.
+
+    :type file_path: String
+    :param file_path: The path to the database file whose write ahead log
+    is going to be flushed.
+    """
+
+    try:
+        connection = sqlite3.connect(file_path)
+    except Exception:
+        return
+
+    try:
+        connection.execute("pragma wal_checkpoint(full)")
+    except Exception:
+        pass
+    finally:
+        connection.close()
+
+
 def backup_database(connection_params, engine):
     """
     Creates a backup of the database before migration.
@@ -300,6 +332,12 @@ def backup_database(connection_params, engine):
     if engine == "sqlite":
         file_path = connection_params.get("file_path", "")
         backup_path = "%s.backup.%d" % (file_path, timestamp)
+
+        # flushes the write ahead log into the database file, otherwise
+        # the committed data that is still held in it would not be part
+        # of the copy that is about to be created
+        checkpoint_database(file_path)
+
         shutil.copy2(file_path, backup_path)
         return backup_path
 

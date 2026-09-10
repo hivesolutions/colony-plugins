@@ -31,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import os
 import sys
 import sqlite3
+import tempfile
 
 import colony
 
@@ -3766,6 +3767,43 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             "_migration_employee",
         )
 
+    def test_checkpoint_database(self):
+        # creates a temporary database using the write ahead log and
+        # writes some data into it, so that the log holds content
+        descriptor, file_path = tempfile.mkstemp(suffix=".db")
+        os.close(descriptor)
+
+        connection = sqlite3.connect(file_path)
+        try:
+            connection.execute("pragma journal_mode = wal")
+            connection.execute("create table _logged(object_id integer primary key)")
+            connection.execute("insert into _logged values(1)")
+            connection.commit()
+
+            # flushes the log and verifies that the database file has
+            # grown, meaning that the content of the log reached it
+            migration.checkpoint_database(file_path)
+            self.assertTrue(os.path.getsize(file_path) > 0)
+        finally:
+            connection.close()
+            os.remove(file_path)
+
+    def test_checkpoint_database_invalid(self):
+        # verifies that the flushing of the log is a best effort
+        # operation, a path that may not be opened must be ignored
+        # instead of raising an exception
+        migration.checkpoint_database("/not/a/valid/path/database.db")
+
+        # verifies the same for a file that exists but that is not a
+        # valid database, where the flushing itself is the failing part
+        descriptor, file_path = tempfile.mkstemp(suffix=".db")
+        os.write(descriptor, b"not a database at all")
+        os.close(descriptor)
+        try:
+            migration.checkpoint_database(file_path)
+        finally:
+            os.remove(file_path)
+
     def test_backup_database(self):
         # creates the required entity classes in the data source so
         # that the database file has some content to be copied
@@ -3835,6 +3873,48 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             if backup_connection:
                 backup_connection.close()
             os.remove(backup_path)
+
+    def test_backup_database_write_ahead_log(self):
+        # creates a temporary database configured to use the write ahead
+        # log, the journal mode under which a file based copy of the
+        # database may miss the data that is still held in the log
+        descriptor, file_path = tempfile.mkstemp(suffix=".db")
+        os.close(descriptor)
+
+        connection = sqlite3.connect(file_path)
+        try:
+            connection.execute("pragma journal_mode = wal")
+            connection.execute(
+                "create table _logged(object_id integer primary key, name text)"
+            )
+            connection.execute("insert into _logged values(1, 'logged_name')")
+            connection.commit()
+
+            # creates the backup while the connection is still open, so
+            # that the log is not flushed by the closing of the connection
+            backup_path = migration.backup_database(dict(file_path=file_path), "sqlite")
+        finally:
+            connection.close()
+
+        # opens the backup as an independent connection and verifies that
+        # the committed data is part of it, which is only the case when
+        # the log has been flushed into the database file
+        backup_connection = None
+        try:
+            backup_connection = sqlite3.connect(backup_path)
+            cursor = backup_connection.cursor()
+            try:
+                cursor.execute("select name from _logged where object_id = 1")
+                row = cursor.fetchone()
+                self.assertNotEqual(row, None)
+                self.assertEqual(row[0], "logged_name")
+            finally:
+                cursor.close()
+        finally:
+            if backup_connection:
+                backup_connection.close()
+            os.remove(backup_path)
+            os.remove(file_path)
 
     def test_backup_database_unsupported_engine(self):
         # verifies that an unsupported engine raises an error instead

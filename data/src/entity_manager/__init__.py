@@ -54,6 +54,7 @@ from .migration import (
     get_root_class,
     get_column_definitions,
     get_source_table_for_column,
+    checkpoint_database,
     backup_database,
     validate_hierarchy,
     validate_data,
