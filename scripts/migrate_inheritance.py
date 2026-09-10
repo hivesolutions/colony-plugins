@@ -19,6 +19,57 @@
 # You should have received a copy of the Apache License along with
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
+"""
+Inheritance strategy migration utility that converts an entity
+hierarchy between the class table and the concrete table strategies,
+rewriting the schema of every level of the hierarchy in place.
+
+Resolves the hierarchy through the ORM itself (names, items and
+identifiers of each entity class) so that the generated schema matches
+the one the entity manager would create, and filters the hierarchy by
+table existence so that only the levels present in the data source are
+touched. The whole migration runs inside a single transaction and is
+rolled back on the first failing statement, and a backup of the data
+source is taken beforehand unless explicitly skipped.
+
+For the class table to concrete table direction a flat table is built
+at every level, carrying the attributes of the level plus every one
+inherited from above, and the rows of the ancestors are folded into it.
+For the reverse direction the inherited columns are dropped from the
+descendant tables and the rows are folded back into the level that
+declares each attribute, using a duplicate safe insert as several
+concrete tables may map onto the same class table level.
+
+Supports SQLite, MySQL and PostgreSQL, adapting the catalog queries,
+the index syntax and the duplicate handling to each of them, although
+only SQLite connections may be opened directly from the command line.
+
+Run from the project root with:
+    python scripts/migrate_inheritance.py ENTITY_CLASS STRATEGY --database DATABASE
+
+Where ENTITY_CLASS is the fully qualified name of the root entity class
+of the hierarchy and STRATEGY is either class_table or concrete_table.
+
+Options:
+    --engine ENGINE      The database engine, one of sqlite, mysql or
+                         pgsql (default: sqlite)
+    --database DATABASE  The database file path (sqlite) or name
+                         (mysql/pgsql), always required
+    --host HOST          The database host (mysql/pgsql, default:
+                         localhost)
+    --user USER          The database user (mysql/pgsql, default: root)
+    --dry-run            Print the SQL that would be executed without
+                         changing the data source
+    --validate           Validate the hierarchy and stop, without
+                         generating or executing any SQL
+    --skip-backup        Skip the backup of the data source, only
+                         advisable for a disposable database
+
+The migration logic lives in the entity manager plugin, under
+`data/src/entity_manager/migration.py`, so that it is covered by the
+plugin test suite, this file is only the command line entry point.
+"""
+
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
