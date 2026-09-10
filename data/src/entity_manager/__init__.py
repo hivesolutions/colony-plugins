@@ -26,13 +26,16 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 from . import analysis
+from . import benchmark
 from . import decorators
 from . import exceptions
+from . import migration
 from . import structures
 from . import system
 from . import test
 
 from .analysis import EntityManagerAnalyzer
+from .benchmark import run_benchmarks, print_report
 from .decorators import transaction, lock_table
 from .exceptions import (
     EntityManagerException,
@@ -42,6 +45,21 @@ from .exceptions import (
     ValidationError,
     RelationValidationError,
     InvalidSerializerError,
+)
+from .migration import (
+    has_table,
+    index_query,
+    insert_ignore_query,
+    get_hierarchy_classes,
+    get_root_class,
+    get_column_definitions,
+    get_source_table_for_column,
+    backup_database,
+    validate_hierarchy,
+    validate_data,
+    generate_cti_to_concrete_queries,
+    generate_concrete_to_cti_queries,
+    migrate,
 )
 from .structures import Connection, EntityClass, rset, load_serializers
 from .system import DataEntityManager

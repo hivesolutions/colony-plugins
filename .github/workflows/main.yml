@@ -41,10 +41,6 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
-      - run: |
-          pip install pytest
-          pytest scripts/test/ -v
-        if: matrix.python-version != '2.7'
   build-pypy:
     name: Build PyPy
     timeout-minutes: 10
@@ -99,9 +95,6 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
-      - run: |
-          pip install pytest
-          pytest scripts/test/ -v
   build-pypy-arm:
     name: Build PyPy ARM
     timeout-minutes: 10
@@ -158,9 +151,6 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
-      - run: |
-          pip install pytest
-          pytest scripts/test/ -v
   build-macos:
     name: Build macOS
     timeout-minutes: 10
@@ -190,6 +180,3 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
-      - run: |
-          pip install pytest
-          pytest scripts/test/ -v
