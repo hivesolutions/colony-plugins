@@ -150,6 +150,35 @@ ATTRIBUTE_LITERAL_REGEX = re.compile(
 """ The literal regular expression that matches all the literals, there
 are matching groups for each of the data types """
 
+MATCH_REGEX = re.compile(
+    OUTPUT_REGEX_VALUE
+    + "|"
+    + EVAL_REGEX_VALUE
+    + "|"
+    + END_TAG_REGEX_VALUE
+    + "|"
+    + SINGLE_TAG_REGEX_VALUE
+    + "|"
+    + START_TAG_REGEX_VALUE
+)
+""" The unified regular expression that matches every kind of template
+token in a single (ordered) scan of the template contents, note that no
+capturing groups are used as they would impose a considerable penalty
+in the matching operation, the kind of the token is instead determined
+from the initial (and final) characters of the matched value """
+
+TEMPLATES_LIMIT = 1024
+""" The maximum number of parsed templates to be kept in the global
+templates cache, once this value is reached the cache is completely
+flushed (avoids unbounded memory growth) """
+
+TEMPLATES_CACHE = {}
+""" The cache that associates the path of a template file with both the
+signature of the file and the (pristine) root node resulting from its
+parsing, a copy of this node is used for each of the parse operations,
+note that the signature is based on the modification time and the size
+of the file and so a change that preserves both is not detected """
+
 ESCAPE_EXTENSIONS = (
     ".xml",
     ".html",
@@ -162,6 +191,33 @@ ESCAPE_EXTENSIONS = (
 """ The sequence containing the various extensions
 for which the autoescape mode will be enabled  by
 default as expected by the end developer """
+
+
+def match_type(value):
+    """
+    Determines the kind of the provided (matched) token value using
+    only the initial and final characters of it, this is a much faster
+    approach than the usage of capturing groups in the tokenizer.
+
+    :type value: String
+    :param value: The complete (literal) value of the matched token
+    for which the type is going to be determined.
+    :rtype: int
+    :return: The internal type value for the provided token.
+    """
+
+    # in case the token starts with the curly brace character it's
+    # either an output or an evaluation token, the second character
+    # is the one that defines which one of them it is
+    if value[0] == "{":
+        return OUTPUT_VALUE if value[1] == "{" else EVAL_VALUE
+
+    # the token is a "dollar" based one, meaning that the closing
+    # sequence defines a single (self closing) token, otherwise the
+    # third character defines if it's an end or a start token
+    if value[-2] == "/":
+        return SINGLE_VALUE
+    return END_VALUE if value[2] == "/" else START_VALUE
 
 
 class TemplateEngine(colony.System):
@@ -180,33 +236,57 @@ class TemplateEngine(colony.System):
         process_methods_list=[],
         locale_bundles=None,
     ):
-        # verifies that the template file requested exists in the
-        # file system in case it does not raises an exception
-        if not os.path.exists(file_path):
+        # retrieves the status of the template file, in case it's not
+        # possible to do so the file is considered not to exist and so
+        # an exception is raised indicating such problem
+        try:
+            status = os.stat(file_path)
+        except OSError:
             raise exceptions.RuntimeError("'%s' template file not found" % file_path)
 
-        # opens the file for the reading of its contents
-        # the complete data will be read
-        file = open(file_path, "rb")
+        # builds both the key and the signature for the file, note that a
+        # relative path must be made absolute before being used as the key,
+        # otherwise the very same path could refer to different files, and
+        # that any change to the contents of the file changes its signature
+        # invalidating the version of it that is currently cached
+        key_path = file_path if os.path.isabs(file_path) else os.path.abspath(file_path)
+        key = (key_path, encoding)
+        signature = (status.st_mtime, status.st_size)
 
-        try:
-            # parses the file, retrieving the template file structure
-            # that can be used for the execution of it
-            template_file = self.parse_file(
-                file,
-                file_path=file_path,
-                base_path=base_path,
-                encoding=encoding,
-                process_methods_list=process_methods_list,
-                locale_bundles=locale_bundles,
-            )
-        finally:
-            # closes the file no further reading operations
-            # will be done for the file (avoids leaks)
-            file.close()
+        # tries to retrieve the (already parsed) root node for the file from
+        # the cache, in case there's no valid one the file must be effectively
+        # read and parsed, storing the resulting tree in the cache
+        cached = TEMPLATES_CACHE.get(key, None)
+        if not cached or not cached[0] == signature:
+            file = open(file_path, "rb")
+            try:
+                root_node = self._parse_file(
+                    file, file_path=file_path, encoding=encoding
+                )
+            finally:
+                file.close()
+            if len(TEMPLATES_CACHE) > TEMPLATES_LIMIT:
+                TEMPLATES_CACHE.clear()
+            cached = (signature, root_node)
+            TEMPLATES_CACHE[key] = cached
 
-        # returns the template file
-        return template_file
+        # copies the (pristine) cached tree so that the caller is given a
+        # private version of it, note that the identifiable nodes are indexed
+        # as part of the copy avoiding an extra traversal of the tree
+        nodes = dict()
+        root_node = cached[1].clone(nodes=nodes)
+
+        # creates the template file structure for the resulting root node
+        # and returns it to the caller method (as expected)
+        return self._template_file(
+            root_node,
+            file_path=file_path,
+            base_path=base_path,
+            encoding=encoding,
+            process_methods_list=process_methods_list,
+            locale_bundles=locale_bundles,
+            nodes=nodes,
+        )
 
     def parse_file_path_variable_encoding(
         self,
@@ -241,10 +321,36 @@ class TemplateEngine(colony.System):
         process_methods_list=[],
         locale_bundles=None,
     ):
-        # in case the locale bundles list is not defined must
-        # create a new list reference to handle it correctly
-        if locale_bundles == None:
-            locale_bundles = []
+        # runs the effective parsing of the file retrieving the root node
+        # of the abstract syntax tree that represents the template and then
+        # uses it to build the template file structure
+        root_node = self._parse_file(file, file_path=file_path, encoding=encoding)
+        return self._template_file(
+            root_node,
+            file_path=file_path,
+            base_path=base_path,
+            encoding=encoding,
+            process_methods_list=process_methods_list,
+            locale_bundles=locale_bundles,
+        )
+
+    def _parse_file(self, file, file_path=None, encoding=None):
+        """
+        Runs the effective parsing of the provided file, building the
+        abstract syntax tree that represents the template contained in it.
+
+        :type file: File
+        :param file: The file that is going to be read and parsed.
+        :type file_path: String
+        :param file_path: The path to the file to be used, this value may
+        or may not be defined and controls the auto escaping mode.
+        :type encoding: String
+        :param encoding: The encoding used in the file, in case this value
+        is not defined the encoding is assumed to be the default one.
+        :rtype: RootNode
+        :return: The root node of the abstract syntax tree that represents
+        the template contained in the provided file.
+        """
 
         # retrieves the proper extension of the template's file
         # path and then uses it to try to determine if the template
@@ -254,173 +360,15 @@ class TemplateEngine(colony.System):
 
         # reads the complete set of file contents and in case an
         # encoding is defined decodes the provided file contents
-        # using the encoding value (may raise exception)
+        # using the encoding value (may raise exception), note that
+        # under python 3 the decoding is always required as it's not
+        # possible to match a string pattern against a bytes value
         file_contents = file.read()
         is_bytes = type(file_contents) == colony.legacy.BYTES
-        if encoding and is_bytes:
+        if is_bytes and encoding:
             file_contents = file_contents.decode(encoding)
-
-        # creates the match orderer list, this list will hold the various
-        # definitions of matched tokens for the current template, and is
-        # meant to be ordered two times for processing
-        match_orderer_l = []
-
-        # retrieves the output matches iterator
-        output_matches = OUTPUT_REGEX.finditer(file_contents)
-
-        # iterates over all the output matches
-        for output_match in output_matches:
-            # retrieves the reference to the start and end matching indexed
-            # to the output match and uses it to retrieve the literal value
-            # for the match (going to be used in the match orderer)
-            match_start = output_match.start()
-            match_end = output_match.end()
-            match_value = file_contents[match_start:match_end]
-
-            # creates the match orderer for the current (output) match
-            # signaling it as a output value (for later reference)
-            match_orderer = MatchOrderer(output_match, OUTPUT_VALUE, match_value)
-            match_orderer_l.append(match_orderer)
-
-        # retrieves the eval matches iterator
-        eval_matches = EVAL_REGEX.finditer(file_contents)
-
-        # iterates over all the eval matches
-        for eval_match in eval_matches:
-            # retrieves the reference to the start and end matching indexed
-            # to the eval match and uses it to retrieve the literal value
-            # for the match (going to be used in the match orderer)
-            match_start = eval_match.start()
-            match_end = eval_match.end()
-            match_value = file_contents[match_start:match_end]
-
-            # creates the match orderer for the current (eval) match
-            # signaling it as a eval value (for later reference)
-            match_orderer = MatchOrderer(eval_match, EVAL_VALUE, match_value)
-            match_orderer_l.append(match_orderer)
-
-        # retrieves the start matches iterator
-        start_matches = START_TAG_REGEX.finditer(file_contents)
-
-        # iterates over all the start matches
-        for start_match in start_matches:
-            # retrieves the match start and end values and uses them to
-            # construct the match value that is going to be used for the
-            # construction of the match orderer structure to be added
-            match_start = start_match.start()
-            match_end = start_match.end()
-            match_value = file_contents[match_start:match_end]
-
-            # creates the match orderer for the current (start) match
-            # signaling it as a start value (for later reference)
-            math_orderer = MatchOrderer(start_match, START_VALUE, match_value)
-            match_orderer_l.append(math_orderer)
-
-        # retrieves the end matches iterator
-        end_matches = END_TAG_REGEX.finditer(file_contents)
-
-        # iterates over all the end matches
-        for end_match in end_matches:
-            # retrieves the match start and end values and uses them to
-            # construct the match value that is going to be used for the
-            # construction of the match orderer structure to be added
-            match_start = end_match.start()
-            match_end = end_match.end()
-            match_value = file_contents[match_start:match_end]
-
-            # creates the match orderer for the current (end) match
-            # signaling it as a end value (for later reference)
-            match_orderer = MatchOrderer(end_match, END_VALUE, match_value)
-            match_orderer_l.append(match_orderer)
-
-        # retrieves the single matches iterator
-        single_matches = SINGLE_TAG_REGEX.finditer(file_contents)
-
-        # iterates over all the single matches
-        for single_match in single_matches:
-            # retrieves the match start and end values and uses them to
-            # construct the match value that is going to be used for the
-            # construction of the match orderer structure to be added
-            match_start = single_match.start()
-            match_end = single_match.end()
-            match_value = file_contents[match_start:match_end]
-
-            # creates the match orderer for the current (single) match
-            # signaling it as a single value (for later reference)
-            match_orderer = MatchOrderer(single_match, SINGLE_VALUE, match_value)
-            match_orderer_l.append(match_orderer)
-
-        # orders the match orderer list so that the items are ordered from
-        # the beginning to the latest as their are meant to be sorted
-        match_orderer_l.sort(reverse=True)
-
-        # creates the temporary literal match orderer list
-        literal_orderer_l = []
-
-        # creates the initial previous end
-        previous_end = 0
-
-        # iterates over all the matches in the match orderer list
-        # to be able to create the complete set of literal parts
-        # of the template with pure contents
-        for match_orderer in match_orderer_l:
-            # retrieves the match orderer match start position
-            # as the "original" match start value
-            match_start_o = match_orderer.match.start()
-
-            # in case the current match orderer value start is not the same
-            # as the previous end plus one, this means that there's a literal
-            # value in between both matches and so that literal value must be
-            # added to the current match orderer container
-            if not match_start_o == previous_end:
-                # calculates the both the start and the end of the literal value
-                # in between and then retrieves the same value from the current
-                # file buffer/contents so that a orderer value may be created
-                match_start = previous_end
-                match_end = match_start_o
-                match_value = file_contents[match_start:match_end]
-
-                # creates the literal match object with the match start and
-                # and end values and then uses it to create the orderer
-                literal_match = LiteralMatch(match_start, match_end)
-                match_orderer_lit = MatchOrderer(
-                    literal_match, LITERAL_VALUE, match_value
-                )
-
-                # appends the match orderer object to the list of literal match
-                # orderer list, this list will later be fused with the "normal"
-                # match orderer list (as expected)
-                literal_orderer_l.append(match_orderer_lit)
-
-            # updates the previous end value with the end of the current
-            # literal value, this is considered to be the iteration housekeeping
-            previous_end = match_orderer.match.end()
-
-        # in case there is still a final literal to be processed, it
-        # must be processed as a special case with special requirements
-        if not previous_end == len(file_contents):
-            # calculates the literal match start as the previous end
-            # value and the end as the final index of the file contents
-            # data and then retrieves the value as that chunk
-            match_start = previous_end
-            match_end = len(file_contents)
-            match_value = file_contents[match_start:match_end]
-
-            # creates the literal match object with the match start and
-            # and end values and then uses it to create the orderer
-            literal_match = LiteralMatch(match_start, match_end)
-            match_orderer = MatchOrderer(literal_match, LITERAL_VALUE, match_value)
-
-            # appends the match orderer object to the list of literal match
-            # orderer list, this list will later be fused with the "normal"
-            # match orderer list (as expected)
-            literal_orderer_l.append(match_orderer)
-
-        # adds the elements of the literal math orderer list
-        # to the match orderer list and then re-sorts the
-        # match ordered list one more time in the reverse order
-        match_orderer_l += literal_orderer_l
-        match_orderer_l.sort(reverse=True)
+        elif is_bytes and colony.legacy.PYTHON_3:
+            file_contents = file_contents.decode("utf-8")
 
         # creates the root node and starts the stack of tree nodes
         # with the root node inserted in it, the stack will be used
@@ -428,15 +376,43 @@ class TemplateEngine(colony.System):
         root_node = ast.RootNode()
         stack = [root_node]
 
-        # iterates over all the matches in the match orderer list
-        # to create the complete abstract syntax tree representing
-        # the template that has just been parsed, this same tree
-        # may be latter percolated for the generation process
-        for match_orderer in match_orderer_l:
-            # retrieves the match orderer type for the
-            # current iteration, this value will condition
-            # the way the nodes are going to be created
-            mtype = match_orderer.get_type()
+        # creates the initial previous end value, this value is going to
+        # be used to detect the literal (pure contents) parts that exist
+        # in between the various matched tokens of the template
+        previous_end = 0
+
+        # runs a single (ordered) scan of the complete template contents
+        # matching every kind of token in one pass, as the matches are
+        # already provided in order no sorting operation is required
+        for match in MATCH_REGEX.finditer(file_contents):
+            # retrieves both the start and the end positions of the current
+            # match as they are going to be used both for the literal parts
+            # detection and for the housekeeping of the iteration
+            match_start = match.start()
+            match_end = match.end()
+
+            # in case the current match start is not the same as the previous
+            # end, this means that there's a literal value in between both
+            # matches and so that literal value must be added as a node
+            if not match_start == previous_end:
+                literal_value = file_contents[previous_end:match_start]
+                literal_value = visitor.escape_literal(literal_value)
+                literal_match = LiteralMatch(previous_end, match_start)
+                literal_orderer = MatchOrderer(
+                    literal_match, LITERAL_VALUE, literal_value
+                )
+                stack[-1].add_child(ast.LiteralNode(literal_orderer))
+
+            # updates the previous end value with the end of the current
+            # match, this is considered to be the iteration housekeeping
+            previous_end = match_end
+
+            # determines the type of the current match from the value of
+            # the matched token and creates the match orderer structure
+            # that is going to be used for the node creation
+            match_value = match.group()
+            mtype = match_type(match_value)
+            match_orderer = MatchOrderer(match, mtype, match_value)
 
             if mtype == OUTPUT_VALUE:
                 value = match_orderer.get_value()
@@ -451,6 +427,10 @@ class TemplateEngine(colony.System):
                 is_end = node.is_end()
                 is_open = node.is_open()
                 if is_end:
+                    if len(stack) == 1:
+                        raise exceptions.RuntimeError(
+                            "unexpected end tag '%s'" % node.type
+                        )
                     node.assert_end(parent_node.type)
                     stack.pop()
                 else:
@@ -481,10 +461,65 @@ class TemplateEngine(colony.System):
                 parent_node = stack[-1]
                 parent_node.add_child(node)
 
-            elif mtype == LITERAL_VALUE:
-                node = ast.LiteralNode(match_orderer)
-                parent_node = stack[-1]
-                parent_node.add_child(node)
+        # in case there is still a final literal to be processed, it
+        # must be processed as a special case, adding the remaining
+        # contents of the template as a literal node
+        contents_length = len(file_contents)
+        if not previous_end == contents_length:
+            literal_value = file_contents[previous_end:contents_length]
+            literal_value = visitor.escape_literal(literal_value)
+            literal_match = LiteralMatch(previous_end, contents_length)
+            literal_orderer = MatchOrderer(literal_match, LITERAL_VALUE, literal_value)
+            stack[-1].add_child(ast.LiteralNode(literal_orderer))
+
+        # returns the root node of the abstract syntax tree that has just
+        # been built from the contents of the provided file
+        return root_node
+
+    def _template_file(
+        self,
+        root_node,
+        file_path=None,
+        base_path=None,
+        encoding=None,
+        process_methods_list=[],
+        locale_bundles=None,
+        nodes=None,
+    ):
+        """
+        Builds the template file structure for the provided root node,
+        loading it with the complete set of values that are required for
+        the processing of the template.
+
+        :type root_node: RootNode
+        :param root_node: The root node of the abstract syntax tree that
+        represents the template.
+        :type file_path: String
+        :param file_path: The path to the file from which the template
+        has been loaded.
+        :type base_path: String
+        :param base_path: The base file system path that is going to be
+        used for processing templates in the include and extends operation.
+        :type encoding: String
+        :param encoding: The encoding used in the file, in case this value
+        is not defined the encoding is assumed to be the default one.
+        :type process_methods_list: List
+        :param process_methods_list: The list of tuples containing the
+        method name and method (function) to be attached.
+        :type locale_bundles: List
+        :param locale_bundles: The list of locale bundles to be used for
+        resolution in the current context.
+        :type nodes: Dictionary
+        :param nodes: The map of the already indexed identifiable nodes,
+        in case it's not provided the indexing operation is performed.
+        :rtype: TemplateFile
+        :return: The template file structure ready to be processed.
+        """
+
+        # in case the locale bundles list is not defined must
+        # create a new list reference to handle it correctly
+        if locale_bundles == None:
+            locale_bundles = []
 
         # creates the template file structure that is going to be
         # used to represent the template in a abstract way this is
@@ -495,6 +530,7 @@ class TemplateEngine(colony.System):
             file_path=file_path,
             encoding=encoding,
             root_node=root_node,
+            nodes=nodes,
         )
 
         # attaches the currently given process methods and locale
@@ -518,6 +554,8 @@ class TemplateEngine(colony.System):
         return template_file
 
     def _extension(self, file_path):
+        if not file_path:
+            return None
         _head, tail = os.path.split(file_path)
         tail_s = tail.split(".", 1)
         if len(tail_s) > 1:
@@ -525,6 +563,8 @@ class TemplateEngine(colony.System):
         return None
 
     def _extension_in(self, extension, sequence):
+        if extension == None:
+            return False
         for item in sequence:
             valid = extension.endswith(item)
             if not valid:
@@ -659,6 +699,7 @@ class TemplateFile(object):
         encoding=None,
         root_node=None,
         eval=False,
+        nodes=None,
     ):
         """
         Constructor of the class.
@@ -680,6 +721,9 @@ class TemplateFile(object):
         :param eval: If the evaluation based visitor should be used instead
         of the normal (and safe) interpreter based visitor. Care should be
         taking while deciding which visitor to be used.
+        :type nodes: Dictionary
+        :param nodes: The map of the already indexed identifiable nodes, in
+        case it's not provided the indexing operation is performed.
         """
 
         self.manager = manager
@@ -690,9 +734,15 @@ class TemplateFile(object):
 
         self.visitor = visitor.EvalVisitor(self) if eval else visitor.Visitor(self)
         self.locale_bundles = []
-        self.nodes = {}
 
-        self.index_nodes()
+        # in case the identifiable nodes have already been indexed (eg: as
+        # part of the copy of a tree) they are used directly, otherwise the
+        # indexing operation must be performed for the complete tree
+        if nodes == None:
+            self.nodes = {}
+            self.index_nodes()
+        else:
+            self.nodes = nodes
 
     @classmethod
     def format(cls, template, *args):

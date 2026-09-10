@@ -28,38 +28,47 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-import colony
 
-
-class TemplateEnginePlugin(colony.Plugin):
+class MockManager(object):
     """
-    The main class for the Template Engine plugin.
+    Mock plugin manager, used to provide the minimum
+    amount of interface required by the template engine
+    for the loading of the system wide variables.
     """
 
-    id = "pt.hive.colony.plugins.template_engine"
-    name = "Template Engine"
-    description = "Template Engine Plugin"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT,
-    ]
-    capabilities = ["template_engine", "test"]
-    main_modules = ["template_engine"]
+    def get_system_information_map(self):
+        return dict(name="mock", version="1.0.0")
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import template_engine
 
-        self.system = template_engine.TemplateEngine(self)
-        self.test = template_engine.TemplateEngineTest(self)
+class MockPlugin(object):
+    """
+    Mock plugin to be used as the owner of the template
+    engine system object under testing.
+    """
 
-    def parse_template(self, file_path, base_path=".", encoding="utf-8"):
-        return self.system.parse_file_path(
-            file_path, base_path=base_path, encoding=encoding
-        )
+    def __init__(self):
+        self.manager = MockManager()
 
-    def parse_file(self, file):
-        return self.system.parse_file(file)
+    def debug(self, message, *args, **kwargs):
+        pass
+
+    def info(self, message, *args, **kwargs):
+        pass
+
+
+class MockEntity(object):
+    """
+    Simple object based entity to be used in the testing
+    of the attribute (object) based resolution of values.
+    """
+
+    def __init__(self, name="name", value=1, child=None):
+        self.name = name
+        self.value = value
+        self.child = child
+
+    def get_name(self):
+        return self.name
+
+    def upper_name(self, suffix="", prefix=""):
+        return prefix + self.name.upper() + suffix
