@@ -114,6 +114,8 @@ INVALID_NAMES = set(
         "_mandatory",
         "_immutable",
         "_relations",
+        "_relation_attributes",
+        "_data_types",
         "_mapped_relations",
         "_unmapped_relations",
         "_direct_relations",
@@ -1810,21 +1812,30 @@ class EntityClass(object):
         # from the complete hierarchy
         all_items = {}
 
-        # retrieves all the parent classes and iterates over
-        # them to collect their items, this includes abstract
-        # parents whose items would normally be inherited into
-        # the first concrete parent
-        all_parents = cls.get_all_parents()
-        for parent in all_parents:
-            # retrieves the items directly defined in the parent
-            # class using the internal items method and filters
-            # them using the same criteria as get_items
-            parent_items = parent._items()
-            for key, value in colony.legacy.iteritems(parent_items):
+        # creates the sequence of classes whose items are going to be
+        # collected, all the parent classes come first (this includes
+        # the abstract ones whose items would normally be inherited
+        # into the first concrete parent) so that the items defined in
+        # the current class take precedence over the inherited ones
+        classes = cls.get_all_parents() + [cls]
+
+        # iterates over the complete set of classes in the hierarchy
+        # to collect the items directly defined in each one of them,
+        # filtering them using the same criteria as get_items
+        for _class in classes:
+            for key, value in colony.legacy.iteritems(_class._items()):
+                # in case the key is one of the "private" non safe values it
+                # should be ignored (not an item)
                 if key in INVALID_NAMES:
                     continue
+
+                # in case the key value is completely based in upper case
+                # letters characters it must be ignored as it is a constant
                 if key.isupper():
                     continue
+
+                # in case the type is a function or a method it
+                # should be ignored (not an item)
                 if type(value) in (
                     types.FunctionType,
                     types.MethodType,
@@ -1833,42 +1844,28 @@ class EntityClass(object):
                     property,
                 ):
                     continue
+
+                # in case the foreign relations are meant to be ignored and
+                # the current attribute is a non mapped relation (foreign)
+                # it should be ignored, note that the relation is resolved
+                # against the class that declares it and not against the
+                # current one, so that the criteria matches the one used
+                # to assign the column in the class table strategy
                 if (
                     not foreign_relations
-                    and cls.is_relation(key)
-                    and not cls.is_mapped(key)
+                    and _class.is_relation(key)
+                    and not _class.is_mapped(key)
                 ):
                     continue
+
+                # in case value is not a dictionary (or a dictionary like
+                # object) it should be ignored (not an item)
                 if not hasattr(value, "get"):
                     continue
-                all_items[key] = value
 
-        # retrieves the items directly defined in the current
-        # class and merges them into the all items map (these
-        # take precedence over parent items)
-        own_items = cls._items()
-        for key, value in colony.legacy.iteritems(own_items):
-            if key in INVALID_NAMES:
-                continue
-            if key.isupper():
-                continue
-            if type(value) in (
-                types.FunctionType,
-                types.MethodType,
-                staticmethod,
-                classmethod,
-                property,
-            ):
-                continue
-            if (
-                not foreign_relations
-                and cls.is_relation(key)
-                and not cls.is_mapped(key)
-            ):
-                continue
-            if not hasattr(value, "get"):
-                continue
-            all_items[key] = value
+                # sets the value as the item for the current
+                # key (valid field in the context)
+                all_items[key] = value
 
         # caches the all items in the class to provide
         # fast access in latter access
@@ -2232,6 +2229,62 @@ class EntityClass(object):
         # returns the (proper) class associated with the
         # provided name to the caller method
         return name_cls
+
+    @classmethod
+    def get_cls_tables(cls, name):
+        """
+        Retrieves the complete set of table names that hold a column
+        for the attribute with the provided name.
+
+        For the class table strategy only the table of the class that
+        declares the attribute holds such a column. For the concrete
+        table strategy the column is duplicated into the table of every
+        concrete descendant of the declaring class, so all of them must
+        be considered whenever the column is written to (otherwise the
+        duplicated values would become out of sync).
+
+        :type name: String
+        :param name: The name of the attribute for which the tables
+        holding the corresponding column are to be retrieved.
+        :rtype: List
+        :return: The list containing the names of the tables that hold
+        a column for the provided attribute.
+        """
+
+        # resolves the class that declares the attribute, in case there's
+        # none no table is able to hold the corresponding column
+        name_cls = cls.get_cls(name)
+        if name_cls == None:
+            return []
+
+        # for the class table strategy the column only exists in the
+        # table of the class that declares the attribute
+        if not name_cls.is_concrete_table():
+            return [name_cls.get_name()]
+
+        # for the concrete table strategy the column is flattened into the
+        # table of the declaring class and into the ones of every concrete
+        # class below it, so the hierarchy of the current class is walked
+        # to collect the tables that hold a copy of the column
+        tables = []
+        for _class in cls.get_all_parents() + [cls]:
+            # in case the current class is abstract it has no associated
+            # table and so it holds no copy of the column
+            if _class.is_abstract():
+                continue
+
+            # in case the current class is above the declaring one in the
+            # hierarchy its table does not contain the column
+            if not issubclass(_class, name_cls):
+                continue
+
+            table = _class.get_name()
+            if not table in tables:
+                tables.append(table)
+
+        # returns the complete set of tables that hold a
+        # column for the provided attribute
+        return tables
 
     @classmethod
     def get_id(cls):
@@ -2620,19 +2673,20 @@ class EntityClass(object):
         :return: The inheritance strategy for the current hierarchy.
         """
 
-        # in case the inheritance strategy is already "cached"
-        # in the current class (fast retrieval)
-        if "_inheritance_strategy" in cls.__dict__:
-            return cls._inheritance_strategy
-
         # checks if there is a global override for the inheritance
         # strategy, resolved at runtime from the DATA_INHERITANCE
         # environment variable (or the module-level value if set
         # programmatically), when set this takes precedence over
-        # everything else allowing a system-wide switch
+        # everything else allowing a system-wide switch, note that
+        # the override is deliberately not cached so that it may
+        # be changed (or removed) at runtime
         data_inheritance = colony.conf("DATA_INHERITANCE", DATA_INHERITANCE)
         if data_inheritance:
-            cls._inheritance_strategy = data_inheritance
+            return data_inheritance
+
+        # in case the inheritance strategy is already "cached"
+        # in the current class (fast retrieval)
+        if "_inheritance_strategy" in cls.__dict__:
             return cls._inheritance_strategy
 
         # checks if the current class defines the inheritance
@@ -2995,6 +3049,15 @@ class EntityClass(object):
         relation in the class.
         """
 
+        # in case the relation is already "cached" in the current class
+        # the cached description is returned immediately (fast retrieval),
+        # note that the cache is looked up in the class own dictionary so
+        # that a relation redefined by a descendant is not shadowed by the
+        # description cached in one of its parents
+        relation_attributes = cls.__dict__.get("_relation_attributes", None)
+        if not relation_attributes == None and relation_name in relation_attributes:
+            return relation_attributes[relation_name]
+
         # in case the class contains the relations attributes method in
         # the "old fashioned" mode
         if hasattr(cls, "get_relation_attributes_" + relation_name):
@@ -3022,9 +3085,19 @@ class EntityClass(object):
             # raising an exception
             return {}
 
-        # returns the result of calling the relation
-        # attributes method
-        return method()
+        # calls the relation attributes method and caches the resulting
+        # description in the current class, note that only the resolved
+        # descriptions are cached so that the raise exception behaviour
+        # of the missing relations is kept intact
+        relation = method()
+        if relation_attributes == None:
+            relation_attributes = {}
+            cls._relation_attributes = relation_attributes
+        relation_attributes[relation_name] = relation
+
+        # returns the (cached) result of calling the
+        # relation attributes method
+        return relation
 
     @classmethod
     def is_reference(cls):
@@ -3962,8 +4035,10 @@ class EntityClass(object):
         # returns the converted SQL value
         return sql_value
 
-    def set_sql_value(self, name, sql_value, encoding=None):
-        value = self.__class__._from_sql_value(name, sql_value, encoding)
+    def set_sql_value(self, name, sql_value, encoding=None, data_type=None):
+        value = self.__class__._from_sql_value(
+            name, sql_value, encoding, data_type=data_type
+        )
         setattr(self, name, value)
 
     def from_sql_value(self, name, sql_value, encoding=None):
@@ -4288,6 +4363,16 @@ class EntityClass(object):
 
     @classmethod
     def _get_data_type(cls, name, resolve_relations=True):
+        # in case the data type is already "cached" in the current class
+        # the cached value is returned immediately (fast retrieval), note
+        # that the cache is looked up in the class own dictionary so that
+        # an attribute redefined by a descendant is not shadowed by the
+        # data type cached in one of its parents
+        key = (name, resolve_relations)
+        data_types = cls.__dict__.get("_data_types", None)
+        if not data_types == None and key in data_types:
+            return data_types[key]
+
         # retrieves the "abstract" information
         # on the attribute and then uses it to
         # retrieve the data type of the attribute
@@ -4311,6 +4396,13 @@ class EntityClass(object):
             # appropriate data type (target id attribute data type)
             attribute = getattr(target_class, target_id)
             attribute_data_type = attribute.get("type", None)
+
+        # caches the "calculated" data type in the current class so
+        # that the resolution is only performed once per attribute
+        if data_types == None:
+            data_types = {}
+            cls._data_types = data_types
+        data_types[key] = attribute_data_type
 
         # returns the "calculated" attribute
         # data type
@@ -4443,11 +4535,12 @@ class EntityClass(object):
             return value_string
 
     @classmethod
-    def _from_sql_value(cls, name, value, encoding=None):
-        # retrieves the (attribute) data type for
-        # the attribute with the given name for
-        # the current entity class
-        data_type = cls._get_data_type(name)
+    def _from_sql_value(cls, name, value, encoding=None, data_type=None):
+        # retrieves the (attribute) data type for the attribute with the
+        # given name for the current entity class, in case one has not
+        # been provided by the caller (already resolved value)
+        if data_type == None:
+            data_type = cls._get_data_type(name)
 
         # in case the value is none, no need to
         # check for the attribute data type for

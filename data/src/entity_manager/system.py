@@ -3080,25 +3080,37 @@ class EntityManager(object):
         # generation (provides way control comma)
         is_first = True
 
+        # for the concrete table strategy the items are flattened from the
+        # complete hierarchy, so the map that associates each name with the
+        # class that declares it is required to resolve the relations
+        # against the proper level (for the class table strategy the items
+        # are always the ones declared by the current class)
+        names_map = entity_class.get_names_map() if is_concrete else {}
+
         # iterates over all the table items to be used
         # to create the table
         for item_name, item_value in colony.legacy.iteritems(table_items):
+            # resolves the class that declares the current item, so that the
+            # relation attributes are read from the same class that would
+            # have held the column under the class table strategy
+            item_class = names_map.get(item_name, entity_class)
+
             # checks if the item name in the entity class
             # "refers" a relation value
-            if entity_class.is_relation(item_name):
+            if item_class.is_relation(item_name):
                 # checks if the relation (attribute) is mapped
-                # by the current class, in case it's not it should
+                # by the declaring class, in case it's not it should
                 # not be created in the current table
-                if not entity_class.is_mapped(item_name):
+                if not item_class.is_mapped(item_name):
                     # continues the loop, no need to
                     # create the column for the relation
-                    # attribute not mapped by the current
+                    # attribute not mapped by the declaring
                     # class
                     continue
 
                 # retrieves the target (class) of the relation with
                 # the given name, this is going to use the relation attributes
-                target_class = entity_class.get_target(item_name)
+                target_class = item_class.get_target(item_name)
 
                 # in case the target class is not itself, must ensure
                 # the definition of the class in the data source and
@@ -3269,6 +3281,62 @@ class EntityManager(object):
         # returns the generated "dropping" query
         return query
 
+    def _get_items_map(self, entity_class, ancestors=True):
+        """
+        Retrieves the map that associates an entity class with the map
+        of items that are contained inside it's scope, taking the
+        inheritance strategy of the entity class into account.
+
+        For the class table strategy the "native" items map is used,
+        associating each level of the hierarchy with the items defined
+        at it. For the concrete table strategy the items are flattened,
+        so that each entry contains all the items (own and inherited)
+        of the associated class, either for the complete set of ancestor
+        classes (write operations, that must target every ancestor
+        table) or for the entity class alone (read operations, that
+        target a single table).
+
+        :type entity_class: EntityClass
+        :param entity_class: The entity class for which the items map
+        is going to be retrieved.
+        :type ancestors: bool
+        :param ancestors: If the (non abstract) ancestor classes should
+        also be included in the resulting map, only meaningful for the
+        concrete table inheritance strategy.
+        :rtype: OrderedMap
+        :return: The map associating the entity classes with the map
+        of items to be used for each one of them.
+        """
+
+        # in case the entity class does not use the concrete table
+        # strategy the "native" items map is used immediately
+        if not entity_class.is_concrete_table():
+            return entity_class.get_items_map()
+
+        # creates the ordered map that is going to hold the items
+        # for each of the hierarchy levels to be handled
+        items_map = colony.OrderedMap()
+
+        # in case the ancestor classes are meant to be included adds an
+        # entry for each of the non abstract ones, with the items
+        # flattened down to that hierarchy level
+        if ancestors:
+            for parent in entity_class.get_all_parents():
+                # in case the parent class is abstract it does not have
+                # an associated table and so it's not to be considered
+                if parent.is_abstract():
+                    continue
+
+                items_map[parent] = parent.get_all_items()
+
+        # adds the entry for the entity class itself, containing the
+        # complete set of items (own and inherited ones)
+        items_map[entity_class] = entity_class.get_all_items()
+
+        # returns the map associating the entity classes with
+        # the respective (flattened) items
+        return items_map
+
     def _save_query(self, entity):
         # retrieves the entity class associated with
         # the entity
@@ -3287,22 +3355,10 @@ class EntityManager(object):
         # on the entity definition
         entity_fields = entity.get_fields()
 
-        # retrieves the map that associates an entity
-        # class with the map of items that are contained
-        # inside it's scope, for concrete table inheritance
-        # each ancestor class gets an entry with all items
-        # flattened down to that hierarchy level (enabling
-        # writes to all ancestor tables)
-        if is_concrete:
-            items_map = colony.OrderedMap()
-            all_parents = entity_class.get_all_parents()
-            for parent in all_parents:
-                if parent.is_abstract():
-                    continue
-                items_map[parent] = parent.get_all_items()
-            items_map[entity_class] = entity_class.get_all_items()
-        else:
-            items_map = entity_class.get_items_map()
+        # retrieves the map that associates an entity class with
+        # the map of items that are contained inside it's scope,
+        # resolved according to the inheritance strategy in use
+        items_map = self._get_items_map(entity_class)
 
         # creates the list to hold the set of queries
         # generated for saving a set of data
@@ -3516,21 +3572,10 @@ class EntityManager(object):
         # SQL representation for query usage (casting)
         table_id_sql_value = entity.get_sql_value(table_id, table_id_value, force=True)
 
-        # retrieves the map that associates an entity
-        # class with the map of items that are contained
-        # inside it's scope, for concrete table inheritance
-        # each ancestor class gets an entry with all items
-        # flattened down to that hierarchy level
-        if is_concrete:
-            items_map = colony.OrderedMap()
-            all_parents = entity_class.get_all_parents()
-            for parent in all_parents:
-                if parent.is_abstract():
-                    continue
-                items_map[parent] = parent.get_all_items()
-            items_map[entity_class] = entity_class.get_all_items()
-        else:
-            items_map = entity_class.get_items_map()
+        # retrieves the map that associates an entity class with
+        # the map of items that are contained inside it's scope,
+        # resolved according to the inheritance strategy in use
+        items_map = self._get_items_map(entity_class)
 
         # retrieves the map that associates the various
         # field names with the value for its immutable
@@ -3933,9 +3978,10 @@ class EntityManager(object):
                 if is_to_many:
                     entity.validate_sequence(direct_relation)
 
-                # retrieves the target (table) name from the target
-                # class value then retrieves the target id attribute
-                # name to used it later in the insert query
+                # retrieves the (table) name of the class that holds the
+                # reverse relation, used to unset the previous values of the
+                # relation, then retrieves the target id attribute name to
+                # be used later in the update queries
                 target_name = target_class.get_name()
                 target_id = target_class.get_id()
 
@@ -3985,17 +4031,30 @@ class EntityManager(object):
                         else "null"
                     )
 
-                    # creates the query to be used to update the foreign key in
-                    # the target relation table with the appropriates casts and
-                    # then appends it to the list of queries to be executed
-                    query = "update %s set %s = %s where %s = %s" % (
-                        target_name,
-                        reverse,
-                        id_sql_value,
-                        target_id,
-                        relation_id_sql_value,
+                    # retrieves the complete set of (table) names that hold a
+                    # column for the reverse relation in the hierarchy of the
+                    # relation value, note that under the concrete table
+                    # strategy the column is flattened into every level and so
+                    # all of them must be written to (otherwise the duplicated
+                    # values would become out of sync)
+                    _target_names = (
+                        _relation_value.__class__.get_cls_tables(reverse)
+                        if _relation_value
+                        else [target_name]
                     )
-                    queries.append(query)
+
+                    # creates the queries to be used to update the foreign key
+                    # in the target relation tables with the appropriates casts
+                    # and then appends them to the list of queries to be executed
+                    for _target_name in _target_names:
+                        query = "update %s set %s = %s where %s = %s" % (
+                            _target_name,
+                            reverse,
+                            id_sql_value,
+                            target_id,
+                            relation_id_sql_value,
+                        )
+                        queries.append(query)
 
         # returns the generated "insert" set of
         # queries (multiple inserts and updates)
@@ -4193,17 +4252,10 @@ class EntityManager(object):
         # retrieved from the data source
         field_names = []
 
-        # retrieves the map containing the various
-        # (upper) parent classes associated with the
-        # items contained in them, for concrete table
-        # inheritance a single entry map with all items
-        # is used since all columns reside in one table
-        if is_concrete:
-            all_items = entity_class.get_all_items()
-            items_map = colony.OrderedMap()
-            items_map[entity_class] = all_items
-        else:
-            items_map = entity_class.get_items_map()
+        # retrieves the map containing the various (upper) parent
+        # classes associated with the items contained in them, no
+        # ancestors are used as the read targets a single table
+        items_map = self._get_items_map(entity_class, ancestors=False)
 
         # retrieves the count flag from the options, if
         # the count flag is set the objective of the query
@@ -4411,14 +4463,11 @@ class EntityManager(object):
 
                     # retrieves the map of items of the target class to use them
                     # as the base structure for population of the names in the
-                    # query, for concrete table targets all items are flattened
-                    # into a single entry map
-                    if target_class.is_concrete_table():
-                        _target_all_items = target_class.get_all_items()
-                        target_items_map = colony.OrderedMap()
-                        target_items_map[target_class] = _target_all_items
-                    else:
-                        target_items_map = target_class.get_items_map()
+                    # query, no ancestors are used as the read targets a single
+                    # table for each of the relation levels
+                    target_items_map = self._get_items_map(
+                        target_class, ancestors=False
+                    )
 
                     # normalizes the prefix by replacing the query "oriented"
                     # separator with the "normal" path separator, this prefix
@@ -4771,8 +4820,12 @@ class EntityManager(object):
                     # creates the auxiliary prefix, to be used to create an unique
                     # virtual table name for joining the tables, note that if the
                     # current relation is from a parent class the table name must
-                    # be appended to the prefix
-                    if entity_class == _entity_class:
+                    # be appended to the prefix, for the concrete table strategy
+                    # the parent tables are never joined (the entity's own table
+                    # holds every column) so its own name is always used
+                    if entity_class.is_concrete_table():
+                        _prefix = prefix or entity_class.get_name()
+                    elif entity_class == _entity_class:
                         _prefix = prefix or _table_name
                     else:
                         _prefix = (
@@ -5132,6 +5185,12 @@ class EntityManager(object):
         :return: The resolved complete table name for the current context.
         """
 
+        # for concrete table inheritance all the attributes reside in
+        # the entity's own table so the table name resolution always
+        # returns the entity's own table name (no parent table join)
+        if entity_class.is_concrete_table():
+            return table_name or entity_class.get_name()
+
         # retrieves the names map for the entity class to resolve
         # the proper entity class (responsible) for the current name
         # and then retrieves the table name as the resolved entity
@@ -5139,13 +5198,6 @@ class EntityManager(object):
         names_map = entity_class.get_names_map()
         _entity_class = names_map.get(name, entity_class)
         _table_name = _entity_class.get_name()
-
-        # for concrete table inheritance all attributes reside in
-        # the entity's own table so the table name resolution always
-        # returns the entity's own table name (no parent table join)
-        if entity_class.is_concrete_table():
-            _own_table_name = entity_class.get_name()
-            return table_name or _own_table_name
 
         # in case the current name is a reserved name (special case)
         # the table name is nor completely resolved and instead is
@@ -6104,31 +6156,62 @@ class EntityManager(object):
         # be used in the value conversion from SQL
         database_encoding = self.engine.get_database_encoding()
 
+        # builds the plan for the unpacking of the result set, associating
+        # each of the fields with its position in the row and with the
+        # decomposition of its name, together with the map that resolves a
+        # field name into that same position, none of these values depend
+        # on the row being unpacked and so they are computed only once
+        plan = []
+        plan_map = {}
+        indexes_map = {}
+        for index, item_name in enumerate(field_names):
+            indexes_map[item_name] = index
+            item_path = item_name.split(".")
+            attribute_path = item_path[:-1]
+
+            # groups the field under the path of the relation that it
+            # belongs to, so that the traversing of the path is performed
+            # once per relation and not once per field of the relation
+            path_key = tuple(attribute_path)
+            fields = plan_map.get(path_key, None)
+            if fields == None:
+                fields = []
+                plan_map[path_key] = fields
+                plan.append((attribute_path, path_key, fields))
+            fields.append((index, item_path[-1]))
+
+        # resolves the positions of the fields that are read for every one
+        # of the rows, avoiding their lookup in the row iteration
+        id_index = indexes_map[table_id]
+        class_index = indexes_map["_class"]
+        mtime_index = indexes_map["_mtime"]
+
+        # creates the maps that are going to memoize the resolution of the
+        # relations and of the attributes, neither of them depends on the
+        # values of a row and so they would otherwise be recomputed for
+        # every one of the rows of the result set
+        partials_map = {}
+        names_map = {}
+
         # iterates over all the results present in the
         # result set to populate the various entity
         # classes
         for result in result_set:
-            # creates the "result map" containing a map
-            # associating the various field names with
-            # the values of them, this map is useful
-            # for key based access to the result
-            result_map = dict(zip(field_names, result))
-
             # retrieves the id (value) from the result
             # to check if it has been already indexed
             # the current entity
-            id = result_map[table_id]
+            id = result[id_index]
 
             # retrieves the current class using the "discriminator"
             # for the retrieval of the entity definition
-            current_class_name = result_map["_class"]
+            current_class_name = result[class_index]
             current_class = self.entities_map.get(
                 current_class_name, structures.EntityClass
             )
 
             # retrieves the current modified time value for the
             # current entity class level (to be set in new instances)
-            current_modified_time = result_map["_mtime"]
+            current_modified_time = result[mtime_index]
 
             # in case the current class does not exists in the
             # map of entities the map reference must be created
@@ -6170,15 +6253,7 @@ class EntityManager(object):
 
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
-            for item_name, item_value in colony.legacy.iteritems(result_map):
-                # splits the item name around the dot separation
-                # token to create the item path
-                item_path = item_name.split(".")
-
-                # retrieves the attribute path and name
-                # from the (complete) item path
-                attribute_path = item_path[:-1]
-                attribute_name = item_path[-1]
+            for attribute_path, path_key, fields in plan:
 
                 # unsets the error flag, by default no
                 # error should occur, during the path traversing
@@ -6198,30 +6273,52 @@ class EntityManager(object):
                 # "traverses" the complete attribute path to progressively
                 # retrieve or create the relation objects for the entity
                 for attribute_partial in attribute_path:
+                    # resolves both the type of the relation and the id
+                    # (key) of its target for the current class and partial
+                    # attribute name, the resolution is memoized as it only
+                    # depends on those two values, an empty resolution means
+                    # that the class holds no such relation
+                    partial_key = (_class, attribute_partial, current_path)
+                    partial = partials_map.get(partial_key, None)
+                    if partial == None:
+                        if hasattr(_class, attribute_partial):
+                            _relation = _class.get_relation(attribute_partial)
+                            _target_class = _class.get_target(attribute_partial)
+                            _path = current_path + attribute_partial + "."
+                            partial = (
+                                _relation["type"],
+                                indexes_map.get(_path + _target_class.get_id(), -1),
+                                indexes_map[_path + "_class"],
+                                indexes_map[_path + "_mtime"],
+                                _path,
+                            )
+                        else:
+                            partial = ()
+                        partials_map[partial_key] = partial
+
                     # in case the class reference does not contains
                     # reference to the current partial attribute name
                     # there is no reference is definition (error situation)
-                    if not hasattr(_class, attribute_partial):
+                    if not partial:
                         # sets the error flag, no definition
                         # and breaks the traversing loop
                         error_flag = True
                         break
 
-                    # updates the current path with the attribute partial
-                    # in iteration (by appending it to the end of the string)
-                    current_path += attribute_partial + "."
-
-                    # retrieves the relation attributes for the current
-                    # relation, then retrieves the target relation class
-                    # and the id (key) for the relation
-                    relation = _class.get_relation(attribute_partial)
-                    target_class = _class.get_target(attribute_partial)
-                    target_id = target_class.get_id()
+                    (
+                        relation_type,
+                        target_id_index,
+                        target_class_index,
+                        target_mtime_index,
+                        current_path,
+                    ) = partial
 
                     # retrieves the value of the id attribute of the target relation
                     # class, this value is going to be used to check for existing
                     # entity, meaning that if it's not defined a new entity is found
-                    target_id_value = result_map.get(current_path + target_id, None)
+                    target_id_value = (
+                        result[target_id_index] if target_id_index > -1 else None
+                    )
 
                     # in case the identifier value is not found in the result
                     # map it's not possible to process the relation
@@ -6237,14 +6334,14 @@ class EntityManager(object):
                         # retrieves the target class using the "discriminator"
                         # for the retrieval of the entity definition, the name
                         # of the class must be resolved into the proper class instance
-                        target_class_name = result_map[current_path + "_class"]
+                        target_class_name = result[target_class_index]
                         target_class = self.entities_map.get(
                             target_class_name, structures.EntityClass
                         )
 
                         # retrieves the current modified time value for the
                         # current entity class level (to be set in new instances)
-                        current_modified_time = result_map[current_path + "_mtime"]
+                        current_modified_time = result[target_mtime_index]
 
                         # in case the target class does not exists in the
                         # map of entities the map reference must be created
@@ -6273,10 +6370,6 @@ class EntityManager(object):
                         _new_entity = entities[target_class][target_id_value]
                         if not _new_entity in _visited_map:
                             _visited_map[_new_entity] = (_new_entity, target_class)
-
-                    # retrieves the type of the current relation, this will
-                    # provide information about how to handle the "new" entity
-                    relation_type = relation["type"]
 
                     # in case the relation is of type to many must
                     # check for current values in the sequence and
@@ -6315,34 +6408,62 @@ class EntityManager(object):
                     _entity = _new_entity
                     _class = _entity and target_class
 
-                # in case the error flag is set,
-                # this attribute must be skipped
+                # in case the error flag is set, the complete set of
+                # fields of the relation must be skipped
                 if error_flag == True:
                     # continues the loop, skips
-                    # the current attribute
+                    # the current relation
                     continue
 
-                # in case the class (for the entity) does not contain
-                # a reference to the current attribute (not valid)
-                if not hasattr(_class, attribute_name):
-                    # continues the loop, ignoring
-                    # the current item
-                    continue
+                # resolves the fields of the relation for the class of the
+                # entity, dropping the ones that the class does not define
+                # and resolving the data type of the remaining ones, the
+                # resolution is memoized as it only depends on the class and
+                # on the path of the relation
+                names_key = (_class, path_key)
+                names = names_map.get(names_key, None)
+                if names == None:
+                    names = []
+                    for item_index, attribute_name in fields:
+                        if not hasattr(_class, attribute_name):
+                            continue
+                        names.append(
+                            (
+                                item_index,
+                                attribute_name,
+                                _class._get_data_type(attribute_name),
+                            )
+                        )
+                    names_map[names_key] = names
 
-                # in case the cache mode is currently enabled and the attribute has
-                # already been set in the current entity, there's no need to re-set
-                # it again, the already set value should prevail (not data source)
-                if cache and _entity.has_value(attribute_name):
-                    # continues the loop, ignoring
-                    # the current item
-                    continue
+                # iterates over the resolved fields of the relation, setting
+                # every one of them in the (already resolved) entity
+                for item_index, attribute_name, data_type in names:
+                    # in case the cache mode is currently enabled and the attribute
+                    # has already been set in the current entity, there's no need to
+                    # re-set it again, the already set value should prevail
+                    if cache and _entity.has_value(attribute_name):
+                        # continues the loop, ignoring
+                        # the current item
+                        continue
 
-                # sets the item value (SQL value) in the entity, converting
-                # it into the correct representation before setting it into
-                # the entity, SQL conversion (this is proper setting of value)
-                _entity.set_sql_value(
-                    attribute_name, item_value, encoding=database_encoding
-                )
+                    # in case the value is not defined no conversion has to
+                    # be performed, as every data type converts an undefined
+                    # value into an undefined one (avoids the conversion call)
+                    item_value = result[item_index]
+                    if item_value == None:
+                        setattr(_entity, attribute_name, None)
+                        continue
+
+                    # sets the item value (SQL value) in the entity, converting
+                    # it into the correct representation before setting it into
+                    # the entity, SQL conversion (this is proper setting of value)
+                    _entity.set_sql_value(
+                        attribute_name,
+                        item_value,
+                        encoding=database_encoding,
+                        data_type=data_type,
+                    )
 
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
@@ -6407,6 +6528,43 @@ class EntityManager(object):
         # be used in the value conversion from SQL
         database_encoding = self.engine.get_database_encoding()
 
+        # builds the plan for the unpacking of the result set, associating
+        # each of the fields with its position in the row and with the
+        # decomposition of its name, together with the map that resolves a
+        # field name into that same position, none of these values depend
+        # on the row being unpacked and so they are computed only once
+        plan = []
+        plan_map = {}
+        indexes_map = {}
+        for index, item_name in enumerate(field_names):
+            indexes_map[item_name] = index
+            item_path = item_name.split(".")
+            attribute_path = item_path[:-1]
+
+            # groups the field under the path of the relation that it
+            # belongs to, so that the traversing of the path is performed
+            # once per relation and not once per field of the relation
+            path_key = tuple(attribute_path)
+            fields = plan_map.get(path_key, None)
+            if fields == None:
+                fields = []
+                plan_map[path_key] = fields
+                plan.append((attribute_path, path_key, fields))
+            fields.append((index, item_path[-1]))
+
+        # resolves the positions of the fields that are read for every one
+        # of the rows, avoiding their lookup in the row iteration
+        id_index = indexes_map[table_id]
+        class_index = indexes_map["_class"]
+        mtime_index = indexes_map["_mtime"]
+
+        # creates the maps that are going to memoize the resolution of the
+        # relations and of the attributes, neither of them depends on the
+        # values of a row and so they would otherwise be recomputed for
+        # every one of the rows of the result set
+        partials_map = {}
+        names_map = {}
+
         # "saves" the id provider function for latter usage, this
         # way its possible to used the reserved symbol name
         id_f = __builtins__.get("id", None)
@@ -6414,27 +6572,21 @@ class EntityManager(object):
         # iterates over all the results present in the
         # result set to populate the various maps
         for result in result_set:
-            # creates the "result map" containing a map
-            # associating the various field names with
-            # the values of them, this map is useful
-            # for key based access to the result
-            result_map = dict(zip(field_names, result))
-
             # retrieves the id (value) from the result
             # to check if it has been already indexed
             # the current entity
-            id = result_map[table_id]
+            id = result[id_index]
 
             # retrieves the current class using the "discriminator"
             # for the retrieval of the entity definition
-            current_class_name = result_map["_class"]
+            current_class_name = result[class_index]
             current_class = self.entities_map.get(
                 current_class_name, structures.EntityClass
             )
 
             # retrieves the current modified time value for the
             # current entity class level (to be set in new instances)
-            current_modified_time = result_map["_mtime"]
+            current_modified_time = result[mtime_index]
 
             # in case the current class does not exists in the
             # map of entities the map reference must be created
@@ -6482,15 +6634,7 @@ class EntityManager(object):
 
             # iterates over all the results in the results map
             # to "populate" the current entity (and relations)
-            for item_name, item_value in colony.legacy.iteritems(result_map):
-                # splits the item name around the dot separation
-                # token to create the item path
-                item_path = item_name.split(".")
-
-                # retrieves the attribute path and name
-                # from the (complete) item path
-                attribute_path = item_path[:-1]
-                attribute_name = item_path[-1]
+            for attribute_path, path_key, fields in plan:
 
                 # unsets the error flag, by default no
                 # error should occur, during the path traversing
@@ -6511,30 +6655,52 @@ class EntityManager(object):
                 # progressively retrieve or create the relation
                 # objects
                 for attribute_partial in attribute_path:
+                    # resolves both the type of the relation and the id
+                    # (key) of its target for the current class and partial
+                    # attribute name, the resolution is memoized as it only
+                    # depends on those two values, an empty resolution means
+                    # that the class holds no such relation
+                    partial_key = (_class, attribute_partial, current_path)
+                    partial = partials_map.get(partial_key, None)
+                    if partial == None:
+                        if hasattr(_class, attribute_partial):
+                            _relation = _class.get_relation(attribute_partial)
+                            _target_class = _class.get_target(attribute_partial)
+                            _path = current_path + attribute_partial + "."
+                            partial = (
+                                _relation["type"],
+                                indexes_map.get(_path + _target_class.get_id(), -1),
+                                indexes_map[_path + "_class"],
+                                indexes_map[_path + "_mtime"],
+                                _path,
+                            )
+                        else:
+                            partial = ()
+                        partials_map[partial_key] = partial
+
                     # in case the class reference does not contains
                     # reference to the current partial attribute name
                     # there is no reference is definition (error situation)
-                    if not hasattr(_class, attribute_partial):
+                    if not partial:
                         # sets the error flag, no definition
                         # and breaks the traversing loop
                         error_flag = True
                         break
 
-                    # updates the current path with the attribute partial
-                    # in iteration (by appending it to the end of the string)
-                    current_path += attribute_partial + "."
-
-                    # retrieves the relation attributes for the current
-                    # relation, then retrieves the target relation class
-                    # and the id (key) for the relation
-                    relation = _class.get_relation(attribute_partial)
-                    target_class = _class.get_target(attribute_partial)
-                    target_id = target_class.get_id()
+                    (
+                        relation_type,
+                        target_id_index,
+                        target_class_index,
+                        target_mtime_index,
+                        current_path,
+                    ) = partial
 
                     # retrieves the value of the id attribute of the target relation
                     # class, this value is going to be used to check for existing
                     # entity
-                    target_id_value = result_map.get(current_path + target_id, None)
+                    target_id_value = (
+                        result[target_id_index] if target_id_index > -1 else None
+                    )
 
                     # in case the identifier value is not found in the result
                     # map it's not possible to process the relation
@@ -6550,7 +6716,7 @@ class EntityManager(object):
                         # retrieves the target class using the "discriminator"
                         # for the retrieval of the entity definition, the name
                         # of the class must be resolved into the proper class instance
-                        target_class_name = result_map[current_path + "_class"]
+                        target_class_name = result[target_class_index]
                         target_class = self.entities_map.get(
                             target_class_name, structures.EntityClass
                         )
@@ -6558,7 +6724,7 @@ class EntityManager(object):
                         # retrieves the target modified time, to be set in the create
                         # map representing the entity, this may be used to check the
                         # last time the entity was modified
-                        target_modified_time = result_map[current_path + "_mtime"]
+                        target_modified_time = result[target_mtime_index]
 
                         # in case the target class does not exists in the
                         # map of entities the map reference must be created
@@ -6596,10 +6762,6 @@ class EntityManager(object):
                         if not _id in _visited_map:
                             _visited_map[_id] = (_new_entity, target_class)
 
-                    # retrieves the type of the current relation, this will
-                    # provide information about how to handle the "new" entity
-                    relation_type = relation["type"]
-
                     # in case the relation is of type to many must
                     # check for current values in the sequence and
                     # add new values in case they do not exist
@@ -6635,34 +6797,62 @@ class EntityManager(object):
                     _entity = _new_entity
                     _class = not _entity == None and target_class
 
-                # in case the error flag is set,
-                # this attribute must be skipped
+                # in case the error flag is set, the complete set of
+                # fields of the relation must be skipped
                 if error_flag == True:
                     # continues the loop, skips
-                    # the current attribute
+                    # the current relation
                     continue
 
-                # in case the class (for the entity) does not contain
-                # a reference to the current attribute (not valid)
-                if not hasattr(_class, attribute_name):
-                    # continues the loop, ignoring
-                    # the current item
-                    continue
+                # resolves the fields of the relation for the class of the
+                # entity, dropping the ones that the class does not define
+                # and resolving the data type of the remaining ones, the
+                # resolution is memoized as it only depends on the class and
+                # on the path of the relation
+                names_key = (_class, path_key)
+                names = names_map.get(names_key, None)
+                if names == None:
+                    names = []
+                    for item_index, attribute_name in fields:
+                        if not hasattr(_class, attribute_name):
+                            continue
+                        names.append(
+                            (
+                                item_index,
+                                attribute_name,
+                                _class._get_data_type(attribute_name),
+                            )
+                        )
+                    names_map[names_key] = names
 
-                # in case the cache mode is currently enabled and the attribute has
-                # already been set in the current entity, there's no need to re-set
-                # it again, the already set value should prevail (not data source)
-                if cache and attribute_name in _entity:
-                    # continues the loop, ignoring
-                    # the current item
-                    continue
+                # iterates over the resolved fields of the relation, setting
+                # every one of them in the (already resolved) entity
+                for item_index, attribute_name, data_type in names:
+                    # in case the cache mode is currently enabled and the attribute
+                    # has already been set in the current entity, there's no need to
+                    # re-set it again, the already set value should prevail
+                    if cache and attribute_name in _entity:
+                        # continues the loop, ignoring
+                        # the current item
+                        continue
 
-                # converts the item value into the appropriate value
-                # representation and sets it into the entity (map) in
-                # the correct attribute name
-                _entity[attribute_name] = _class._from_sql_value(
-                    attribute_name, item_value, encoding=database_encoding
-                )
+                    # in case the value is not defined no conversion has to
+                    # be performed, as every data type converts an undefined
+                    # value into an undefined one (avoids the conversion call)
+                    item_value = result[item_index]
+                    if item_value == None:
+                        _entity[attribute_name] = None
+                        continue
+
+                    # converts the item value into the appropriate value
+                    # representation and sets it into the entity (map) in
+                    # the correct attribute name
+                    _entity[attribute_name] = _class._from_sql_value(
+                        attribute_name,
+                        item_value,
+                        encoding=database_encoding,
+                        data_type=data_type,
+                    )
 
         # in case the sort flag is not set no need to
         # continue (only sorting is missing) returns
@@ -7933,10 +8123,13 @@ class EntityManager(object):
         # for the name (name associated class) note that if the
         # current final name is the identifier attribute the
         # current concrete entity class is used (performance tune)
+        # and that for the concrete table inheritance strategy the
+        # entity class is always used, as all of its attributes
+        # (own and inherited) reside in its own table
         names_map = entity_class.get_names_map()
         name_class = (
             entity_class
-            if final_name == id
+            if final_name == id or entity_class.is_concrete_table()
             else names_map.get(final_name, entity_class)
         )
         name_class_name = name_class.get_name()

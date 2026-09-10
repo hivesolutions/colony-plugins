@@ -8,8 +8,8 @@
 | **Date**            | 2026-03-30                                                           |
 | **Author**          | João Magalhães <joamag@hive.pt>                                      |
 | **Subject**         | Concrete Table Inheritance as Alternative to Class Table Inheritance |
-| **Status**          | Draft                                                                |
-| **Version**         | 1.0                                                                  |
+| **Status**          | Implemented                                                          |
+| **Version**         | 1.1                                                                  |
 
 ## Description
 
@@ -68,6 +68,8 @@ SELECT * FROM _concrete_root_entity
 SELECT * FROM _concrete_person
 ```
 
+A read performed at an ancestor level builds the entity as the concrete class named by the `_class` discriminator of that table, so a `find(ConcretePerson)` returns `ConcreteEmployee` instances for the employee rows. The fields declared below the queried level have no column in that table and are therefore reported as not loaded (`has_value()` is false), being resolved lazily from the concrete table on first access.
+
 **UPDATE**: Modifying a `ConcreteEmployee` produces three updates, one per ancestor table:
 
 ```sql
@@ -95,6 +97,14 @@ DELETE FROM _concrete_root_entity WHERE object_id = 1
 **Save/Update/Delete Queries**: For concrete table entities, the `items_map` used for query generation iterates over each ancestor class but uses `get_all_items()` at each level (not just that level's own items). This produces one query per ancestor table, each containing all fields relevant to that hierarchy level.
 
 **Find Queries**: For concrete table entities, `_names_query_f` and `_join_query_f` use a single-entry items map with all fields attributed to the queried class. No parent table joins are generated. The `_class` discriminator column references the entity's own table.
+
+### Duplicated Column Writes
+
+Because an inherited column exists in the table of every concrete level, **any write that targets such a column must reach all of those tables**, otherwise the copies go out of sync and a read at one level returns a stale value.
+
+The entity save, update and delete paths handle this by iterating over the ancestor classes. The foreign key write of the reverse (non mapped) side of a relation also fans out, using the hierarchy of the entity that holds the relation. This is the reason why `get_cls_tables()` exists, as it resolves the complete set of tables that hold a column for a given attribute.
+
+One known gap remains: when a relation is re-assigned, the query that unsets the previous holder of the foreign key only targets the table of the class that declares the relation, as the concrete class of the previous holder is not known at query generation time. A stale copy may therefore be left in the table of a sibling subclass. Closing it requires either knowing which definitions exist in the data source or an extra query per write.
 
 ### Trade-offs
 
@@ -141,7 +151,7 @@ export DATA_INHERITANCE=class_table
 unset DATA_INHERITANCE
 ```
 
-The override is resolved via `colony.conf("DATA_INHERITANCE", None)` at module load time in `structures.py` and checked as the first step in `get_inheritance_strategy()`.
+The override is checked as the first step of `get_inheritance_strategy()` and is deliberately not cached, so that it may be set or removed at runtime. The per class resolution of the class level attribute remains cached.
 
 ---
 
