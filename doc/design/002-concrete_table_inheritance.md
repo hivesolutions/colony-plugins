@@ -92,7 +92,7 @@ DELETE FROM _concrete_root_entity WHERE object_id = 1
 
 **Flattened Items**: The `get_all_items()` classmethod on `EntityClass` returns all items (own + inherited from all parents, including abstract parents) flattened into a single dictionary. This is used by `_create_definition_query` and `_save_query` for concrete table entities.
 
-**Table Creation (`create()`)**: For concrete table hierarchies, parent classes are created recursively (not skipped). Each class creates its own table using `get_all_items()` to include all inherited columns.
+**Table Creation (`create()`)**: For concrete table hierarchies, parent classes are created recursively (not skipped). Each class creates its own table using `get_all_items()` to include all inherited columns, and indexes it using `get_all_indexed()` so that a field declared as indexed by an ancestor is also indexed in the table of every descendant that holds a copy of the column.
 
 **Save/Update/Delete Queries**: For concrete table entities, the `items_map` used for query generation iterates over each ancestor class but uses `get_all_items()` at each level (not just that level's own items). This produces one query per ancestor table, each containing all fields relevant to that hierarchy level.
 
@@ -104,7 +104,7 @@ Because an inherited column exists in the table of every concrete level, **any w
 
 The entity save, update and delete paths handle this by iterating over the ancestor classes. The foreign key write of the reverse (non mapped) side of a relation also fans out, using the hierarchy of the entity that holds the relation. This is the reason why `get_cls_tables()` exists, as it resolves the complete set of tables that hold a column for a given attribute.
 
-One known gap remains: when a relation is re-assigned, the query that unsets the previous holder of the foreign key only targets the table of the class that declares the relation, as the concrete class of the previous holder is not known at query generation time. A stale copy may therefore be left in the table of a sibling subclass. Closing it requires either knowing which definitions exist in the data source or an extra query per write.
+The unset of the previous holder of the foreign key, issued whenever a relation is re-assigned, fans out in the same way. The concrete class of the previous holder is not known at query generation time, so the column is cleared in the table of the class that declares the relation and in the ones of every class that inherits from it, resolved through `_get_descendant_tables()` against the classes registered in the entity manager.
 
 ### Trade-offs
 
