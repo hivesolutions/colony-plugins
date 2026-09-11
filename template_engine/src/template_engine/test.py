@@ -36,6 +36,7 @@ import tempfile
 import colony
 
 from . import ast
+from . import compiler
 from . import mocks
 from . import system
 from . import visitor
@@ -52,6 +53,7 @@ class TemplateEngineTest(colony.Test):
         return (
             AstTestCase,
             TemplateEngineTestCase,
+            CompilerTestCase,
             TemplateFileTestCase,
             VisitorTestCase,
             VisitorResolutionTestCase,
@@ -173,6 +175,46 @@ class TemplateEngineBaseTestCase(colony.ColonyTestCase):
         """
 
         template_file = self.parse(contents, file_name=file_name, files=files)
+        template_file.set_strict_mode(strict)
+        for key, value in colony.legacy.items(values):
+            template_file.assign(key, value)
+        result = template_file.process()
+
+        # in case the template has been rendered by its compiled version
+        # renders it once again using the visitor, so that the equivalence
+        # of both of the paths is verified by every single test, note that
+        # the values assigned to a template must be free of side effects
+        # as they are used by both of the renders
+        if template_file.is_compiled():
+            self.assertEqual(
+                result, self.render_visitor(contents, file_name, files, strict, values)
+            )
+
+        return result
+
+    def render_visitor(self, contents, file_name, files, strict, values):
+        """
+        Renders the provided template contents forcing the usage of the
+        visitor, used as the reference for the compiled rendering.
+
+        :type contents: String
+        :param contents: The contents of the template to be rendered.
+        :type file_name: String
+        :param file_name: The name of the file that is going to "hold"
+        the template contents (controls the auto escaping mode).
+        :type files: Dictionary
+        :param files: The extra files to be written before the parsing.
+        :type strict: bool
+        :param strict: If the strict mode should be enabled for the
+        rendering operation (raises on undefined values).
+        :type values: Dictionary
+        :param values: The named values to be assigned to the template.
+        :rtype: String
+        :return: The result of the template rendering operation.
+        """
+
+        template_file = self.parse(contents, file_name=file_name, files=files)
+        template_file.compiled = None
         template_file.set_strict_mode(strict)
         for key, value in colony.legacy.items(values):
             template_file.assign(key, value)
@@ -831,6 +873,491 @@ class TemplateFileTestCase(TemplateEngineBaseTestCase):
         self.assertEqual(template_file.process(), "[ola]")
 
 
+class CompilerTestCase(TemplateEngineBaseTestCase):
+    """
+    Test case for the template compiler, covering both the translation
+    of the various kinds of node and the equivalence of the compiled
+    rendering against the visitor based one.
+    """
+
+    @staticmethod
+    def get_description():
+        return "Template engine compiler test case"
+
+    def assert_same(self, contents, file_name="test.html.tpl", **values):
+        """
+        Asserts that the provided template is compiled and that both the
+        compiled and the visitor based renderings produce the very same
+        result, returning it.
+
+        :type contents: String
+        :param contents: The contents of the template to be rendered.
+        :type file_name: String
+        :param file_name: The name of the file that is going to "hold"
+        the template contents (controls the auto escaping mode).
+        :rtype: String
+        :return: The result of the template rendering operation.
+        """
+
+        template_file = self.parse(contents, file_name=file_name)
+        for key, value in colony.legacy.items(values):
+            template_file.assign(key, value)
+        self.assertEqual(template_file.is_compiled(), True)
+        result = template_file.process()
+
+        self.assertEqual(
+            result, self.render_visitor(contents, file_name, None, False, values)
+        )
+        return result
+
+    def test_write_out(self):
+        instance = visitor.Visitor()
+        compiler.write_out(instance, "<b>", True)
+        self.assertEqual(instance.string_buffer.get_value(), "&lt;b&gt;")
+
+    def test_write_out_undefined(self):
+        instance = visitor.Visitor()
+        compiler.write_out(instance, None, True)
+        self.assertEqual(instance.string_buffer.get_value(), b"")
+
+    def test_write_out_no_escape(self):
+        instance = visitor.Visitor()
+        compiler.write_out(instance, "<b>", False)
+        self.assertEqual(instance.string_buffer.get_value(), "<b>")
+
+    def test_write_out_sequence(self):
+        instance = visitor.Visitor()
+        compiler.write_out(instance, ["a"], False)
+        self.assertEqual(instance.string_buffer.get_value(), "['a']")
+
+    def test_resolve_parts(self):
+        instance = visitor.Visitor()
+        instance.set_global("entity", mocks.MockEntity(name="john"))
+        self.assertEqual(compiler.resolve_parts(instance, ("entity", "name")), "john")
+
+    def test_resolve_parts_undefined(self):
+        instance = visitor.Visitor()
+        self.assertEqual(compiler.resolve_parts(instance, ("missing",)), None)
+
+    def test_resolve_parts_undefined_strict(self):
+        instance = visitor.Visitor()
+        instance.set_strict_mode(True)
+        self.assertRaises(
+            exceptions.UndefinedVariable,
+            lambda: compiler.resolve_parts(instance, ("missing",)),
+        )
+
+    def test_iterable_for(self):
+        instance = visitor.Visitor()
+        self.assertEqual(compiler.iterable_for(instance, ["a"], "items"), ["a"])
+
+    def test_iterable_for_non_iterable(self):
+        instance = visitor.Visitor()
+        self.assertEqual(compiler.iterable_for(instance, 5, "value"), [5])
+
+    def test_iterable_for_undefined(self):
+        instance = visitor.Visitor()
+        self.assertEqual(compiler.iterable_for(instance, None, "missing"), [])
+
+    def test_iterable_for_strict(self):
+        instance = visitor.Visitor()
+        instance.set_strict_mode(True)
+        self.assertRaises(
+            exceptions.VariableNotIterable,
+            lambda: compiler.iterable_for(instance, 5, "value"),
+        )
+
+    def test_loop_start_end(self):
+        instance = visitor.Visitor()
+        instance.set_global("loop", "previous")
+        loop, previous = compiler.loop_start(instance)
+        self.assertEqual(instance.get_global("loop") is loop, True)
+        compiler.loop_end(instance, previous)
+        self.assertEqual(instance.get_global("loop"), "previous")
+
+    def test_compile_literal(self):
+        self.assertEqual(self.assert_same("hello world"), "hello world")
+
+    def test_compile_empty(self):
+        template_file = self.parse("")
+        self.assertEqual(template_file.is_compiled(), True)
+        self.assertEqual(template_file.process(), "")
+
+    def test_compile_out(self):
+        self.assertEqual(self.assert_same("[{{ name }}]", name="john"), "[john]")
+
+    def test_compile_out_escaped(self):
+        self.assertEqual(self.assert_same("[{{ raw }}]", raw="<b>"), "[&lt;b&gt;]")
+
+    def test_compile_out_undefined(self):
+        self.assertEqual(self.assert_same("[{{ missing }}]"), "[]")
+
+    def test_compile_out_literal(self):
+        self.assertEqual(self.assert_same("[{{ 'john' }}]"), "[john]")
+
+    def test_compile_out_none(self):
+        self.assertEqual(self.assert_same("[{{ None }}]"), "[]")
+
+    def test_compile_out_nested(self):
+        entity = mocks.MockEntity(name="john", child=mocks.MockEntity(name="kid"))
+        self.assertEqual(
+            self.assert_same("[{{ entity.child.name }}]", entity=entity), "[kid]"
+        )
+
+    def test_compile_if(self):
+        self.assertEqual(self.assert_same("{% if flag %}Y{% endif %}", flag=True), "Y")
+
+    def test_compile_if_else(self):
+        self.assertEqual(
+            self.assert_same("{% if flag %}Y{% else %}N{% endif %}", flag=False), "N"
+        )
+
+    def test_compile_if_elif(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% if a %}A{% elif b %}B{% else %}C{% endif %}", a=False, b=True
+            ),
+            "B",
+        )
+
+    def test_compile_if_operator(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% if name == 'john' %}Y{% else %}N{% endif %}", name="john"
+            ),
+            "Y",
+        )
+
+    def test_compile_if_undefined(self):
+        self.assertEqual(
+            self.assert_same("{% if missing %}Y{% else %}N{% endif %}"), "N"
+        )
+
+    def test_compile_if_empty_branch(self):
+        self.assertEqual(
+            self.assert_same("{% if flag %}{% else %}N{% endif %}", flag=True), ""
+        )
+
+    def test_compile_for(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}[{{ i }}]{% endfor %}", items=["a", "b"]
+            ),
+            "[a][b]",
+        )
+
+    def test_compile_for_empty(self):
+        self.assertEqual(
+            self.assert_same("{% for i in items %}X{% endfor %}", items=[]), ""
+        )
+
+    def test_compile_for_map(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for k, v in map %}[{{ k }}={{ v }}]{% endfor %}", map=dict(a="1")
+            ),
+            "[a=1]",
+        )
+
+    def test_compile_for_simple_map(self):
+        # the simple iteration form over a map exposes the key under the
+        # single name, the very same value the sequence form exposes
+        self.assertEqual(
+            self.assert_same(
+                "{% for k in map %}[{{ k }}]{% endfor %}", map=dict(a="1")
+            ),
+            "[a]",
+        )
+
+    def test_compile_for_loop_values(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}{{ loop.index }}/{{ loop.first }}/{{ loop.last }};{% endfor %}",
+                items=["a", "b"],
+            ),
+            "1/True/False;2/False/True;",
+        )
+
+    def test_compile_for_flags(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}{{ is_first }}/{{ is_last }};{% endfor %}",
+                items=["a", "b"],
+            ),
+            "True/False;False/True;",
+        )
+
+    def test_compile_for_non_iterable(self):
+        self.assertEqual(
+            self.assert_same("{% for i in value %}[{{ i }}]{% endfor %}", value=5),
+            "[5]",
+        )
+
+    def test_compile_for_attribute(self):
+        entity = mocks.MockEntity(name="john")
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}[{{ i.name }}]{% endfor %}", items=[entity]
+            ),
+            "[john]",
+        )
+
+    def test_compile_for_composite(self):
+        self.assertEqual(
+            self.assert_same(
+                "${foreach item=i from=items}[{{ i }}]${/foreach}",
+                items=["a", "b"],
+            ),
+            "[a][b]",
+        )
+
+    def test_compile_for_composite_index(self):
+        self.assertEqual(
+            self.assert_same(
+                "${foreach item=i from=items index=idx}"
+                "[{{ idx }}:{{ i }}]"
+                "${/foreach}",
+                items=["a", "b"],
+            ),
+            "[1:a][2:b]",
+        )
+
+    def test_compile_for_call_argument_loop(self):
+        # the loop values referenced as the arguments of a call must still
+        # be maintained, as they are not part of the name of the value
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}[{{ identity(loop.index) }}]{% endfor %}",
+                items=["a", "b"],
+                identity=lambda value: value,
+            ),
+            "[1][2]",
+        )
+
+    def test_compile_for_call_argument_flags(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}[{{ identity(is_first) }}]{% endfor %}",
+                items=["a", "b"],
+                identity=lambda value: value,
+            ),
+            "[True][False]",
+        )
+
+    def test_compile_for_nested_key_reuse(self):
+        # the inner iteration assigns the name of the outer item through
+        # its key value, so the outer one may no longer be read from the
+        # local of the generated function
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in a %}{% for i, v in m %}{% endfor %}({{ i }}){% endfor %}",
+                a=["1", "2"],
+                m=dict(k="v"),
+            ),
+            "(k)(k)",
+        )
+
+    def test_compile_for_nested_key_reuse_deep(self):
+        # the iteration that assigns the name of the outer item is not a
+        # direct child of it, so the detection has to reach it through the
+        # contents of the conditional that holds it
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in a %}"
+                "{% if flag %}{% for i, v in m %}{% endfor %}{% endif %}"
+                "({{ i }})"
+                "{% endfor %}",
+                a=["1", "2"],
+                m=dict(k="v"),
+                flag=True,
+            ),
+            "(k)(k)",
+        )
+
+    def test_compile_for_nested_same_name(self):
+        # the value of an iteration is not restored once it is over, so an
+        # inner iteration that uses the very same name of the outer one
+        # leaves its own last value behind (the reference behavior)
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in a %}{% for i in b %}[{{ i }}]{% endfor %}({{ i }}){% endfor %}",
+                a=["1", "2"],
+                b=["x"],
+            ),
+            "[x](x)[x](x)",
+        )
+
+    def test_compile_for_nested(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in a %}{% for j in b %}{{ i }}{{ j }}{% endfor %}{% endfor %}",
+                a=["1", "2"],
+                b=["x"],
+            ),
+            "1x2x",
+        )
+
+    def test_compile_for_nested_loop_restored(self):
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in a %}"
+                "{% for j in b %}{% endfor %}"
+                "-{{ loop.index }};"
+                "{% endfor %}",
+                a=["x", "y"],
+                b=["1", "2"],
+            ),
+            "-1;-2;",
+        )
+
+    def test_compile_set(self):
+        self.assertEqual(
+            self.assert_same("{% set name = 'john' %}[{{ name }}]"), "[john]"
+        )
+
+    def test_compile_set_inside_for(self):
+        # the re-assignment of the name of the iteration forces the value
+        # to be read from the global map instead of from the local
+        self.assertEqual(
+            self.assert_same(
+                "{% for i in items %}{% set i = 'x' %}[{{ i }}]{% endfor %}",
+                items=["a", "b"],
+            ),
+            "[x][x]",
+        )
+
+    def test_compile_branch_orphan(self):
+        # a branch node outside of a conditional one is skipped, the very
+        # same way that the visitor skips it
+        self.assertEqual(self.assert_same("[{% else %}]"), "[]")
+
+    def test_compile_refused_iteration_index(self):
+        # an iteration with an index but no item name depends on the runtime
+        # kind of the value for the naming of its variables
+        template_file = self.parse("${foreach from=items index=idx key=k}x${/foreach}")
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_deep_nesting(self):
+        # a deeply nested template may exceed the indentation limit of the
+        # parser, which is implementation specific, the template must be
+        # rendered either way, by the compiled version or by the visitor
+        depth = 120
+        contents = "{% if flag %}" * depth + "X" + "{% endif %}" * depth
+        template_file = self.parse(contents)
+        template_file.assign("flag", True)
+        self.assertEqual(template_file.process(), "X")
+
+    def test_compile_refused_branch_after_else(self):
+        # an else branch followed by an elif one has no direct translation
+        # and so the generated source is invalid, the template must still
+        # be rendered by the visitor
+        template_file = self.parse("{% if a %}A{% else %}B{% elif c %}C{% endif %}")
+        template_file.assign("a", False)
+        template_file.assign("c", True)
+        self.assertEqual(template_file.is_compiled(), False)
+        self.assertEqual(
+            template_file.process(),
+            self.render_visitor(
+                "{% if a %}A{% else %}B{% elif c %}C{% endif %}",
+                "test.html.tpl",
+                None,
+                False,
+                dict(a=False, c=True),
+            ),
+        )
+
+    def test_compile_refused_repeated_else(self):
+        template_file = self.parse("{% if a %}A{% else %}B{% else %}C{% endif %}")
+        template_file.assign("a", False)
+        self.assertEqual(template_file.is_compiled(), False)
+        self.assertEqual(
+            template_file.process(),
+            self.render_visitor(
+                "{% if a %}A{% else %}B{% else %}C{% endif %}",
+                "test.html.tpl",
+                None,
+                False,
+                dict(a=False),
+            ),
+        )
+
+    def test_compile_refused_filter(self):
+        template_file = self.parse("[{{ name|safe }}]")
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_refused_tag(self):
+        template_file = self.parse("[${out value=name /}]")
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_refused_include(self):
+        template_file = self.parse(
+            "[{% include 'part.html.tpl' %}]", files={"part.html.tpl": "PART"}
+        )
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_refused_out_attributes(self):
+        template_file = self.parse("[${out value=name prefix='>' /}]")
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_refused_condition_filter(self):
+        template_file = self.parse("{% if name|safe %}Y{% endif %}")
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_refused_no_path(self):
+        # a template parsed from a file object has no cache entry and so
+        # no compilation is performed for it
+        file = colony.legacy.BytesIO("[{{ name }}]".encode("utf-8"))
+        template_file = self.engine.parse_file(file, encoding="utf-8")
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_is_compiled_process_methods(self):
+        def process_custom(self, node):
+            self.write("custom")
+
+        template_file = self.parse("[{{ name }}]")
+        self.assertEqual(template_file.is_compiled(), True)
+        template_file.attach_process_methods([("process_custom", process_custom)])
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_is_compiled_eval_visitor(self):
+        template_file = self.parse("[{{ name }}]")
+        template_file.visitor = visitor.EvalVisitor(template_file)
+        self.assertEqual(template_file.is_compiled(), False)
+
+    def test_compile_node_refused(self):
+        template_file = self.parse("[${out value=name /}]")
+        self.assertEqual(compiler.compile_node(template_file.root_node), None)
+
+    def test_compile_node_encoding(self):
+        template_file = self.parse("hello")
+        compiled = compiler.compile_node(template_file.root_node, encoding="utf-8")
+        self.assertEqual(b"hello" in compiled[1], True)
+
+    def test_compile_strict_mode(self):
+        template_file = self.parse("{{ missing }}")
+        template_file.set_strict_mode(True)
+        self.assertRaises(exceptions.UndefinedVariable, template_file.process)
+
+    def test_compile_unicode(self):
+        self.assertEqual(
+            self.assert_same("[{{ name }}]", name=colony.legacy.u("joão")),
+            colony.legacy.u("[joão]"),
+        )
+
+    def test_compile_variable_encoding(self):
+        template_file = self.parse("[{{ name }}]", file_name="test.txt")
+        template_file.set_variable_encoding("utf-8")
+        template_file.assign("name", colony.legacy.u("joão"))
+        self.assertEqual(template_file.is_compiled(), True)
+        self.assertEqual(template_file.process(), colony.legacy.u("[joão]"))
+
+    def test_compile_locale(self):
+        template_file = self.parse("[{{ 'hello' }}]")
+        template_file.add_bundle(dict(hello="ola"))
+        self.assertEqual(template_file.is_compiled(), True)
+        self.assertEqual(template_file.process(), "[ola]")
+
+
 class VisitorTestCase(TemplateEngineBaseTestCase):
     """
     Test case for the visitor, covering the dispatch infra-structure
@@ -922,9 +1449,12 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
         def process_out(self, node):
             self.write("replaced")
 
-        template_file = self.parse("[{{ name }}]")
+        # uses a tag that is not translated by the compiler so that the
+        # process method cache is effectively populated before the attach
+        template_file = self.parse("[${out value=name /}]")
         template_file.assign("name", "john")
         template_file.process()
+        self.assertEqual("out" in template_file.visitor.process_map, True)
         template_file.visitor.attach_process_method("process_out", process_out)
         self.assertEqual(template_file.visitor.process_map, dict())
 
@@ -962,7 +1492,9 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
         )
 
     def test_process_accept_cached(self):
-        template_file = self.parse("[{{ a }}][{{ b }}]")
+        # uses a tag that is not translated by the compiler so that the
+        # visitor based rendering (the one being tested) is the one used
+        template_file = self.parse("[${out value=a /}][${out value=b /}]")
         template_file.assign("a", "x")
         template_file.process()
         self.assertEqual("out" in template_file.visitor.process_map, True)
