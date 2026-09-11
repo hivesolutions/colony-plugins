@@ -156,20 +156,27 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(result, mocks.SIMPLE_JSON)
 
     def test_dumps_f_version(self):
-        # simulates an older interpreter, under which the embedded
-        # encoder is not able to generate an equivalent result
         version = serializer.FAST_VERSION
+
+        # simulates an older interpreter, under which the embedded
+        # encoder is not able to generate an equivalent result, note
+        # that the control characters above the escape range are the
+        # ones that the "normal" approach emits in their literal form
         serializer.FAST_VERSION = (99, 0)
         try:
-            # the control characters above the escape range are the ones
-            # that the "normal" approach emits in their literal form
             result = serializer.dumps_f("a\x1ab")
             self.assertEqual(result, serializer.dumps("a\x1ab"))
             self.assertEqual(result, '"a\x1ab"')
         finally:
             serializer.FAST_VERSION = version
 
-        self.assertEqual(serializer.dumps_f("a\x1ab"), '"a\\u001ab"')
+        # simulates a recent enough interpreter, under which the same
+        # control characters are escaped by the embedded encoder
+        serializer.FAST_VERSION = (0, 0)
+        try:
+            self.assertEqual(serializer.dumps_f("a\x1ab"), '"a\\u001ab"')
+        finally:
+            serializer.FAST_VERSION = version
 
     def test_dumps_lazy_f(self):
         parts = list(serializer.dumps_lazy_f(mocks.COMPLEX_OBJECT))
