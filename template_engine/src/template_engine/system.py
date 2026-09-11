@@ -35,6 +35,7 @@ import colony
 
 from . import ast
 from . import visitor
+from . import compiler
 from . import exceptions
 
 OUTPUT_REGEX_VALUE = r"\{\{[^\}]*\}\}"
@@ -267,7 +268,11 @@ class TemplateEngine(colony.System):
                 file.close()
             if len(TEMPLATES_CACHE) > TEMPLATES_LIMIT:
                 TEMPLATES_CACHE.clear()
-            cached = (signature, root_node)
+            cached = (
+                signature,
+                root_node,
+                compiler.compile_node(root_node, encoding=encoding),
+            )
             TEMPLATES_CACHE[key] = cached
 
         # copies the (pristine) cached tree so that the caller is given a
@@ -286,6 +291,7 @@ class TemplateEngine(colony.System):
             process_methods_list=process_methods_list,
             locale_bundles=locale_bundles,
             nodes=nodes,
+            compiled=cached[2],
         )
 
     def parse_file_path_variable_encoding(
@@ -485,6 +491,7 @@ class TemplateEngine(colony.System):
         process_methods_list=[],
         locale_bundles=None,
         nodes=None,
+        compiled=None,
     ):
         """
         Builds the template file structure for the provided root node,
@@ -512,6 +519,9 @@ class TemplateEngine(colony.System):
         :type nodes: Dictionary
         :param nodes: The map of the already indexed identifiable nodes,
         in case it's not provided the indexing operation is performed.
+        :type compiled: Tuple
+        :param compiled: The compiled version of the template, used for
+        the rendering whenever it's available.
         :rtype: TemplateFile
         :return: The template file structure ready to be processed.
         """
@@ -531,6 +541,7 @@ class TemplateEngine(colony.System):
             encoding=encoding,
             root_node=root_node,
             nodes=nodes,
+            compiled=compiled,
         )
 
         # attaches the currently given process methods and locale
@@ -676,6 +687,11 @@ class TemplateFile(object):
     """ The root node from which the visitor will start the visiting
     using a recursive approach """
 
+    compiled = None
+    """ The compiled version of the template, containing both the generated
+    function and its constants, in case it's not defined the template is
+    rendered by the (reference) visitor instead """
+
     visitor = None
     """ The visitor object that will be used for the visiting of the
     various nodes that make part of the abstract syntax tree defined
@@ -700,6 +716,7 @@ class TemplateFile(object):
         root_node=None,
         eval=False,
         nodes=None,
+        compiled=None,
     ):
         """
         Constructor of the class.
@@ -724,6 +741,9 @@ class TemplateFile(object):
         :type nodes: Dictionary
         :param nodes: The map of the already indexed identifiable nodes, in
         case it's not provided the indexing operation is performed.
+        :type compiled: Tuple
+        :param compiled: The compiled version of the template, used for the
+        rendering whenever it's available.
         """
 
         self.manager = manager
@@ -731,6 +751,7 @@ class TemplateFile(object):
         self.file_path = file_path
         self.encoding = encoding
         self.root_node = root_node
+        self.compiled = compiled
 
         self.visitor = visitor.EvalVisitor(self) if eval else visitor.Visitor(self)
         self.locale_bundles = []
@@ -789,6 +810,29 @@ class TemplateFile(object):
             return conversion_method(value)
         except Exception:
             return None
+
+    def is_compiled(self):
+        """
+        Verifies if the current template is going to be rendered using
+        its compiled version, which requires both a compiled template to
+        be available and the rendering context to be the default one.
+
+        A non default visitor or a process method attached to it change
+        the meaning of the nodes at runtime and so they force the usage
+        of the (reference) visitor based rendering.
+
+        :rtype: bool
+        :return: If the compiled version of the template is the one that
+        is going to be used for the rendering operation.
+        """
+
+        if self.compiled == None:
+            return False
+        if not type(self.visitor) == visitor.Visitor:
+            return False
+        if self.visitor.process_methods_list:
+            return False
+        return True
 
     def index_nodes(self):
         """
@@ -972,10 +1016,14 @@ class TemplateFile(object):
 
         # sets the complete set of attributes in the visitor
         # that is currently set in the template and then runs
-        # the accept operation in the root node, this will
-        # trigger the generation of the template contents
+        # either the compiled version of the template or the
+        # accept operation in the root node, this will trigger
+        # the generation of the template contents
         self.load_visitor()
-        self.root_node.accept(self.visitor)
+        if self.is_compiled():
+            compiler.render_compiled(self.compiled, self.visitor)
+        else:
+            self.root_node.accept(self.visitor)
 
         # retrieves the visitor string buffer, that should now
         # contains the final contents from template generation

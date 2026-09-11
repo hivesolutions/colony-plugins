@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Documentation of the AT test mode in the resources README, covering the hardcoded test credentials, the `AT_TEST_MODE` switch, the test endpoints and how to diagnose an authentication failure
 * Debug logging of the AT submission, recording the target URL with the version of the specification and the response received, so that the result code and the message of a rejected submission become diagnosable
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
+* Template compiler that translates templates into bytecode, falling back to the previous rendering for the constructs it does not cover - [#33](https://github.com/hivesolutions/colony-plugins/issues/33)
 
 ### Changed
 
