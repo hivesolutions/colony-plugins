@@ -62,6 +62,8 @@ The following falls back to the visitor:
 
 The rendering also falls back whenever the context is not the default one, meaning a non default visitor or a process method attached to it, as both change the meaning of the nodes at runtime.
 
+The compilation is enabled by default and may be disabled as a whole through the `TEMPLATE_COMPILER` configuration option, in which case every template is rendered by the visitor. This is the escape hatch for an eventual problem in the compiler, as it removes the whole of the generated code from the rendering without requiring a new release.
+
 ### Optimizations
 
 - **Literal joining**, a run of contiguous literal nodes results in a single constant and a single write.

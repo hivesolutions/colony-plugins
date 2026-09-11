@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Tests covering session ACL validation and the ACL template predicates in the MVC utilities
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
 * Template compiler that translates templates into bytecode, falling back to the previous rendering for the constructs it does not cover - [#33](https://github.com/hivesolutions/colony-plugins/issues/33)
+* New `TEMPLATE_COMPILER` configuration option (default `True`) to control the compilation of templates
 
 ### Changed
 

@@ -268,11 +268,7 @@ class TemplateEngine(colony.System):
                 file.close()
             if len(TEMPLATES_CACHE) > TEMPLATES_LIMIT:
                 TEMPLATES_CACHE.clear()
-            cached = (
-                signature,
-                root_node,
-                compiler.compile_node(root_node, encoding=encoding),
-            )
+            cached = (signature, root_node, self._compile(root_node, encoding))
             TEMPLATES_CACHE[key] = cached
 
         # copies the (pristine) cached tree so that the caller is given a
@@ -563,6 +559,29 @@ class TemplateEngine(colony.System):
         # returns the final template file template file to the caller
         # method so that it may be used for rendering
         return template_file
+
+    def _compile(self, root_node, encoding):
+        """
+        Compiles the provided root node into its bytecode version, taking
+        into account the configuration that controls the compilation.
+
+        The compilation may be disabled at the configuration level, in
+        which case the template is always rendered by the visitor, this
+        is the "escape hatch" for an eventual problem in the compiler.
+
+        :type root_node: RootNode
+        :param root_node: The root node of the tree to be compiled.
+        :type encoding: String
+        :param encoding: The encoding of the template, used for the pre
+        encoding of the literal values.
+        :rtype: Tuple
+        :return: The compiled version of the template or an invalid value
+        in case it's not able (or meant) to be compiled.
+        """
+
+        if not colony.conf("TEMPLATE_COMPILER", True, cast=bool):
+            return None
+        return compiler.compile_node(root_node, encoding=encoding)
 
     def _extension(self, file_path):
         if not file_path:
