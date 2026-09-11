@@ -84,6 +84,21 @@ SEQUENCE_TYPES = {
 }
 """ The map used to check sequence types """
 
+NATIVE_TYPES = {
+    type(None): True,
+    bool: True,
+    int: True,
+    colony.legacy.LONG: True,
+    float: True,
+    str: True,
+    colony.legacy.UNICODE: True,
+    dict: True,
+    list: True,
+    tuple: True,
+}
+""" The map used to check the types that are serialized by the
+embedded encoder without any kind of external resolution """
+
 INDENTATION_VALUE = "    "
 """ The indentation value """
 
@@ -110,6 +125,8 @@ escape_char_to_char = {
 }
 
 string_escape_re = re.compile(r"[\x00-\x19\\\"/\b\f\n\r\t]")
+
+coerced_key_re = re.compile(r'"(?:true|false|null)":')
 
 digits_list = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
 
@@ -164,6 +181,156 @@ def dumps(object):
 
     parts = dump_parts(object)
     return "".join([part for part in parts])
+
+
+def dumps_f(object):
+    """
+    Dumps (converts to JSON) the given object using the "embedded"
+    approach, meaning that the encoder provided by the language is
+    used instead of the "local" one (faster operation).
+
+    The result of this operation is meant to be exactly the same as
+    the one of the "normal" approach, whenever such equivalence may
+    not be guaranteed the "normal" approach is used instead.
+
+    :type object: Object
+    :param object: The object to be dumped.
+    :rtype: String
+    :return: The dumped/serialized JSON string.
+    """
+
+    try:
+        import json
+    except ImportError:
+        return dumps(object)
+
+    # runs the embedded dumping operation delegating the resolution of
+    # the "unknown" types into the default (callback) function, note that
+    # the non finite float values are not allowed so that the "normal"
+    # approach is used for them (the representation is a different one)
+    try:
+        data = json.dumps(
+            object,
+            default=default_f,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+    except (ValueError, TypeError, exceptions.JSONEncodeException):
+        # falls back into the "normal" approach, as the embedded encoder
+        # is either unable to encode the object or would encode it in a
+        # different way, note that in case the object is really not
+        # encodable the "normal" approach raises the proper exception
+        return dumps(object)
+
+    # verifies that no key has been coerced by the embedded encoder, as
+    # the boolean and none values are converted by it into their JSON
+    # counterparts instead of the string ones used by the "normal"
+    # approach, note that a string key with such a value also triggers
+    # the fallback (equivalent result, just a slower one)
+    if coerced_key_re.search(data):
+        return dumps(object)
+
+    # escapes the forward slash character as expected by the "normal"
+    # approach, note that in a valid JSON string this character may only
+    # appear inside a string literal (making the replacement a safe one)
+    return data.replace("/", "\\/")
+
+
+def dumps_lazy_f(object):
+    """
+    Lazy version of the "embedded" dumps operation, note that the
+    embedded encoder is not able to generate a partial result and so
+    a single (complete) part is yielded by the generator.
+
+    :type object: Object
+    :param object: The object to be dumped.
+    :rtype: Generator
+    :return: The resulting generator that may be used to lazy
+    evaluated the various components of the JSON data.
+    """
+
+    yield dumps_f(object)
+
+
+def default_f(object):
+    """
+    Resolves the provided object into a value that the embedded
+    encoder is able to serialize, following the same type based
+    strategy of the "normal" approach (see dump_parts).
+
+    :type object: Object
+    :param object: The object to be resolved into a natively
+    serializable value.
+    :rtype: Object
+    :return: The natively serializable version of the object.
+    """
+
+    # in case the current object contains the JSON value
+    # method the object to be serialized should be the
+    # one retrieved by this method
+    has_json_v = hasattr(object, "json_v")
+    if has_json_v:
+        object = object.json_v()
+
+    # retrieves the object type, to be used in the
+    # type based resolution of the object
+    object_type = type(object)
+
+    # in case the object is already serializable by the embedded
+    # encoder it's returned as is (no resolution required)
+    if object_type in NATIVE_TYPES:
+        return object
+
+    # in case the object is a function
+    if object_type is types.FunctionType:
+        return "function"
+
+    # in case the object is a module
+    if object_type is types.ModuleType:
+        return "module"
+
+    # in case the object is a method
+    if object_type is types.MethodType:
+        return "method"
+
+    # in case the object is a sequence, converts it into a list
+    # so that the embedded encoder is able to iterate it
+    if object_type in SEQUENCE_TYPES:
+        return list(object)
+
+    # in case the object is a number, the float representation is
+    # only used in case it's the exact same one that the "normal"
+    # approach would have generated (otherwise fallback is raised)
+    if object_type in NUMBER_TYPES:
+        value = float(object)
+        if colony.legacy.UNICODE(object) == repr(value):
+            return value
+        raise exceptions.JSONEncodeException(object)
+
+    # in case the object is a date time
+    if object_type == datetime.datetime:
+        object_time_tuple = object.utctimetuple()
+        return calendar.timegm(object_time_tuple)
+
+    # in case the object is a date
+    if object_type == datetime.date:
+        object_time_tuple = object.timetuple()
+        return calendar.timegm(object_time_tuple)
+
+    # in case the object is an instance
+    if hasattr(object, "__class__"):
+        return dict(
+            (name, getattr(object, name))
+            for name in dir(object)
+            if not name.startswith("_")
+            and not name in EXCLUSION_MAP
+            and not type(getattr(object, name)) in EXCLUSION_TYPES
+        )
+
+    # raises the JSON encode exception, as there's no
+    # valid strategy to serialize the object
+    raise exceptions.JSONEncodeException(object)
 
 
 def dumps_lazy(object):
@@ -380,6 +547,16 @@ def dump_parts(object, objects=None, cycles=False):
 
         # yields the timestamp unicode value
         yield colony.legacy.UNICODE(date_time_timestamp)
+    # in case the object is a date
+    elif object_type == datetime.date:
+        # converts the object (date) to a time tuple
+        object_time_tuple = object.timetuple()
+
+        # converts the object time tuple into a timestamp
+        date_timestamp = calendar.timegm(object_time_tuple)
+
+        # yields the timestamp unicode value
+        yield colony.legacy.UNICODE(date_timestamp)
     # in case the object is an instance
     elif hasattr(object, "__class__"):
         # yields the dictionary initial value
@@ -604,6 +781,16 @@ def dump_parts_pretty(object, objects=None, indentation=0, cycles=False):
 
         # yields the timestamp unicode value
         yield colony.legacy.UNICODE(date_time_timestamp)
+    # in case the object is a date
+    elif object_type == datetime.date:
+        # converts the object (date) to a time tuple
+        object_time_tuple = object.timetuple()
+
+        # converts the object time tuple into a timestamp
+        date_timestamp = calendar.timegm(object_time_tuple)
+
+        # yields the timestamp unicode value
+        yield colony.legacy.UNICODE(date_timestamp)
     # in case the object is an instance
     elif hasattr(object, "__class__"):
         # yields the dictionary initial value
@@ -825,6 +1012,16 @@ def dump_parts_buffer(object, string_buffer, objects=None, cycles=False):
 
         # writes the timestamp string value
         string_buffer.write(str(date_time_timestamp))
+    # in case the object is a date
+    elif object_type == datetime.date:
+        # converts the object (date) to a time tuple
+        object_time_tuple = object.timetuple()
+
+        # converts the object time tuple into a timestamp
+        date_timestamp = calendar.timegm(object_time_tuple)
+
+        # writes the timestamp string value
+        string_buffer.write(str(date_timestamp))
     # in case the object is an instance
     elif hasattr(object, "__class__"):
         # writes the dictionary initial value

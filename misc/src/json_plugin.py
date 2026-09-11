@@ -42,7 +42,7 @@ class JSONPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
-    capabilities = ["serializer.json"]
+    capabilities = ["test", "serializer.json"]
     main_modules = ["json_c"]
 
     def load_plugin(self):
@@ -50,6 +50,7 @@ class JSONPlugin(colony.Plugin):
         import json_c
 
         self.system = json_c.JSON(self)
+        self.test = json_c.JSONTest(self)
 
     def dumps(self, object):
         return self.system.dumps(object)
