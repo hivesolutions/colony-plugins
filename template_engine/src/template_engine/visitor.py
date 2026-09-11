@@ -1071,6 +1071,11 @@ class Visitor(object):
         for child in node.children:
             child.parent = node
 
+        # marks the transplanted nodes with the file they were defined in,
+        # so that the relative paths they may contain are resolved against
+        # it and not against the file that has included them
+        self._origin(node, template_file.file_path)
+
         # runs the visit operation in the complete set of child nodes
         # so that they get update with the proper include files if they
         # have ones (normal recursive step operation)
@@ -1108,6 +1113,11 @@ class Visitor(object):
         self.owner.root_node.children = template_file.root_node.children
         for child in self.owner.root_node.children:
             child.parent = self.owner.root_node
+
+        # marks the transplanted nodes with the file they were defined in,
+        # note that this is done before the switching of the blocks so that
+        # the ones of the current file keep their own origin
+        self._origin(self.owner.root_node, template_file.file_path)
 
         # retrieves both the current template owner nodes map and the nodes
         # map of the "super" template file as there structures are going
@@ -1676,6 +1686,29 @@ class Visitor(object):
         # writes the final string/unicode value to the buffer
         self.write(value)
 
+    def _origin(self, node, file_path):
+        """
+        Marks the inclusion and extension nodes of the provided subtree
+        with the file they were defined in, so that the relative paths
+        they contain are resolved against it.
+
+        Only the nodes that do not have an origin are marked, as a node
+        that already has one has been transplanted from an even deeper
+        template and so it must keep its own.
+
+        :type node: Node
+        :param node: The node whose subtree is going to be marked.
+        :type file_path: String
+        :param file_path: The path to the file where the nodes of the
+        subtree have been defined.
+        """
+
+        for child in node.children:
+            type = child.get_type()
+            if type in ("include", "extends") and child.file_path == None:
+                child.file_path = file_path
+            self._origin(child, file_path)
+
     def _get_template(self, node, file_path):
         """
         Retrieves and loads a (partial) template file under the ownership
@@ -1710,7 +1743,8 @@ class Visitor(object):
         # the current template path (relative inclusion) and the defined
         # base path (in case it's defined)
         if not os.path.isabs(file_path):
-            file_base = os.path.dirname(self.file_path)
+            origin = node.file_path if node.file_path else self.file_path
+            file_base = os.path.dirname(origin)
             for base_path in (file_base, self.base_path):
                 if base_path == None:
                     continue
