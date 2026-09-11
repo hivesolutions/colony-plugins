@@ -28,7 +28,9 @@ __license__ = "Apache License, Version 2.0"
 from . import exceptions
 from . import serializer
 from . import system
+from . import test
 
 from .exceptions import JSONException, JSONEncodeException, JSONDecodeException
 from .serializer import escape_character, dumps, dumps_pretty, dumps_buffer, loads
 from .system import JSON
+from .test import JSONTest, JSONBaseTestCase
