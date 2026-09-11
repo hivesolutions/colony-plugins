@@ -18,3 +18,4 @@ Design documents serve as:
 | COP-001 | [AT Invoice API Integration](001-at_invoice_api.md)             | Complete invoice API integration for AT webservices                   | Implemented |
 | COP-002 | [Concrete Table Inheritance](002-concrete_table_inheritance.md) | Concrete table inheritance as alternative to class table inheritance  | Implemented |
 | COP-003 | [Template Compiler](003-template_compiler.md)                   | Translation of template trees into python bytecode for faster renders | Implemented |
+| COP-004 | [Sentry Error Reporting](004-sentry_error_reporting.md)         | Error reporting to Sentry for MVC based solutions                     | Implemented |

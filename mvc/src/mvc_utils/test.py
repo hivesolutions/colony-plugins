@@ -48,6 +48,7 @@ class MVCUtilsTest(colony.Test):
             MVCUtilsBaseTestCase,
             RawModelTestCase,
             ValidatedDecoratorTestCase,
+            SerializedDecoratorTestCase,
             ValidateACLSessionTestCase,
             TemplateFileACLTestCase,
             TemplateProcessMethodsTestCase,
@@ -329,6 +330,84 @@ class ValidatedDecoratorTestCase(colony.ColonyTestCase):
             return "success"
 
         self.assertEqual(my_action.__name__, "my_action")
+
+
+class SerializedDecoratorTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Serialized decorator test case"
+
+    def setUp(self):
+        colony.ColonyTestCase.setUp(self)
+        self.notified = []
+        colony.register_g("request.exception", self._on_request_exception)
+
+    def tearDown(self):
+        colony.unregister_g("request.exception", self._on_request_exception)
+
+    def test_serialized_notifies_request_exception(self):
+        controller = mocks.MockSerializedController()
+        request = mocks.MockRequest(parameters=dict(serializer=mocks.MockSerializer()))
+
+        @utils.serialized()
+        def action(self, request):
+            raise ValueError("invalid value")
+
+        action(controller, request)
+
+        self.assertEqual(len(self.notified), 1)
+        self.assertEqual(self.notified[0][0], request)
+        self.assert_type(self.notified[0][1], ValueError)
+        self.assertEqual(self.notified[0][2]["exception"]["message"], "invalid value")
+        self.assertEqual(controller.status_code, 500)
+        self.assertEqual(controller.contents, "serialized")
+
+    def test_serialized_notifies_with_status_code(self):
+        controller = mocks.MockSerializedController()
+        request = mocks.MockRequest(parameters=dict(serializer=mocks.MockSerializer()))
+
+        exception = ValueError("not found")
+        exception.status_code = 404
+
+        @utils.serialized()
+        def action(self, request):
+            raise exception
+
+        action(controller, request)
+
+        self.assertEqual(len(self.notified), 1)
+        self.assertEqual(controller.status_code, 404)
+
+    def test_serialized_reraises_without_handler(self):
+        controller = mocks.MockSerializedController()
+        request = mocks.MockRequest(parameters=dict())
+
+        @utils.serialized()
+        def action(self, request):
+            raise ValueError("invalid value")
+
+        # with neither a serializer nor an exception handler defined the
+        # exception is re-raised, reaching the REST layer that notifies
+        # it by itself, meaning that no notification is due here
+        self.assertRaises(ValueError, action, controller, request)
+        self.assertEqual(len(self.notified), 0)
+
+    def test_serialized_no_notification_on_success(self):
+        controller = mocks.MockSerializedController()
+        request = mocks.MockRequest(parameters=dict(serializer=mocks.MockSerializer()))
+        request.is_flushed = lambda: True
+
+        @utils.serialized()
+        def action(self, request):
+            return "success"
+
+        result = action(controller, request)
+
+        self.assertEqual(result, "success")
+        self.assertEqual(len(self.notified), 0)
+
+    def _on_request_exception(self, request, exception, exception_map=None):
+        self.notified.append((request, exception, exception_map))
 
 
 class ValidateACLSessionTestCase(colony.ColonyTestCase):

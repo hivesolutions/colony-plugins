@@ -28,40 +28,23 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-import colony
+
+class MockPlugin(object):
+    def __init__(self):
+        self.manager = None
 
 
-class DiagnosticsPlugin(colony.Plugin):
-    """
-    The main class for plugin responsible for the gathering
-    and processing of diagnostics information to be used
-    both for profiling and debugging.
-    """
+class MockRequest(object):
+    def __init__(self, method="GET", path="omni/sales", status_code=200):
+        self._method = method
+        self._path = path
+        self._status_code = status_code
 
-    id = "pt.hive.colony.plugins.diagnostics"
-    name = "Diagnostics Engine"
-    description = "Diagnostics Engine Plugin"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT,
-    ]
-    capabilities = ["diagnostics", "test"]
-    main_modules = ["diagnostics"]
+    def get_method(self):
+        return self._method
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import diagnostics
+    def get_path(self):
+        return self._path
 
-        self.diagnostics = diagnostics.Diagnostics(self)
-        self.test = diagnostics.DiagnosticsTest(self)
-        self.diagnostics.start()
-
-    def unload_plugin(self):
-        colony.Plugin.unload_plugin(self)
-        self.diagnostics.stop()
-
-    def get_data(self):
-        return self.diagnostics.get_data()
+    def get_status_code(self):
+        return self._status_code

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Error reporting to Sentry for any MVC based solution, covering controllers, the HTTP stack and background tasks - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Request, user and breadcrumb context in the reported errors, with sensitive values withheld unless explicitly enabled - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Concrete table inheritance as an alternative strategy for entity hierarchies, trading storage for reads without joins - [#25](https://github.com/hivesolutions/colony-plugins/issues/25)
 * Support for switching the inheritance strategy of every entity hierarchy at once, for migration and debugging purposes
 * Tool to migrate existing entity hierarchies between inheritance strategies, with backup, validation and dry-run
@@ -48,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Diagnostics gathering no longer fails when a request ends with an error - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Handling of a SOAP fault returned by the AT, whose code is a qualified name instead of a number, which raised a `ValueError` instead of the expected `ATAPIError` and discarded the fault message explaining the failure
 * Printing of an AT API error whose code is not a number, which raised a `TypeError` and hid the message of the error from the logs and the tracebacks
 
