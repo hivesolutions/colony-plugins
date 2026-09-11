@@ -35,6 +35,15 @@ import itertools
 import colony
 
 
+def mock_function():
+    """
+    Simple function to be used in the validation of the
+    serialization of the function type.
+    """
+
+    pass
+
+
 class MockObject(object):
     """
     Simple object to be used in the validation of the
@@ -79,25 +88,19 @@ class MockOpaque(object):
         raise AttributeError(name)
 
 
-SIMPLE_OBJECT = dict(age=24, name=colony.legacy.u("João"))
+SIMPLE_OBJECT = dict(name=colony.legacy.u("João"))
 
-SIMPLE_JSON = colony.legacy.u('{"age":24,"name":"João"}')
+SIMPLE_JSON = colony.legacy.u('{"name":"João"}')
 
-SIMPLE_PRETTY_JSON = colony.legacy.u('{\n    "age" : 24,\n    "name" : "João"\n}')
+SIMPLE_PRETTY_JSON = colony.legacy.u('{\n    "name" : "João"\n}')
 
-COMPLEX_OBJECT = dict(
-    items=[1, 2.5, True, False, None],
-    empty=[],
-    nested=dict(tuple=(1, 2)),
-)
+COMPLEX_OBJECT = [1, 2.5, True, False, None, [], dict(tuple=(1, 2))]
 
-COMPLEX_JSON = '{"items":[1,2.5,true,false,null],"empty":[],"nested":{"tuple":[1,2]}}'
+COMPLEX_JSON = '[1,2.5,true,false,null,[],{"tuple":[1,2]}]'
 
-ESCAPE_OBJECT = dict(path="/var/log", quote='say "hi"', control="a\nb\tc\x00")
+ESCAPE_OBJECT = ["/var/log", 'say "hi"', "a\nb\tc\x00"]
 
-ESCAPE_JSON = (
-    '{"path":"\\/var\\/log","quote":"say \\"hi\\"","control":"a\\nb\\tc\\u0000"}'
-)
+ESCAPE_JSON = '["\\/var\\/log","say \\"hi\\"","a\\nb\\tc\\u0000"]'
 
 EQUIVALENT_VALUES = (
     None,

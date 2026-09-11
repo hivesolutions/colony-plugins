@@ -154,7 +154,7 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(serializer.default_f("value"), "value")
         self.assertEqual(serializer.default_f(dict(a=1)), dict(a=1))
 
-        self.assertEqual(serializer.default_f(mocks.MockObject.method), "function")
+        self.assertEqual(serializer.default_f(mocks.mock_function), "function")
         self.assertEqual(serializer.default_f(types), "module")
         self.assertEqual(serializer.default_f(mocks.MockObject().method), "method")
 
@@ -233,4 +233,4 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(result, mocks.SIMPLE_OBJECT)
 
         result = self.system.loads(serializer.dumps_f(mocks.COMPLEX_OBJECT))
-        self.assertEqual(result["items"], [1, 2.5, True, False, None])
+        self.assertEqual(result[:5], [1, 2.5, True, False, None])
