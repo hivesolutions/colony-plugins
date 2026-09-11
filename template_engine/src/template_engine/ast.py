@@ -123,6 +123,11 @@ class AstNode(object):
     defined for the node, allowing a faster processing of it, the value
     is lazily determined by the visitor on the first visit """
 
+    file_path = None
+    """ The path to the template file where the node was defined, only
+    set for the nodes that have been transplanted from another template
+    and used for the resolution of their relative paths """
+
     def __init__(self):
         self.children = []
         self.supers = []

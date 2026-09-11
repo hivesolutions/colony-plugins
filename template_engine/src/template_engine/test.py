@@ -1433,6 +1433,29 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
             "[<IN>]",
         )
 
+    def test_process_include_nested_relative(self):
+        # the included template lives in a sub directory and includes a
+        # sibling of its own, which must be resolved relative to it and
+        # not relative to the template that has included it
+        os.makedirs(os.path.join(self.temp_path, "partials"))
+        self.write("partials/inner.html.tpl", "IN")
+        self.write("partials/outer.html.tpl", "<{% include 'inner.html.tpl' %}>")
+        self.assertEqual(
+            self.render("[{% include 'partials/outer.html.tpl' %}]"), "[<IN>]"
+        )
+
+    def test_process_include_nested_relative_deep(self):
+        # the deepest template keeps its own origin, so that the sibling
+        # it includes is resolved against the directory it lives in
+        os.makedirs(os.path.join(self.temp_path, "one"))
+        os.makedirs(os.path.join(self.temp_path, "one", "two"))
+        self.write("one/two/deep.html.tpl", "DEEP")
+        self.write("one/two/middle.html.tpl", "({% include 'deep.html.tpl' %})")
+        self.write("one/outer.html.tpl", "<{% include 'two/middle.html.tpl' %}>")
+        self.assertEqual(
+            self.render("[{% include 'one/outer.html.tpl' %}]"), "[<(DEEP)>]"
+        )
+
     def test_process_include_undefined_reference(self):
         self.assertRaises(
             exceptions.UndefinedReference,
@@ -1520,6 +1543,37 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
                 },
             ),
             "PART-<CHILD>",
+        )
+
+    def test_process_extends_parent_include_relative(self):
+        # the extended template lives in a sub directory and includes a
+        # sibling of its own, which must be resolved relative to it
+        os.makedirs(os.path.join(self.temp_path, "partials"))
+        self.write("partials/part.html.tpl", "PART-")
+        self.write(
+            "partials/base.html.tpl",
+            "{% include 'part.html.tpl' %}<{% block c %}BASE{% endblock %}>",
+        )
+        self.assertEqual(
+            self.render(
+                "{% extends 'partials/base.html.tpl' %}"
+                "{% block c %}CHILD{% endblock %}"
+            ),
+            "PART-<CHILD>",
+        )
+
+    def test_process_extends_block_include_relative(self):
+        # the block of the extending template keeps its own origin, so the
+        # include it holds is resolved against the file that defines it
+        os.makedirs(os.path.join(self.temp_path, "partials"))
+        self.write("own.html.tpl", "OWN")
+        self.write("partials/base.html.tpl", "<{% block c %}BASE{% endblock %}>")
+        self.assertEqual(
+            self.render(
+                "{% extends 'partials/base.html.tpl' %}"
+                "{% block c %}{% include 'own.html.tpl' %}{% endblock %}"
+            ),
+            "<OWN>",
         )
 
     def test_process_extends_chain(self):

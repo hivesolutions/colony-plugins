@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* A template included by another one now resolves its own relative includes against the directory it lives in
 * Templates whose file name has no extension are no longer rejected with an internal error
 * The else branch of a template condition is now taken when the tested value is undefined
 * Containment checks in template conditions now compare the operands in the expected order
