@@ -32,6 +32,7 @@ __credits__ = "Jan-Klaas Kollhof <keyjaque@yahoo.com>"
 """ The credits for the module """
 
 import re
+import sys
 import types
 import decimal
 import calendar
@@ -79,10 +80,16 @@ NUMBER_TYPES = {
 SEQUENCE_TYPES = {
     tuple: True,
     list: True,
+    colony.JournaledList: True,
     types.GeneratorType: True,
     itertools.chain: True,
 }
 """ The map used to check sequence types """
+
+ORDERED_MAPS = sys.version_info >= (3, 7)
+""" Flag that indicates if the map implementation of the current
+interpreter preserves the insertion order of its keys, required to
+reproduce the attribute order of the "normal" approach """
 
 NATIVE_TYPES = {
     type(None): True,
@@ -318,8 +325,12 @@ def default_f(object):
         object_time_tuple = object.timetuple()
         return calendar.timegm(object_time_tuple)
 
-    # in case the object is an instance
+    # in case the object is an instance, note that under an interpreter
+    # whose maps are not ordered the attribute order of the "normal"
+    # approach may not be reproduced and so the fallback is raised
     if hasattr(object, "__class__"):
+        if not ORDERED_MAPS:
+            raise exceptions.JSONEncodeException(object)
         return dict(
             (name, getattr(object, name))
             for name in dir(object)

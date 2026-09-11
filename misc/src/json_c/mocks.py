@@ -121,6 +121,8 @@ EQUIVALENT_VALUES = (
     [1, "two", None],
     dict(a=[1, dict(b=(2, 3))], c="d/e"),
     {1: "a", 2.5: "b"},
+    colony.JournaledList([1, 2]),
+    colony.JournaledList(),
     datetime.datetime(2026, 1, 2, 3, 4, 5),
     datetime.datetime(1970, 1, 1),
     datetime.date(2026, 1, 2),

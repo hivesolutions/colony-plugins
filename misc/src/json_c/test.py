@@ -68,6 +68,11 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         result = serializer.dumps_f(datetime.date(1970, 1, 2))
         self.assertEqual(result, "86400")
 
+        # the to many relations of an entity are held in a list based
+        # structure that used to be serialized as its own method map
+        result = serializer.dumps_f(colony.JournaledList([1, 2]))
+        self.assertEqual(result, "[1,2]")
+
     def test_dumps_f_equivalent(self):
         for value in mocks.EQUIVALENT_VALUES:
             result = serializer.dumps_f(value)
@@ -169,8 +174,27 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         value = datetime.date(1970, 1, 2)
         self.assertEqual(serializer.default_f(value), 86400)
 
-        value = serializer.default_f(mocks.MockObject())
-        self.assertEqual(value, dict(age=24, name=colony.legacy.u("João")))
+        # the instance resolution is only possible under an interpreter
+        # whose maps preserve the insertion order of the keys
+        if serializer.ORDERED_MAPS:
+            value = serializer.default_f(mocks.MockObject())
+            self.assertEqual(value, dict(age=24, name=colony.legacy.u("João")))
+
+    def test_default_f_unordered(self):
+        # simulates an interpreter whose maps are not ordered, under
+        # which the instance serialization must use the "normal" approach
+        ordered = serializer.ORDERED_MAPS
+        serializer.ORDERED_MAPS = False
+        try:
+            self.assertRaises(
+                colony.ColonyException,
+                lambda: serializer.default_f(mocks.MockObject()),
+            )
+            result = serializer.dumps_f(mocks.MockObject())
+            expected = serializer.dumps(mocks.MockObject())
+            self.assertEqual(result, expected)
+        finally:
+            serializer.ORDERED_MAPS = ordered
 
     def test_default_f_invalid(self):
         self.assertRaises(
@@ -198,6 +222,12 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         value = datetime.date(1970, 1, 2)
         self.assertEqual(self.system.dumps(value), "86400")
         self.assertEqual(self.system.dumps(value, fast=False), "86400")
+
+        # the to many relations of an entity are held in a list based
+        # structure that used to be serialized as its own method map
+        value = colony.JournaledList([1, 2])
+        self.assertEqual(self.system.dumps(value), "[1,2]")
+        self.assertEqual(self.system.dumps(value, fast=False), "[1,2]")
 
     def test_dumps_lazy(self):
         parts = list(self.system.dumps_lazy(mocks.COMPLEX_OBJECT))
