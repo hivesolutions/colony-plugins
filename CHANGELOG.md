@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * New `DEBUG_SQL` configuration option (default `True`) to control debug-level SQL query logging in MySQL, SQLite, and PostgreSQL engine plugins
 * Tests covering session ACL validation and the ACL template predicates in the MVC utilities
 * Documentation of the AT test mode in the resources README, covering the hardcoded test credentials, the `AT_TEST_MODE` switch, the test endpoints and how to diagnose an authentication failure
-* Debug logging of the AT submission, recording the target URL with the version of the specification and the response received, so that the result code and the message of a rejected submission become diagnosable
+* Debug logging of the AT submission, recording the target URL with the version of the specification and the status code of the response, with the body of a rejected response added so that the reason for the rejection becomes diagnosable
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
 * Template compiler that translates templates into bytecode, falling back to the previous rendering for the constructs it does not cover - [#33](https://github.com/hivesolutions/colony-plugins/issues/33)
 
@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Handling of a SOAP fault returned by the AT, whose code is a qualified name instead of a number, which raised a `ValueError` instead of the expected `ATAPIError` and discarded the fault message explaining the failure
+* Printing of an AT API error whose code is not a number, which raised a `TypeError` and hid the message of the error from the logs and the tracebacks
 
 * A template included by another one now resolves its own relative includes against the directory it lives in
 * Templates whose file name has no extension are no longer rejected with an internal error

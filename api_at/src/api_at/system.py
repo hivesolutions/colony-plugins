@@ -628,40 +628,43 @@ class ATClient(object):
         # data source according to the AT WS specification
         data, code = self._fetch_url(submit_url, method="POST", contents=message)
 
-        # prints the response received from the AT service, as its body is
-        # the only place carrying the result code and the message that
-        # explain a rejected submission
-        self.plugin.debug(
-            "Received AT response with the status code %d and the data: %s"
-            % (code, str(data))
-        )
+        # prints the status code of the response received from the AT, the
+        # body is only printed for a rejected submission so that the fiscal
+        # data of a successful operation never reaches the logs
+        self.plugin.debug("Received AT response with the status code %d" % code)
 
         # checks the result data for error according to the version of
         # WS specification that has been requested, in case there's an
         # error an exception should be raised, notice that the consumer
         # can provide a custom `check_errors` parameter to be called instead
         # of the default one for the version
-        if check_errors:
-            check_errors(data)
-        elif version == 1:
-            self._check_at_errors_v1(data)
-        elif version == 2:
-            self._check_at_errors_v2(data)
-        else:
-            raise exceptions.ATVersionError(version=version)
+        try:
+            if check_errors:
+                check_errors(data)
+            elif version == 1:
+                self._check_at_errors_v1(data)
+            elif version == 2:
+                self._check_at_errors_v2(data)
+            else:
+                raise exceptions.ATVersionError(version=version)
 
-        # in case the response HTTP code is not valid raises an AT API
-        # error to avoid operations from progressing
-        if not code // 100 == 2:
-            try:
-                details = colony.xml_to_dict(data)
-            except Exception:
-                details = data
-            raise exceptions.ATAPIError(
-                "Invalid AT HTTP response code received",
-                error_code=code,
-                details=details,
-            )
+            # in case the response HTTP code is not valid raises an AT API
+            # error to avoid operations from progressing
+            if not code // 100 == 2:
+                try:
+                    details = colony.xml_to_dict(data)
+                except Exception:
+                    details = data
+                raise exceptions.ATAPIError(
+                    "Invalid AT HTTP response code received",
+                    error_code=code,
+                    details=details,
+                )
+        except exceptions.APIATException:
+            # prints the body of the rejected response, the only place
+            # carrying the result code and the message that explain it
+            self.plugin.debug("Rejected AT response with the data: %s" % data)
+            raise
 
         # returns the resulting data
         return data

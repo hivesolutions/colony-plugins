@@ -42,7 +42,10 @@ class APIATTest(colony.Test):
     """
 
     def get_bundle(self):
-        return (APIATBaseTestCase,)
+        return (
+            APIATBaseTestCase,
+            APIATExceptionsTestCase,
+        )
 
     def set_up(self, test_case):
         colony.Test.set_up(self, test_case)
@@ -277,10 +280,13 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             "using the version 1 of the specification",
         )
         self.assertEqual(
-            plugin.messages[-1],
-            "Received AT response with the status code 200 and the data: %s"
-            % xml_response,
+            plugin.messages[-1], "Received AT response with the status code 200"
         )
+
+        # the body of a successful response must never reach the logs, as
+        # it carries the fiscal data of the operation
+        rejected = [m for m in plugin.messages if m.startswith("Rejected AT response")]
+        self.assertEqual(rejected, [])
 
     def test_submit_document_logging_error_response(self):
         """
@@ -319,8 +325,44 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(raised, True)
         self.assertEqual(
             plugin.messages[-1],
-            "Received AT response with the status code 200 and the data: %s"
-            % xml_response,
+            "Rejected AT response with the data: %s" % xml_response,
+        )
+
+    def test_submit_document_logging_unicode(self):
+        """
+        Tests that `_submit_document` prints a rejected response carrying
+        non ASCII characters, the AT messages being written in Portuguese.
+        """
+
+        # creates the response of a rejected submission decoded the way the
+        # HTTP client decodes it, so that the accented characters of the
+        # message are present as unicode
+        data_response = colony.legacy.u("Operacao invalida, autenticacao nao efectuada")
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(
+            received_message=data_response, status_code=500
+        )
+        client = mocks.MockATClient(
+            plugin=plugin,
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client._submit_document(
+                "https://at.example.com/ws",
+                "<payload />",
+                check_errors=lambda data: None,
+            )
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, 500)
+        self.assertEqual(raised, True)
+        self.assertEqual(
+            plugin.messages[-1],
+            "Rejected AT response with the data: %s" % data_response,
         )
 
     def test_submit_document_invalid_version(self):
@@ -381,8 +423,7 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(raised, True)
         self.assertEqual(
             plugin.messages[-1],
-            "Received AT response with the status code 500 and the data: %s"
-            % xml_response,
+            "Rejected AT response with the data: %s" % xml_response,
         )
 
     def test_submit_document_check_errors(self):
@@ -1042,3 +1083,41 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
             # should not raise any exception for success codes
             client._check_at_errors_v2(xml_response)
+
+
+class APIATExceptionsTestCase(colony.ColonyTestCase):
+
+    @staticmethod
+    def get_description():
+        return "API AT Exceptions test case"
+
+    def test_at_api_error_qualified_code(self):
+        """
+        Tests that `ATAPIError` is printable when the error code is a
+        qualified name, the shape used by the code of a SOAP fault.
+        """
+
+        error = exceptions.ATAPIError(
+            "Invalid authentication credentials", error_code="S:Client"
+        )
+        self.assertEqual(
+            str(error), "AT API error (S:Client) - Invalid authentication credentials"
+        )
+
+    def test_at_api_error_numeric_code(self):
+        """
+        Tests that `ATAPIError` keeps printing a numeric error code the
+        way it did before the qualified name support.
+        """
+
+        error = exceptions.ATAPIError("Credenciais invalidas", error_code=40001)
+        self.assertEqual(str(error), "AT API error (40001) - Credenciais invalidas")
+
+    def test_at_api_error_no_code(self):
+        """
+        Tests that `ATAPIError` omits the error code from its string
+        representation when no code is associated with it.
+        """
+
+        error = exceptions.ATAPIError("Credenciais invalidas")
+        self.assertEqual(str(error), "AT API error - Credenciais invalidas")
