@@ -67,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Race condition in `RESTSession.gc()` and `ShelveSession.gc()` that caused `RuntimeError: dictionary changed size during iteration` when expiring sessions during garbage collection
 * Missing return statement in `REST.translate_result()` that caused the method to not return a value when no encoder name was specified
 * Serializing a date value to JSON no longer fails
+* Values based on custom list and map types now serialize with their contents instead of their method names
 * Incorrect `super()` call in `RedisSession.unload()` that referenced `ShelveSession` instead of `RedisSession`
 * Added type validation for unpickled sessions in `RedisSession.get_s()` to prevent potential security issues from malformed session data
 * BER unpacker now properly handles unknown type numbers by falling back to sequence (constructed) or octet string (primitive) unpacking

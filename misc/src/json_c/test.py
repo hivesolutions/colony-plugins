@@ -73,6 +73,12 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         result = serializer.dumps_f(colony.JournaledList([1, 2]))
         self.assertEqual(result, "[1,2]")
 
+        # the sub-classes of the native types used to be serialized as
+        # the map of their own methods instead of their contents
+        self.assertEqual(serializer.dumps_f(mocks.MockDict(a=1)), '{"a":1}')
+        self.assertEqual(serializer.dumps_f(mocks.MockList([1, 2])), "[1,2]")
+        self.assertEqual(serializer.dumps_f(mocks.MockString("a/b")), '"a\\/b"')
+
     def test_dumps_f_equivalent(self):
         for value in mocks.EQUIVALENT_VALUES:
             result = serializer.dumps_f(value)
@@ -117,6 +123,14 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         # fallback, generating an equivalent (just slower) result
         self.assertEqual(serializer.dumps_f({"true": 1}), '{"true":1}')
 
+        # the single pass sequences must not be consumed by the embedded
+        # encoder, otherwise the fallback would lose their contents
+        self.assertEqual(serializer.dumps_f(item for item in [float("inf")]), "[inf]")
+        self.assertEqual(
+            serializer.dumps_f(item for item in [decimal.Decimal("12.50")]), "[12.50]"
+        )
+        self.assertEqual(serializer.dumps_f(itertools.chain([float("inf")])), "[inf]")
+
         for value in mocks.FALLBACK_VALUES:
             result = serializer.dumps_f(value)
             expected = serializer.dumps(value)
@@ -141,13 +155,49 @@ class JSONBaseTestCase(colony.ColonyTestCase):
                 sys.modules["json"] = module
         self.assertEqual(result, mocks.SIMPLE_JSON)
 
+    def test_dumps_f_version(self):
+        # simulates an older interpreter, under which the embedded
+        # encoder is not able to generate an equivalent result
+        version = serializer.FAST_VERSION
+        serializer.FAST_VERSION = (99, 0)
+        try:
+            # the control characters above the escape range are the ones
+            # that the "normal" approach emits in their literal form
+            result = serializer.dumps_f("a\x1ab")
+            self.assertEqual(result, serializer.dumps("a\x1ab"))
+            self.assertEqual(result, '"a\x1ab"')
+        finally:
+            serializer.FAST_VERSION = version
+
+        self.assertEqual(serializer.dumps_f("a\x1ab"), '"a\\u001ab"')
+
     def test_dumps_lazy_f(self):
         parts = list(serializer.dumps_lazy_f(mocks.COMPLEX_OBJECT))
-        self.assertEqual(len(parts), 1)
+        self.assertGreater(len(parts), 1)
         self.assertEqual("".join(parts), mocks.COMPLEX_JSON)
+
+        parts = list(serializer.dumps_lazy_f([]))
+        self.assertEqual("".join(parts), "[]")
+
+        parts = list(serializer.dumps_lazy_f((1, 2)))
+        self.assertEqual("".join(parts), "[1,2]")
+
+        # the non sequence values are not able to generate a partial
+        # result and so a single (complete) part is yielded
+        parts = list(serializer.dumps_lazy_f(mocks.SIMPLE_OBJECT))
+        self.assertEqual(len(parts), 1)
+        self.assertEqual("".join(parts), mocks.SIMPLE_JSON)
 
         parts = list(serializer.dumps_lazy_f(float("inf")))
         self.assertEqual("".join(parts), "inf")
+
+        # an item that requires the fallback must not affect the
+        # remaining ones, that are still dumped by the embedded encoder
+        parts = list(serializer.dumps_lazy_f([1, decimal.Decimal("12.50"), 2]))
+        self.assertEqual("".join(parts), "[1,12.50,2]")
+        self.assertEqual(
+            "".join(parts), serializer.dumps([1, decimal.Decimal("12.50"), 2])
+        )
 
     def test_default_f(self):
         self.assertEqual(
@@ -156,15 +206,13 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(serializer.default_f(mocks.MockJSONValueNative()), [1, 2])
 
         self.assertEqual(serializer.default_f(None), None)
+        self.assertEqual(serializer.default_f(mocks.MockNone()), None)
         self.assertEqual(serializer.default_f("value"), "value")
         self.assertEqual(serializer.default_f(dict(a=1)), dict(a=1))
 
         self.assertEqual(serializer.default_f(mocks.mock_function), "function")
         self.assertEqual(serializer.default_f(types), "module")
         self.assertEqual(serializer.default_f(mocks.MockObject().method), "method")
-
-        self.assertEqual(serializer.default_f(item for item in [1, 2]), [1, 2])
-        self.assertEqual(serializer.default_f(itertools.chain([1], [2])), [1, 2])
 
         self.assertEqual(serializer.default_f(decimal.Decimal("0.5")), 0.5)
 
@@ -174,27 +222,25 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         value = datetime.date(1970, 1, 2)
         self.assertEqual(serializer.default_f(value), 86400)
 
-        # the instance resolution is only possible under an interpreter
-        # whose maps preserve the insertion order of the keys
-        if serializer.ORDERED_MAPS:
-            value = serializer.default_f(mocks.MockObject())
-            self.assertEqual(value, dict(age=24, name=colony.legacy.u("João")))
+        value = serializer.default_f(mocks.MockObject())
+        self.assertEqual(value, dict(age=24, name=colony.legacy.u("João")))
 
-    def test_default_f_unordered(self):
-        # simulates an interpreter whose maps are not ordered, under
-        # which the instance serialization must use the "normal" approach
-        ordered = serializer.ORDERED_MAPS
-        serializer.ORDERED_MAPS = False
-        try:
-            self.assertRaises(
-                colony.ColonyException,
-                lambda: serializer.default_f(mocks.MockObject()),
-            )
-            result = serializer.dumps_f(mocks.MockObject())
-            expected = serializer.dumps(mocks.MockObject())
-            self.assertEqual(result, expected)
-        finally:
-            serializer.ORDERED_MAPS = ordered
+    def test_default_f_sequence(self):
+        # the single pass sequences must not be consumed, as the
+        # "normal" approach would not be able to iterate them again
+        self.assertRaises(
+            colony.ColonyException,
+            lambda: serializer.default_f(item for item in [1, 2]),
+        )
+        self.assertRaises(
+            colony.ColonyException,
+            lambda: serializer.default_f(itertools.chain([1], [2])),
+        )
+
+        # the sequences are still dumped with their contents, through
+        # the "normal" approach that is used as the fallback
+        self.assertEqual(serializer.dumps_f(item for item in [1, 2]), "[1,2]")
+        self.assertEqual(serializer.dumps_f(itertools.chain([1], [2])), "[1,2]")
 
     def test_default_f_invalid(self):
         self.assertRaises(
@@ -248,12 +294,18 @@ class JSONBaseTestCase(colony.ColonyTestCase):
         result = self.system.dumps_pretty(datetime.date(1970, 1, 2))
         self.assertEqual(result, "86400")
 
+        result = self.system.dumps_pretty(mocks.MockList([1, 2]))
+        self.assertEqual(result, "[1, 2]")
+
     def test_dumps_buffer(self):
         result = self.system.dumps_buffer(mocks.SIMPLE_OBJECT)
         self.assertEqual(result, mocks.SIMPLE_JSON)
 
         result = self.system.dumps_buffer(datetime.date(1970, 1, 2))
         self.assertEqual(result, "86400")
+
+        result = self.system.dumps_buffer(mocks.MockList([1, 2]))
+        self.assertEqual(result, "[1,2]")
 
     def test_loads(self):
         result = self.system.loads(mocks.SIMPLE_JSON)

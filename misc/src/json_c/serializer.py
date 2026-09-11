@@ -80,16 +80,23 @@ NUMBER_TYPES = {
 SEQUENCE_TYPES = {
     tuple: True,
     list: True,
-    colony.JournaledList: True,
     types.GeneratorType: True,
     itertools.chain: True,
 }
 """ The map used to check sequence types """
 
-ORDERED_MAPS = sys.version_info >= (3, 7)
-""" Flag that indicates if the map implementation of the current
-interpreter preserves the insertion order of its keys, required to
-reproduce the attribute order of the "normal" approach """
+SEQUENCE_BASES = (tuple, list)
+""" The base sequence types, used so that the sub-classes of them
+are also handled as sequences (and not as generic instances) """
+
+PARTIAL_TYPES = {tuple: True, list: True}
+""" The map used to check the types for which a partial (lazy)
+dumping operation may be performed, one item at a time """
+
+FAST_VERSION = (3, 7)
+""" The minimum interpreter version from which the embedded encoder
+generates a result that is exactly equivalent to the "normal" one,
+before it both the float representation and the map ordering differ """
 
 NATIVE_TYPES = {
     type(None): True,
@@ -206,6 +213,12 @@ def dumps_f(object):
     :return: The dumped/serialized JSON string.
     """
 
+    # verifies that the current interpreter is recent enough for the
+    # embedded encoder to generate an equivalent result, otherwise runs
+    # the "normal" approach (the only one considered safe)
+    if sys.version_info < FAST_VERSION:
+        return dumps(object)
+
     try:
         import json
     except ImportError:
@@ -246,9 +259,10 @@ def dumps_f(object):
 
 def dumps_lazy_f(object):
     """
-    Lazy version of the "embedded" dumps operation, note that the
-    embedded encoder is not able to generate a partial result and so
-    a single (complete) part is yielded by the generator.
+    Lazy version of the "embedded" dumps operation, the sequence based
+    objects have their items dumped one at a time so that a partial
+    result may be generated, for any other object a single (complete)
+    part is yielded instead.
 
     :type object: Object
     :param object: The object to be dumped.
@@ -257,7 +271,36 @@ def dumps_lazy_f(object):
     evaluated the various components of the JSON data.
     """
 
-    yield dumps_f(object)
+    # in case the object is not a "partial" sequence the complete dumped
+    # value is yielded as a single part (no partial result possible)
+    if not type(object) in PARTIAL_TYPES:
+        yield dumps_f(object)
+        return
+
+    # yields the sequence initial value
+    yield "["
+
+    # sets the is first flag
+    is_first = True
+
+    # iterates over all the items in the object, dumping each one of
+    # them separately, note that the concatenation of the various parts
+    # is equivalent to the dumping of the complete sequence
+    for item in object:
+        # in case the is first flag is set
+        if is_first:
+            # unsets the is first flag
+            is_first = False
+        # otherwise
+        else:
+            # yields the comma value
+            yield ","
+
+        # yields the dumped item value
+        yield dumps_f(item)
+
+    # yields the sequence final value
+    yield "]"
 
 
 def default_f(object):
@@ -280,6 +323,12 @@ def default_f(object):
     if has_json_v:
         object = object.json_v()
 
+    # in case the object is none, note that the equality based
+    # comparison is used so that the objects that consider
+    # themselves none are also handled as such
+    if object == None:
+        return None
+
     # retrieves the object type, to be used in the
     # type based resolution of the object
     object_type = type(object)
@@ -301,10 +350,12 @@ def default_f(object):
     if object_type is types.MethodType:
         return "method"
 
-    # in case the object is a sequence, converts it into a list
-    # so that the embedded encoder is able to iterate it
+    # in case the object is a sequence, note that only the single pass
+    # ones are able to reach this point (the native ones are handled by
+    # the embedded encoder) and so the fallback is always raised, as
+    # consuming them would make the "normal" approach lose the contents
     if object_type in SEQUENCE_TYPES:
-        return list(object)
+        raise exceptions.JSONEncodeException(object)
 
     # in case the object is a number, the float representation is
     # only used in case it's the exact same one that the "normal"
@@ -325,12 +376,8 @@ def default_f(object):
         object_time_tuple = object.timetuple()
         return calendar.timegm(object_time_tuple)
 
-    # in case the object is an instance, note that under an interpreter
-    # whose maps are not ordered the attribute order of the "normal"
-    # approach may not be reproduced and so the fallback is raised
+    # in case the object is an instance
     if hasattr(object, "__class__"):
-        if not ORDERED_MAPS:
-            raise exceptions.JSONEncodeException(object)
         return dict(
             (name, getattr(object, name))
             for name in dir(object)
@@ -478,7 +525,7 @@ def dump_parts(object, objects=None, cycles=False):
             # yields the false value
             yield "false"
     # in case the object is a dictionary
-    elif object_type is dict:
+    elif isinstance(object, dict):
         # yields the dictionary initial value
         yield "{"
 
@@ -515,11 +562,11 @@ def dump_parts(object, objects=None, cycles=False):
         # yields the dictionary final value
         yield "}"
     # in case the object is a string
-    elif object_type in colony.legacy.STRINGS:
+    elif isinstance(object, colony.legacy.STRINGS):
         # yields the string value
         yield '"' + string_escape_re.sub(escape_character, object) + '"'
     # in case the object is a sequence
-    elif object_type in SEQUENCE_TYPES:
+    elif object_type in SEQUENCE_TYPES or isinstance(object, SEQUENCE_BASES):
         # yields the list initial value
         yield "["
 
@@ -696,7 +743,7 @@ def dump_parts_pretty(object, objects=None, indentation=0, cycles=False):
             # yields the false value
             yield "false"
     # in case the object is a dictionary
-    elif object_type is dict:
+    elif isinstance(object, dict):
         # yields the dictionary initial value
         yield "{"
 
@@ -749,11 +796,11 @@ def dump_parts_pretty(object, objects=None, indentation=0, cycles=False):
         # yields the dictionary final value
         yield "}"
     # in case the object is a string
-    elif object_type in colony.legacy.STRINGS:
+    elif isinstance(object, colony.legacy.STRINGS):
         # yields the string value
         yield '"' + string_escape_re.sub(escape_character, object) + '"'
     # in case the object is a sequence
-    elif object_type in SEQUENCE_TYPES:
+    elif object_type in SEQUENCE_TYPES or isinstance(object, SEQUENCE_BASES):
         # yields the list initial value
         yield "["
 
@@ -949,7 +996,7 @@ def dump_parts_buffer(object, string_buffer, objects=None, cycles=False):
             # writes the false value
             string_buffer.write("false")
     # in case the object is a dictionary
-    elif object_type is dict:
+    elif isinstance(object, dict):
         # writes the dictionary initial value
         string_buffer.write("{")
 
@@ -983,11 +1030,11 @@ def dump_parts_buffer(object, string_buffer, objects=None, cycles=False):
         # writes the dictionary final value
         string_buffer.write("}")
     # in case the object is a string
-    elif object_type in colony.legacy.STRINGS:
+    elif isinstance(object, colony.legacy.STRINGS):
         # writes the escaped string value
         string_buffer.write('"' + string_escape_re.sub(escape_character, object) + '"')
     # in case the object is a sequence
-    elif object_type in SEQUENCE_TYPES:
+    elif object_type in SEQUENCE_TYPES or isinstance(object, SEQUENCE_BASES):
         # writes the list initial value
         string_buffer.write("[")
 

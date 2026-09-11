@@ -78,6 +78,48 @@ class MockJSONValueNative(object):
         return [1, 2]
 
 
+class MockDict(dict):
+    """
+    Dictionary sub-class, used in the validation of the
+    serialization of the native type sub-classes.
+    """
+
+    pass
+
+
+class MockList(list):
+    """
+    List sub-class, used in the validation of the
+    serialization of the native type sub-classes.
+    """
+
+    pass
+
+
+class MockString(colony.legacy.UNICODE):
+    """
+    String sub-class, used in the validation of the
+    serialization of the native type sub-classes.
+    """
+
+    pass
+
+
+class MockNone(object):
+    """
+    Object that considers itself equal to none, so that the
+    equality based null serialization may be validated.
+    """
+
+    value = 1
+
+    def __eq__(self, other):
+        return other == None
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+
 class MockOpaque(object):
     """
     Object that hides every attribute, including the class
@@ -123,6 +165,10 @@ EQUIVALENT_VALUES = (
     {1: "a", 2.5: "b"},
     colony.JournaledList([1, 2]),
     colony.JournaledList(),
+    MockDict(a=1),
+    MockList([1, 2]),
+    MockString("a/b"),
+    MockNone(),
     datetime.datetime(2026, 1, 2, 3, 4, 5),
     datetime.datetime(1970, 1, 1),
     datetime.date(2026, 1, 2),
