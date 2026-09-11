@@ -26,6 +26,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 from . import ast
+from . import compiler
 from . import exceptions
 from . import mocks
 from . import system
@@ -55,6 +56,7 @@ from .exceptions import (
     InvalidBooleanValue,
     InvalidSerializer,
 )
+from .compiler import Compiler, compile_node, render_compiled
 from .system import TemplateEngine
 from .test import TemplateEngineTest
 from .util import Accessor, accessor
