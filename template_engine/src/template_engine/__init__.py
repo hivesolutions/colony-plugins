@@ -27,7 +27,9 @@ __license__ = "Apache License, Version 2.0"
 
 from . import ast
 from . import exceptions
+from . import mocks
 from . import system
+from . import test
 from . import util
 from . import visitor
 
@@ -54,5 +56,6 @@ from .exceptions import (
     InvalidSerializer,
 )
 from .system import TemplateEngine
+from .test import TemplateEngineTest
 from .util import Accessor, accessor
 from .visitor import Visitor, EvalVisitor

@@ -64,7 +64,7 @@ object to handle it """
 LITERAL_ESCAPE_REGEX_VALUE = r"\$\\\\(?=\\\\*\{)"
 """ The literal escape regular expression value """
 
-FUNCTION_ARGUMENTS_REGEX_VALUE = r"\([\sa-zA-Z0-9_\-,\.\:\=\%'\/\"]+\)"
+FUNCTION_ARGUMENTS_REGEX_VALUE = r"\([^\)]+\)"
 """ The function arguments regular expression value
 that will match any possible (variable or constant) value """
 
@@ -83,6 +83,36 @@ FUNCTION_ARGUMENTS_REGEX = re.compile(FUNCTION_ARGUMENTS_REGEX_VALUE)
 NAMES_REGEX = re.compile(NAMES_REGEX_VALUE)
 """ The compiled version of names regular expression used for the
 matching of the various components of a variable template value """
+
+CACHE_LIMIT = 4096
+""" The maximum number of entries to be kept in each of the global
+(process wide) parsing caches, once this value is reached the cache
+is completely flushed (avoids unbounded memory growth) """
+
+NAMES_CACHE = {}
+""" The cache that associates the complete name of a variable with the
+sequence of the partial names that compose it, as this operation is a
+pure one its result may be safely re-used between resolutions """
+
+ARGUMENTS_CACHE = {}
+""" The cache that associates the name of a method call with the sequence
+of the (already processed) argument structures for it, avoiding the
+re-parsing of the arguments for every single call resolution """
+
+NODE_METHOD_CACHE = {}
+""" The cache that associates a visitor class with the map of the AST node
+classes to the (visit) methods that handle them, this structure is static
+for a class and so it's only built once per class """
+
+VISIT_CACHE = {}
+""" The cache that associates a visitor class with the map that resolves
+an AST node class into the proper visit method, this avoids the walking
+of the class hierarchy for each one of the node visits """
+
+EMPTY_FILTERS = ()
+""" The empty filters sequence, re-used for every attribute that does not
+define any filtering pipeline (avoids extra allocations) """
+
 
 DEFAULT_DATE_FORMAT = "%d/%m/%y"
 """ The default date format """
@@ -126,7 +156,7 @@ COMPARISION_FUNCTIONS = {
     "lengt": lambda item, value: len(item) > value,
     "lenlt": lambda item, value: len(item) < value,
     "in": lambda item, value: item and value in item or False,
-    "nin": lambda item, value: item and not value in item or False,
+    "nin": lambda item, value: False if item == None else not value in item,
 }
 """ The map containing the comparison functions (lambda) these
 are going to be used "inside" the visitor execution logic """
@@ -164,6 +194,146 @@ EXTRAS = dict(
 """ Dictionary that contains the set of symbols
 that are going to extend the base ones (builtins)
 in the process of name resolution """
+
+BUILTINS_EXTRAS = dict(BUILTINS)
+BUILTINS_EXTRAS.update(EXTRAS)
+""" The complete set of builtins, resulting from the extension of the base
+ones with the extra symbols, this map is shared by the various visitor
+instances and so it must not be changed at runtime """
+
+
+def escape_literal(literal_value):
+    """
+    Escapes the given literal value, allowing the template engine to
+    skip the interpretation of template tags.
+
+    This operation is meant to be run at "parse time" so that no extra
+    processing of the literal values is required at template rendering
+    time (performance oriented).
+
+    :type literal_value: String
+    :param literal_value: The literal value to be escaped.
+    :rtype: String
+    :return: The escaped literal value.
+    """
+
+    return LITERAL_ESCAPE_REGEX.sub("$", literal_value)
+
+
+def split_filters(original):
+    """
+    Splits the provided original (attribute) value around the filter
+    separator token, returning both the base name of the value and the
+    sequence of the filters that should be applied to it.
+
+    The result of this operation is meant to be stored in the attribute
+    structure itself so that no string splitting is required for each
+    one of the value resolutions (performance oriented).
+
+    :type original: String
+    :param original: The original (unprocessed) value of the attribute
+    that is going to be split around the filter separator.
+    :rtype: Tuple
+    :return: A tuple containing both the base name of the attribute and
+    the sequence of filters to be applied to its value.
+    """
+
+    # in case the provided original value is not a string based value
+    # it's not possible to split it, returning the "original" value
+    # and an empty set of filters (as expected)
+    if not hasattr(original, "split"):
+        return original, EMPTY_FILTERS
+
+    # in case there's no filter separator in the value the complete
+    # value is considered to be the name of the attribute, this is
+    # considered to be the most common (and fast) scenario
+    if not "|" in original:
+        return original.strip(), EMPTY_FILTERS
+
+    # splits the value around the filter separator using the first
+    # part as the name of the attribute and the remaining ones as
+    # the various filters to be applied (in sequence)
+    parts = original.split("|")
+    return parts[0].strip(), tuple(part.strip() for part in parts[1:])
+
+
+def split_arguments(value):
+    """
+    Splits the provided arguments string around the argument separator
+    token, taking into account the quoted sequences so that a separator
+    contained inside a string literal does not split it.
+
+    :type value: String
+    :param value: The (complete) arguments string that is going to be
+    split around the argument separator.
+    :rtype: List
+    :return: The list containing the various arguments resulting from
+    the split operation.
+    """
+
+    # creates the list that is going to hold the various arguments and
+    # the buffer of characters for the argument currently being built
+    arguments = []
+    current = []
+
+    # creates the value that holds the quote character that has started
+    # the sequence currently open (invalid in case none is open)
+    quote = None
+
+    # iterates over the complete set of characters of the arguments
+    # string to split it around the (unquoted) separator characters
+    for char in value:
+        if quote:
+            if char == quote:
+                quote = None
+        elif char in ("'", '"'):
+            quote = char
+        elif char == ",":
+            arguments.append("".join(current))
+            del current[:]
+            continue
+        current.append(char)
+
+    # adds the remaining (pending) characters as the final argument of
+    # the sequence and returns the complete set of arguments
+    arguments.append("".join(current))
+    return arguments
+
+
+def node_method_map(cls):
+    """
+    Builds (or retrieves from cache) the map that associates the various
+    AST node classes with the methods of the provided visitor class that
+    are annotated to handle them.
+
+    :type cls: Class
+    :param cls: The visitor class for which the node method map is going
+    to be built.
+    :rtype: Dictionary
+    :return: The map associating the AST node classes with the proper
+    visit methods of the provided class.
+    """
+
+    # tries to retrieve the already built map for the class, avoiding
+    # the (expensive) listing of the complete set of class elements
+    map = NODE_METHOD_CACHE.get(cls, None)
+    if not map == None:
+        return map
+
+    # iterates over the complete set of elements (attributes) defined
+    # for the provided class trying to find the ones that are annotated
+    # with the AST node class value, associating them in the map
+    map = dict()
+    for name in dir(cls):
+        element = getattr(cls, name)
+        if not hasattr(element, "ast_node_class"):
+            continue
+        map[element.ast_node_class] = element
+
+    # stores the newly built map under the class key so that any further
+    # request for the same class is immediately resolved
+    NODE_METHOD_CACHE[cls] = map
+    return map
 
 
 class Visitor(object):
@@ -257,43 +427,32 @@ class Visitor(object):
         self.string_buffer = string_buffer or colony.StringBuffer()
         self.process_methods_list = []
         self.locale_bundles = []
-        self.filters = dict(FILTERS)
-        self.extras = dict(EXTRAS)
-        self.builtins = dict(BUILTINS)
-        self.builtins.update(EXTRAS)
+        self.filters = FILTERS
+        self.extras = EXTRAS
+        self.builtins = BUILTINS_EXTRAS
+        self.process_map = dict()
 
         self.global_map["__builtins__"] = self.builtins
         self.update_node_method_map()
 
     def update_node_method_map(self):
-        # retrieves the current instance class and list the
-        # complete set of element for the current class so that
-        # the proper node method map may be created
+        # retrieves both the node method map and the visit resolution
+        # map for the class of the current instance, note that these
+        # structures are static for a class and so they are built only
+        # once and then shared by every instance of it
         cls = self.__class__
-        cls_elements = dir(cls)
-
-        # iterates over the complete set of elements (attributes)
-        # defined for the current instance's class trying to find
-        # the ones that are annotated with the AST node class value
-        for name in cls_elements:
-            # retrieves the current element in iteration and verifies
-            # if the current element is annotated with the asr node class
-            # value, if that's not the case continues the loop
-            element = getattr(cls, name)
-            if not hasattr(element, "ast_node_class"):
-                continue
-
-            # retrieves the elements node class and associated the
-            # current element with the node class in the node class
-            # method map (to be used latter in runtime verification)
-            ast_node_class = element.ast_node_class
-            self.node_method_map[ast_node_class] = element
+        self.node_method_map = node_method_map(cls)
+        self.visit_map = VISIT_CACHE.setdefault(cls, dict())
 
     def attach_process_method(self, method_name, method):
         # creates the process method instance, that is attached to
         # the general visitor class and sets it the current instance
         method_instance = types.MethodType(method, self)
         setattr(self, method_name, method_instance)
+
+        # invalidates the process method cache as a new method may be
+        # shadowing a previously resolved (and cached) one
+        self.process_map.clear()
 
         # creates the process method tuple that contains both the
         # name of the method and the method reference and adds the
@@ -347,6 +506,10 @@ class Visitor(object):
         self.locale_bundles.append(bundle)
 
     def add_filter(self, name, filter):
+        # copies the currently set filters map before changing it, this is
+        # required as the default one is shared between the various visitor
+        # instances (copy on write strategy)
+        self.filters = dict(self.filters)
         self.filters[name] = filter
 
     def get_encoding(self):
@@ -385,9 +548,64 @@ class Visitor(object):
     def set_strict_mode(self, strict_mode):
         self.strict_mode = strict_mode
 
-    @colony.dispatch_visit()
     def visit(self, node):
+        # tries to resolve the visit method for the class of the node
+        # that is going to be visited using the class level cache, in
+        # case it's not there the "slow" resolution is performed
+        node_class = node.__class__
+        visit_map = self.visit_map
+        if node_class in visit_map:
+            method = visit_map[node_class]
+        else:
+            method = self._resolve_visit(node_class)
+
+        # in case no method was found for the node class the fallback
+        # operation is performed, notifying about the unknown node
+        if method == None:
+            return self.visit_default(node)
+
+        # runs the complete set of visit operations, note that both the
+        # before and after visit calls are performed so that the proper
+        # "notification" of the visit exists (as expected)
+        self.before_visit(node)
+        method(self, node)
+        self.after_visit(node)
+
+    def visit_default(self, node):
         print("unrecognized element node of type " + node.__class__.__name__)
+
+    def _resolve_visit(self, node_class):
+        """
+        Resolves the visit method that should be used for the provided
+        AST node class, walking the class hierarchy from the bottom to
+        the top so that the most specific method is used.
+
+        The result of the resolution is stored in the class level cache
+        so that this (expensive) operation is only run once per class.
+
+        :type node_class: Class
+        :param node_class: The AST node class for which the visit method
+        is going to be resolved.
+        :rtype: Method
+        :return: The visit method for the provided node class or an
+        invalid value in case no method is able to handle it.
+        """
+
+        # iterates over the complete class hierarchy for the provided
+        # node class (from bottom to top) so that the best match for
+        # the visit operation is found and then cached
+        node_method_map = self.node_method_map
+        method = None
+        for mro_item in node_class.mro():
+            if not mro_item in node_method_map:
+                continue
+            method = node_method_map[mro_item]
+            break
+
+        # stores the resolved method (that may be invalid) under the node
+        # class key so that any further visit is immediately resolved
+        self.visit_map[node_class] = method
+        return method
 
     def before_visit(self, node):
         self.visit_childs = True
@@ -405,12 +623,10 @@ class Visitor(object):
 
     @colony.visit(ast.LiteralNode)
     def visit_literal_node(self, node):
-        # retrieves the match value from the current node's
-        # value escaping it to avoid any problem and then
-        # writes the value into the current string buffer
-        match_value = node.value.value
-        match_value = self._escape_literal(match_value)
-        self.write(match_value)
+        # retrieves the match value from the current node's value, note
+        # that this value is already escaped (at parse time) and so it
+        # may be written directly into the current string buffer
+        self.write(node.value.value)
 
     @colony.visit(ast.MatchNode)
     def visit_match_node(self, node):
@@ -425,14 +641,23 @@ class Visitor(object):
         pass
 
     def process_accept(self, node, name):
+        # tries to retrieve the process method for the requested tag name
+        # from the instance level cache, avoiding the (repeated) dynamic
+        # resolution of the method for every single node visit
+        process_map = self.process_map
+        if name in process_map:
+            process_method = process_map[name]
+        else:
+            process_method = getattr(self, "process_" + name, None)
+            process_map[name] = process_method
+
         # in case the process method is not defined, raises an exception
         # indicating tha the tag is not supported
-        if not hasattr(self, "process_" + name):
+        if process_method == None:
             raise exceptions.InvalidTagName(name)
 
-        # retrieves the process method for the name and runs the
-        # same method with the current node as the argument
-        process_method = getattr(self, "process_" + name)
+        # runs the process method with the current node as the argument
+        # so that the proper tag operation is performed
         process_method(node)
 
     def process_out(self, node):
@@ -451,6 +676,16 @@ class Visitor(object):
         # is going to be used to process the data that is going
         # to be printed to the current context
         attributes = node.get_attributes()
+
+        # verifies if only the minimum set of attributes is defined for
+        # the node, if that's the case (by far the most common one) the
+        # simplified processing of the node is performed instead
+        simple = node.simple
+        if simple == None:
+            simple = self._is_simple(attributes)
+            node.simple = simple
+        if simple:
+            return self._process_out_simple(attributes)
 
         # retrieves the localization value, this is going to be used
         # for a lot of sub-operation in retrieval and must be gathered
@@ -471,8 +706,8 @@ class Visitor(object):
         quote = self.get_boolean_value(quote)
         xml_escape = attributes.get("xml_escape", None)
         xml_escape = self.get_boolean_value(xml_escape)
-        xml_quote = attributes.get("xml_escape", None)
-        xml_quote = self.get_boolean_value(xml_quote)
+        xml_quote = attributes.get("xml_quote", None)
+        xml_quote = self.get_boolean_value(xml_quote, xml_escape)
         newline_convert = attributes.get("newline_convert", None)
         newline_convert = self.get_boolean_value(newline_convert)
         convert = attributes.get("convert", None)
@@ -527,11 +762,6 @@ class Visitor(object):
             conversion_method = CONVERSION_MAP.get(convert, None)
             value = conversion_method(value) if conversion_method else value
 
-        # in case the variable encoding is defined must re-encode
-        # the variable according to the current variable encoding
-        if self.variable_encoding:
-            value = value.encode(self.variable_encoding)
-
         # in case the attribute quote value is set must quote the
         # value using the provided colony utility
         if quote:
@@ -548,8 +778,16 @@ class Visitor(object):
             value = value.replace("\n", "<br/>")
 
         # runs the final appending of the prefix value to the value
-        # and then writes the final string/unicode value to the buffer
         value = prefix + value
+
+        # in case the variable encoding is defined must re-encode the
+        # variable according to the current variable encoding, note that
+        # this is the last operation to be performed as the resulting
+        # value is no longer a valid (unicode) string value
+        if self.variable_encoding:
+            value = value.encode(self.variable_encoding)
+
+        # writes the final string/unicode value to the buffer
         self.write(value)
 
     def process_set(self, node):
@@ -597,9 +835,9 @@ class Visitor(object):
 
         # in case the start index literal value is defined
         # retrieves the index as the integer cast of the
-        # partial name otherwise the index start at one
-        if start_index:
-            index = int(start_index[1:-1])
+        # value otherwise the index start at one
+        if not start_index == None:
+            index = int(start_index)
         else:
             index = 1
 
@@ -629,11 +867,26 @@ class Visitor(object):
             else:
                 iterable = []
 
+        # saves the previous values of the loop related globals so that
+        # they may be restored at the end of the iteration, this is what
+        # allows the proper nesting of loop operations
+        global_map = self.global_map
+        previous_loop = global_map.get("loop", None)
+        previous_first = global_map.get("is_first", None)
+        previous_last = global_map.get("is_last", None)
+
+        # creates the map that holds the loop related values for the
+        # current loop operation, this map is created only once as it's
+        # going to be updated for each one of the iterations
+        loop = dict()
+        global_map["loop"] = loop
+
         # sets the various global wide values relates with the
         # current loop operation that is going to be performed
         # this values are not related with each iteration
-        self.set_global_many("loop.length", len(iterable))
-        self.set_global_many("loop.cycle", self._loop_cycle)
+        length = len(iterable)
+        loop["length"] = length
+        loop["cycle"] = self._loop_cycle
 
         # verifies if the iterable currently in use is of type
         # map (dictionary) this will condition the way the loop
@@ -649,35 +902,50 @@ class Visitor(object):
             key_ref = None
             index_ref = None
 
+        # creates the ordinal value that is going to be used for the
+        # detection of both the first and the last iterations, note that
+        # this value is independent from the (visible) index one as that
+        # one may start at any value (start index attribute)
+        ordinal = 1
+
         # iterates over the complete set of elements in the iterable,
         # note that the value contained in the item will not be the
         # same if the iterable is a map or if it is a sequence
-        for element in iterable:
-            is_first = index == 1
-            is_last = index == len(iterable)
+        try:
+            for element in iterable:
+                is_first = ordinal == 1
+                is_last = ordinal == length
 
-            self.set_global_many("loop.index", index)
-            self.set_global_many("loop.index0", index - 1)
-            self.set_global_many("loop.first", is_first)
-            self.set_global_many("loop.last", is_last)
-            self.set_global("is_first", is_first)
-            self.set_global("is_last", is_last)
+                loop["index"] = index
+                loop["index0"] = index - 1
+                loop["first"] = is_first
+                loop["last"] = is_last
+                global_map["is_first"] = is_first
+                global_map["is_last"] = is_last
 
-            key = element if is_map else index
-            value = iterable[element] if is_map else element
+                key = element if is_map else index
+                value = iterable[element] if is_map else element
 
-            if item:
-                self.set_global(item, value)
-            if index_ref:
-                self.set_global(index_ref, index)
-            if key_ref:
-                self.set_global(key_ref, key)
+                if item:
+                    global_map[item] = value
+                if index_ref:
+                    global_map[index_ref] = index
+                if key_ref:
+                    global_map[key_ref] = key
 
-            if self.visit_childs:
-                for child in node.children:
-                    child.accept(self)
+                if self.visit_childs:
+                    for child in node.children:
+                        child.accept(self)
 
-            index += 1
+                ordinal += 1
+                index += 1
+
+        # restores the previous values of the loop related globals so that
+        # an outer loop is not affected by the one that has just finished
+        finally:
+            global_map["loop"] = previous_loop
+            global_map["is_first"] = previous_first
+            global_map["is_last"] = previous_last
 
     def process_if(self, node):
         # evaluates the current node comparison, this is the default
@@ -786,13 +1054,14 @@ class Visitor(object):
         # parses the file retrieving the template file structure, note
         # that any path existence validation will be done at this stage,
         # after this loading operation the visitor is loaded into the
-        # template engine and the visitor is accepted, this is going to
-        # create a partial abstract syntax tree that is going to be
-        # appended to the current node as subtree
+        # template engine and only the extends nodes are accepted, this
+        # is going to create a partial abstract syntax tree that is going
+        # to be appended to the current node as subtree, the contents of
+        # it are generated by the (owner) visitor afterwards
         template_file = self._get_template(node, file_path)
         template_file.set_global_map(self.global_map)
         template_file.load_visitor()
-        template_file.root_node.accept(template_file.visitor)
+        template_file.root_node.accept_extends(template_file.visitor)
 
         # updates the current node's children sequence with the complete
         # set of root children of the processed file (propagation) and
@@ -825,13 +1094,13 @@ class Visitor(object):
         # parses the file retrieving the template file structure, note
         # that any path existence validation will be done at this stage,
         # after this loading operation the visitor is loaded into the
-        # template engine and the visitor is accepted, this should create
-        # a partial abstract syntax tree that must then be processed and
-        # used as the base for the current processing (inheritance)
+        # template engine and only the extends nodes of the parent are
+        # accepted, this resolves the complete inheritance chain without
+        # generating any contents (they are generated by the owner)
         template_file = self._get_template(node, file_path)
         template_file.set_global_map(self.global_map)
         template_file.load_visitor()
-        template_file.root_node.accept(template_file.visitor)
+        template_file.root_node.accept_extends(template_file.visitor)
         template_file.index_nodes()
 
         # "transfers" the children nodes of the super template file to
@@ -1011,24 +1280,23 @@ class Visitor(object):
         if not attribute:
             return default
 
-        # retrieves the (processed) value of the attribute and the
-        # original (unprocessed) value, so that they may be used
-        # for the value processing (as expected)
+        # retrieves the (processed) value of the attribute and then the
+        # base name and filters sequence, note that these values are
+        # computed only once and then stored in the attribute structure
+        # so that any further resolution of it is immediate
         value = attribute["value"]
-        original = attribute["original"]
-
-        # splits the raw (attribute) value into the various parts
-        # of it, separating the proper variable name from the
-        # various filters as defined in the specification
-        parts = original.split("|")
-        filters = [filter.strip() for filter in parts[1:]]
+        filters = attribute.get("filters", None)
+        if filters == None:
+            base, filters = split_filters(attribute["original"])
+            attribute["base"] = base
+            attribute["filters"] = filters
 
         # in case the attribute value is of type variable, must be
         # properly handled (stripping the value from extra lines)
         if attribute["type"] == "variable":
-            # retrieves the variable name by stripping the first part
-            # of the filters splitting (as expected)
-            variable_name = parts[0].strip()
+            # retrieves the pre-computed base name of the attribute, this
+            # is the name of the variable stripped from any filter
+            variable_name = attribute["base"]
 
             # in case the variable name is none sets the final value
             # with the invalid value as that's requested by the template
@@ -1042,12 +1310,6 @@ class Visitor(object):
                 # approach so that the final value is retrieved according
                 # to the current state of the template engine
                 value = self.resolve_many(variable_name)
-
-        # in case the attribute value is of type literal the value must
-        # be "read" using a literal based approach so that the proper and
-        # concrete value is going to be returned as the value
-        elif attribute["type"] == "literal":
-            pass
 
         # resolves the current "variable" value, trying to
         # localize it using the current locale bundles only
@@ -1096,25 +1358,29 @@ class Visitor(object):
         raise exceptions.InvalidBooleanValue("invalid boolean " + value)
 
     def resolve_many(self, name, *args, **kwargs):
-        # creates the list that will hold the complete set of names
-        # for the current (full) variable name, this partial names
-        # will be retrieved using regex matching
-        names = []
-
-        # retrieves the various names matched for the current variable
-        # name and then iterates over each of these matches to retrieve
-        # it's literal value and store it under the names list
-        matches = NAMES_REGEX.finditer(name)
-        for match in matches:
-            part = name[match.start() : match.end()]
-            names.append(part)
+        # tries to retrieve the sequence of partial names for the requested
+        # (complete) variable name from the global cache, as the splitting
+        # of a name is a pure operation its result may be safely re-used
+        names = NAMES_CACHE.get(name, None)
+        if names == None:
+            names = tuple(match.group() for match in NAMES_REGEX.finditer(name))
+            if len(NAMES_CACHE) > CACHE_LIMIT:
+                NAMES_CACHE.clear()
+            NAMES_CACHE[name] = names
 
         # sets the initial value of the resolution process as the current
         # global map and then starts the resolution running it for the
-        # complete set of "partial" attribute names (iterative resolution)
+        # complete set of "partial" attribute names (iterative resolution),
+        # note that the resolution is guarded in the same way as the one
+        # of the resolve method (inline for performance reasons)
         value = kwargs.pop("global_map", self.global_map)
-        for name in names:
-            value = self.resolve(value, name, *args, **kwargs)
+        try:
+            for name in names:
+                value = self._resolve(value, name, *args, **kwargs)
+        except exceptions.UndefinedVariable:
+            if self.strict_mode:
+                raise
+            value = None
 
         # return the final resolved value, this value should be a result
         # of the iteration around the various partial names
@@ -1135,25 +1401,33 @@ class Visitor(object):
         # as it's going to be used latter for some processing operations
         name_o = name
 
-        # filters the variable name (split) so that if it's
-        # a complete method call the arguments part is removed
-        # this way only the name of the attribute is guaranteed
-        name = name.split("(", 1)[0]
+        # filters the variable name so that if it's a complete method
+        # call the arguments part is removed, this way only the name of
+        # the attribute is guaranteed
+        index = name.find("(")
+        if index > -1:
+            name = name[:index]
 
         # verifies if the base value refers a dictionary, if that's the
         # case a normal get operation will be performed
-        is_dictionary = colony.is_dictionary(value)
+        is_dictionary = True if type(value) == dict else colony.is_dictionary(value)
 
         # in case the variable is of type dictionary, the normal recursive
         # iteration step will be executed
         if is_dictionary:
-            builtins = value.get("__builtins__", dict())
+            # verifies if the name is present in the map itself and only in
+            # case it's not there falls back to the builtins, note that the
+            # builtins are only retrieved when they are required
             if name in value:
                 result = value[name]
-            elif name in builtins:
-                result = builtins[name]
             else:
-                raise exceptions.UndefinedVariable("variable is not defined: " + name)
+                builtins = value.get("__builtins__", None)
+                if builtins and name in builtins:
+                    result = builtins[name]
+                else:
+                    raise exceptions.UndefinedVariable(
+                        "variable is not defined: " + name
+                    )
 
         # otherwise variable is of type object or other, then the more complex
         # recursive read of its attributes is executed
@@ -1209,7 +1483,7 @@ class Visitor(object):
         # retrieves the current results's class and in case the class is of
         # type file reference the contents should be read (the file is closed properly)
         # and set as the current variable (as the new result of it)
-        result_class = result.__class__ if hasattr(result, "__class__") else None
+        result_class = getattr(result, "__class__", None)
         if result_class == colony.FileReference:
             result = result.read_all()
 
@@ -1218,6 +1492,23 @@ class Visitor(object):
         return result
 
     def resolve_args(self, name):
+        # tries to retrieve the already processed sequence of arguments for
+        # the provided name, as the parsing of the arguments depends only
+        # on the name itself its result may be safely re-used
+        arguments_c = ARGUMENTS_CACHE.get(name, None)
+        if not arguments_c == None:
+            return arguments_c
+
+        # runs the "effective" parsing of the arguments for the name and
+        # then stores the result in the cache so that any further call
+        # for the same name is resolved without any extra processing
+        arguments_t = self._resolve_args(name)
+        if len(ARGUMENTS_CACHE) > CACHE_LIMIT:
+            ARGUMENTS_CACHE.clear()
+        ARGUMENTS_CACHE[name] = arguments_t
+        return arguments_t
+
+    def _resolve_args(self, name):
         # tries to match the complete variable name split against
         # the arguments regular expression, to find out if the call
         # is of type simple or complex (arguments present)
@@ -1236,8 +1527,9 @@ class Visitor(object):
 
         # splits the arguments string into the various arguments
         # names and then treats them, converting them into the
-        # normal form
-        arguments = arguments_s.split(",")
+        # normal form, note that the split operation is aware of
+        # the quoted sequences (avoids breaking string literals)
+        arguments = split_arguments(arguments_s)
         arguments = [argument.strip() for argument in arguments]
 
         # creates the list that will hold the various argument types
@@ -1305,6 +1597,84 @@ class Visitor(object):
         # argument dictionary values that are meant to be latter recursively
         # resolved to obtain the real/final argument values
         return arguments_t
+
+    def _is_simple(self, attributes):
+        """
+        Verifies if the provided attributes map defines only the minimum
+        set of attributes required for an out operation, meaning that no
+        extra transformation of the value is going to be required.
+
+        :type attributes: Dictionary
+        :param attributes: The map containing the attributes defined for
+        the node that is going to be verified.
+        :rtype: bool
+        :return: If the provided attributes allow the simplified (and
+        faster) processing of the out operation.
+        """
+
+        # in case there are more attributes than the value and the auto
+        # escaping ones the node is not considered to be a simple one
+        if not len(attributes) == 2:
+            return False
+
+        # the auto escaping attribute must be a "plain" boolean value as
+        # otherwise its resolution would be required
+        if not type(attributes.get("xml_escape", None)) == bool:
+            return False
+
+        # retrieves the value attribute and in case it's not defined the
+        # node is not considered to be a simple one
+        value = attributes.get("value", None)
+        if not value:
+            return False
+
+        # computes (and stores) the base name and the filters for the value
+        # attribute, as the presence of filters requires the complete
+        # processing of the node (the filters may change the attributes)
+        filters = value.get("filters", None)
+        if filters == None:
+            base, filters = split_filters(value["original"])
+            value["base"] = base
+            value["filters"] = filters
+        return not filters
+
+    def _process_out_simple(self, attributes):
+        """
+        Processes the out operation for a node that defines only the
+        minimum set of attributes, this is the most common scenario and
+        so it's handled in an optimized fashion.
+
+        :type attributes: Dictionary
+        :param attributes: The map containing the attributes defined for
+        the node that is going to be processed.
+        """
+
+        # resolves the value of the node localizing it (the default
+        # behavior) and in case it's an invalid one returns immediately
+        # as there's nothing to be printed to the current buffer
+        value = self.get_value(attributes["value"], localize=True)
+        if value == None:
+            return
+
+        # serializes the value into the correct visual representation
+        # and makes sure that a valid unicode string is used
+        value = self._serialize_value(value)
+        if not type(value) == colony.legacy.UNICODE:
+            value = colony.legacy.UNICODE(value)
+
+        # runs the final transformation on the value according to the
+        # auto escaping mode that is defined for the node
+        if attributes["xml_escape"]:
+            value = xml.sax.saxutils.escape(value)
+            value = value.replace('"', "&quot;")
+
+        # in case the variable encoding is defined must re-encode the
+        # variable according to the current variable encoding
+        if self.variable_encoding:
+            value = value.encode(self.variable_encoding)
+
+        # writes the final string/unicode value to the buffer
+        self.write(value)
 
     def _get_template(self, node, file_path):
         """
@@ -1403,7 +1773,7 @@ class Visitor(object):
 
             # in case the type is elif, the node should be
             # accepted in case of positive evaluation
-            elif "elif":
+            elif type == "elif":
                 result = self._evaluate_comparison_node(node)
                 accept_node = result
 
@@ -1435,12 +1805,13 @@ class Visitor(object):
         operator = self.get_literal_value(operator)
 
         # retrieves the comparison function from the requested operator
-        # and then evaluates the item against the value, this should produce
-        # a boolean result that is then returned as the result of the evaluation
-        # of the comparison based node, to the caller method
+        # and then evaluates the item against the value, note that the
+        # result is normalized into a boolean value as the invalid value
+        # is used by the caller method as the "stop" sentinel and so it
+        # may not be used to represent a negative evaluation
         comparison = COMPARISION_FUNCTIONS.get(operator, None)
         result = comparison(item, value) if comparison else item
-        return result
+        return True if result else False
 
     def _escape_literal(self, literal_value):
         """
@@ -1454,11 +1825,8 @@ class Visitor(object):
         :return: The escaped literal value
         """
 
-        # escapes the literal value
-        escaped_literal_value = LITERAL_ESCAPE_REGEX.sub("$", literal_value)
-
-        # returns the escaped literal value
-        return escaped_literal_value
+        # escapes the literal value and returns it
+        return escape_literal(literal_value)
 
     def _resolve_locale(self, value):
         """
@@ -1480,6 +1848,11 @@ class Visitor(object):
         # in case the value is invalid, not set or
         # an empty string no need to resolve it
         if not value:
+            return value
+
+        # in case there are no locale bundles defined there's no possible
+        # resolution of the value, returns it immediately
+        if not self.locale_bundles:
             return value
 
         # in case the type of the value is a sequence the resolution
@@ -1580,11 +1953,11 @@ class Visitor(object):
             else:
                 string_buffer.write(colony.legacy.u(", "))
 
-            # serializes the current value and retrieves the type
-            # of the value that will condition the writing into
-            # the string buffer
-            _value = self._serialize_value(_value)
+            # retrieves the type of the value before its serialization
+            # (as it's the original type that conditions the writing
+            # into the string buffer) and then serializes the value
             _value_type = type(_value)
+            _value = self._serialize_value(_value)
 
             # checks if the value contains a unicode string
             # in such case there's no need to re-decode it
@@ -1626,7 +1999,9 @@ class Visitor(object):
         name = name or SERIALIZERS[0]
         serializer = SERIALIZERS_MAP.get(name, None)
         if not serializer:
-            raise exceptions.InvalidSerializer("no serializer available for '%s'", name)
+            raise exceptions.InvalidSerializer(
+                "no serializer available for '%s'" % name
+            )
 
         # creates the serializer tuple containing both
         # the serializer object and the name
@@ -1695,7 +2070,7 @@ class EvalVisitor(Visitor):
     function required the creation of new contexts (slow operations).
     """
 
-    def get_value(self, attribute, localize=False, default=None):
+    def get_value(self, attribute, meta=None, localize=False, default=None):
         # in case the passed attribute is not valid the default must
         # be returned immediately as no resolution is possible, this
         # is the default and expected behavior (fallback procedure)
@@ -1747,7 +2122,9 @@ class EvalVisitor(Visitor):
         # iterates over the complete set of filter definition to
         # resolve the final value according to the filters
         for filter in filters:
-            value = self.resolve_many(filter, value, self, global_map=self.filters)
+            value = self.resolve_many(
+                filter, value, meta, self, global_map=self.filters
+            )
 
         # returns the final value according to the eval based value
         # retrieval that uses the python interpreter for evaluation

@@ -118,6 +118,11 @@ class AstNode(object):
     children of the current node, the maximum number
     of children is not limited """
 
+    simple = None
+    """ Flag that controls if only the minimum set of attributes is
+    defined for the node, allowing a faster processing of it, the value
+    is lazily determined by the visitor on the first visit """
+
     def __init__(self):
         self.children = []
         self.supers = []
@@ -155,6 +160,42 @@ class AstNode(object):
         node.parent = parent
         node.super = self
 
+    def clone(self, nodes=None):
+        """
+        Creates a copy of the current node and of the complete set of
+        its children, the immutable parts of the node (eg: the value) are
+        shared with the original node and only the structure of the tree
+        and the attributes map are effectively re-created.
+
+        This operation is meant to be used to obtain a private version
+        of a tree that is going to be changed by the visiting operation
+        (eg: the inclusion and extension of templates).
+
+        :type nodes: Dictionary
+        :param nodes: The optional map to be populated with the various
+        identifiable nodes found while copying the tree, avoiding an
+        extra traversal of it for the indexing operation.
+        :rtype: AstNode
+        :return: The newly created copy of the current node.
+        """
+
+        node = object.__new__(self.__class__)
+        node.__dict__.update(self.__dict__)
+
+        # copies the attributes map as it may be changed at runtime by the
+        # filters (eg: the safe filter unsets the auto escaping), meaning
+        # that sharing it would leak such a change into the other copies
+        attributes = node.__dict__.get("attributes", None)
+        if not attributes == None:
+            node.attributes = dict(attributes)
+
+        node.children = [child.clone(nodes=nodes) for child in self.children]
+        for child in node.children:
+            child.parent = node
+        if not nodes == None and node.get_type() == "block":
+            nodes[node.get_id()] = node
+        return node
+
     def add_child(self, node):
         node.parent = self
         self.children.append(node)
@@ -179,6 +220,28 @@ class RootNode(AstNode):
         if not visitor.visit_childs:
             return
 
+        self.accept_extends(visitor)
+
+        for child in self.children:
+            type = child.get_type()
+            if type == "extends":
+                continue
+            child.accept(visitor)
+
+    def accept_extends(self, visitor):
+        """
+        Runs the accept operation for the extends nodes of the current
+        root node, resolving the complete inheritance chain of it.
+
+        This operation is meant to be used whenever only the structure
+        of the template is required (eg: the resolution of the parent
+        of a template) avoiding the (costly) generation of contents.
+
+        :type visitor: Visitor
+        :param visitor: The visitor that is going to be used for the
+        accepting of the extends nodes.
+        """
+
         while True:
             if not self.children:
                 break
@@ -186,12 +249,6 @@ class RootNode(AstNode):
             type = child.get_type()
             if not type == "extends":
                 break
-            child.accept(visitor)
-
-        for child in self.children:
-            type = child.get_type()
-            if type == "extends":
-                continue
             child.accept(visitor)
 
     def get_type(self):
@@ -345,10 +402,10 @@ class EvalNode(SimpleNode):
     def assert_end(self, type):
         if type == self.type[3:]:
             return
-        raise RuntimeError("Invalid end tag")
+        raise exceptions.RuntimeError("invalid end tag '%s'" % self.type)
 
     def _process_if(self, contents):
-        match = IF_REGEX.match(contents)
+        match = IF_REGEX.match(contents) if contents else None
         if not match:
             raise exceptions.RuntimeError("malformed if expression")
 
@@ -376,12 +433,18 @@ class EvalNode(SimpleNode):
         if not_oper:
             oper = "n" + oper if oper else "not"
 
+        # the containment based operations expect the sequence to be the
+        # item of the comparison and the element to be searched for as the
+        # value, so both of the operands must be swapped to comply with it
+        if oper in ("in", "nin"):
+            item, value = value, item
+
         self.attributes["item"] = self.parse(item)
         self.attributes["value"] = self.parse(value)
         self.attributes["operator"] = self.literal(oper)
 
     def _process_for(self, contents):
-        match = FOR_REGEX.match(contents)
+        match = FOR_REGEX.match(contents) if contents else None
         if not match:
             raise exceptions.RuntimeError("malformed for expression")
 
@@ -408,9 +471,9 @@ class EvalNode(SimpleNode):
         self.attributes["key"] = self.literal(key)
 
     def _process_set(self, contents):
-        match = SET_REGEX.match(contents)
+        match = SET_REGEX.match(contents) if contents else None
         if not match:
-            raise exceptions.RuntimeError("malformed for expression")
+            raise exceptions.RuntimeError("malformed set expression")
 
         item = match.group(1)
         value = match.group(2)
