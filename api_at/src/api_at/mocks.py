@@ -23,6 +23,8 @@ __author__ = "João Magalhães <joamag@hive.pt>"
 __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 
+from . import system
+
 
 class MockManager(object):
     def __init__(self, plugin_path="."):
@@ -42,18 +44,6 @@ class MockPlugin(object):
 
     def debug(self, message):
         self.messages.append(message)
-
-
-class MockSSLStructure(object):
-    def encrypt(self, key_path, data):
-        if isinstance(data, bytes):
-            return b"encrypted:" + data
-        return b"encrypted:" + data.encode("utf-8")
-
-
-class MockSSLPlugin(object):
-    def create_structure(self, parameters):
-        return MockSSLStructure()
 
 
 class MockHTTPResponse(object):
@@ -90,3 +80,11 @@ class MockClientHTTPPlugin(object):
 
     def create_client(self, parameters):
         return self.http_client
+
+
+class MockATClient(system.ATClient):
+    def _gen_envelope_v1(self, document_payload, namespace=None):
+        return document_payload
+
+    def _gen_envelope_v2(self, document_payload, namespace=None):
+        return document_payload

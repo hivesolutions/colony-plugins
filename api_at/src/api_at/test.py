@@ -263,9 +263,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
         plugin = mocks.MockPlugin()
         http_client = mocks.MockHTTPClient(received_message=xml_response)
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
             test_mode=True,
         )
@@ -303,9 +302,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
         plugin = mocks.MockPlugin()
         http_client = mocks.MockHTTPClient(received_message=xml_response)
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
             test_mode=True,
         )
@@ -332,9 +330,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         """
 
         plugin = mocks.MockPlugin()
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(),
             test_mode=True,
         )
@@ -369,9 +366,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         http_client = mocks.MockHTTPClient(
             received_message=xml_response, status_code=500
         )
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
             test_mode=True,
         )
@@ -402,9 +398,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
         plugin = mocks.MockPlugin()
         http_client = mocks.MockHTTPClient(received_message=xml_response)
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
             test_mode=True,
         )
@@ -432,9 +427,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         http_client = mocks.MockHTTPClient(
             received_message=data_response, status_code=504
         )
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
             test_mode=True,
         )
@@ -465,9 +459,8 @@ class APIATBaseTestCase(colony.ColonyTestCase):
 
         plugin = mocks.MockPlugin()
         http_client = mocks.MockHTTPClient(received_message=xml_response)
-        client = system.ATClient(
+        client = mocks.MockATClient(
             plugin=plugin,
-            ssl_plugin=mocks.MockSSLPlugin(),
             client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
             test_mode=True,
         )
