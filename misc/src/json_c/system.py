@@ -44,6 +44,10 @@ FAST_LOADS = True
 """ Flag that controls if by default the strategy for the loading
 operation should try to use the embedded loader (faster) """
 
+FAST_DUMPS = True
+""" Flag that controls if by default the strategy for the dumping
+operation should try to use the embedded dumper (faster) """
+
 
 class JSON(colony.System):
     """
@@ -51,10 +55,14 @@ class JSON(colony.System):
     implement (and conform) with the generic serialization methods.
     """
 
-    def dumps(self, object):
+    def dumps(self, object, fast=FAST_DUMPS):
+        if fast:
+            return serializer.dumps_f(object)
         return serializer.dumps(object)
 
-    def dumps_lazy(self, object):
+    def dumps_lazy(self, object, fast=FAST_DUMPS):
+        if fast:
+            return serializer.dumps_lazy_f(object)
         return serializer.dumps_lazy(object)
 
     def dumps_pretty(self, object):
