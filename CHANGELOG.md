@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Regression tests for session GC and translate_result fixes in REST plugin
 * New `DEBUG_SQL` configuration option (default `True`) to control debug-level SQL query logging in MySQL, SQLite, and PostgreSQL engine plugins
 * Tests covering session ACL validation and the ACL template predicates in the MVC utilities
+* Documentation of the AT test mode in the resources README, covering the hardcoded test credentials, the `AT_TEST_MODE` switch, the test endpoints and how to diagnose an authentication failure
+* Debug logging of the AT submission, recording the target URL with the version of the specification and the response received, so that the result code and the message of a rejected submission become diagnosable
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
 
 ### Changed
@@ -43,6 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated the AT test webservice certificate (`certificate.crt`), private key (`key.pem`) and source bundle (`TesteWebservices.pfx`) to the version published on 2026-07-10, valid until 2027-01-06, replacing the previous one that expired on 2026-07-18
 
 ### Fixed
+
+* Handling of a SOAP fault returned by the AT, whose code is a qualified name instead of a number, which raised a `ValueError` instead of the expected `ATAPIError` and discarded the fault message explaining the failure
 
 * A template included by another one now resolves its own relative includes against the directory it lives in
 * Templates whose file name has no extension are no longer rejected with an internal error

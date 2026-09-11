@@ -32,6 +32,7 @@ import colony
 
 from . import system
 from . import exceptions
+from . import mocks
 
 
 class APIATTest(colony.Test):
@@ -246,6 +247,241 @@ class APIATBaseTestCase(colony.ColonyTestCase):
         client = system.ATClient(plugin=None, certificate_info=None, test_mode=False)
         server_name = client.get_server_name()
         self.assertEqual(server_name, "production")
+
+    def test_submit_document_logging(self):
+        """
+        Tests that `_submit_document` logs the target URL of the submission
+        and the response received from the AT.
+        """
+
+        # creates the XML response of a successful submission, the one that
+        # carries neither a fault nor a return message
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body />
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        data = client._submit_document("https://at.example.com/ws", "<payload />")
+        self.assertEqual(data, xml_response)
+        self.assertEqual(
+            plugin.messages[0],
+            "Submitting AT document to 'https://at.example.com/ws' "
+            "using the version 1 of the specification",
+        )
+        self.assertEqual(
+            plugin.messages[-1],
+            "Received AT response with the status code 200 and the data: %s"
+            % xml_response,
+        )
+
+    def test_submit_document_logging_error_response(self):
+        """
+        Tests that `_submit_document` logs the response of a rejected
+        submission before the error is raised.
+        """
+
+        # creates the XML response of a submission rejected by the AT with
+        # an authentication error, the case that must remain diagnosable
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <RegisterInvoiceResponse>
+                    <codResultOper>40001</codResultOper>
+                    <msgResultOper>Credenciais invalidas</msgResultOper>
+                </RegisterInvoiceResponse>
+            </S:Body>
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client._submit_document(
+                "https://at.example.com/ws", "<payload />", version=2
+            )
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, 40001)
+        self.assertEqual(raised, True)
+        self.assertEqual(
+            plugin.messages[-1],
+            "Received AT response with the status code 200 and the data: %s"
+            % xml_response,
+        )
+
+    def test_submit_document_invalid_version(self):
+        """
+        Tests that `_submit_document` raises `ATVersionError` for an
+        unsupported version of the specification.
+        """
+
+        plugin = mocks.MockPlugin()
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client._submit_document(
+                "https://at.example.com/ws", "<payload />", version=3
+            )
+        except exceptions.ATVersionError:
+            raised = True
+        self.assertEqual(raised, True)
+
+        # no message should have been logged as the failure happens before
+        # the submission is performed
+        self.assertEqual(plugin.messages, [])
+
+    def test_submit_document_invalid_http_code(self):
+        """
+        Tests that `_submit_document` raises `ATAPIError` when the HTTP
+        status code of the response is not a successful one.
+        """
+
+        # creates an XML response free of AT errors, so that the failure
+        # comes exclusively from the HTTP status code
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body />
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(
+            received_message=xml_response, status_code=500
+        )
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client._submit_document("https://at.example.com/ws", "<payload />")
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, 500)
+        self.assertEqual(raised, True)
+        self.assertEqual(
+            plugin.messages[-1],
+            "Received AT response with the status code 500 and the data: %s"
+            % xml_response,
+        )
+
+    def test_submit_document_check_errors(self):
+        """
+        Tests that `_submit_document` uses the provided `check_errors`
+        callable instead of the default one of the version.
+        """
+
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body />
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        checked = []
+        client._submit_document(
+            "https://at.example.com/ws",
+            "<payload />",
+            check_errors=lambda data: checked.append(data),
+        )
+        self.assertEqual(checked, [xml_response])
+
+    def test_submit_document_invalid_http_code_non_xml(self):
+        """
+        Tests that `_submit_document` falls back to the raw data as the
+        details of the error when the response is not valid XML.
+        """
+
+        # creates a response that cannot be parsed as XML, the shape of a
+        # plain text error returned by an intermediate gateway that fails
+        # before the request reaches the AT
+        data_response = "504 Gateway Time-out"
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(
+            received_message=data_response, status_code=504
+        )
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client._submit_document(
+                "https://at.example.com/ws",
+                "<payload />",
+                check_errors=lambda data: None,
+            )
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, 504)
+            self.assertEqual(e.details, data_response)
+        self.assertEqual(raised, True)
+
+    def test_submit_document_reuses_http_client(self):
+        """
+        Tests that `_submit_document` reuses the HTTP client across
+        submissions instead of creating one per operation.
+        """
+
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body />
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = system.ATClient(
+            plugin=plugin,
+            ssl_plugin=mocks.MockSSLPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        client._submit_document("https://at.example.com/ws", "<payload />")
+        client._submit_document("https://at.example.com/ws", "<payload />")
+
+        # both submissions must have been performed, while the parameters
+        # of the client creation are only logged once (a single client)
+        self.assertEqual(len(http_client.requests), 2)
+        created = [
+            m for m in plugin.messages if m.startswith("Submitting AT information")
+        ]
+        self.assertEqual(len(created), 1)
 
     def test_get_at_document_id(self):
         """
@@ -671,6 +907,83 @@ class APIATBaseTestCase(colony.ColonyTestCase):
             raised = True
             self.assertEqual(e.error_code, 50001)
         self.assertEqual(raised, True)
+
+    def test_check_at_errors_v2_fault(self):
+        """
+        Tests that `_check_at_errors_v2` raises `ATAPIError` for a SOAP
+        fault whose code is a qualified name instead of a number.
+        """
+
+        # creates a sample SOAP fault, the shape used by the AT to report
+        # a failure of the WS-Security authentication
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <S:Fault>
+                    <faultcode>S:Client</faultcode>
+                    <faultstring>Invalid authentication credentials</faultstring>
+                </S:Fault>
+            </S:Body>
+        </S:Envelope>"""
+
+        client = system.ATClient(plugin=None, certificate_info=None)
+        raised = False
+        try:
+            client._check_at_errors_v2(xml_response)
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, "S:Client")
+            self.assertEqual(e.message, "Invalid authentication credentials")
+        self.assertEqual(raised, True)
+
+    def test_check_at_errors_v2_fault_numeric(self):
+        """
+        Tests that `_check_at_errors_v2` raises `ATAPIError` for a SOAP
+        fault whose code is a number, keeping it as an integer.
+        """
+
+        # creates a sample SOAP fault carrying a numeric code, the case
+        # that must keep its original integer based handling
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <S:Fault>
+                    <faultcode>40001</faultcode>
+                    <faultstring>Credenciais invalidas</faultstring>
+                </S:Fault>
+            </S:Body>
+        </S:Envelope>"""
+
+        client = system.ATClient(plugin=None, certificate_info=None)
+        raised = False
+        try:
+            client._check_at_errors_v2(xml_response)
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, 40001)
+        self.assertEqual(raised, True)
+
+    def test_check_at_errors_v2_fault_numeric_success(self):
+        """
+        Tests that `_check_at_errors_v2` does not raise for a fault code
+        that falls in the successful (`2xxxx`) range.
+        """
+
+        # creates a sample response whose fault code is a success one, the
+        # boundary that the numeric handling must keep honouring
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <S:Fault>
+                    <faultcode>20001</faultcode>
+                    <faultstring>Operacao concluida</faultstring>
+                </S:Fault>
+            </S:Body>
+        </S:Envelope>"""
+
+        client = system.ATClient(plugin=None, certificate_info=None)
+        # should not raise any exception
+        client._check_at_errors_v2(xml_response)
 
     def test_check_at_errors_v2_no_code(self):
         """
