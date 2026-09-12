@@ -48,6 +48,7 @@ CONFIG_NAMES = (
     "SENTRY_LEVEL",
     "SENTRY_SAMPLE_RATE",
     "SENTRY_SEND_REQUEST",
+    "SENTRY_SEND_QUERY",
     "SENTRY_SEND_USER",
     "SENTRY_BREADCRUMBS",
     "SENTRY_MAX_BREADCRUMBS",
@@ -125,6 +126,7 @@ class DiagnosticsSentryLifecycleTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(_system.level, system.DEFAULT_LEVEL)
         self.assertEqual(_system.sample_rate, system.DEFAULT_SAMPLE_RATE)
         self.assertEqual(_system.send_request, False)
+        self.assertEqual(_system.send_query, False)
         self.assertEqual(_system.send_user, True)
         self.assertEqual(_system.breadcrumbs, True)
         self.assertEqual(_system.max_breadcrumbs, system.DEFAULT_MAX_BREADCRUMBS)
@@ -280,6 +282,22 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(len(client.events), 1)
         self.assertEqual(_system._context().request, None)
 
+    def test_request_end_exception_stacktrace(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+        request = mocks.MockRequest()
+        _system.request_begin(request)
+
+        # the observers are notified while the handling of the exception is
+        # still in progress, so the traceback must reach the event instead of
+        # the failing location being lost for the main MVC path
+        try:
+            raise RuntimeError("problem")
+        except RuntimeError as exception:
+            _system.request_end(request, exception)
+
+        self.assertEqual(client.events[0]["stacktrace"], dict(frames=["frame"]))
+
     def test_request_end_swallows_error(self):
         client = mocks.MockRaisingSentryClient()
         _system = self._build_started(client=client)
@@ -300,6 +318,17 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(len(client.events), 1)
         self.assertEqual(client.events[0]["exception"].args[0], "invalid")
 
+    def test_request_exception_stacktrace(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+
+        try:
+            raise ValueError("invalid")
+        except ValueError as exception:
+            _system.request_exception(mocks.MockRequest(), exception, dict())
+
+        self.assertEqual(client.events[0]["stacktrace"], dict(frames=["frame"]))
+
     def test_request_exception_swallows_error(self):
         client = mocks.MockRaisingSentryClient()
         _system = self._build_started(client=client)
@@ -307,6 +336,50 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
         _system.request_exception(mocks.MockRequest(), ValueError("invalid"))
 
         self.assertEqual(len(client.events), 0)
+
+    def test_resolve_traceback(self):
+        _system = self._build_started()
+
+        try:
+            raise ValueError("invalid")
+        except ValueError as exception:
+            traceback_list = _system.resolve_traceback(exception)
+
+        self.assertNotEqual(traceback_list, None)
+
+    def test_resolve_traceback_execution_information(self):
+        _system = self._build_started()
+
+        # exercises the fallback to the execution information of the current
+        # thread, used under Python 2 where the exceptions do not carry a
+        # traceback of their own, note that under Python 3 both refer the very
+        # same structure, meaning that clearing one clears the other as well
+        # and that no traceback may be resolved for the exception
+        try:
+            raise ValueError("invalid")
+        except ValueError as exception:
+            exception.__traceback__ = None
+            traceback_list = _system.resolve_traceback(exception)
+
+        self.assertEqual(traceback_list, None)
+
+    def test_resolve_traceback_no_handling(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.resolve_traceback(ValueError("invalid")), None)
+
+    def test_resolve_traceback_unrelated_exception(self):
+        _system = self._build_started()
+
+        # the execution information of the current thread is only usable in
+        # case it refers the very same exception, as otherwise the traceback
+        # of an unrelated failure would be reported
+        try:
+            raise ValueError("invalid")
+        except ValueError:
+            traceback_list = _system.resolve_traceback(RuntimeError("other"))
+
+        self.assertEqual(traceback_list, None)
 
     def test_template_end(self):
         _system = self._build_started()
@@ -341,29 +414,64 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
         _system = self._build_started()
         _system.request_begin(mocks.MockRequest())
 
-        _system.sql_executed("SELECT 1", "sqlite", 12)
+        # the engines embed the values of the entities in the query, so only
+        # the operation of it may be recorded unless the text has been
+        # explicitly requested by the operator
+        _system.sql_executed("INSERT INTO omni_person VALUES ('secret')", "sqlite", 12)
 
         breadcrumb = _system._context().breadcrumbs[0]
         self.assertEqual(breadcrumb["category"], "query")
-        self.assertEqual(breadcrumb["message"], "SELECT 1")
+        self.assertEqual(breadcrumb["message"], "INSERT")
         self.assertEqual(breadcrumb["data"], dict(engine="sqlite", time=12))
 
+    def test_sql_executed_send_query(self):
+        _system = self._build_started(send_query=True)
+        _system.request_begin(mocks.MockRequest())
+
+        _system.sql_executed("SELECT 1", "sqlite", 12)
+
+        self.assertEqual(_system._context().breadcrumbs[0]["message"], "SELECT 1")
+
     def test_sql_executed_bytes(self):
-        _system = self._build_started()
+        _system = self._build_started(send_query=True)
         _system.request_begin(mocks.MockRequest())
 
         _system.sql_executed(b"SELECT 1", "sqlite", 12)
 
         self.assertEqual(_system._context().breadcrumbs[0]["message"], "SELECT 1")
 
+    def test_sql_executed_undecodable_bytes(self):
+        _system = self._build_started(send_query=True)
+        _system.request_begin(mocks.MockRequest())
+
+        # the engines provide the query encoded using the charset of the data
+        # source, so an undecodable byte must never break the operation that
+        # has just been performed, as the notification is a synchronous one
+        _system.sql_executed(b"SELECT '\xe1\xe9'", "mysql", 12)
+
+        message = _system._context().breadcrumbs[0]["message"]
+        self.assertEqual(message.startswith("SELECT"), True)
+
     def test_sql_executed_truncated(self):
-        _system = self._build_started()
+        _system = self._build_started(send_query=True)
         _system.request_begin(mocks.MockRequest())
 
         _system.sql_executed("A" * (system.MAX_QUERY_LENGTH + 100), "sqlite", 12)
 
         message = _system._context().breadcrumbs[0]["message"]
         self.assertEqual(len(message), system.MAX_QUERY_LENGTH)
+
+    def test_query_operation(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.query_operation("select * from omni"), "SELECT")
+        self.assertEqual(_system.query_operation("  UPDATE omni SET a = 1"), "UPDATE")
+        self.assertEqual(_system.query_operation("DELETE"), "DELETE")
+
+    def test_query_operation_empty(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.query_operation("   "), system.UNKNOWN_OPERATION)
 
     def test_add_breadcrumb_no_request(self):
         _system = self._build_started()
@@ -479,7 +587,7 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
 
         breadcrumbs = client.events[0]["breadcrumbs"]
         self.assertEqual(len(breadcrumbs), 1)
-        self.assertEqual(breadcrumbs[0]["message"], "SELECT 1")
+        self.assertEqual(breadcrumbs[0]["message"], "SELECT")
 
     def test_capture_context_request(self):
         client = mocks.MockSentryClient()
@@ -608,6 +716,57 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(tags, dict(method="GET"))
 
+    def test_build_tags_exception(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(status_code=200)
+
+        # the observers are notified before the upper layers assign the status
+        # code of the error response, so the one still set in the request must
+        # not be the one reported for a request that failed
+        tags = _system.build_tags(request, exception=RuntimeError("problem"))
+
+        self.assertEqual(tags["status_code"], "500")
+
+    def test_resolve_status_code(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(status_code=404)
+
+        self.assertEqual(_system.resolve_status_code(request), 404)
+
+    def test_resolve_status_code_exception(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(status_code=200)
+
+        exception = ValueError("not found")
+        exception.status_code = 404
+
+        self.assertEqual(_system.resolve_status_code(request, exception), 404)
+
+    def test_resolve_status_code_exception_default(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(status_code=200)
+
+        self.assertEqual(
+            _system.resolve_status_code(request, RuntimeError("problem")),
+            system.ERROR_STATUS_CODE,
+        )
+
+    def test_resolve_status_code_exception_invalid(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(status_code=200)
+
+        exception = ValueError("broken")
+        exception.status_code = "not a number"
+
+        self.assertEqual(
+            _system.resolve_status_code(request, exception), system.ERROR_STATUS_CODE
+        )
+
+    def test_resolve_status_code_raising_request(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.resolve_status_code(mocks.MockRaisingRequest()), None)
+
     def test_scrub_map(self):
         _system = self._build_started()
 
@@ -617,11 +776,46 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(scrubbed["api_key"], system.SCRUBBED_VALUE)
         self.assertEqual(scrubbed["quantity"], "12")
 
+    def test_scrub_map_nested(self):
+        _system = self._build_started()
+
+        # the MVC layer stores the parsed payload of a request as a nested
+        # map, so a sensitive field under a name that is not itself sensitive
+        # must still be scrubbed
+        scrubbed = _system.scrub_map(
+            dict(_json_data=dict(name="product", password="secret"))
+        )
+
+        self.assertEqual(scrubbed["_json_data"]["name"], "product")
+        self.assertEqual(scrubbed["_json_data"]["password"], system.SCRUBBED_VALUE)
+
     def test_scrub_map_empty(self):
         _system = self._build_started()
 
         self.assertEqual(_system.scrub_map(None), {})
         self.assertEqual(_system.scrub_map({}), {})
+
+    def test_scrub_value_sequence(self):
+        _system = self._build_started()
+
+        scrubbed = _system.scrub_value([dict(token="abc"), "plain", 12])
+
+        self.assertEqual(scrubbed[0]["token"], system.SCRUBBED_VALUE)
+        self.assertEqual(scrubbed[1], "plain")
+        self.assertEqual(scrubbed[2], "12")
+
+    def test_scrub_value_tuple(self):
+        _system = self._build_started()
+
+        scrubbed = _system.scrub_value((dict(secret="abc"),))
+
+        self.assertEqual(scrubbed[0]["secret"], system.SCRUBBED_VALUE)
+
+    def test_scrub_value_scalar(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.scrub_value(12), "12")
+        self.assertEqual(_system.scrub_value("plain"), "plain")
 
     def test_is_sensitive(self):
         _system = self._build_started()

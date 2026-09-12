@@ -190,6 +190,24 @@ class SentryClientDsnTestCase(colony.ColonyTestCase):
             "https://sentry.example.com/prefix/api/42/envelope/",
         )
 
+    def test_parse_dsn_ipv6(self):
+        client = self._build_client()
+
+        structure = client.parse_dsn("https://public@[2001:db8::1]/42")
+
+        self.assertEqual(
+            structure["envelope_url"], "https://[2001:db8::1]/api/42/envelope/"
+        )
+
+    def test_parse_dsn_ipv6_port(self):
+        client = self._build_client()
+
+        structure = client.parse_dsn("https://public@[2001:db8::1]:9000/42")
+
+        self.assertEqual(
+            structure["envelope_url"], "https://[2001:db8::1]:9000/api/42/envelope/"
+        )
+
     def test_parse_dsn_no_scheme(self):
         client = self._build_client()
 
@@ -320,6 +338,20 @@ class SentryClientFrameTestCase(colony.ColonyTestCase):
 
         self.assertEqual(client.is_in_app("/omni/sales/src/system.py"), True)
         self.assertEqual(client.is_in_app("/usr/lib/python/json.py"), False)
+
+    def test_is_in_app_sibling_path(self):
+        client = self._build_client(in_app_paths=["/opt/app"])
+
+        # a sibling directory sharing the prefix of an application path must
+        # not be considered to be contained in it, as otherwise the frames of
+        # unrelated code would be highlighted and used in the grouping
+        self.assertEqual(client.is_in_app("/opt/app/src/system.py"), True)
+        self.assertEqual(client.is_in_app("/opt/application/system.py"), False)
+
+    def test_is_in_app_exact_path(self):
+        client = self._build_client(in_app_paths=["/opt/app/system.py"])
+
+        self.assertEqual(client.is_in_app("/opt/app/system.py"), True)
 
     def test_is_in_app_no_paths(self):
         client = self._build_client()
@@ -551,6 +583,21 @@ class SentryClientSubmissionTestCase(colony.ColonyTestCase):
         self.assertEqual(len(client.events), 0)
         self.assertEqual(len(http_client.requests), 1)
 
+    def test_flush_stops_on_refusal(self):
+        response = mocks.MockHTTPResponse(status_code=system.RATE_LIMIT_CODE)
+        http_client = mocks.MockHTTPClient(
+            responses=[response, mocks.MockHTTPResponse()]
+        )
+        client = self._build_client(http_client=http_client, max_length=16)
+        client.submit_event(client.build_event(message="first"))
+        client.submit_event(client.build_event(message="second"))
+
+        client.flush()
+
+        # the refusal of the first envelope must stop the batch, as no useful
+        # purpose is served by insisting on an endpoint that is refusing them
+        self.assertEqual(len(http_client.requests), 1)
+
     def test_submit_envelope_auth_header(self):
         http_client = mocks.MockHTTPClient()
         client = self._build_client(http_client=http_client)
@@ -579,6 +626,51 @@ class SentryClientSubmissionTestCase(colony.ColonyTestCase):
         self.assertEqual(result, False)
         self.assertEqual(client.is_enabled(), False)
         self.assertEqual(client._retry_after > time.time() + 100.0, True)
+
+    def test_submit_envelope_rejected(self):
+        response = mocks.MockHTTPResponse(status_code=401)
+        http_client = mocks.MockHTTPClient(responses=[response])
+        client = self._build_client(http_client=http_client)
+
+        # an invalid credential must never be reported as an accepted event,
+        # as the event has effectively been lost at that point
+        result = client.submit_envelope(client.build_event(message="problem"))
+
+        self.assertEqual(result, False)
+        self.assertEqual(client.is_enabled(), True)
+
+    def test_submit_envelope_server_error(self):
+        response = mocks.MockHTTPResponse(status_code=503)
+        http_client = mocks.MockHTTPClient(responses=[response])
+        client = self._build_client(http_client=http_client)
+
+        self.assertEqual(
+            client.submit_envelope(client.build_event(message="problem")), False
+        )
+
+    def test_submit_envelope_accepted(self):
+        response = mocks.MockHTTPResponse(status_code=204)
+        http_client = mocks.MockHTTPClient(responses=[response])
+        client = self._build_client(http_client=http_client)
+
+        self.assertEqual(
+            client.submit_envelope(client.build_event(message="problem")), True
+        )
+
+    def test_is_success(self):
+        client = self._build_client()
+
+        self.assertEqual(client.is_success(200), True)
+        self.assertEqual(client.is_success(204), True)
+        self.assertEqual(client.is_success(299), True)
+        self.assertEqual(client.is_success(199), False)
+        self.assertEqual(client.is_success(300), False)
+        self.assertEqual(client.is_success(500), False)
+
+    def test_is_success_no_status(self):
+        client = self._build_client()
+
+        self.assertEqual(client.is_success(None), False)
 
     def test_retry_delay(self):
         client = self._build_client()

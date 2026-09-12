@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import sys
 import random
 import logging
 import threading
@@ -94,6 +95,14 @@ MAX_QUERY_LENGTH = 1024
 """ The maximum number of characters of a query kept in the
 breadcrumb that describes it """
 
+UNKNOWN_OPERATION = "UNKNOWN"
+""" The operation reported for a query from which no leading
+keyword may be determined """
+
+ERROR_STATUS_CODE = 500
+""" The status code reported for a request that failed with an
+exception that does not define one of its own """
+
 
 class DiagnosticsSentry(colony.System):
     """
@@ -125,6 +134,7 @@ class DiagnosticsSentry(colony.System):
             "SENTRY_SAMPLE_RATE", DEFAULT_SAMPLE_RATE, cast=float
         )
         self.send_request = colony.conf("SENTRY_SEND_REQUEST", False, cast=bool)
+        self.send_query = colony.conf("SENTRY_SEND_QUERY", False, cast=bool)
         self.send_user = colony.conf("SENTRY_SEND_USER", True, cast=bool)
         self.breadcrumbs = colony.conf("SENTRY_BREADCRUMBS", True, cast=bool)
         self.max_breadcrumbs = colony.conf(
@@ -239,7 +249,11 @@ class DiagnosticsSentry(colony.System):
         """
 
         if exception:
-            self.capture_safe(exception=exception, request=request)
+            self.capture_safe(
+                exception=exception,
+                traceback_list=self.resolve_traceback(exception),
+                request=request,
+            )
 
         context = self._context()
         context.request = None
@@ -260,7 +274,41 @@ class DiagnosticsSentry(colony.System):
         by the MVC layer.
         """
 
-        self.capture_safe(exception=exception, request=request)
+        self.capture_safe(
+            exception=exception,
+            traceback_list=self.resolve_traceback(exception),
+            request=request,
+        )
+
+    def resolve_traceback(self, exception):
+        """
+        Retrieves the traceback associated with the provided exception, note
+        that the observers are notified while the handling of the exception
+        is still in progress, meaning that the execution information is
+        still available for the current thread.
+
+        :type exception: Exception
+        :param exception: The exception whose traceback is going to be
+        retrieved.
+        :rtype: Traceback
+        :return: The traceback associated with the exception or an invalid
+        value in case it may not be determined.
+        """
+
+        # tries to obtain the traceback directly from the exception, as
+        # this is the most reliable source of it, note that under Python 2
+        # the exceptions do not carry their own traceback
+        traceback_list = getattr(exception, "__traceback__", None)
+        if traceback_list:
+            return traceback_list
+
+        # falls back to the execution information of the current thread,
+        # using it only in case it refers the very same exception so that
+        # the traceback of an unrelated one is never reported
+        _type, value, traceback_list = sys.exc_info()
+        if value == exception:
+            return traceback_list
+        return None
 
     def template_end(self, identifier, template_file=None):
         """
@@ -304,11 +352,39 @@ class DiagnosticsSentry(colony.System):
         :param time: The amount of time (in milliseconds) taken.
         """
 
+        # decodes the query in a permissive fashion as the engines provide
+        # it already encoded using the charset of the data source, meaning
+        # that an undecodable byte must never break the operation that has
+        # just been performed (the notification is a synchronous one)
         is_bytes = type(query) == colony.legacy.BYTES
-        query = query.decode("utf-8") if is_bytes else query
-        self.add_breadcrumb(
-            "query", query[:MAX_QUERY_LENGTH], dict(engine=engine, time=time)
-        )
+        query = query.decode("utf-8", "replace") if is_bytes else query
+
+        # determines the message of the breadcrumb, note that the text of
+        # the query is only used in case it has been explicitly requested,
+        # as the engines embed the values of the entities in it
+        if self.send_query:
+            message = query[:MAX_QUERY_LENGTH]
+        else:
+            message = self.query_operation(query)
+
+        self.add_breadcrumb("query", message, dict(engine=engine, time=time))
+
+    def query_operation(self, query):
+        """
+        Retrieves the operation of the provided query, meaning the leading
+        keyword of it, to be used in the breadcrumbs whenever the text of
+        the query itself may not be recorded.
+
+        :type query: String
+        :param query: The query whose operation is going to be retrieved.
+        :rtype: String
+        :return: The operation of the provided query.
+        """
+
+        query = query.strip()
+        if not query:
+            return UNKNOWN_OPERATION
+        return query.split(None, 1)[0].upper()
 
     def add_breadcrumb(self, category, message, data=None):
         """
@@ -424,7 +500,7 @@ class DiagnosticsSentry(colony.System):
                 stacktrace=stacktrace,
                 request=self.build_request(request),
                 user=self.build_user(request),
-                tags=self.build_tags(request),
+                tags=self.build_tags(request, exception=exception),
                 breadcrumbs=context.breadcrumbs,
             )
             return self.client.submit_event(event)
@@ -514,7 +590,7 @@ class DiagnosticsSentry(colony.System):
 
         return user or None
 
-    def build_tags(self, request):
+    def build_tags(self, request, exception=None):
         """
         Builds the map of tags to be associated with the event, these
         are the values by which the events may be searched and grouped
@@ -522,6 +598,9 @@ class DiagnosticsSentry(colony.System):
 
         :type request: RESTRequest
         :param request: The request that provides the context.
+        :type exception: Exception
+        :param exception: The exception that originated the event, used in
+        the determination of the status code of the request.
         :rtype: Dictionary
         :return: The map of tags of the event.
         """
@@ -530,13 +609,45 @@ class DiagnosticsSentry(colony.System):
             return None
 
         tags = dict(method=request.get_method())
-        try:
-            status_code = request.get_status_code()
-        except Exception:
-            status_code = None
+        status_code = self.resolve_status_code(request, exception)
         if status_code:
             tags["status_code"] = str(status_code)
         return tags
+
+    def resolve_status_code(self, request, exception=None):
+        """
+        Determines the status code that is going to be reported for the
+        provided request, note that in case an exception is provided the
+        status code is derived from it, as the one of the request has not
+        been assigned by the upper layers yet.
+
+        :type request: RESTRequest
+        :param request: The request whose status code is going to be
+        determined.
+        :type exception: Exception
+        :param exception: The exception that originated the event.
+        :rtype: int
+        :return: The status code to be reported for the request.
+        """
+
+        # in case an exception is provided the status code is taken from it
+        # defaulting to the internal error one, this is required as the
+        # observers are notified before the upper layers assign the status
+        # code of the error response to the request
+        if exception:
+            status_code = getattr(exception, "status_code", ERROR_STATUS_CODE)
+            try:
+                return int(status_code)
+            except (TypeError, ValueError):
+                return ERROR_STATUS_CODE
+
+        # otherwise uses the one currently set in the request, note that the
+        # retrieval is performed in a safe fashion as it may not be available
+        # for some of the more exotic kinds of request
+        try:
+            return request.get_status_code()
+        except Exception:
+            return None
 
     def scrub_map(self, values_map):
         """
@@ -555,11 +666,35 @@ class DiagnosticsSentry(colony.System):
         scrubbed = dict()
         for name, value in colony.legacy.items(values_map):
             scrubbed[name] = (
-                SCRUBBED_VALUE
-                if self.is_sensitive(name)
-                else colony.legacy.UNICODE(value)
+                SCRUBBED_VALUE if self.is_sensitive(name) else self.scrub_value(value)
             )
         return scrubbed
+
+    def scrub_value(self, value):
+        """
+        Scrubs the provided value, descending into it in case it's a
+        container so that a sensitive field nested under a name that is
+        not itself sensitive is scrubbed as expected.
+
+        :type value: Object
+        :param value: The value to be scrubbed.
+        :rtype: Object
+        :return: The scrubbed version of the provided value.
+        """
+
+        # in case the value is a map descends into it, reusing the scrubbing
+        # of the maps so that the names of the nested fields are verified
+        if isinstance(value, dict):
+            return self.scrub_map(value)
+
+        # in case the value is a sequence scrubs each of its items, note that
+        # the strings are excluded as they are the scalar values themselves
+        if isinstance(value, (list, tuple)):
+            return [self.scrub_value(item) for item in value]
+
+        # converts the (scalar) value into its textual representation, as the
+        # payload of the event must be serializable
+        return colony.legacy.UNICODE(value)
 
     def is_sensitive(self, name):
         """

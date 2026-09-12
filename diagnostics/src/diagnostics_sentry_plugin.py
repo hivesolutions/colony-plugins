@@ -75,4 +75,6 @@ class DiagnosticsSentryPlugin(colony.Plugin):
         :return: If the event has been accepted for submission.
         """
 
-        return self.system.capture(exception=exception, message=message, level=level)
+        return self.system.capture_safe(
+            exception=exception, message=message, level=level
+        )

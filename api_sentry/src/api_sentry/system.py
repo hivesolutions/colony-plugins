@@ -313,8 +313,12 @@ class SentryClient(object):
             raise exceptions.InvalidDsn(dsn)
 
         # rebuilds the network location taking into account the possible
-        # existence of an explicit port in the provided DSN
+        # existence of an explicit port in the provided DSN, note that an
+        # IPv6 literal must be kept enclosed in brackets so that it remains
+        # distinguishable from the port that may follow it
         netloc = parsed.hostname
+        if ":" in netloc:
+            netloc = "[%s]" % netloc
         if parsed.port:
             netloc += ":%d" % parsed.port
 
@@ -434,11 +438,18 @@ class SentryClient(object):
         :return: If the file is considered to belong to the application.
         """
 
+        # verifies the containment of the file in each of the application
+        # paths, note that the separator is appended to the path so that a
+        # sibling directory sharing the same prefix is not considered to be
+        # contained in it (eg: "/opt/application" in "/opt/app")
         if not self.in_app_paths:
             return False
         file_path = os.path.abspath(file_path)
         for in_app_path in self.in_app_paths:
-            if file_path.startswith(os.path.abspath(in_app_path)):
+            in_app_path = os.path.abspath(in_app_path)
+            if file_path == in_app_path:
+                return True
+            if file_path.startswith(in_app_path + os.sep):
                 return True
         return False
 
@@ -600,10 +611,13 @@ class SentryClient(object):
 
         # submits each of the pending events, note that this is a blocking
         # operation and runs outside of the lock so that other threads are
-        # not prevented from buffering new events
+        # not prevented from buffering new events, in case one of the events
+        # is refused the remaining ones are discarded as no useful purpose
+        # is served by insisting on a endpoint that is refusing the events
         for event in events:
             try:
-                self.submit_envelope(event)
+                if not self.submit_envelope(event):
+                    break
             except Exception:
                 if raise_e:
                     raise
@@ -676,7 +690,25 @@ class SentryClient(object):
             self._retry_after = time.time() + self._retry_delay(http_response)
             return False
 
-        return True
+        # verifies that the endpoint has effectively accepted the event, as
+        # otherwise (eg: invalid credentials or rejected payload) the event
+        # has been lost and the caller must not be told otherwise
+        return self.is_success(status_code)
+
+    def is_success(self, status_code):
+        """
+        Verifies if the provided status code is one that indicates that the
+        event has been accepted by the endpoint.
+
+        :type status_code: int
+        :param status_code: The status code to be verified.
+        :rtype: bool
+        :return: If the status code indicates a successful submission.
+        """
+
+        if status_code == None:
+            return False
+        return status_code >= 200 and status_code < 300
 
     def _retry_delay(self, http_response):
         """
