@@ -31,37 +31,39 @@ __license__ = "Apache License, Version 2.0"
 import colony
 
 
-class DiagnosticsPlugin(colony.Plugin):
+class APISentryException(colony.ColonyException):
     """
-    The main class for plugin responsible for the gathering
-    and processing of diagnostics information to be used
-    both for profiling and debugging.
+    The API Sentry exception class.
     """
 
-    id = "pt.hive.colony.plugins.diagnostics"
-    name = "Diagnostics Engine"
-    description = "Diagnostics Engine Plugin"
-    version = "1.0.0"
-    author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT,
-    ]
-    capabilities = ["diagnostics", "test"]
-    main_modules = ["diagnostics"]
+    message = None
+    """ The exception's message """
 
-    def load_plugin(self):
-        colony.Plugin.load_plugin(self)
-        import diagnostics
 
-        self.diagnostics = diagnostics.Diagnostics(self)
-        self.test = diagnostics.DiagnosticsTest(self)
-        self.diagnostics.start()
+class InvalidDsn(APISentryException):
+    """
+    The invalid DSN class, raised whenever the provided
+    DSN string does not contain the complete set of
+    components required for the submission of events.
+    """
 
-    def unload_plugin(self):
-        colony.Plugin.unload_plugin(self)
-        self.diagnostics.stop()
+    def __init__(self, message):
+        """
+        Constructor of the class.
 
-    def get_data(self):
-        return self.diagnostics.get_data()
+        :type message: String
+        :param message: The message to be printed.
+        """
+
+        APISentryException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "Invalid DSN - %s" % self.message

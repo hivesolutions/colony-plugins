@@ -88,6 +88,42 @@ class MockValidatedControllerNoHandler(object):
         return self._validate_reasons
 
 
+class MockSerializer(object):
+    def __init__(self, mime_type="application/json"):
+        self._mime_type = mime_type
+
+    def dumps(self, value):
+        return "serialized"
+
+    def get_mime_type(self):
+        return self._mime_type
+
+
+class MockSerializedController(object):
+    def __init__(self):
+        self.status_code = None
+        self.contents = None
+        self.messages = []
+
+    def debug(self, message):
+        self.messages.append(message)
+
+    def warning(self, message):
+        self.messages.append(message)
+
+    def set_status_code(self, request, status_code):
+        self.status_code = status_code
+
+    def set_contents(self, request, contents, content_type=None):
+        self.contents = contents
+
+    def get_exception_map(self, exception, request):
+        return dict(
+            exception=dict(message=str(exception), traceback=None),
+            environment=dict(method="GET"),
+        )
+
+
 class MockTemplateFile(object):
     def __init__(self):
         self.assigns = {}

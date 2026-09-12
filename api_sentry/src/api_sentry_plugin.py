@@ -31,37 +31,39 @@ __license__ = "Apache License, Version 2.0"
 import colony
 
 
-class DiagnosticsPlugin(colony.Plugin):
+class APISentryPlugin(colony.Plugin):
     """
-    The main class for plugin responsible for the gathering
-    and processing of diagnostics information to be used
-    both for profiling and debugging.
+    The main class for the Sentry API plugin.
     """
 
-    id = "pt.hive.colony.plugins.diagnostics"
-    name = "Diagnostics Engine"
-    description = "Diagnostics Engine Plugin"
+    id = "pt.hive.colony.plugins.api.sentry"
+    name = "Sentry API"
+    description = "The plugin that offers the Sentry API"
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
-    platforms = [
-        colony.CPYTHON_ENVIRONMENT,
-        colony.JYTHON_ENVIRONMENT,
-        colony.IRON_PYTHON_ENVIRONMENT,
+    platforms = [colony.CPYTHON_ENVIRONMENT]
+    capabilities = ["api.sentry", "test"]
+    dependencies = [
+        colony.PluginDependency("pt.hive.colony.plugins.client.http"),
+        colony.PluginDependency("pt.hive.colony.plugins.misc.json"),
     ]
-    capabilities = ["diagnostics", "test"]
-    main_modules = ["diagnostics"]
+    main_modules = ["api_sentry"]
 
     def load_plugin(self):
         colony.Plugin.load_plugin(self)
-        import diagnostics
+        import api_sentry
 
-        self.diagnostics = diagnostics.Diagnostics(self)
-        self.test = diagnostics.DiagnosticsTest(self)
-        self.diagnostics.start()
+        self.system = api_sentry.APISentry(self)
+        self.test = api_sentry.APISentryTest(self)
 
-    def unload_plugin(self):
-        colony.Plugin.unload_plugin(self)
-        self.diagnostics.stop()
+    def create_client(self, api_attributes):
+        """
+        Creates a client, with the given API attributes.
 
-    def get_data(self):
-        return self.diagnostics.get_data()
+        :type api_attributes: Dictionary
+        :param api_attributes: The API attributes to be used.
+        :rtype: SentryClient
+        :return: The created client.
+        """
+
+        return self.system.create_client(api_attributes)

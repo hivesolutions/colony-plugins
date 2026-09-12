@@ -202,6 +202,7 @@ class WSGI(colony.System):
             except Exception:
                 code = 500
             status = "Not OK"
+            self.log_exception(exception, code=code)
             message = self.error_message(exception, code=code)
             is_unicode = colony.legacy.is_unicode(message)
             if is_unicode:
@@ -287,6 +288,35 @@ class WSGI(colony.System):
         # returns the content sequence to the caller method so that is
         # possible to render the appropriate message to the client
         return content
+
+    def log_exception(self, exception, code=500):
+        """
+        Logs the exception that prevented the handling of a request from
+        being completed, so that it becomes visible to the complete set of
+        logging handlers instead of being only sent to the client.
+
+        Only the errors considered to be server side ones are logged with
+        error verbosity, as the remaining ones are part of the expected
+        operation of the server (eg: a resource that does not exist).
+
+        :type exception: Exception
+        :param exception: The exception that is going to be logged.
+        :type code: int
+        :param code: The HTTP status code associated with the exception.
+        """
+
+        # determines the logging method to be used taking into account if
+        # the error is considered to be a server side one, then uses it to
+        # log the exception together with its execution information, so
+        # that the traceback becomes available to the handlers
+        is_server = code >= 500
+        logging_method = self.plugin.error if is_server else self.plugin.debug
+        logging_method(
+            "There was an exception handling the request (%s): "
+            % exception.__class__.__name__
+            + colony.legacy.UNICODE(exception),
+            exc_info=True,
+        )
 
     def error_message(self, error, code=500):
         """

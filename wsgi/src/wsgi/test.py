@@ -101,6 +101,12 @@ class WSGISystemTestCase(colony.ColonyTestCase):
         self.assertTrue(start_response.status.startswith("500"))
         self.assertTrue(len(content) > 0)
 
+        # the failure must reach the logging infra-structure, as otherwise it
+        # would only be sent to the client and become invisible to the
+        # handlers that gather the errors of the infra-structure
+        levels = [level for level, _message, _kwargs in mock_plugin.messages]
+        self.assertIn("error", levels)
+
     def test_handle_exception_with_status_code(self):
         mock_plugin = mocks.MockPlugin()
 
@@ -161,6 +167,26 @@ class WSGISystemTestCase(colony.ColonyTestCase):
         self.assertIn("X-Frame-Options", header_names)
         self.assertIn("X-XSS-Protection", header_names)
         self.assertIn("X-Content-Type-Options", header_names)
+
+    def test_log_exception(self):
+        mock_plugin = mocks.MockPlugin()
+        wsgi = system.WSGI(mock_plugin)
+
+        wsgi.log_exception(Exception("Test error"), code=500)
+
+        level, message, kwargs = mock_plugin.messages[0]
+        self.assertEqual(level, "error")
+        self.assertIn("Test error", message)
+        self.assertEqual(kwargs["exc_info"], True)
+
+    def test_log_exception_client_error(self):
+        mock_plugin = mocks.MockPlugin()
+        wsgi = system.WSGI(mock_plugin)
+
+        wsgi.log_exception(Exception("Not found"), code=404)
+
+        level, _message, _kwargs = mock_plugin.messages[0]
+        self.assertEqual(level, "debug")
 
     def test_error_message(self):
         mock_plugin = mocks.MockPlugin()
