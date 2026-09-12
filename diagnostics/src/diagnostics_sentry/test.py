@@ -881,7 +881,16 @@ class SentryHandlerTestCase(DiagnosticsSentryBaseTestCase):
         _system = self._build_started(client=client)
         record = self._build_record("problem")
 
-        _system.handler.emit(record)
+        # silences the error handling of the logging infra-structure while the
+        # emission is performed, as the failure is the expected outcome of the
+        # test and the complete traceback of it would otherwise be printed to
+        # the standard error stream
+        raise_exceptions = logging.raiseExceptions
+        logging.raiseExceptions = False
+        try:
+            _system.handler.emit(record)
+        finally:
+            logging.raiseExceptions = raise_exceptions
 
         self.assertEqual(len(client.events), 0)
 
