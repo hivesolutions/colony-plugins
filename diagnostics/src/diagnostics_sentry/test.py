@@ -352,16 +352,18 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
 
         # exercises the fallback to the execution information of the current
         # thread, used under Python 2 where the exceptions do not carry a
-        # traceback of their own, note that under Python 3 both refer the very
-        # same structure, meaning that clearing one clears the other as well
-        # and that no traceback may be resolved for the exception
+        # traceback of their own, note that the value held by the execution
+        # information after the traceback of the exception has been cleared
+        # is itself dependent on the version of the interpreter, so it's the
+        # source of the fallback that is verified and not a fixed value
         try:
             raise ValueError("invalid")
         except ValueError as exception:
             exception.__traceback__ = None
             traceback_list = _system.resolve_traceback(exception)
+            expected = sys.exc_info()[2]
 
-        self.assertEqual(traceback_list, None)
+        self.assertEqual(traceback_list, expected)
 
     def test_resolve_traceback_no_handling(self):
         _system = self._build_started()
