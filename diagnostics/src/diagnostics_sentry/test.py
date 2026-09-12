@@ -71,6 +71,7 @@ class DiagnosticsSentryTest(colony.Test):
             DiagnosticsSentryCaptureTestCase,
             DiagnosticsSentryContextTestCase,
             SentryHandlerTestCase,
+            DiagnosticsSentryPluginTestCase,
         )
 
     def set_up(self, test_case):
@@ -913,3 +914,17 @@ class SentryHandlerTestCase(DiagnosticsSentryBaseTestCase):
 
     def _build_record(self, message, level=logging.ERROR):
         return logging.LogRecord("colony", level, __file__, 1, message, None, None)
+
+
+class DiagnosticsSentryPluginTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Diagnostics Sentry Plugin test case"
+
+    def test_capabilities(self):
+        # the reporter is not a dependency of any other plugin, meaning that
+        # the plugin manager only loads it in case it's flagged as a startup
+        # plugin, without such flag it would be installed but never loaded
+        # and no error would ever be reported
+        self.assertEqual("startup" in self.plugin.capabilities, True)
+        self.assertEqual("error_reporter" in self.plugin.capabilities, True)

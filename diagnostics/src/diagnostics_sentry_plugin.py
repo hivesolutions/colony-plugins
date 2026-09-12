@@ -44,7 +44,7 @@ class DiagnosticsSentryPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["error_reporter", "test"]
+    capabilities = ["startup", "error_reporter", "test"]
     dependencies = [colony.PluginDependency("pt.hive.colony.plugins.api.sentry")]
     main_modules = ["diagnostics_sentry"]
 
