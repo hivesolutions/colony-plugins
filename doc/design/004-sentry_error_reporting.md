@@ -2,14 +2,14 @@
 
 ## Document Information
 
-| Field               | Value                                            |
-| ------------------- | ------------------------------------------------ |
-| **Document Number** | COP-004                                          |
-| **Date**            | 2026-09-11                                       |
-| **Author**          | João Magalhães <joamag@hive.pt>                  |
-| **Subject**         | Error Reporting to Sentry for MVC Solutions      |
-| **Status**          | Implemented                                      |
-| **Version**         | 1.0                                              |
+| Field               | Value                                       |
+| ------------------- | ------------------------------------------- |
+| **Document Number** | COP-004                                     |
+| **Date**            | 2026-09-11                                  |
+| **Author**          | João Magalhães <joamag@hive.pt>             |
+| **Subject**         | Error Reporting to Sentry for MVC Solutions |
+| **Status**          | Implemented                                 |
+| **Version**         | 1.0                                         |
 
 ## Description
 
@@ -23,10 +23,10 @@ The gap is widest in two places. Controller exceptions are caught by the `serial
 
 Two plugins, one providing the transport and the other the reporting, plus a single notification added to the MVC layer. Nothing is added to the framework core, so the reporting remains optional and both runtime loadable and unloadable.
 
-| Component            | Responsibility                                                                                 |
-| -------------------- | ---------------------------------------------------------------------------------------------- |
-| `api_sentry`         | DSN parsing, event payload construction, envelope framing, submission and rate limit handling  |
-| `diagnostics_sentry` | Log record capturing, request context, breadcrumbs, scrubbing and event assembly               |
+| Component            | Responsibility                                                                                |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| `api_sentry`         | DSN parsing, event payload construction, envelope framing, submission and rate limit handling |
+| `diagnostics_sentry` | Log record capturing, request context, breadcrumbs, scrubbing and event assembly              |
 
 The client is deliberately implemented in house rather than through a dependency on the official SDK, both because the framework still declares Python 2.7 support, which the official SDK dropped, and because its automatic instrumentation targets frameworks that Colony is not.
 
@@ -36,12 +36,12 @@ A logging handler attached to the `colony` logger is the primary capture mechani
 
 | Surface            | Mechanism                                                                       |
 | ------------------ | ------------------------------------------------------------------------------- |
-| Controller actions | The `request.exception` event, notified by the `serialized` decorator            |
-| REST dispatch      | The `request.end` event, which already carries the exception when one is raised  |
-| WSGI entrypoint    | The logging handler, from the error logged when a request fails                  |
+| Controller actions | The `request.exception` event, notified by the `serialized` decorator           |
+| REST dispatch      | The `request.end` event, which already carries the exception when one is raised |
+| WSGI entrypoint    | The logging handler, from the error logged when a request fails                 |
 | HTTP service       | The logging handler, from the exception processing of the service               |
-| Scheduler tasks    | The logging handler, from the error logged when a task fails                     |
-| Explicit logging   | The logging handler, at error and critical level by default                      |
+| Scheduler tasks    | The logging handler, from the error logged when a task fails                    |
+| Explicit logging   | The logging handler, at error and critical level by default                     |
 
 The `request.exception` notification is required because the `serialized` decorator does not re-raise once a serializer or an exception handler is defined, meaning that the exception would otherwise never reach any other surface. It is emitted only where the exception is already being handled, so no control flow is changed.
 
@@ -65,21 +65,21 @@ The engines provide the query already encoded using the charset of the data sour
 
 Every value is read through the standard configuration infra-structure. The plugin is completely inert while no DSN is defined, so loading it in development costs nothing.
 
-| Name                    | Type   | Default                             | Description                                                             |
-| ----------------------- | ------ | ----------------------------------- | ----------------------------------------------------------------------- |
-| `SENTRY_DSN`            | `str`  | `None`                              | The DSN of the target project, reporting is disabled while unset        |
-| `SENTRY_ENVIRONMENT`    | `str`  | The plugin manager environment      | The name of the environment reported with each event                    |
-| `SENTRY_RELEASE`        | `str`  | The plugin manager version          | The release identifier reported with each event                         |
-| `SENTRY_SERVER_NAME`    | `str`  | The host name of the machine        | The name of the server reported with each event                         |
-| `SENTRY_LEVEL`          | `str`  | `ERROR`                             | The minimum level of the log records that are captured                  |
-| `SENTRY_SAMPLE_RATE`    | `float`| `1.0`                               | The fraction of the events that are effectively submitted               |
-| `SENTRY_SEND_REQUEST`   | `bool` | `False`                             | If the contents of the request are included in the events               |
-| `SENTRY_SEND_QUERY`     | `bool` | `False`                             | If the text of a query is recorded in its breadcrumb                    |
-| `SENTRY_SEND_USER`      | `bool` | `True`                              | If the address and the user of the request are included in the events   |
-| `SENTRY_BREADCRUMBS`    | `bool` | `True`                              | If the observed events are recorded as breadcrumbs                      |
-| `SENTRY_MAX_BREADCRUMBS`| `int`  | `50`                                | The number of breadcrumbs kept for each request                         |
-| `SENTRY_IGNORED`        | `list` | `ControllerValidationReasonFailed`  | The exception class names that are never reported                       |
-| `SENTRY_SESSION_ATTRIBUTES` | `list` | `[]`                            | The session attributes whose values are reported (eg: `system_company`) |
+| Name                        | Type    | Default                            | Description                                                             |
+| --------------------------- | ------- | ---------------------------------- | ----------------------------------------------------------------------- |
+| `SENTRY_DSN`                | `str`   | `None`                             | The DSN of the target project, reporting is disabled while unset        |
+| `SENTRY_ENVIRONMENT`        | `str`   | The plugin manager environment     | The name of the environment reported with each event                    |
+| `SENTRY_RELEASE`            | `str`   | The plugin manager version         | The release identifier reported with each event                         |
+| `SENTRY_SERVER_NAME`        | `str`   | The host name of the machine       | The name of the server reported with each event                         |
+| `SENTRY_LEVEL`              | `str`   | `ERROR`                            | The minimum level of the log records that are captured                  |
+| `SENTRY_SAMPLE_RATE`        | `float` | `1.0`                              | The fraction of the events that are effectively submitted               |
+| `SENTRY_SEND_REQUEST`       | `bool`  | `False`                            | If the contents of the request are included in the events               |
+| `SENTRY_SEND_QUERY`         | `bool`  | `False`                            | If the text of a query is recorded in its breadcrumb                    |
+| `SENTRY_SEND_USER`          | `bool`  | `True`                             | If the address and the user of the request are included in the events   |
+| `SENTRY_BREADCRUMBS`        | `bool`  | `True`                             | If the observed events are recorded as breadcrumbs                      |
+| `SENTRY_MAX_BREADCRUMBS`    | `int`   | `50`                               | The number of breadcrumbs kept for each request                         |
+| `SENTRY_IGNORED`            | `list`  | `ControllerValidationReasonFailed` | The exception class names that are never reported                       |
+| `SENTRY_SESSION_ATTRIBUTES` | `list`  | `[]`                               | The session attributes whose values are reported (eg: `system_company`) |
 
 ## Scrubbing
 

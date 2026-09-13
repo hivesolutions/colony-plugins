@@ -2,14 +2,14 @@
 
 ## Document Information
 
-| Field               | Value                                                     |
-| ------------------- | --------------------------------------------------------- |
-| **Document Number** | COP-003                                                   |
-| **Date**            | 2026-09-11                                                |
-| **Author**          | João Magalhães <joamag@hive.pt>                           |
-| **Subject**         | Translation of Template Trees into Python Bytecode        |
-| **Status**          | Implemented                                               |
-| **Version**         | 1.0                                                       |
+| Field               | Value                                              |
+| ------------------- | -------------------------------------------------- |
+| **Document Number** | COP-003                                            |
+| **Date**            | 2026-09-11                                         |
+| **Author**          | João Magalhães <joamag@hive.pt>                    |
+| **Subject**         | Translation of Template Trees into Python Bytecode |
+| **Status**          | Implemented                                        |
+| **Version**         | 1.0                                                |
 
 ## Description
 
@@ -77,12 +77,12 @@ For any template the compiler accepts, the compiled output must be byte identica
 
 ## Trade-offs
 
-| Aspect          | Benefit                                          | Cost                                                     |
-| --------------- | ------------------------------------------------ | -------------------------------------------------------- |
-| Render speed    | Around twice as fast for the accepted templates  | None at render time                                       |
-| Compilation     | Paid once per file, kept in the templates cache  | A small amount of work on the first parse of each file    |
-| Coverage        | The common content templates are accepted        | The templates using filters or inclusion keep the visitor |
-| Maintainability | The visitor stays the single reference           | Two rendering paths have to be kept equivalent            |
+| Aspect          | Benefit                                         | Cost                                                      |
+| --------------- | ----------------------------------------------- | --------------------------------------------------------- |
+| Render speed    | Around twice as fast for the accepted templates | None at render time                                       |
+| Compilation     | Paid once per file, kept in the templates cache | A small amount of work on the first parse of each file    |
+| Coverage        | The common content templates are accepted       | The templates using filters or inclusion keep the visitor |
+| Maintainability | The visitor stays the single reference          | Two rendering paths have to be kept equivalent            |
 
 ## Future work
 
