@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Error reporting to Sentry for any MVC based solution, covering controllers, the HTTP stack and background tasks - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Request, user and breadcrumb context in the reported errors, with sensitive values withheld unless explicitly enabled - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Reported errors now describe the operating system, the installed package versions, the plugin manager and the process in which they happened - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Concrete table inheritance as an alternative strategy for entity hierarchies, trading storage for reads without joins - [#25](https://github.com/hivesolutions/colony-plugins/issues/25)
 * Support for switching the inheritance strategy of every entity hierarchy at once, for migration and debugging purposes
 * Tool to migrate existing entity hierarchies between inheritance strategies, with backup, validation and dry-run

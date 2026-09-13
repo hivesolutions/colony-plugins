@@ -31,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import sys
 import json
 import time
+import platform
 
 import colony
 
@@ -376,6 +377,33 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
     def get_description():
         return "Sentry Client event test case"
 
+    def test_build_os(self):
+        client = self._build_client()
+
+        result = client.build_os()
+
+        self.assertEqual(result["name"], platform.system())
+        self.assertEqual(result["version"], platform.release())
+        self.assertEqual(result["build"], platform.version())
+        self.assertEqual(result["raw_description"], platform.platform())
+
+    def test_build_modules(self):
+        client = self._build_client()
+
+        modules = client.build_modules()
+
+        # the versions of the installed packages are only gathered for the
+        # Python versions that provide the metadata infra-structure, in which
+        # case the framework itself must be one of the packages gathered
+        try:
+            import importlib.metadata as metadata
+        except ImportError:
+            metadata = None
+        if metadata:
+            self.assertEqual(modules["colony"], metadata.version("colony"))
+        else:
+            self.assertEqual(modules, dict())
+
     def test_build_event(self):
         client = self._build_client()
 
@@ -387,6 +415,7 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
         self.assertEqual(event["server_name"], "omni-ldj")
         self.assertEqual(event["timestamp"].endswith("Z"), True)
         self.assertEqual(event["contexts"]["runtime"]["name"], "python")
+        self.assertEqual(event["contexts"]["os"]["name"], platform.system())
         self.assertEqual("exception" in event, False)
         self.assertEqual("environment" in event, False)
 
@@ -457,6 +486,56 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
         self.assertEqual(event["tags"], dict(route="omni/sales"))
         self.assertEqual(event["extra"], dict(status=500))
         self.assertEqual(event["breadcrumbs"], dict(values=[dict(message="query")]))
+
+    def test_build_event_contexts(self):
+        client = self._build_client()
+
+        event = client.build_event(
+            contexts=dict(
+                colony=dict(version="1.4.49"), runtime=dict(name="pypy", version="7.3")
+            )
+        )
+
+        # the provided contexts extend the ones describing the environment
+        # and take precedence over them in case both are defined
+        contexts = event["contexts"]
+        self.assertEqual(contexts["colony"], dict(version="1.4.49"))
+        self.assertEqual(contexts["runtime"], dict(name="pypy", version="7.3"))
+        self.assertEqual(contexts["os"]["name"], platform.system())
+
+    def test_build_event_modules(self):
+        client = self._build_client()
+        calls = []
+
+        def build_modules():
+            calls.append(True)
+            return dict(appier="1.46.0")
+
+        client.build_modules = build_modules
+
+        first = client.build_event()
+        second = client.build_event()
+
+        # the versions of the installed packages are gathered only once, as
+        # they remain the same for the complete lifetime of the process
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(first["modules"], dict(appier="1.46.0"))
+        self.assertEqual(second["modules"], dict(appier="1.46.0"))
+
+    def test_build_event_modules_error(self):
+        client = self._build_client()
+
+        def build_modules():
+            raise RuntimeError("invalid metadata")
+
+        client.build_modules = build_modules
+
+        # a failure in the gathering of the versions of the packages must
+        # never prevent the event from being built, and is not retried
+        event = client.build_event()
+
+        self.assertEqual("modules" in event, False)
+        self.assertEqual(client.modules, dict())
 
     def test_build_envelope(self):
         client = self._build_client()
