@@ -39,7 +39,7 @@ class MockPlugin(object):
 
 class MockJSONPlugin(object):
     def dumps(self, object):
-        return json.dumps(object, sort_keys=True)
+        return json.dumps(object, sort_keys=True, ensure_ascii=False)
 
 
 class MockClientHTTPPlugin(object):

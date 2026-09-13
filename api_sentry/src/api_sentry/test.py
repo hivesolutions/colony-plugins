@@ -568,6 +568,21 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
 
         envelope = client.build_envelope(event)
 
+        # the length of the payload must be measured in the charset used in its
+        # submission, as the endpoint rejects the complete envelope otherwise
+        lines = envelope.split("\n")
+        item_header = json.loads(lines[1])
+        self.assertEqual("acentuação" in lines[2], True)
+        self.assertEqual(item_header["length"], len(lines[2].encode("utf-8")))
+
+    def test_build_envelope_unicode_non_latin(self):
+        client = self._build_client()
+        event = client.build_event(message="preço em € para 你好")
+
+        # the characters that are not part of the latin charset must not
+        # prevent the envelope from being built, nor change its length
+        envelope = client.build_envelope(event)
+
         lines = envelope.split("\n")
         item_header = json.loads(lines[1])
         self.assertEqual(item_header["length"], len(lines[2].encode("utf-8")))

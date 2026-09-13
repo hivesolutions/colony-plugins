@@ -718,7 +718,10 @@ class SentryClient(object):
         payload = self.json_plugin.dumps(event)
 
         # creates both the envelope header, identifying the event and the
-        # target project, and the item header, describing the payload
+        # target project, and the item header, describing the payload, note
+        # that the length of the payload is measured in the charset used in
+        # its submission, as otherwise any non ASCII character would lead to
+        # the rejection of the complete envelope by the endpoint
         header = self.json_plugin.dumps(
             dict(
                 event_id=event["event_id"],
@@ -726,9 +729,8 @@ class SentryClient(object):
                 dsn=self.dsn,
             )
         )
-        item_header = self.json_plugin.dumps(
-            dict(type="event", length=len(colony.legacy.bytes(payload, force=True)))
-        )
+        payload_b = colony.legacy.bytes(payload, encoding=DEFAULT_CHARSET, force=True)
+        item_header = self.json_plugin.dumps(dict(type="event", length=len(payload_b)))
 
         # joins the various components of the envelope using the newline
         # character as the delimiter, as defined by the protocol
