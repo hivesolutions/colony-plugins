@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import os
 import sys
+import hashlib
 import logging
 import threading
 
@@ -55,6 +56,7 @@ CONFIG_NAMES = (
     "SENTRY_BREADCRUMBS",
     "SENTRY_MAX_BREADCRUMBS",
     "SENTRY_IGNORED",
+    "SENTRY_SESSION_ATTRIBUTES",
 )
 """ The complete set of configuration names used by the plugin,
 unset at the end of each one of the test cases """
@@ -134,6 +136,7 @@ class DiagnosticsSentryLifecycleTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(_system.breadcrumbs, True)
         self.assertEqual(_system.max_breadcrumbs, system.DEFAULT_MAX_BREADCRUMBS)
         self.assertEqual(_system.ignored, system.DEFAULT_IGNORED)
+        self.assertEqual(_system.session_attributes, system.DEFAULT_SESSION_ATTRIBUTES)
 
     def test_configuration_override(self):
         _system = self._build_system(
@@ -142,6 +145,7 @@ class DiagnosticsSentryLifecycleTestCase(DiagnosticsSentryBaseTestCase):
             send_request=True,
             send_user=False,
             max_breadcrumbs=10,
+            session_attributes="system_company;employee",
         )
 
         self.assertEqual(_system.level, "WARNING")
@@ -149,6 +153,7 @@ class DiagnosticsSentryLifecycleTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(_system.send_request, True)
         self.assertEqual(_system.send_user, False)
         self.assertEqual(_system.max_breadcrumbs, 10)
+        self.assertEqual(_system.session_attributes, ["system_company", "employee"])
 
     def test_start(self):
         logger = logging.getLogger(system.DEFAULT_LOGGER)
@@ -248,6 +253,7 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
         context = _system._context()
         self.assertEqual(context.request, request)
         self.assertEqual(len(context.breadcrumbs), 0)
+        self.assertNotEqual(context.begin, None)
 
     def test_request_begin_bounded_breadcrumbs(self):
         _system = self._build_started(max_breadcrumbs=2)
@@ -273,6 +279,7 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(len(client.events), 0)
         self.assertEqual(_system._context().request, None)
         self.assertEqual(_system._context().breadcrumbs, None)
+        self.assertEqual(_system._context().begin, None)
 
     def test_request_end_exception(self):
         client = mocks.MockSentryClient()
@@ -616,6 +623,7 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
         _system.capture(exception=ValueError("invalid"))
 
         self.assertEqual(client.events[0]["request"]["url"], "omni/sales/1")
+        self.assertEqual(client.events[0]["transaction"], "GET omni/sales/{id}")
 
     def test_capture_contexts(self):
         client = mocks.MockSentryClient()
@@ -626,7 +634,22 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
         event = client.events[0]
         self.assertEqual(event["contexts"]["colony"]["version"], "1.4.49")
         self.assertEqual(event["contexts"]["process"]["pid"], os.getpid())
+        self.assertEqual("session" in event["contexts"], False)
         self.assertEqual(event["extra"], None)
+
+    def test_capture_request_contexts(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+        session = mocks.MockSession(dict(username="joamag"))
+        _system.request_begin(mocks.MockRequest(session=session))
+
+        _system.capture(exception=ValueError("invalid"))
+
+        event = client.events[0]
+        self.assertEqual(event["user"]["username"], "joamag")
+        self.assertEqual(event["contexts"]["session"]["storage"], "redis")
+        self.assertEqual(event["contexts"]["response"]["status_code"], 500)
+        self.assertEqual(event["transaction"], "GET omni/sales")
 
     def test_capture_recursion_guard(self):
         client = mocks.MockSentryClient()
@@ -671,6 +694,30 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(data, dict(method="POST", url="omni/sales"))
 
+    def test_build_request_complete(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(
+            path="/adm/stores/1",
+            headers={
+                "Host": "omni.example.com",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "Cookie": "sid=c2f1b9e7d4a6",
+            },
+            connection_address=("172.17.0.80", 52314),
+            request=mocks.MockServiceRequest(
+                environ=dict(SERVER_PROTOCOL="HTTP/1.1"), query_string="page=2"
+            ),
+        )
+
+        data = _system.build_request(request)
+
+        self.assertEqual(data["url"], "http://omni.example.com/adm/stores/1")
+        self.assertEqual(data["headers"]["Cookie"], system.SCRUBBED_VALUE)
+        self.assertEqual(data["env"]["REMOTE_ADDR"], "172.17.0.80")
+        self.assertEqual(data["env"]["SERVER_PROTOCOL"], "HTTP/1.1")
+        self.assertEqual("query_string" in data, False)
+        self.assertEqual("data" in data, False)
+
     def test_build_request_none(self):
         _system = self._build_started()
 
@@ -679,13 +726,209 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
     def test_build_request_contents(self):
         _system = self._build_started(send_request=True)
         request = mocks.MockRequest(
-            attributes_map=dict(name="product", password="secret")
+            method="POST",
+            attributes_map=dict(name="product", password="secret"),
+            request=mocks.MockServiceRequest(query_string="page=2&token=secret"),
         )
 
         data = _system.build_request(request)
 
         self.assertEqual(data["data"]["name"], "product")
         self.assertEqual(data["data"]["password"], system.SCRUBBED_VALUE)
+        self.assertEqual(
+            data["query_string"], [["page", "2"], ["token", system.SCRUBBED_VALUE]]
+        )
+
+    def test_build_request_contents_get(self):
+        _system = self._build_started(send_request=True)
+        request = mocks.MockRequest(
+            attributes_map=dict(page="2"),
+            request=mocks.MockServiceRequest(query_string="page=2"),
+        )
+
+        # the attributes of a request using the get method are the values of its
+        # query string, so they are reported as such and never as its contents
+        data = _system.build_request(request)
+
+        self.assertEqual(data["query_string"], [["page", "2"]])
+        self.assertEqual("data" in data, False)
+
+    def test_build_request_raising_request(self):
+        _system = self._build_started(send_request=True)
+
+        data = _system.build_request(mocks.MockRaisingRequest())
+
+        self.assertEqual(data, dict(method="GET", url="omni/sales"))
+
+    def test_resolve_url(self):
+        _system = self._build_started()
+        headers = {"Host": "omni.example.com"}
+        request = mocks.MockRequest(path="/adm/stores/1", headers=headers)
+        secure_request = mocks.MockRequest(
+            path="/adm/stores/1", headers=headers, secure=True
+        )
+
+        self.assertEqual(
+            _system.resolve_url(request), "http://omni.example.com/adm/stores/1"
+        )
+        self.assertEqual(
+            _system.resolve_url(secure_request), "https://omni.example.com/adm/stores/1"
+        )
+
+    def test_resolve_url_forwarded(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(
+            path="/adm/stores/1",
+            headers={
+                "Host": "omni:8080",
+                "X-Forwarded-Host": "omni.example.com, proxy.example.com",
+                "X-Forwarded-Proto": "https, http",
+            },
+        )
+
+        # a chain of proxies sets one value for each one of them, the first value
+        # being the one of the request as received by the first of the proxies
+        self.assertEqual(
+            _system.resolve_url(request), "https://omni.example.com/adm/stores/1"
+        )
+
+    def test_resolve_url_no_host(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(path="/adm/stores/1")
+
+        self.assertEqual(_system.resolve_url(request), "/adm/stores/1")
+
+    def test_resolve_url_raising_request(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.resolve_url(mocks.MockRaisingRequest()), "omni/sales")
+
+    def test_build_headers(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Authorization": "Basic dXNlcjpwYXNz",
+                "Cookie": "sid=c2f1b9e7d4a6",
+                "X-Forwarded-For": "203.0.113.7",
+                "Referer": "https://omni.example.com/reset?token=secret",
+            }
+        )
+
+        headers = _system.build_headers(request)
+
+        self.assertEqual(headers["User-Agent"], "Mozilla/5.0")
+        self.assertEqual(headers["Authorization"], system.SCRUBBED_VALUE)
+        self.assertEqual(headers["Cookie"], system.SCRUBBED_VALUE)
+        self.assertEqual(headers["X-Forwarded-For"], "203.0.113.7")
+        self.assertEqual(headers["Referer"], "https://omni.example.com/reset")
+
+    def test_build_headers_no_user(self):
+        _system = self._build_started(send_user=False)
+        request = mocks.MockRequest(
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "X-Forwarded-For": "203.0.113.7",
+                "X-Real-IP": "203.0.113.7",
+            }
+        )
+
+        # the headers that carry the address of the client identify it as much
+        # as the address of the user, which is not sent in such case
+        headers = _system.build_headers(request)
+
+        self.assertEqual(headers, {"User-Agent": "Mozilla/5.0"})
+
+    def test_build_headers_empty(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.build_headers(mocks.MockRequest()), None)
+
+    def test_build_headers_raising_request(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.build_headers(mocks.MockRaisingRequest()), None)
+
+    def test_build_env(self):
+        _system = self._build_started()
+        environ = dict(
+            SERVER_NAME="omni", SERVER_PORT="8080", SERVER_PROTOCOL="HTTP/1.1"
+        )
+        request = mocks.MockRequest(
+            connection_address=("172.17.0.80", 52314),
+            server_software="netius/1.63.1",
+            request=mocks.MockServiceRequest(environ=environ),
+        )
+
+        env = _system.build_env(request)
+
+        self.assertEqual(
+            env,
+            dict(
+                REMOTE_ADDR="172.17.0.80",
+                REMOTE_PORT=52314,
+                SERVER_SOFTWARE="netius/1.63.1",
+                SERVER_NAME="omni",
+                SERVER_PORT="8080",
+                SERVER_PROTOCOL="HTTP/1.1",
+            ),
+        )
+
+    def test_build_env_protocol_version(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(
+            request=mocks.MockServiceRequest(protocol_version="HTTP/1.0")
+        )
+
+        # the requests of the HTTP service have no WSGI environment, providing
+        # the version of the protocol through the lower level request instead
+        env = _system.build_env(request)
+
+        self.assertEqual(env, dict(SERVER_PROTOCOL="HTTP/1.0"))
+
+    def test_build_env_no_user(self):
+        _system = self._build_started(send_user=False)
+        request = mocks.MockRequest(connection_address=("203.0.113.7", 52314))
+
+        # without a proxy the address of the connection is the one of the client
+        # which is not to be sent in case the user is not to be sent
+        self.assertEqual(_system.build_env(request), dict())
+
+    def test_build_env_raising_request(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.build_env(mocks.MockRaisingRequest()), dict())
+
+    def test_build_query_string(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(
+            request=mocks.MockServiceRequest(
+                query_string="page=2&sort=&token=secret&page=3"
+            )
+        )
+
+        pairs = _system.build_query_string(request)
+
+        self.assertEqual(
+            pairs,
+            [
+                ["page", "2"],
+                ["page", "3"],
+                ["sort", ""],
+                ["token", system.SCRUBBED_VALUE],
+            ],
+        )
+
+    def test_build_query_string_empty(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.build_query_string(mocks.MockRequest()), None)
+
+    def test_build_query_string_raising_request(self):
+        _system = self._build_started()
+        request = mocks.MockRaisingRequest()
+
+        self.assertEqual(_system.build_query_string(request), None)
 
     def test_build_user(self):
         _system = self._build_started()
@@ -695,6 +938,38 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         user = _system.build_user(request)
 
         self.assertEqual(user, dict(ip_address="192.168.1.100", username="joamag"))
+
+    def test_build_user_object(self):
+        _system = self._build_started()
+        user = mocks.MockEntity(
+            object_id=5, username="joamag", email="joamag@example.com"
+        )
+        session = mocks.MockSession(dict(user=user, user_id=1))
+        request = mocks.MockRequest(address="192.168.1.100", session=session)
+
+        user = _system.build_user(request)
+
+        self.assertEqual(
+            user,
+            dict(
+                ip_address="192.168.1.100",
+                id=1,
+                username="joamag",
+                email="joamag@example.com",
+            ),
+        )
+
+    def test_build_user_lazy(self):
+        _system = self._build_started()
+        session = mocks.MockSession(dict(user=mocks.MockEntity(username="joamag")))
+        request = mocks.MockRequest(address=None, session=session)
+
+        # the values of the user object that are not loaded must not be retrieved,
+        # as their loading would access the data source while the error is being
+        # reported (eg: the email of a lazy loaded entity)
+        user = _system.build_user(request)
+
+        self.assertEqual(user, dict(username="joamag"))
 
     def test_build_user_disabled(self):
         _system = self._build_started(send_user=False)
@@ -725,6 +1000,30 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(_system.build_user(mocks.MockRaisingRequest()), None)
 
+    def test_resolve_user(self):
+        _system = self._build_started()
+        user = mocks.MockEntity(
+            object_id=5, username="object", email="object@example.com"
+        )
+        session = mocks.MockSession(dict(username="session", account=user))
+
+        # the values stored directly in the session take precedence over the ones
+        # of the user object, which may be stored under any of the common names
+        values = _system.resolve_user(session)
+
+        self.assertEqual(
+            values, dict(id=5, username="session", email="object@example.com")
+        )
+
+    def test_resolve_user_invalid(self):
+        _system = self._build_started()
+        user = mocks.MockEntity(email=["joamag@example.com"])
+        session = mocks.MockSession(dict(username="", login=dict(), user=user))
+
+        # neither the empty values nor the values that are not scalars identify
+        # the user, as they would be meaningless in its description
+        self.assertEqual(_system.resolve_user(session), dict())
+
     def test_build_tags(self):
         _system = self._build_started()
         request = mocks.MockRequest(method="POST", status_code=500)
@@ -732,6 +1031,15 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         tags = _system.build_tags(request)
 
         self.assertEqual(tags, dict(method="POST", status_code="500"))
+
+    def test_build_tags_device_type(self):
+        _system = self._build_started()
+        user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile"
+        request = mocks.MockRequest(headers={"User-Agent": user_agent})
+
+        tags = _system.build_tags(request)
+
+        self.assertEqual(tags["device_type"], "mobile")
 
     def test_build_tags_none(self):
         _system = self._build_started()
@@ -755,6 +1063,33 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         tags = _system.build_tags(request, exception=RuntimeError("problem"))
 
         self.assertEqual(tags["status_code"], "500")
+
+    def test_resolve_device_type(self):
+        _system = self._build_started()
+        user_agents = (
+            ("Mozilla/5.0 (compatible; Googlebot/2.1; +http://google.com/bot)", "bot"),
+            ("Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) Mobile/15E148", "tablet"),
+            ("Mozilla/5.0 (Linux; Android 14; SM-X710) Safari/537.36", "tablet"),
+            ("Mozilla/5.0 (Linux; Android 14; Pixel 8) Mobile Safari/537.36", "mobile"),
+            ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0", "desktop"),
+        )
+
+        # the bots and the tablets are verified before the remaining types, as
+        # their user agents may also include the keywords of the mobile devices
+        for user_agent, device_type in user_agents:
+            request = mocks.MockRequest(headers={"User-Agent": user_agent})
+            self.assertEqual(_system.resolve_device_type(request), device_type)
+
+    def test_resolve_device_type_none(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.resolve_device_type(mocks.MockRequest()), None)
+
+    def test_resolve_device_type_raising_request(self):
+        _system = self._build_started()
+        request = mocks.MockRaisingRequest()
+
+        self.assertEqual(_system.resolve_device_type(request), None)
 
     def test_resolve_status_code(self):
         _system = self._build_started()
@@ -796,6 +1131,29 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(_system.resolve_status_code(mocks.MockRaisingRequest()), None)
 
+    def test_resolve_transaction(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(path="/adm/stores/5857409334")
+        json_request = mocks.MockRequest(method="POST", path="/sam/sales/6475.json")
+        named_request = mocks.MockRequest(path="/adm/users/2fa/v2")
+
+        self.assertEqual(_system.resolve_transaction(request), "GET /adm/stores/{id}")
+        self.assertEqual(
+            _system.resolve_transaction(json_request), "POST /sam/sales/{id}.json"
+        )
+
+        # only the segments that are complete numbers (optionally followed by an
+        # extension) are identifiers, the ones merely starting with a number are
+        # part of the name of the endpoint and must be kept as they are
+        self.assertEqual(
+            _system.resolve_transaction(named_request), "GET /adm/users/2fa/v2"
+        )
+
+    def test_resolve_transaction_none(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.resolve_transaction(None), None)
+
     def test_build_contexts(self):
         _system = self._build_system()
 
@@ -829,6 +1187,140 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(contexts["colony"]["version"], None)
         self.assertEqual(contexts["colony"]["run_mode"], None)
         self.assertEqual(contexts["process"]["pid"], os.getpid())
+
+    def test_build_contexts_request(self):
+        _system = self._build_system()
+        request = mocks.MockRequest(session=mocks.MockSession(), status_code=404)
+
+        contexts = _system.build_contexts(request)
+
+        self.assertEqual(contexts["session"]["storage"], "redis")
+        self.assertEqual(contexts["response"]["status_code"], 404)
+
+    def test_build_session(self):
+        _system = self._build_system()
+        session = mocks.MockSession(dict(_locale="pt_pt", user_id=1, user_acl=dict()))
+        request = mocks.MockRequest(session=session)
+
+        context = _system.build_session(request)
+
+        session_hash = hashlib.sha256(b"c2f1b9e7d4a6").hexdigest()
+        self.assertEqual(context["storage"], "redis")
+        self.assertEqual(context["id_hash"], session_hash[: system.SESSION_HASH_LENGTH])
+        self.assertEqual(context["creation_time"], 1789261658.0)
+        self.assertEqual(context["expire_time"], 1789265258.0)
+        self.assertEqual(context["locale"], "pt_pt")
+        self.assertEqual(context["attributes"], ["_locale", "user_acl", "user_id"])
+        self.assertEqual("values" in context, False)
+
+        # the identifier of the session is a credential that grants access to
+        # it, so it must never be part of the description of the session, and
+        # the type name is reserved by Sentry for the kind of the context
+        self.assertEqual("c2f1b9e7d4a6" in str(context), False)
+        self.assertEqual("type" in context, False)
+
+    def test_build_session_values(self):
+        _system = self._build_system(
+            session_attributes="system_company;employee;store;secret_key"
+        )
+        company = mocks.MockEntity(object_id=1, name="Company", tax_number="PT123")
+        session = mocks.MockSession(
+            dict(system_company=company, employee="joamag", secret_key="abc")
+        )
+        request = mocks.MockRequest(session=session)
+
+        # only the attributes that identify an object are reported for it, as the
+        # remaining ones may hold personal or tax information, and the attributes
+        # not defined in the session are not reported at all
+        values = _system.build_session(request)["values"]
+
+        self.assertEqual(values["system_company"], dict(object_id=1, name="Company"))
+        self.assertEqual(values["employee"], "joamag")
+        self.assertEqual(values["secret_key"], system.SCRUBBED_VALUE)
+        self.assertEqual("store" in values, False)
+
+    def test_build_session_values_no_user(self):
+        _system = self._build_system(session_attributes="employee", send_user=False)
+        session = mocks.MockSession(dict(employee="joamag"))
+        request = mocks.MockRequest(session=session)
+
+        self.assertEqual("values" in _system.build_session(request), False)
+
+    def test_build_session_previous(self):
+        _system = self._build_system()
+        session = mocks.MockSession(name="CustomSession", session_id=None)
+        del session.creation_time
+
+        # the sessions of the previous versions have no creation time and the type
+        # of an unknown class of session is described by the name of the class
+        context = _system.build_session(mocks.MockRequest(session=session))
+
+        self.assertEqual(context["storage"], "CustomSession")
+        self.assertEqual(context["creation_time"], None)
+        self.assertEqual("id_hash" in context, False)
+
+    def test_build_session_none(self):
+        _system = self._build_system()
+
+        self.assertEqual(_system.build_session(None), None)
+        self.assertEqual(_system.build_session(mocks.MockRequest()), None)
+
+    def test_build_session_raising_request(self):
+        _system = self._build_system()
+
+        self.assertEqual(_system.build_session(mocks.MockRaisingRequest()), None)
+
+    def test_build_response(self):
+        _system = self._build_started()
+        request = mocks.MockRequest(
+            content_type="application/json", encoder_name="json"
+        )
+        _system.request_begin(request)
+
+        exception = ValueError("not found")
+        exception.status_code = 404
+        response = _system.build_response(request, exception=exception)
+
+        self.assertEqual(response["status_code"], 404)
+        self.assertEqual(response["content_type"], "application/json")
+        self.assertEqual(response["encoder"], "json")
+        self.assertEqual(response["elapsed"] >= 0.0, True)
+
+    def test_build_response_other_request(self):
+        _system = self._build_started()
+        _system.request_begin(mocks.MockRequest())
+
+        # the beginning of the handling is only known for the request that is
+        # being handled by the current thread and not for any other request
+        response = _system.build_response(mocks.MockRequest(status_code=200))
+
+        self.assertEqual(response, dict(status_code=200))
+
+    def test_build_response_none(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.build_response(None), None)
+
+    def test_build_response_raising_request(self):
+        _system = self._build_started()
+
+        self.assertEqual(_system.build_response(mocks.MockRaisingRequest()), None)
+
+    def test_describe_value(self):
+        _system = self._build_started()
+        store = dict(object_id=1, name="Store", address="Porto")
+
+        self.assertEqual(_system.describe_value(1), "1")
+        self.assertEqual(_system.describe_value("pt_pt"), "pt_pt")
+        self.assertEqual(_system.describe_value(store), dict(object_id=1, name="Store"))
+
+    def test_describe_value_lazy(self):
+        _system = self._build_started()
+        store = mocks.MockEntity(name="Store")
+
+        # the attributes that are not loaded in the object are not described, as
+        # describing them would access the data source (lazy loading)
+        self.assertEqual(_system.describe_value(store), dict(name="Store"))
 
     def test_scrub_map(self):
         _system = self._build_started()
@@ -880,6 +1372,17 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(_system.scrub_value(12), "12")
         self.assertEqual(_system.scrub_value("plain"), "plain")
 
+    def test_scrub_value_truncated(self):
+        _system = self._build_started()
+        limit = "x" * system.MAX_VALUE_LENGTH
+
+        # a large value (eg: an uploaded file) would lead to the rejection of the
+        # complete event, so the values exceeding the limit are truncated
+        value = _system.scrub_value(limit + "x")
+
+        self.assertEqual(_system.scrub_value(limit), limit)
+        self.assertEqual(value, limit + "...")
+
     def test_is_sensitive(self):
         _system = self._build_started()
 
@@ -911,6 +1414,17 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         _system = self._build_started(level="warning")
 
         self.assertEqual(_system._level(), logging.WARNING)
+
+    def test_is_scalar(self):
+        _system = self._build_started()
+
+        # the zero is a valid value (eg: the identifier of a user) while an empty
+        # string identifies nothing, and the containers are never scalars
+        self.assertEqual(_system._is_scalar("joamag"), True)
+        self.assertEqual(_system._is_scalar(0), True)
+        self.assertEqual(_system._is_scalar(""), False)
+        self.assertEqual(_system._is_scalar(None), False)
+        self.assertEqual(_system._is_scalar(dict()), False)
 
 
 class SentryHandlerTestCase(DiagnosticsSentryBaseTestCase):

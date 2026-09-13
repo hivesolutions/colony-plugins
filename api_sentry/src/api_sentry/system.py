@@ -520,6 +520,7 @@ class SentryClient(object):
         extra=None,
         breadcrumbs=None,
         contexts=None,
+        transaction=None,
     ):
         """
         Builds the event payload from the provided components, setting
@@ -549,6 +550,9 @@ class SentryClient(object):
         :type contexts: Dictionary
         :param contexts: The contexts to be associated with the event,
         extending (or overriding) the ones describing the environment.
+        :type transaction: String
+        :param transaction: The name of the transaction (eg: the endpoint
+        of the request) in which the event has been originated.
         :rtype: Dictionary
         :return: The event payload ready to be submitted.
         """
@@ -579,6 +583,8 @@ class SentryClient(object):
             event["release"] = self.release
         if message:
             event["message"] = dict(formatted=message)
+        if transaction:
+            event["transaction"] = transaction
 
         # in case an exception is provided builds the structure that
         # describes it, associating the stack trace with it so that

@@ -503,6 +503,14 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
         self.assertEqual(contexts["runtime"], dict(name="pypy", version="7.3"))
         self.assertEqual(contexts["os"]["name"], platform.system())
 
+    def test_build_event_transaction(self):
+        client = self._build_client()
+
+        event = client.build_event(transaction="GET /adm/stores/{id}")
+
+        self.assertEqual(event["transaction"], "GET /adm/stores/{id}")
+        self.assertEqual("transaction" in client.build_event(), False)
+
     def test_build_event_modules(self):
         client = self._build_client()
         calls = []
