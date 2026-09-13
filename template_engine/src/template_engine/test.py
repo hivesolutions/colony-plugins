@@ -499,6 +499,22 @@ class TemplateEngineTestCase(TemplateEngineBaseTestCase):
             exceptions.RuntimeError, lambda: self.parse("{% bogus value %}")
         )
 
+    def test_compile_enabled(self):
+        template_file = self.parse("[{{ name }}]")
+        self.assertEqual(template_file.is_compiled(), True)
+
+    def test_compile_disabled(self):
+        # disables the compilation at the configuration level, the template
+        # must then be rendered by the visitor with the very same result
+        colony.conf_s("TEMPLATE_COMPILER", "0")
+        try:
+            template_file = self.parse("[{{ name }}]")
+            template_file.assign("name", "john")
+            self.assertEqual(template_file.is_compiled(), False)
+            self.assertEqual(template_file.process(), "[john]")
+        finally:
+            colony.conf_s("TEMPLATE_COMPILER", "1")
+
     def test_extension(self):
         self.assertEqual(self.engine._extension("/base/name.html.tpl"), ".html.tpl")
         self.assertEqual(self.engine._extension("/base/name.txt"), ".txt")

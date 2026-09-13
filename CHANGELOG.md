@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Debug logging of the AT submission, recording the target URL with the version of the specification and the status code of the response, with the body of a rejected response added so that the reason for the rejection becomes diagnosable
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
 * Template compiler that translates templates into bytecode, falling back to the previous rendering for the constructs it does not cover - [#33](https://github.com/hivesolutions/colony-plugins/issues/33)
+* New `TEMPLATE_COMPILER` configuration option (default `True`) to control the compilation of templates
 
 ### Changed
 
