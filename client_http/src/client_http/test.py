@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import ssl
 import json
 
 import colony
@@ -173,3 +174,38 @@ class ClientHTTPTestCase(colony.ColonyTestCase):
         received_message_j = json.loads(received_message)
         self.assertEqual(received_message_j["authenticated"], True)
         self.assertEqual(received_message_j["user"], "username")
+
+    def test_fetch_url_server_hostname(self):
+        response = self.http.fetch_url("https://%s/image/png" % self.httpbin)
+
+        self.assertEqual(response.status_code, 200)
+
+        # verifies that the host of the URL is used as the server hostname
+        # of the socket, so that it's sent in the SSL handshake as required
+        # by the servers hosting multiple domains (SNI), note that the legacy
+        # wrapping of the socket is not able to send it at all, meaning that
+        # the value in the socket may only be verified for the other wrapping
+        client_connection = self.http.client_connection
+        socket_parameters = client_connection.connection_socket_parameters
+        self.assertEqual(socket_parameters["server_hostname"], self.httpbin)
+        if not hasattr(ssl, "wrap_socket"):
+            connection_socket = client_connection.connection_socket
+            self.assertEqual(connection_socket.server_hostname, self.httpbin)
+
+    def test_fetch_url_server_hostname_credentials(self):
+        response = self.http.fetch_url(
+            "https://username:password@%s:443/basic-auth/username/password"
+            % self.httpbin,
+            method="GET",
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # the server hostname is sent in plain text in the SSL handshake so
+        # neither the credentials nor the port of the URL may be part of it
+        client_connection = self.http.client_connection
+        socket_parameters = client_connection.connection_socket_parameters
+        self.assertEqual(socket_parameters["server_hostname"], self.httpbin)
+        if not hasattr(ssl, "wrap_socket"):
+            connection_socket = client_connection.connection_socket
+            self.assertEqual(connection_socket.server_hostname, self.httpbin)

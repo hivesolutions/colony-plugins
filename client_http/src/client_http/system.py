@@ -476,8 +476,10 @@ class HTTPClient(object):
 
         # creates the map that will hold the various parameters
         # to be used in the creation of the socket and sets the
-        # various values in it
-        socket_parameters = {}
+        # various values in it, note that the host is set as the
+        # server hostname so that it's sent in the SSL handshake
+        # as required by servers hosting multiple domains (SNI)
+        socket_parameters = {"server_hostname": host}
         if self.key_file_path:
             socket_parameters["key_file_path"] = self.key_file_path
         if self.certificate_file_path:

@@ -166,6 +166,11 @@ class SSLSocket(colony.System):
         ssl_version = parameters.get("ssl_version", None)
         ssl_version = SSL_VERSIONS.get(ssl_version, ssl.PROTOCOL_SSLv23)
 
+        # tries to retrieve the server hostname value, that will
+        # be sent in the handshake so that the server is able to
+        # select the certificate of the requested domain (SNI)
+        server_hostname = parameters.get("server_hostname", "localhost")
+
         # warps the normal socket into an SSL socket, providing
         # the extra security layer on top of the normal socket
         ssl_socket = self._wrap_socket(
@@ -175,6 +180,7 @@ class SSLSocket(colony.System):
             server_side,
             ssl_version=ssl_version,
             do_handshake_on_connect=do_handshake_on_connect,
+            server_hostname=server_hostname,
         )
 
         # returns the SSL socket
