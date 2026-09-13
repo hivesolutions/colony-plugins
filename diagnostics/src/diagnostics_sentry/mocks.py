@@ -49,8 +49,25 @@ class MockPluginManager(object):
     def get_plugin_paths(self):
         return ["/colony/plugins"]
 
+    def get_system_information_map(self):
+        return dict(
+            layout_mode="default",
+            run_mode="production",
+            timestamp=1789261658.0,
+            version=self._version,
+            release="100",
+            build="final",
+            release_date_time="13 Sep 2026 01:07:38",
+            environment=self._environment,
+        )
+
     def generate_event(self, event_name, event_args):
         pass
+
+
+class MockUnstartedPluginManager(MockPluginManager):
+    def get_system_information_map(self):
+        return None
 
 
 class MockAPISentryPlugin(object):

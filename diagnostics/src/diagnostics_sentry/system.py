@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import os
 import sys
 import random
 import logging
@@ -426,12 +427,18 @@ class DiagnosticsSentry(colony.System):
         if record.exc_info:
             _type, exception, traceback_list = record.exc_info
 
+        # captures the record together with the location of the logging
+        # call that originated it, as it's the only reference to the code
+        # responsible for the event whenever no stack trace is available
         return self.capture(
             exception=exception,
             traceback_list=traceback_list,
             message=record.getMessage(),
             level=LEVELS_MAP.get(record.levelname, DEFAULT_EVENT_LEVEL),
             logger=record.name,
+            extra=dict(
+                path=record.pathname, lineno=record.lineno, function=record.funcName
+            ),
         )
 
     def capture(
@@ -442,6 +449,7 @@ class DiagnosticsSentry(colony.System):
         level=None,
         logger=None,
         request=None,
+        extra=None,
     ):
         """
         Captures the provided exception or message, building the complete
@@ -461,6 +469,8 @@ class DiagnosticsSentry(colony.System):
         :type request: RESTRequest
         :param request: The request under which the event was originated,
         defaulting to the one associated with the current thread.
+        :type extra: Dictionary
+        :param extra: The extra information to be associated with the event.
         :rtype: bool
         :return: If the event has been accepted for submission.
         """
@@ -501,7 +511,9 @@ class DiagnosticsSentry(colony.System):
                 request=self.build_request(request),
                 user=self.build_user(request),
                 tags=self.build_tags(request, exception=exception),
+                extra=extra,
                 breadcrumbs=context.breadcrumbs,
+                contexts=self.build_contexts(),
             )
             return self.client.submit_event(event)
         finally:
@@ -648,6 +660,41 @@ class DiagnosticsSentry(colony.System):
             return request.get_status_code()
         except Exception:
             return None
+
+    def build_contexts(self):
+        """
+        Builds the contexts that describe the environment under which
+        the event has been originated, namely the plugin manager and the
+        process (and thread) in which it's running.
+
+        :rtype: Dictionary
+        :return: The map of contexts to be associated with the event.
+        """
+
+        # gathers the information about the plugin manager, using the same
+        # set of values exposed in the status of the system, note that the
+        # information may not be available in case the event is originated
+        # before the plugin manager has completed its start
+        plugin_manager = self.plugin.manager
+        system_information = plugin_manager.get_system_information_map() or dict()
+        colony_context = dict(
+            layout_mode=system_information.get("layout_mode", None),
+            run_mode=system_information.get("run_mode", None),
+            start_timestamp=system_information.get("timestamp", None),
+            version=system_information.get("version", None),
+            release=system_information.get("release", None),
+            build=system_information.get("build", None),
+            release_date_time=system_information.get("release_date_time", None),
+            environment=system_information.get("environment", None),
+        )
+
+        # gathers the identifiers of the process and of the thread in which
+        # the event has been originated, the same that are sent together with
+        # each one of the records of the logging infra-structure
+        thread = threading.current_thread()
+        process_context = dict(pid=os.getpid(), tid=thread.ident, thread=thread.name)
+
+        return dict(colony=colony_context, process=process_context)
 
     def scrub_map(self, values_map):
         """

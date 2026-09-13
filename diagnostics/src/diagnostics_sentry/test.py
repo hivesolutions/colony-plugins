@@ -28,8 +28,10 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import os
 import sys
 import logging
+import threading
 
 import colony
 
@@ -546,6 +548,19 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(client.events[0]["level"], system.DEFAULT_EVENT_LEVEL)
 
+    def test_capture_record_location(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+        record = self._build_record("problem")
+        record.funcName = "create"
+
+        _system.capture_record(record)
+
+        # the location of the logging call is the only reference to the code
+        # that originated the record, as no stack trace is available for it
+        extra = client.events[0]["extra"]
+        self.assertEqual(extra, dict(path=__file__, lineno=1, function="create"))
+
     def test_capture_no_client(self):
         _system = self._build_system(dsn=None)
 
@@ -601,6 +616,17 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
         _system.capture(exception=ValueError("invalid"))
 
         self.assertEqual(client.events[0]["request"]["url"], "omni/sales/1")
+
+    def test_capture_contexts(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+
+        _system.capture(exception=ValueError("invalid"))
+
+        event = client.events[0]
+        self.assertEqual(event["contexts"]["colony"]["version"], "1.4.49")
+        self.assertEqual(event["contexts"]["process"]["pid"], os.getpid())
+        self.assertEqual(event["extra"], None)
 
     def test_capture_recursion_guard(self):
         client = mocks.MockSentryClient()
@@ -769,6 +795,40 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         _system = self._build_started()
 
         self.assertEqual(_system.resolve_status_code(mocks.MockRaisingRequest()), None)
+
+    def test_build_contexts(self):
+        _system = self._build_system()
+
+        contexts = _system.build_contexts()
+
+        colony_context = contexts["colony"]
+        self.assertEqual(colony_context["layout_mode"], "default")
+        self.assertEqual(colony_context["run_mode"], "production")
+        self.assertEqual(colony_context["start_timestamp"], 1789261658.0)
+        self.assertEqual(colony_context["version"], "1.4.49")
+        self.assertEqual(colony_context["release"], "100")
+        self.assertEqual(colony_context["build"], "final")
+        self.assertEqual(colony_context["release_date_time"], "13 Sep 2026 01:07:38")
+        self.assertEqual(colony_context["environment"], "cpython")
+
+        thread = threading.current_thread()
+        process_context = contexts["process"]
+        self.assertEqual(process_context["pid"], os.getpid())
+        self.assertEqual(process_context["tid"], thread.ident)
+        self.assertEqual(process_context["thread"], thread.name)
+
+    def test_build_contexts_no_system_information(self):
+        _system = self._build_system()
+        _system.plugin.manager = mocks.MockUnstartedPluginManager()
+
+        # an event may be originated before the plugin manager completes its
+        # start, in which case the information about it is not yet available
+        # and only the process is described in the contexts of the event
+        contexts = _system.build_contexts()
+
+        self.assertEqual(contexts["colony"]["version"], None)
+        self.assertEqual(contexts["colony"]["run_mode"], None)
+        self.assertEqual(contexts["process"]["pid"], os.getpid())
 
     def test_scrub_map(self):
         _system = self._build_started()

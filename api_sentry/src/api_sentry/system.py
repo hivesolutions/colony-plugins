@@ -202,6 +202,11 @@ class SentryClient(object):
     """ The HTTP client currently in use, created in a lazy
     fashion once the first submission is performed """
 
+    modules = None
+    """ The map associating the name of each installed package
+    with its version, built in a lazy fashion once the first
+    event is built as it remains the same for the process """
+
     dsn_structure = None
     """ The structure resulting from the parsing of the DSN,
     containing both the endpoint URL and the public key """
@@ -453,6 +458,55 @@ class SentryClient(object):
                 return True
         return False
 
+    def build_os(self):
+        """
+        Builds the structure that describes the operating system under
+        which the client is running, as expected by the Sentry endpoint
+        for the operating system context.
+
+        :rtype: Dictionary
+        :return: The structure describing the operating system.
+        """
+
+        return dict(
+            name=platform.system(),
+            version=platform.release(),
+            build=platform.version(),
+            raw_description=platform.platform(),
+        )
+
+    def build_modules(self):
+        """
+        Builds the map that associates the name of each of the packages
+        installed in the running environment with its version, so that
+        the version of the libraries in use (eg: appier) is known in the
+        analysis of each one of the events.
+
+        Note that the map is only built for the Python versions that
+        provide the metadata infra-structure of the import system.
+
+        :rtype: Dictionary
+        :return: The map associating the name of each installed package
+        with its version.
+        """
+
+        # tries to import the metadata infra-structure, which is not
+        # available for the older Python versions, in which case an
+        # empty map is returned as no package information is gathered
+        try:
+            import importlib.metadata as metadata
+        except ImportError:
+            return dict()
+
+        # iterates over the complete set of installed distributions to
+        # gather their versions, skipping the ones whose metadata is not
+        # valid (eg: an incomplete installation) as they have no name
+        return dict(
+            (distribution.metadata.get("Name"), distribution.version)
+            for distribution in metadata.distributions()
+            if distribution.metadata.get("Name")
+        )
+
     def build_event(
         self,
         level=DEFAULT_LEVEL,
@@ -465,6 +519,7 @@ class SentryClient(object):
         tags=None,
         extra=None,
         breadcrumbs=None,
+        contexts=None,
     ):
         """
         Builds the event payload from the provided components, setting
@@ -491,6 +546,9 @@ class SentryClient(object):
         :param extra: The extra information to be associated with the event.
         :type breadcrumbs: List
         :param breadcrumbs: The breadcrumbs that preceded the event.
+        :type contexts: Dictionary
+        :param contexts: The contexts to be associated with the event,
+        extending (or overriding) the ones describing the environment.
         :rtype: Dictionary
         :return: The event payload ready to be submitted.
         """
@@ -506,7 +564,8 @@ class SentryClient(object):
             level=level,
             server_name=self.server_name,
             contexts=dict(
-                runtime=dict(name="python", version=platform.python_version())
+                runtime=dict(name="python", version=platform.python_version()),
+                os=self.build_os(),
             ),
         )
 
@@ -548,6 +607,20 @@ class SentryClient(object):
             event["extra"] = extra
         if breadcrumbs:
             event["breadcrumbs"] = dict(values=list(breadcrumbs))
+        if contexts:
+            event["contexts"].update(contexts)
+
+        # sets the versions of the installed packages, building them only
+        # once as they remain the same for the complete lifetime of the
+        # process, note that a failure in their gathering must never be
+        # the reason for an event not being built (and reported)
+        if self.modules == None:
+            try:
+                self.modules = self.build_modules()
+            except Exception:
+                self.modules = dict()
+        if self.modules:
+            event["modules"] = self.modules
 
         return event
 

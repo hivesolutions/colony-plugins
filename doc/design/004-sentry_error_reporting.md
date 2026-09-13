@@ -84,7 +84,7 @@ Every value is read through the standard configuration infra-structure. The plug
 
 The default posture is to scrub. A solution built on the framework may carry payment data, personal information and tax identifiers, so nothing that could hold those values leaves the process unless it has been explicitly enabled.
 
-Always sent: the type, the value and the stack frames of the exception with the surrounding source lines, the logger name, the level, the path, the method, the status code, the address of the connection, the user of the session, the environment, the release, the server name and the runtime context.
+Always sent: the type, the value and the stack frames of the exception with the surrounding source lines, the logger name, the level, the path, the method, the status code, the address of the connection, the user of the session, the environment, the release, the server name, the runtime and operating system contexts, the versions of the installed packages, the version, release, build, modes and start time of the plugin manager, the identifiers of the process and of the thread, and the location of the logging call that originated a record.
 
 Withheld unless `SENTRY_SEND_REQUEST` is enabled: the fields of the request. Even once enabled, every field whose name suggests that it holds a credential, a token, a card, a cookie or a session is replaced by a filtered marker, and the maps and sequences nested under a name that is not itself sensitive are descended into so that the same filtering applies below the top level. The local variables of a frame are never sent, as in a controller they routinely hold entity instances with complete customer records.
 
