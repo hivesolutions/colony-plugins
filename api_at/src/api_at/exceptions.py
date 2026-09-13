@@ -83,7 +83,7 @@ class ATAPIError(APIATException):
         """
 
         return (
-            "AT API error (%d) - %s" % (self.error_code, self.message)
+            "AT API error (%s) - %s" % (self.error_code, self.message)
             if self.error_code
             else "AT API error - %s" % self.message
         )

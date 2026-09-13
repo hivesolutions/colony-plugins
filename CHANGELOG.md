@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Error reporting to Sentry for any MVC based solution, covering controllers, the HTTP stack and background tasks - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Request, user and breadcrumb context in the reported errors, with sensitive values withheld unless explicitly enabled - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Concrete table inheritance as an alternative strategy for entity hierarchies, trading storage for reads without joins - [#25](https://github.com/hivesolutions/colony-plugins/issues/25)
 * Support for switching the inheritance strategy of every entity hierarchy at once, for migration and debugging purposes
 * Tool to migrate existing entity hierarchies between inheritance strategies, with backup, validation and dry-run
@@ -28,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Regression tests for session GC and translate_result fixes in REST plugin
 * New `DEBUG_SQL` configuration option (default `True`) to control debug-level SQL query logging in MySQL, SQLite, and PostgreSQL engine plugins
 * Tests covering session ACL validation and the ACL template predicates in the MVC utilities
+* Documentation of the AT test mode in the resources README, covering the hardcoded test credentials, the `AT_TEST_MODE` switch, the test endpoints and how to diagnose an authentication failure
+* Debug logging of the AT submission, recording the target URL with the version of the specification and the status code of the response, with the body of a rejected response added so that the reason for the rejection becomes diagnosable
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
 * Template compiler that translates templates into bytecode, falling back to the previous rendering for the constructs it does not cover - [#33](https://github.com/hivesolutions/colony-plugins/issues/33)
 * New `TEMPLATE_COMPILER` configuration option (default `True`) to control the compilation of templates
@@ -46,6 +50,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Faster JSON serialization of API responses and web pages, producing the exact same output as before
 
 ### Fixed
+
+* Diagnostics gathering no longer fails when a request ends with an error - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* A request that fails before it starts being handled is now logged instead of being reported only to the client - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Sentry error reporting now starts with the application instead of staying installed but inactive - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Applications configured to report errors to Sentry no longer fail to start - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Handling of a SOAP fault returned by the AT, whose code is a qualified name instead of a number, which raised a `ValueError` instead of the expected `ATAPIError` and discarded the fault message explaining the failure
+* Printing of an AT API error whose code is not a number, which raised a `TypeError` and hid the message of the error from the logs and the tracebacks
 
 * A template included by another one now resolves its own relative includes against the directory it lives in
 * Templates whose file name has no extension are no longer rejected with an internal error

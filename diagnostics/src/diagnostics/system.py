@@ -126,7 +126,7 @@ class Diagnostics(colony.System):
         self.data["requests_l"] = requests_l
         self.push_state("request", data)
 
-    def request_end(self, request):
+    def request_end(self, request, exception=None):
         identifier = id(request)
         requests = self.data.get("requests", {})
         data = requests[identifier]

@@ -31,4 +31,4 @@ from . import test
 
 from .exceptions import APIATException, ATAPIError
 from .system import APIAT
-from .test import APIATTest, APIATBaseTestCase
+from .test import APIATTest, APIATBaseTestCase, APIATExceptionsTestCase

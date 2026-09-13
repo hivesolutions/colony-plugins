@@ -35,15 +35,19 @@ class MockPlugin(object):
     def __init__(self):
         self.manager = MockManager()
         self.rest_plugin = MockRESTPlugin()
+        self.messages = []
 
     def debug(self, message, *args, **kwargs):
-        pass
+        self.messages.append(("debug", message, kwargs))
 
     def info(self, message, *args, **kwargs):
-        pass
+        self.messages.append(("info", message, kwargs))
 
     def warning(self, message, *args, **kwargs):
-        pass
+        self.messages.append(("warning", message, kwargs))
+
+    def error(self, message, *args, **kwargs):
+        self.messages.append(("error", message, kwargs))
 
 
 class MockManager(object):

@@ -615,37 +615,56 @@ class ATClient(object):
         else:
             raise exceptions.ATVersionError(version=version)
 
+        # prints the URL and the version of the specification used in the
+        # submission, so that the environment being targeted (test or
+        # production) is visible together with the operation
+        self.plugin.debug(
+            "Submitting AT document to '%s' using the version %d of the specification"
+            % (submit_url, version)
+        )
+
         # "fetches" the "submit document" URL with the message contents
         # this should post the document and create it in the remote
         # data source according to the AT WS specification
         data, code = self._fetch_url(submit_url, method="POST", contents=message)
+
+        # prints the status code of the response received from the AT, the
+        # body is only printed for a rejected submission so that the fiscal
+        # data of a successful operation never reaches the logs
+        self.plugin.debug("Received AT response with the status code %d" % code)
 
         # checks the result data for error according to the version of
         # WS specification that has been requested, in case there's an
         # error an exception should be raised, notice that the consumer
         # can provide a custom `check_errors` parameter to be called instead
         # of the default one for the version
-        if check_errors:
-            check_errors(data)
-        elif version == 1:
-            self._check_at_errors_v1(data)
-        elif version == 2:
-            self._check_at_errors_v2(data)
-        else:
-            raise exceptions.ATVersionError(version=version)
+        try:
+            if check_errors:
+                check_errors(data)
+            elif version == 1:
+                self._check_at_errors_v1(data)
+            elif version == 2:
+                self._check_at_errors_v2(data)
+            else:
+                raise exceptions.ATVersionError(version=version)
 
-        # in case the response HTTP code is not valid raises an AT API
-        # error to avoid operations from progressing
-        if not code // 100 == 2:
-            try:
-                details = colony.xml_to_dict(data)
-            except Exception:
-                details = data
-            raise exceptions.ATAPIError(
-                "Invalid AT HTTP response code received",
-                error_code=code,
-                details=details,
-            )
+            # in case the response HTTP code is not valid raises an AT API
+            # error to avoid operations from progressing
+            if not code // 100 == 2:
+                try:
+                    details = colony.xml_to_dict(data)
+                except Exception:
+                    details = data
+                raise exceptions.ATAPIError(
+                    "Invalid AT HTTP response code received",
+                    error_code=code,
+                    details=details,
+                )
+        except exceptions.APIATException:
+            # prints the body of the rejected response, the only place
+            # carrying the result code and the message that explain it
+            self.plugin.debug("Rejected AT response with the data: %s" % data)
+            raise
 
         # returns the resulting data
         return data
@@ -1106,15 +1125,24 @@ class ATClient(object):
         result_code = fault_code if fault_code else result_code
 
         # converts the result code into its textual representation and
-        # then into an integer value, to be properly handled
+        # then into an integer value, to be properly handled, notice that
+        # the code of a SOAP fault may be a qualified name instead of a
+        # number (eg: `S:Client`) meaning that the conversion may fail
         result_code = self._text(result_code[0])
-        result_code = int(result_code)
+        try:
+            result_code = int(result_code)
+        except ValueError:
+            # a code that is not a number always denotes a fault, so it
+            # can never be considered a success one
+            is_success = False
+        else:
+            # determines if the result code represents a success (eg: 2xxx or 2xxxx)
+            # the divisor is calculated based on the number of digits in the code
+            divisor = 10 ** (len(str(result_code)) - 1)
+            is_success = result_code // divisor == 2
 
-        # determines if the result code represents a success (eg: 2xxx or 2xxxx)
-        # and if that's the case returns the control flow immediately (not an error),
-        # the divisor is calculated based on the number of digits in the code
-        divisor = 10 ** (len(str(result_code)) - 1)
-        is_success = result_code // divisor == 2
+        # in case the result code denotes a success returns the control
+        # flow immediately as no error is present in the response
         if is_success:
             return
 

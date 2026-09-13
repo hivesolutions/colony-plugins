@@ -579,6 +579,12 @@ def serialized(serialization_parameters=None, default_success=True):
                 # information about the exception to be handled
                 exception_map = self.get_exception_map(exception, request)
 
+                # notifies the observers about the exception that has just been
+                # handled, note that this is the only opportunity for an error
+                # reporter to observe it, as the exception is not re-raised once
+                # either a serializer or an exception handler is defined
+                colony.notify_g("request.exception", request, exception, exception_map)
+
                 # retrieves the exception value from the exception map and then
                 # unpacks it into its components of message or traceback
                 exception = exception_map.get("exception")
