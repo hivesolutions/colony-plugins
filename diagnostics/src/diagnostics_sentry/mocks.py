@@ -49,6 +49,9 @@ class MockPluginManager(object):
     def get_plugin_paths(self):
         return ["/colony/plugins"]
 
+    def generate_event(self, event_name, event_args):
+        pass
+
 
 class MockAPISentryPlugin(object):
     def __init__(self, client=None):

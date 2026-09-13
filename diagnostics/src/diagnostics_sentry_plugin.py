@@ -54,6 +54,9 @@ class DiagnosticsSentryPlugin(colony.Plugin):
 
         self.system = diagnostics_sentry.DiagnosticsSentry(self)
         self.test = diagnostics_sentry.DiagnosticsSentryTest(self)
+
+    def end_load_plugin(self):
+        colony.Plugin.end_load_plugin(self)
         self.system.start()
 
     def unload_plugin(self):

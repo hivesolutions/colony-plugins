@@ -916,7 +916,7 @@ class SentryHandlerTestCase(DiagnosticsSentryBaseTestCase):
         return logging.LogRecord("colony", level, __file__, 1, message, None, None)
 
 
-class DiagnosticsSentryPluginTestCase(colony.ColonyTestCase):
+class DiagnosticsSentryPluginTestCase(DiagnosticsSentryBaseTestCase):
     @staticmethod
     def get_description():
         return "Diagnostics Sentry Plugin test case"
@@ -928,3 +928,65 @@ class DiagnosticsSentryPluginTestCase(colony.ColonyTestCase):
         # and no error would ever be reported
         self.assertEqual("startup" in self.plugin.capabilities, True)
         self.assertEqual("error_reporter" in self.plugin.capabilities, True)
+
+    def test_load_plugin(self):
+        # the dependencies are only injected by the plugin manager after the
+        # loading of the plugin, so the Sentry API plugin is not available at
+        # this stage and starting the reporting would fail the loading of the
+        # complete plugin system whenever a DSN is defined
+        plugin = self._build_loaded()
+
+        self.assertEqual(hasattr(plugin, "api_sentry_plugin"), False)
+        self.assertEqual(plugin.system.client, None)
+        self.assertEqual(plugin.system.handler, None)
+
+    def test_end_load_plugin(self):
+        logger = logging.getLogger(system.DEFAULT_LOGGER)
+        handlers = len(logger.handlers)
+        client = mocks.MockSentryClient()
+
+        # injects the Sentry API plugin the same way the plugin manager does
+        # for the dependencies, right before the end of the loading
+        plugin = self._build_loaded()
+        plugin.api_sentry_plugin = mocks.MockAPISentryPlugin(client=client)
+        plugin.end_load_plugin()
+
+        self.assertEqual(plugin.system.client, client)
+        self.assertEqual(len(logger.handlers), handlers + 1)
+
+    def test_unload_plugin(self):
+        logger = logging.getLogger(system.DEFAULT_LOGGER)
+        handlers = len(logger.handlers)
+        client = mocks.MockSentryClient()
+
+        plugin = self._build_loaded()
+        plugin.api_sentry_plugin = mocks.MockAPISentryPlugin(client=client)
+        plugin.end_load_plugin()
+        plugin.unload_plugin()
+
+        self.assertEqual(plugin.system.client, None)
+        self.assertEqual(plugin.system.handler, None)
+        self.assertEqual(client.closed, True)
+        self.assertEqual(len(logger.handlers), handlers)
+
+    def test_unload_plugin_not_started(self):
+        # the loading of the plugin may be interrupted before its end (eg: a
+        # dependency that fails to be injected), in which case the plugin is
+        # still unloaded with the plugin system without its reporting having
+        # ever been started
+        plugin = self._build_loaded()
+        plugin.unload_plugin()
+
+        self.assertEqual(plugin.system.client, None)
+        self.assertEqual(plugin.system.handler, None)
+
+    def _build_loaded(self):
+        colony.conf_s("SENTRY_DSN", DSN)
+
+        # creates the plugin outside of the plugin manager so that none of its
+        # dependencies is injected, which is the state of the plugin while its
+        # loading is still in progress
+        plugin = self.plugin.__class__(mocks.MockPluginManager())
+        plugin.load_plugin()
+        self._systems.append(plugin.system)
+        return plugin
