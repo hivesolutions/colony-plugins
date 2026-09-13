@@ -123,9 +123,21 @@ SCRUBBED_VALUE = "[Filtered]"
 """ The value that replaces the one of the fields considered to
 be sensitive, mimics the one used by the official clients """
 
-ADDRESS_HEADERS = ("forwarded", "x-client-ip", "x-forwarded-for", "x-real-ip")
-""" The sequence of (lower cased) names of the headers that carry the
-address of the client, only sent in case the user is to be sent """
+ANONYMOUS_HEADERS = (
+    "accept",
+    "accept-encoding",
+    "accept-language",
+    "content-length",
+    "content-type",
+    "host",
+    "origin",
+    "referer",
+    "user-agent",
+)
+""" The sequence of (lower cased) names of the headers that identify
+neither the client nor the user of a request, the only ones sent in
+case the user is not to be sent, as any other header (eg: the ones set
+by a proxy) may carry the address or the identity of the client """
 
 MAX_QUERY_LENGTH = 1024
 """ The maximum number of characters of a query kept in the
@@ -678,8 +690,9 @@ class DiagnosticsSentry(colony.System):
         # request, in which case the path is used as the URL of the request
         path = request.get_path()
         try:
-            host = request.get_header("X-Forwarded-Host") or request.get_header("Host")
-            scheme = request.get_header("X-Forwarded-Proto")
+            forwarded_host = self._header(request, "X-Forwarded-Host")
+            host = forwarded_host or self._header(request, "Host")
+            scheme = self._header(request, "X-Forwarded-Proto")
             secure = request.is_secure()
         except Exception:
             return path
@@ -697,10 +710,10 @@ class DiagnosticsSentry(colony.System):
     def build_headers(self, request):
         """
         Builds the map of the headers of the provided request, filtering the
-        values of the ones that carry credentials (eg: cookies), removing the
-        ones that carry the address of the client in case the user is not to
-        be sent and removing the query string of the referer, as it may carry
-        tokens (eg: the one of a password reset).
+        values of the ones that carry credentials (eg: cookies), keeping only
+        the ones that identify neither the client nor the user in case the user
+        is not to be sent and removing the query string of the referer, as it
+        may carry tokens (eg: the one of a password reset).
 
         :type request: RESTRequest
         :param request: The request whose headers are going to be described.
@@ -718,7 +731,7 @@ class DiagnosticsSentry(colony.System):
         scrubbed = dict()
         for name, value in colony.legacy.items(headers):
             name_l = name.lower()
-            if name_l in ADDRESS_HEADERS and not self.send_user:
+            if not self.send_user and name_l not in ANONYMOUS_HEADERS:
                 continue
             if self.is_sensitive(name):
                 scrubbed[name] = SCRUBBED_VALUE
@@ -911,7 +924,7 @@ class DiagnosticsSentry(colony.System):
         """
 
         try:
-            user_agent = request.get_header("User-Agent")
+            user_agent = self._header(request, "User-Agent")
         except Exception:
             user_agent = None
         if not user_agent:
@@ -1083,13 +1096,19 @@ class DiagnosticsSentry(colony.System):
         if not self.send_user:
             return context
 
+        # describes the values of the attributes configured to be reported, not
+        # reporting the ones whose description is empty (eg: an empty string or
+        # an object with no identifying attribute loaded) as they describe nothing
         values = dict()
         for name in self.session_attributes:
             value = session.get_attribute(name)
             if value == None:
                 continue
             sensitive = self.is_sensitive(name)
-            values[name] = SCRUBBED_VALUE if sensitive else self.describe_value(value)
+            description = SCRUBBED_VALUE if sensitive else self.describe_value(value)
+            if not description:
+                continue
+            values[name] = description
         if values:
             context["values"] = values
         return context
@@ -1158,7 +1177,7 @@ class DiagnosticsSentry(colony.System):
         for name in OBJECT_NAMES:
             _value = self._loaded_value(value, name)
             if self._is_scalar(_value):
-                description[name] = _value
+                description[name] = self.scrub_value(_value)
         return description
 
     def scrub_map(self, values_map):
@@ -1339,6 +1358,33 @@ class DiagnosticsSentry(colony.System):
         if not isinstance(value, colony.legacy.STRINGS + colony.legacy.INTEGERS):
             return False
         return not value == ""
+
+    def _header(self, request, name):
+        """
+        Retrieves the value of the header with the provided name from the given
+        request in a case insensitive fashion, as some of the kinds of request
+        (eg: the ones of the HTTP service) keep the names of the headers as they
+        have been received, making their retrieval by name case sensitive.
+
+        :type request: RESTRequest
+        :param request: The request from which the header is retrieved.
+        :type name: String
+        :param name: The name of the header to be retrieved.
+        :rtype: String
+        :return: The value of the header, or an invalid value in case the
+        header is not defined in the request.
+        """
+
+        value = request.get_header(name)
+        if not value == None:
+            return value
+
+        name = name.lower()
+        headers = request.get_headers() or dict()
+        for _name, _value in colony.legacy.items(headers):
+            if _name.lower() == name:
+                return _value
+        return None
 
 
 class SentryHandler(logging.Handler):

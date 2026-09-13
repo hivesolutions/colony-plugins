@@ -220,6 +220,11 @@ class MockRaisingRequest(MockRequest):
         raise RuntimeError("no address")
 
 
+class MockCaseSensitiveRequest(MockRequest):
+    def get_header(self, header_name):
+        return self._headers.get(header_name, None)
+
+
 class MockServiceRequest(object):
     def __init__(self, environ=None, query_string=None, protocol_version=None):
         self.environ = environ

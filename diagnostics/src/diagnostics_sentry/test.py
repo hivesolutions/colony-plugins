@@ -792,6 +792,24 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
             _system.resolve_url(request), "https://omni.example.com/adm/stores/1"
         )
 
+    def test_resolve_url_case_insensitive(self):
+        _system = self._build_started()
+        request = mocks.MockCaseSensitiveRequest(
+            path="/adm/stores/1",
+            headers={
+                "host": "omni:8080",
+                "x-forwarded-host": "omni.example.com",
+                "x-forwarded-proto": "https",
+            },
+        )
+
+        # the requests of the HTTP service keep the names of the headers as they
+        # have been received (eg: lower cased by a proxy), so the headers must be
+        # resolved regardless of the case of their names
+        self.assertEqual(
+            _system.resolve_url(request), "https://omni.example.com/adm/stores/1"
+        )
+
     def test_resolve_url_no_host(self):
         _system = self._build_started()
         request = mocks.MockRequest(path="/adm/stores/1")
@@ -828,16 +846,28 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         request = mocks.MockRequest(
             headers={
                 "User-Agent": "Mozilla/5.0",
+                "Content-Type": "application/json",
+                "referer": "https://omni.example.com/reset?token=secret",
                 "X-Forwarded-For": "203.0.113.7",
-                "X-Real-IP": "203.0.113.7",
+                "CF-Connecting-IP": "203.0.113.7",
+                "True-Client-IP": "203.0.113.7",
+                "X-Forwarded-Email": "joamag@example.com",
             }
         )
 
-        # the headers that carry the address of the client identify it as much
-        # as the address of the user, which is not sent in such case
+        # any header may carry the address or the identity of the client (eg: the
+        # ones set by a proxy), so only the headers that identify neither the
+        # client nor the user are sent in case the user is not to be sent
         headers = _system.build_headers(request)
 
-        self.assertEqual(headers, {"User-Agent": "Mozilla/5.0"})
+        self.assertEqual(
+            headers,
+            {
+                "User-Agent": "Mozilla/5.0",
+                "Content-Type": "application/json",
+                "referer": "https://omni.example.com/reset",
+            },
+        )
 
     def test_build_headers_empty(self):
         _system = self._build_started()
@@ -1080,6 +1110,13 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
             request = mocks.MockRequest(headers={"User-Agent": user_agent})
             self.assertEqual(_system.resolve_device_type(request), device_type)
 
+    def test_resolve_device_type_case_insensitive(self):
+        _system = self._build_started()
+        user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile"
+        request = mocks.MockCaseSensitiveRequest(headers={"user-agent": user_agent})
+
+        self.assertEqual(_system.resolve_device_type(request), "mobile")
+
     def test_resolve_device_type_none(self):
         _system = self._build_started()
 
@@ -1234,10 +1271,22 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         # not defined in the session are not reported at all
         values = _system.build_session(request)["values"]
 
-        self.assertEqual(values["system_company"], dict(object_id=1, name="Company"))
+        self.assertEqual(values["system_company"], dict(object_id="1", name="Company"))
         self.assertEqual(values["employee"], "joamag")
         self.assertEqual(values["secret_key"], system.SCRUBBED_VALUE)
         self.assertEqual("store" in values, False)
+
+    def test_build_session_values_empty(self):
+        _system = self._build_system(session_attributes="employee;functional_unit")
+        functional_unit = mocks.MockEntity(tax_number="PT123")
+        session = mocks.MockSession(dict(employee="", functional_unit=functional_unit))
+        request = mocks.MockRequest(session=session)
+
+        # the values whose description is empty describe nothing, as it's the case
+        # of an empty string or of an object with no identifying attribute loaded
+        context = _system.build_session(request)
+
+        self.assertEqual("values" in context, False)
 
     def test_build_session_values_no_user(self):
         _system = self._build_system(session_attributes="employee", send_user=False)
@@ -1312,7 +1361,21 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(_system.describe_value(1), "1")
         self.assertEqual(_system.describe_value("pt_pt"), "pt_pt")
-        self.assertEqual(_system.describe_value(store), dict(object_id=1, name="Store"))
+        self.assertEqual(
+            _system.describe_value(store), dict(object_id="1", name="Store")
+        )
+
+    def test_describe_value_truncated(self):
+        _system = self._build_started()
+        name = "x" * (system.MAX_VALUE_LENGTH + 1)
+
+        # the identifying attributes of an object are truncated as any other value,
+        # so that a large one never leads to the rejection of the complete event
+        description = _system.describe_value(mocks.MockEntity(name=name))
+
+        self.assertEqual(
+            description, dict(name=name[: system.MAX_VALUE_LENGTH] + "...")
+        )
 
     def test_describe_value_lazy(self):
         _system = self._build_started()
@@ -1425,6 +1488,15 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(_system._is_scalar(""), False)
         self.assertEqual(_system._is_scalar(None), False)
         self.assertEqual(_system._is_scalar(dict()), False)
+
+    def test_header(self):
+        _system = self._build_started()
+        headers = {"Host": "omni.example.com", "user-agent": "Mozilla/5.0"}
+        request = mocks.MockCaseSensitiveRequest(headers=headers)
+
+        self.assertEqual(_system._header(request, "Host"), "omni.example.com")
+        self.assertEqual(_system._header(request, "User-Agent"), "Mozilla/5.0")
+        self.assertEqual(_system._header(request, "Referer"), None)
 
 
 class SentryHandlerTestCase(DiagnosticsSentryBaseTestCase):
