@@ -29,8 +29,11 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import os
+import re
 import sys
+import time
 import random
+import hashlib
 import logging
 import threading
 import collections
@@ -57,13 +60,41 @@ DEFAULT_MAX_BREADCRUMBS = 50
 """ The default number of breadcrumbs kept for each one of
 the requests being handled """
 
-DEFAULT_USER_ATTRIBUTE = "username"
-""" The name of the session attribute from which the identifier
-of the user is going to be retrieved """
-
 DEFAULT_IGNORED = ["ControllerValidationReasonFailed"]
 """ The names of the exception classes that are never reported,
 as they are part of the expected control flow """
+
+DEFAULT_SESSION_ATTRIBUTES = []
+""" The names of the session attributes whose values are reported by
+default, none as they are specific to each one of the solutions """
+
+USER_NAMES = dict(
+    id=("user_id", "object_id"),
+    username=("username", "user_name", "login"),
+    email=("email", "user_email"),
+)
+""" The map associating each one of the values that identify the user
+with the names under which they are commonly stored, looked up by trial
+and error in the session and then in the user object stored in it, as
+each one of the solutions uses its own naming """
+
+USER_OBJECT_NAMES = ("user", "account")
+""" The names of the session attributes that commonly hold the object
+representing the user, in which the values that identify the user are
+looked up whenever they are not stored directly in the session """
+
+OBJECT_NAMES = ("object_id", "id", "name", "username", "email")
+""" The names of the attributes that identify an object stored in the
+session (eg: the company of the user), the only ones reported for it
+as the remaining ones may hold personal or even tax information """
+
+LOCALE_NAMES = ("_locale", "locale", "language")
+""" The names of the session attributes under which the locale of the
+session is commonly stored, looked up by trial and error """
+
+SESSION_TYPES = dict(RESTSession="memory", ShelveSession="file", RedisSession="redis")
+""" The map associating the name of each one of the session classes
+with the type of the storage in which its sessions are kept """
 
 LEVELS_MAP = dict(
     DEBUG="debug", INFO="info", WARNING="warning", ERROR="error", CRITICAL="fatal"
@@ -92,9 +123,30 @@ SCRUBBED_VALUE = "[Filtered]"
 """ The value that replaces the one of the fields considered to
 be sensitive, mimics the one used by the official clients """
 
+ANONYMOUS_HEADERS = (
+    "accept",
+    "accept-encoding",
+    "accept-language",
+    "content-length",
+    "content-type",
+    "host",
+    "origin",
+    "referer",
+    "user-agent",
+)
+""" The sequence of (lower cased) names of the headers that identify
+neither the client nor the user of a request, the only ones sent in
+case the user is not to be sent, as any other header (eg: the ones set
+by a proxy) may carry the address or the identity of the client """
+
 MAX_QUERY_LENGTH = 1024
 """ The maximum number of characters of a query kept in the
 breadcrumb that describes it """
+
+MAX_VALUE_LENGTH = 1024
+""" The maximum number of characters of a value of the request kept
+in the event, so that a large value (eg: an uploaded file) never leads
+to the rejection of the complete event by the endpoint """
 
 UNKNOWN_OPERATION = "UNKNOWN"
 """ The operation reported for a query from which no leading
@@ -103,6 +155,39 @@ keyword may be determined """
 ERROR_STATUS_CODE = 500
 """ The status code reported for a request that failed with an
 exception that does not define one of its own """
+
+SESSION_HASH_LENGTH = 12
+""" The number of characters of the hash of the session identifier
+reported, enough to correlate the events of a session while never
+exposing the identifier itself, as it's a credential """
+
+ENV_NAMES = ("SERVER_NAME", "SERVER_PORT", "SERVER_PROTOCOL")
+""" The names of the variables of the (WSGI) environment of a request
+that describe the server by which it has been received """
+
+BOT_REGEX = re.compile(
+    r"bot|crawler|spider|scraper|slurp|facebookexternalhit", re.IGNORECASE
+)
+""" The regular expression that matches the user agents of the bots and
+crawlers, verified before the remaining types of device as their user
+agents may also contain the keywords of those types """
+
+TABLET_REGEX = re.compile(r"iPad|Android(?!.*Mobile)|Tablet", re.IGNORECASE)
+""" The regular expression that matches the user agents of the tablets,
+verified before the mobile one as the tablets may include its keywords """
+
+MOBILE_REGEX = re.compile(
+    r"Mobile|iPhone|iPod|Android.*Mobile|Windows Phone", re.IGNORECASE
+)
+""" The regular expression that matches the user agents of the mobile
+devices, any user agent not matched by the regular expressions of the
+remaining types of device is considered to be the one of a desktop """
+
+IDENTIFIER_REGEX = re.compile(r"^\d+(?=\.|$)")
+""" The regular expression that matches a numeric identifier in a segment
+of the path of a request (optionally followed by an extension), replaced
+in the name of the transaction so that the requests to the same endpoint
+share the same name """
 
 
 class DiagnosticsSentry(colony.System):
@@ -142,6 +227,9 @@ class DiagnosticsSentry(colony.System):
             "SENTRY_MAX_BREADCRUMBS", DEFAULT_MAX_BREADCRUMBS, cast=int
         )
         self.ignored = colony.conf("SENTRY_IGNORED", DEFAULT_IGNORED, cast=list)
+        self.session_attributes = colony.conf(
+            "SENTRY_SESSION_ATTRIBUTES", DEFAULT_SESSION_ATTRIBUTES, cast=list
+        )
         self.client = None
         self.handler = None
         self._local = threading.local()
@@ -236,6 +324,7 @@ class DiagnosticsSentry(colony.System):
         context = self._context()
         context.request = request
         context.breadcrumbs = collections.deque(maxlen=self.max_breadcrumbs)
+        context.begin = time.time()
 
     def request_end(self, request, exception=None):
         """
@@ -259,6 +348,7 @@ class DiagnosticsSentry(colony.System):
         context = self._context()
         context.request = None
         context.breadcrumbs = None
+        context.begin = None
 
     def request_exception(self, request, exception, exception_map=None):
         """
@@ -513,7 +603,8 @@ class DiagnosticsSentry(colony.System):
                 tags=self.build_tags(request, exception=exception),
                 extra=extra,
                 breadcrumbs=context.breadcrumbs,
-                contexts=self.build_contexts(),
+                contexts=self.build_contexts(request, exception=exception),
+                transaction=self.resolve_transaction(request),
             )
             return self.client.submit_event(event)
         finally:
@@ -550,8 +641,15 @@ class DiagnosticsSentry(colony.System):
             return None
 
         # gathers the basic description of the request, these values are
-        # never considered sensitive and as such are always sent
-        data = dict(method=request.get_method(), url=request.get_path())
+        # never considered sensitive and as such are always sent, note that
+        # the URL is made absolute as only such an URL is presented by Sentry
+        data = dict(method=request.get_method(), url=self.resolve_url(request))
+        headers = self.build_headers(request)
+        if headers:
+            data["headers"] = headers
+        env = self.build_env(request)
+        if env:
+            data["env"] = env
 
         # in case the sending of the contents of the request has not been
         # explicitly enabled returns immediately, avoiding the leaking of
@@ -559,14 +657,171 @@ class DiagnosticsSentry(colony.System):
         if not self.send_request:
             return data
 
-        data["data"] = self.scrub_map(request.get_attributes_map())
+        # gathers both the query string and the contents of the request, note
+        # that the attributes of a request using the get method are the values
+        # of its query string, so they are only reported as contents otherwise
+        # and that their map is built as none is exposed by the request
+        query_string = self.build_query_string(request)
+        if query_string:
+            data["query_string"] = query_string
+        if not request.is_get():
+            attributes = dict(
+                (name, request.get_attribute(name))
+                for name in request.get_attributes_list()
+            )
+            data["data"] = self.scrub_map(attributes)
         return data
+
+    def resolve_url(self, request):
+        """
+        Resolves the absolute URL of the provided request, giving priority to
+        the scheme and host forwarded by a proxy (if any) over the ones of the
+        connection effectively established with the server.
+
+        :type request: RESTRequest
+        :param request: The request whose URL is going to be resolved.
+        :rtype: String
+        :return: The absolute URL of the request, or its path in case its
+        host can not be determined.
+        """
+
+        # retrieves the host and the scheme of the request in a safe fashion,
+        # as they may not be available for some of the more exotic kinds of
+        # request, in which case the path is used as the URL of the request
+        path = request.get_path()
+        try:
+            forwarded_host = self._header(request, "X-Forwarded-Host")
+            host = forwarded_host or self._header(request, "Host")
+            scheme = self._header(request, "X-Forwarded-Proto")
+            secure = request.is_secure()
+        except Exception:
+            return path
+        if not host:
+            return path
+
+        # uses only the first one of the values of the forwarded headers, as a
+        # chain of proxies sets one value for each one of them, the first value
+        # being the one of the request as received by the first proxy
+        host = host.split(",", 1)[0].strip()
+        scheme = scheme.split(",", 1)[0].strip() if scheme else None
+        scheme = scheme or ("https" if secure else "http")
+        return "%s://%s%s" % (scheme, host, path)
+
+    def build_headers(self, request):
+        """
+        Builds the map of the headers of the provided request, filtering the
+        values of the ones that carry credentials (eg: cookies), keeping only
+        the ones that identify neither the client nor the user in case the user
+        is not to be sent and removing the query string of the referer, as it
+        may carry tokens (eg: the one of a password reset).
+
+        :type request: RESTRequest
+        :param request: The request whose headers are going to be described.
+        :rtype: Dictionary
+        :return: The map of the headers of the request.
+        """
+
+        try:
+            headers = request.get_headers()
+        except Exception:
+            headers = None
+        if not headers:
+            return None
+
+        scrubbed = dict()
+        for name, value in colony.legacy.items(headers):
+            name_l = name.lower()
+            if not self.send_user and name_l not in ANONYMOUS_HEADERS:
+                continue
+            if self.is_sensitive(name):
+                scrubbed[name] = SCRUBBED_VALUE
+                continue
+            value = self.scrub_value(value)
+            if name_l == "referer":
+                value = value.split("?", 1)[0]
+            scrubbed[name] = value
+        return scrubbed
+
+    def build_env(self, request):
+        """
+        Builds the map describing the environment in which the provided
+        request has been received, namely the connection effectively
+        established with the server (commonly by a proxy) and the server
+        itself, using the names of the variables of the CGI specification.
+
+        :type request: RESTRequest
+        :param request: The request whose environment is going to be described.
+        :rtype: Dictionary
+        :return: The map describing the environment of the request.
+        """
+
+        env = dict()
+
+        # gathers the address of the connection effectively established with
+        # the server, without resolving the forwarded headers, only sent in
+        # case the user is to be sent as it may be the address of the client
+        if self.send_user:
+            try:
+                address, port = request.get_connection_address(resolve=False)
+            except Exception:
+                address, port = None, None
+            if address:
+                env["REMOTE_ADDR"] = address
+            if port:
+                env["REMOTE_PORT"] = port
+
+        # gathers the description of the server, completing it with the values
+        # of the lower level request (eg: the WSGI environment) whenever they
+        # are available for the kind of request that is being handled
+        try:
+            server_software = request.get_server_software()
+            lower_request = request.get_request()
+        except Exception:
+            server_software, lower_request = None, None
+        if server_software:
+            env["SERVER_SOFTWARE"] = server_software
+        environ = getattr(lower_request, "environ", None) or dict()
+        for name in ENV_NAMES:
+            if environ.get(name, None):
+                env[name] = environ[name]
+        protocol_version = getattr(lower_request, "protocol_version", None)
+        if protocol_version and "SERVER_PROTOCOL" not in env:
+            env["SERVER_PROTOCOL"] = protocol_version
+        return env
+
+    def build_query_string(self, request):
+        """
+        Builds the sequence of name and value pairs of the query string of the
+        provided request, with the values of the sensitive names filtered.
+
+        :type request: RESTRequest
+        :param request: The request whose query string is going to be described.
+        :rtype: List
+        :return: The sequence of name and value pairs of the query string.
+        """
+
+        try:
+            lower_request = request.get_request()
+        except Exception:
+            lower_request = None
+        query_string = getattr(lower_request, "query_string", None)
+        if not query_string:
+            return None
+
+        pairs = []
+        query = colony.legacy.parse_qs(query_string, keep_blank_values=True)
+        for name, values in sorted(colony.legacy.items(query)):
+            for value in values:
+                sensitive = self.is_sensitive(name)
+                value = SCRUBBED_VALUE if sensitive else self.scrub_value(value)
+                pairs.append([name, value])
+        return pairs
 
     def build_user(self, request):
         """
         Builds the structure that describes the user of the provided
         request, using both the address of the connection and the
-        identifier of the user stored in the session.
+        values that identify the user stored in the session.
 
         :type request: RESTRequest
         :param request: The request whose user is going to be described.
@@ -590,17 +845,43 @@ class DiagnosticsSentry(colony.System):
         if address:
             user["ip_address"] = address
 
-        # tries to retrieve the identifier of the user from the session
-        # of the request, note that no session may exist for it
+        # tries to resolve the values that identify the user from the session
+        # of the request, note that no session may exist for it and that the
+        # resolution is performed in a safe fashion as it may fail
         try:
             session = request.get_session()
-            username = session and session.get_attribute(DEFAULT_USER_ATTRIBUTE)
+            values = self.resolve_user(session) if session else dict()
         except Exception:
-            username = None
-        if username:
-            user["username"] = username
+            values = dict()
+        user.update(values)
 
         return user or None
+
+    def resolve_user(self, session):
+        """
+        Resolves the values that identify the user of the provided session by
+        trial and error, looking them up under the names commonly used, first
+        directly in the session and then in the object representing the user
+        stored in it, considering only the values already loaded in the object.
+
+        :type session: RESTSession
+        :param session: The session whose user is going to be resolved.
+        :rtype: Dictionary
+        :return: The map of the values that identify the user.
+        """
+
+        user = dict()
+        user_object = self._session_value(session, USER_OBJECT_NAMES)
+        for key, names in colony.legacy.items(USER_NAMES):
+            for name in names:
+                value = session.get_attribute(name)
+                if not self._is_scalar(value):
+                    value = self._loaded_value(user_object, name)
+                if not self._is_scalar(value):
+                    continue
+                user[key] = value
+                break
+        return user
 
     def build_tags(self, request, exception=None):
         """
@@ -624,7 +905,38 @@ class DiagnosticsSentry(colony.System):
         status_code = self.resolve_status_code(request, exception)
         if status_code:
             tags["status_code"] = str(status_code)
+        device_type = self.resolve_device_type(request)
+        if device_type:
+            tags["device_type"] = device_type
         return tags
+
+    def resolve_device_type(self, request):
+        """
+        Resolves the type of the device from which the provided request has
+        been sent (bot, tablet, mobile or desktop), using the keywords that
+        are commonly present in its user agent.
+
+        :type request: RESTRequest
+        :param request: The request whose device is going to be resolved.
+        :rtype: String
+        :return: The type of the device, or an invalid value in case the
+        request has no user agent.
+        """
+
+        try:
+            user_agent = self._header(request, "User-Agent")
+        except Exception:
+            user_agent = None
+        if not user_agent:
+            return None
+
+        if BOT_REGEX.search(user_agent):
+            return "bot"
+        if TABLET_REGEX.search(user_agent):
+            return "tablet"
+        if MOBILE_REGEX.search(user_agent):
+            return "mobile"
+        return "desktop"
 
     def resolve_status_code(self, request, exception=None):
         """
@@ -661,12 +973,36 @@ class DiagnosticsSentry(colony.System):
         except Exception:
             return None
 
-    def build_contexts(self):
+    def resolve_transaction(self, request):
+        """
+        Resolves the name of the transaction of the provided request, composed
+        by its method and path, with the numeric identifiers of the path replaced
+        so that the requests to the same endpoint share the same name.
+
+        :type request: RESTRequest
+        :param request: The request whose transaction is going to be resolved.
+        :rtype: String
+        :return: The name of the transaction of the request.
+        """
+
+        if not request:
+            return None
+
+        segments = request.get_path().split("/")
+        segments = [IDENTIFIER_REGEX.sub("{id}", segment) for segment in segments]
+        return "%s %s" % (request.get_method(), "/".join(segments))
+
+    def build_contexts(self, request=None, exception=None):
         """
         Builds the contexts that describe the environment under which
         the event has been originated, namely the plugin manager and the
-        process (and thread) in which it's running.
+        process (and thread) in which it's running, together with both
+        the session and the response of the request (if any).
 
+        :type request: RESTRequest
+        :param request: The request under which the event was originated.
+        :type exception: Exception
+        :param exception: The exception that originated the event.
         :rtype: Dictionary
         :return: The map of contexts to be associated with the event.
         """
@@ -694,7 +1030,155 @@ class DiagnosticsSentry(colony.System):
         thread = threading.current_thread()
         process_context = dict(pid=os.getpid(), tid=thread.ident, thread=thread.name)
 
-        return dict(colony=colony_context, process=process_context)
+        # gathers the contexts that describe both the session and the response
+        # of the request, only available for the events that are originated
+        # while a request is being handled
+        contexts = dict(colony=colony_context, process=process_context)
+        session_context = self.build_session(request)
+        if session_context:
+            contexts["session"] = session_context
+        response_context = self.build_response(request, exception=exception)
+        if response_context:
+            contexts["response"] = response_context
+        return contexts
+
+    def build_session(self, request):
+        """
+        Builds the structure that describes the session of the provided
+        request, namely the type of its storage, the hash of its identifier,
+        its creation and expire times, its locale, the names of its attributes
+        and the values of the ones configured to be reported.
+
+        :type request: RESTRequest
+        :param request: The request whose session is going to be described.
+        :rtype: Dictionary
+        :return: The structure describing the session.
+        """
+
+        if not request:
+            return None
+
+        # retrieves the session of the request in a safe fashion, as it may not
+        # be possible to load it, note that many of the requests have no session
+        try:
+            session = request.get_session()
+        except Exception:
+            session = None
+        if not session:
+            return None
+
+        # describes the storage and the lifetime of the session, together with
+        # its locale and the names (never the values) of its attributes, note
+        # that the storage is not described under the type name, as such name
+        # is reserved by Sentry for the identification of the kind of context,
+        # and that no creation time exists for the sessions created before it
+        # was kept, as well as for the ones of the older versions of sessions
+        name = session.get_name()
+        context = dict(
+            storage=SESSION_TYPES.get(name, name),
+            creation_time=getattr(session, "creation_time", None),
+            expire_time=session.get_expire_time(),
+            locale=self._session_value(session, LOCALE_NAMES),
+            attributes=sorted(session.attributes_map.keys()),
+        )
+
+        # reports the hash of the identifier of the session and never the
+        # identifier itself, as it's the credential that grants access to it
+        session_id = session.get_session_id()
+        if session_id:
+            session_id = colony.legacy.bytes(session_id, force=True)
+            session_hash = hashlib.sha256(session_id).hexdigest()
+            context["id_hash"] = session_hash[:SESSION_HASH_LENGTH]
+
+        # in case the user is not to be sent returns immediately, as the values
+        # of the attributes configured to be reported identify the operator of
+        # the solution (eg: its company or its employee)
+        if not self.send_user:
+            return context
+
+        # describes the values of the attributes configured to be reported, not
+        # reporting the ones whose description is empty (eg: an empty string or
+        # an object with no identifying attribute loaded) as they describe nothing
+        values = dict()
+        for name in self.session_attributes:
+            value = session.get_attribute(name)
+            if value == None:
+                continue
+            sensitive = self.is_sensitive(name)
+            description = SCRUBBED_VALUE if sensitive else self.describe_value(value)
+            if not description:
+                continue
+            values[name] = description
+        if values:
+            context["values"] = values
+        return context
+
+    def build_response(self, request, exception=None):
+        """
+        Builds the structure that describes the response to the provided
+        request as determined at the moment of the event, together with the
+        time elapsed since the beginning of the handling of the request.
+
+        :type request: RESTRequest
+        :param request: The request whose response is going to be described.
+        :type exception: Exception
+        :param exception: The exception that originated the event, used in
+        the determination of the status code of the response.
+        :rtype: Dictionary
+        :return: The structure describing the response.
+        """
+
+        if not request:
+            return None
+
+        response = dict()
+        status_code = self.resolve_status_code(request, exception)
+        if status_code:
+            response["status_code"] = status_code
+
+        # retrieves both the content type and the encoder of the response in a
+        # safe fashion, as they are only defined once the response is built
+        try:
+            content_type = request.get_content_type()
+            encoder_name = request.get_encoder_name()
+        except Exception:
+            content_type, encoder_name = None, None
+        if content_type:
+            response["content_type"] = content_type
+        if encoder_name:
+            response["encoder"] = encoder_name
+
+        # calculates the time elapsed since the beginning of the handling of the
+        # request, only possible for the request that is being handled by the
+        # current thread, as the beginning of it is kept in its context
+        context = self._context()
+        if context.request == request and context.begin:
+            response["elapsed"] = time.time() - context.begin
+
+        return response or None
+
+    def describe_value(self, value):
+        """
+        Describes the provided value of an attribute of the session, reporting
+        it as is in case it's a scalar and only the attributes that identify it
+        in case it's a map or an object (eg: an entity), as the remaining ones
+        may hold personal or even tax information.
+
+        :type value: Object
+        :param value: The value of the attribute to be described.
+        :rtype: Object
+        :return: The description of the value.
+        """
+
+        if self._is_scalar(value):
+            return self.scrub_value(value)
+
+        description = dict()
+        for name in OBJECT_NAMES:
+            _value = self._loaded_value(value, name)
+            if self._is_scalar(_value):
+                description[name] = self.scrub_value(_value)
+        return description
 
     def scrub_map(self, values_map):
         """
@@ -740,8 +1224,12 @@ class DiagnosticsSentry(colony.System):
             return [self.scrub_value(item) for item in value]
 
         # converts the (scalar) value into its textual representation, as the
-        # payload of the event must be serializable
-        return colony.legacy.UNICODE(value)
+        # payload of the event must be serializable, truncating it in case it's
+        # too large so that the event is never rejected because of its size
+        value = colony.legacy.UNICODE(value)
+        if len(value) > MAX_VALUE_LENGTH:
+            value = value[:MAX_VALUE_LENGTH] + "..."
+        return value
 
     def is_sensitive(self, name):
         """
@@ -801,6 +1289,7 @@ class DiagnosticsSentry(colony.System):
             self._local.request = None
             self._local.breadcrumbs = None
             self._local.capturing = False
+            self._local.begin = None
         return self._local
 
     def _level(self):
@@ -813,6 +1302,89 @@ class DiagnosticsSentry(colony.System):
         """
 
         return logging.getLevelName(self.level.upper())
+
+    def _session_value(self, session, names):
+        """
+        Retrieves the value of the first one of the attributes of the provided
+        session, under the given names, that is defined.
+
+        :type session: RESTSession
+        :param session: The session from which the value is retrieved.
+        :type names: Tuple
+        :param names: The names of the attributes to be looked up, by order.
+        :rtype: Object
+        :return: The value of the first attribute defined, or an invalid value
+        in case none of the attributes is defined.
+        """
+
+        for name in names:
+            value = session.get_attribute(name)
+            if not value == None:
+                return value
+        return None
+
+    def _loaded_value(self, value, name):
+        """
+        Retrieves the value of the attribute with the provided name from the
+        given map or object, considering only the values already loaded in an
+        object, so that no access to the data source is triggered for an entity
+        whose attributes are loaded in a lazy fashion.
+
+        :type value: Object
+        :param value: The map or object from which the value is retrieved.
+        :type name: String
+        :param name: The name of the attribute to be retrieved.
+        :rtype: Object
+        :return: The value of the attribute, or an invalid value in case it's
+        not defined (or not loaded).
+        """
+
+        if isinstance(value, dict):
+            return value.get(name, None)
+        values = getattr(value, "__dict__", None) or dict()
+        return values.get(name, None)
+
+    def _is_scalar(self, value):
+        """
+        Verifies if the provided value is a (non empty) scalar value, that may
+        be reported as is, as opposed to a container or an object.
+
+        :type value: Object
+        :param value: The value to be verified.
+        :rtype: bool
+        :return: If the value is a non empty scalar value.
+        """
+
+        if not isinstance(value, colony.legacy.STRINGS + colony.legacy.INTEGERS):
+            return False
+        return not value == ""
+
+    def _header(self, request, name):
+        """
+        Retrieves the value of the header with the provided name from the given
+        request in a case insensitive fashion, as some of the kinds of request
+        (eg: the ones of the HTTP service) keep the names of the headers as they
+        have been received, making their retrieval by name case sensitive.
+
+        :type request: RESTRequest
+        :param request: The request from which the header is retrieved.
+        :type name: String
+        :param name: The name of the header to be retrieved.
+        :rtype: String
+        :return: The value of the header, or an invalid value in case the
+        header is not defined in the request.
+        """
+
+        value = request.get_header(name)
+        if not value == None:
+            return value
+
+        name = name.lower()
+        headers = request.get_headers() or dict()
+        for _name, _value in colony.legacy.items(headers):
+            if _name.lower() == name:
+                return _value
+        return None
 
 
 class SentryHandler(logging.Handler):

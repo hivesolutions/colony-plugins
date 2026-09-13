@@ -2537,6 +2537,10 @@ class RESTSession(object):
     session is going to be considered expired and removed from
     the associated storage mechanism """
 
+    creation_time = None
+    """ The creation time as seconds since epoch of the session,
+    the moment from which its complete lifetime is measured """
+
     cookie = None
     """ The cookie structure associated with the session this
     structure is going to be used in serialization """
@@ -2578,6 +2582,7 @@ class RESTSession(object):
         self.session_id = session_id
         self.timeout = timeout
         self.maximum_timeout = maximum_timeout
+        self.creation_time = time.time()
 
         self.dirty = True
         self.attributes_map = {}
@@ -2595,6 +2600,7 @@ class RESTSession(object):
             timeout=self.timeout,
             maximum_timeout=self.maximum_timeout,
             expire_time=self.expire_time,
+            creation_time=self.creation_time,
             attributes_map=self.attributes_map,
             _maximum_expire_time=self._maximum_expire_time,
         )
@@ -2607,6 +2613,10 @@ class RESTSession(object):
         self.attributes_map = state["attributes_map"]
         self._maximum_expire_time = state["_maximum_expire_time"]
         self._access_lock = threading.RLock()
+
+        # restores the creation time in a safe fashion, as the sessions
+        # stored before it started to be kept have no creation time
+        self.creation_time = state.get("creation_time", None)
 
     @classmethod
     def load(cls):
@@ -2800,6 +2810,9 @@ class RESTSession(object):
 
     def set_expire_time(self, expire_time):
         self.expire_time = expire_time
+
+    def get_creation_time(self):
+        return self.creation_time
 
     def get_cookie(self):
         return self.cookie

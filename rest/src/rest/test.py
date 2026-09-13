@@ -29,6 +29,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import time
+import pickle
 
 import colony
 
@@ -805,6 +806,31 @@ class RESTSessionTestCase(colony.ColonyTestCase):
         self.assertEqual(session.dirty, True)
         self.assertEqual(session.attributes_map, {})
         self.assertNotEqual(session.expire_time, None)
+        self.assertNotEqual(session.creation_time, None)
+
+    def test_state(self):
+        session = system.RESTSession("state_session", timeout=100, maximum_timeout=1000)
+        session.set_attribute("username", "joamag")
+
+        restored = pickle.loads(pickle.dumps(session))
+
+        self.assertEqual(restored.session_id, "state_session")
+        self.assertEqual(restored.creation_time, session.creation_time)
+        self.assertEqual(restored.expire_time, session.expire_time)
+        self.assertEqual(restored.get_attribute("username"), "joamag")
+
+    def test_state_previous(self):
+        session = system.RESTSession("state_session")
+        state = session.__getstate__()
+        del state["creation_time"]
+
+        # the sessions stored before the creation time started to be kept have
+        # no such value, which must not prevent them from being restored
+        restored = system.RESTSession.__new__(system.RESTSession)
+        restored.__setstate__(state)
+
+        self.assertEqual(restored.session_id, "state_session")
+        self.assertEqual(restored.creation_time, None)
 
     def test_new_session(self):
         session = system.RESTSession.new("new_session_id")
@@ -920,6 +946,19 @@ class RESTSessionTestCase(colony.ColonyTestCase):
 
         session.lock()
         session.release()
+
+    def test_get_creation_time(self):
+        before = time.time()
+        session = system.RESTSession("creation_test")
+        after = time.time()
+
+        # the creation time must remain the same once the lifetime of the session
+        # is extended, as opposed to the expire time that is regenerated
+        creation_time = session.get_creation_time()
+        session.update_expire_time(dirty_interval=0)
+
+        self.assertEqual(before <= creation_time <= after, True)
+        self.assertEqual(session.get_creation_time(), creation_time)
 
     def test_start_session(self):
         session = system.RESTSession("start_test")

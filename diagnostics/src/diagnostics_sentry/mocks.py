@@ -114,6 +114,13 @@ class MockRequest(object):
         address="192.168.1.100",
         session=None,
         status_code=500,
+        headers=None,
+        connection_address=None,
+        secure=False,
+        server_software=None,
+        request=None,
+        content_type=None,
+        encoder_name=None,
     ):
         self._method = method
         self._path = path
@@ -121,6 +128,43 @@ class MockRequest(object):
         self._address = address
         self._session = session
         self._status_code = status_code
+        self._headers = headers or {}
+        self._connection_address = connection_address or (None, None)
+        self._secure = secure
+        self._server_software = server_software
+        self._request = request
+        self._content_type = content_type
+        self._encoder_name = encoder_name
+
+    def is_get(self):
+        return self._method == "GET"
+
+    def is_secure(self):
+        return self._secure
+
+    def get_header(self, header_name):
+        for name, value in self._headers.items():
+            if name.lower() == header_name.lower():
+                return value
+        return None
+
+    def get_headers(self):
+        return self._headers
+
+    def get_attributes_list(self):
+        return list(self._attributes_map.keys())
+
+    def get_attribute(self, attribute_name, default=None):
+        return self._attributes_map.get(attribute_name, default)
+
+    def get_server_software(self):
+        return self._server_software
+
+    def get_request(self):
+        return self._request
+
+    def get_session(self):
+        return self._session
 
     def get_method(self):
         return self._method
@@ -128,36 +172,101 @@ class MockRequest(object):
     def get_path(self):
         return self._path
 
-    def get_attributes_map(self):
-        return self._attributes_map
+    def get_content_type(self):
+        return self._content_type
 
-    def get_address(self):
-        return self._address
-
-    def get_session(self):
-        return self._session
+    def get_encoder_name(self):
+        return self._encoder_name
 
     def get_status_code(self):
         return self._status_code
 
+    def get_connection_address(self, resolve=True, cleanup=True):
+        return self._connection_address
+
+    def get_address(self):
+        return self._address
+
 
 class MockRaisingRequest(MockRequest):
-    def get_address(self):
-        raise RuntimeError("no address")
+    def is_secure(self):
+        raise RuntimeError("no scheme")
+
+    def get_header(self, header_name):
+        raise RuntimeError("no header")
+
+    def get_headers(self):
+        raise RuntimeError("no headers")
+
+    def get_server_software(self):
+        raise RuntimeError("no server software")
+
+    def get_request(self):
+        raise RuntimeError("no request")
 
     def get_session(self):
         raise RuntimeError("no session")
 
+    def get_content_type(self):
+        raise RuntimeError("no content type")
+
     def get_status_code(self):
         raise RuntimeError("no status code")
 
+    def get_connection_address(self, resolve=True, cleanup=True):
+        raise RuntimeError("no connection address")
+
+    def get_address(self):
+        raise RuntimeError("no address")
+
+
+class MockCaseSensitiveRequest(MockRequest):
+    def get_header(self, header_name):
+        return self._headers.get(header_name, None)
+
+
+class MockServiceRequest(object):
+    def __init__(self, environ=None, query_string=None, protocol_version=None):
+        self.environ = environ
+        self.query_string = query_string
+        self.protocol_version = protocol_version
+
 
 class MockSession(object):
-    def __init__(self, attributes_map=None):
-        self._attributes_map = attributes_map or {}
+    def __init__(
+        self,
+        attributes_map=None,
+        session_id="c2f1b9e7d4a6",
+        name="RedisSession",
+        creation_time=1789261658.0,
+        expire_time=1789265258.0,
+    ):
+        self.attributes_map = attributes_map or {}
+        self.session_id = session_id
+        self.creation_time = creation_time
+        self.expire_time = expire_time
+        self._name = name
+
+    def get_name(self):
+        return self._name
+
+    def get_session_id(self):
+        return self.session_id
+
+    def get_expire_time(self):
+        return self.expire_time
 
     def get_attribute(self, attribute_name, default=None):
-        return self._attributes_map.get(attribute_name, default)
+        return self.attributes_map.get(attribute_name, default)
+
+
+class MockEntity(object):
+    def __init__(self, **kwargs):
+        for name, value in kwargs.items():
+            setattr(self, name, value)
+
+    def __getattr__(self, name):
+        raise RuntimeError("lazy loading of '%s' from the data source" % name)
 
 
 class MockTemplateFile(object):
