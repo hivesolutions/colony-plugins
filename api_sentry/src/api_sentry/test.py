@@ -573,7 +573,10 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
         lines = envelope.split("\n")
         item_header = json.loads(lines[1])
         self.assertEqual("acentuação" in lines[2], True)
-        self.assertEqual(item_header["length"], len(lines[2].encode("utf-8")))
+        self.assertEqual(
+            item_header["length"],
+            len(colony.legacy.bytes(lines[2], encoding="utf-8", force=True)),
+        )
 
     def test_build_envelope_unicode_non_latin(self):
         client = self._build_client()
@@ -585,7 +588,10 @@ class SentryClientEventTestCase(colony.ColonyTestCase):
 
         lines = envelope.split("\n")
         item_header = json.loads(lines[1])
-        self.assertEqual(item_header["length"], len(lines[2].encode("utf-8")))
+        self.assertEqual(
+            item_header["length"],
+            len(colony.legacy.bytes(lines[2], encoding="utf-8", force=True)),
+        )
 
     def _build_client(self, **kwargs):
         plugin = mocks.MockPlugin()
