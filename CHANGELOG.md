@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Applications configured to report errors to Sentry no longer fail to start - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Secure connections to servers hosting multiple domains, such as Sentry, no longer fail during the handshake - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Enabling the sending of the request contents to Sentry no longer silently stops the reporting of errors - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
+* Errors whose report includes non ASCII characters, such as accented names, are no longer rejected by Sentry - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Handling of a SOAP fault returned by the AT, whose code is a qualified name instead of a number, which raised a `ValueError` instead of the expected `ATAPIError` and discarded the fault message explaining the failure
 * Printing of an AT API error whose code is not a number, which raised a `TypeError` and hid the message of the error from the logs and the tracebacks
 
