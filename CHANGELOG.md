@@ -68,7 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Templates whose file name has no extension are no longer rejected with an internal error
 * The else branch of a template condition is now taken when the tested value is undefined
 * Containment checks in template conditions now compare the operands in the expected order
-* Ordering comparisons in template conditions no longer fail when one of the values is missing, such as in the receipts of old documents
 * Filter and method arguments containing special characters are no longer silently discarded
 * Commas inside quoted template arguments no longer split them into separate arguments
 * Template output is no longer corrupted when a variable encoding is configured
