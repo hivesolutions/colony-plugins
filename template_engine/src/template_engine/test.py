@@ -1883,14 +1883,108 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
     def test_process_if_not(self):
         self.assertEqual(self.render("{% if not flag %}Y{% endif %}", flag=False), "Y")
 
+    def test_process_if_greater_equal(self):
+        self.assertEqual(
+            self.render("{% if value >= 2 %}Y{% else %}N{% endif %}", value=2), "Y"
+        )
+
+    def test_process_if_greater_equal_undefined(self):
+        self.assertEqual(
+            self.render("{% if missing >= 0 %}Y{% else %}N{% endif %}"), "N"
+        )
+
+    def test_process_if_greater_equal_none(self):
+        self.assertEqual(
+            self.render(
+                "{% if value >= limit %}Y{% else %}N{% endif %}", value=-1, limit=None
+            ),
+            "Y",
+        )
+
+    def test_process_if_greater_equal_undefined_none(self):
+        self.assertEqual(
+            self.render("{% if missing >= limit %}Y{% else %}N{% endif %}", limit=None),
+            "Y",
+        )
+
     def test_process_if_greater(self):
         self.assertEqual(self.render("{% if value > 2 %}Y{% endif %}", value=3), "Y")
 
     def test_process_if_greater_false(self):
         self.assertEqual(self.render("{% if value > 2 %}Y{% endif %}", value=1), "")
 
+    def test_process_if_greater_undefined(self):
+        self.assertEqual(
+            self.render("{% if missing > 0 %}Y{% else %}N{% endif %}"), "N"
+        )
+
+    def test_process_if_greater_undefined_attribute(self):
+        self.assertEqual(
+            self.render(
+                "{% if sale.bail > 0 %}Y{% else %}N{% endif %}", sale=dict(price=10)
+            ),
+            "N",
+        )
+
+    def test_process_if_greater_none(self):
+        self.assertEqual(
+            self.render(
+                "{% if value > limit %}Y{% else %}N{% endif %}", value=-1, limit=None
+            ),
+            "Y",
+        )
+
+    def test_process_if_greater_undefined_none(self):
+        self.assertEqual(
+            self.render("{% if missing > limit %}Y{% else %}N{% endif %}", limit=None),
+            "N",
+        )
+
+    def test_process_if_lesser_equal(self):
+        self.assertEqual(
+            self.render("{% if value <= 2 %}Y{% else %}N{% endif %}", value=2), "Y"
+        )
+
+    def test_process_if_lesser_equal_undefined(self):
+        self.assertEqual(
+            self.render("{% if missing <= -1 %}Y{% else %}N{% endif %}"), "Y"
+        )
+
+    def test_process_if_lesser_equal_none(self):
+        self.assertEqual(
+            self.render(
+                "{% if value <= limit %}Y{% else %}N{% endif %}", value=-1, limit=None
+            ),
+            "N",
+        )
+
+    def test_process_if_lesser_equal_undefined_none(self):
+        self.assertEqual(
+            self.render("{% if missing <= limit %}Y{% else %}N{% endif %}", limit=None),
+            "Y",
+        )
+
     def test_process_if_lesser(self):
         self.assertEqual(self.render("{% if value < 2 %}Y{% endif %}", value=1), "Y")
+
+    def test_process_if_lesser_undefined(self):
+        self.assertEqual(
+            self.render("{% if missing < -1 %}Y{% else %}N{% endif %}"), "Y"
+        )
+
+    def test_process_if_lesser_none(self):
+        self.assertEqual(
+            self.render(
+                "{% if value < limit %}Y{% else %}N{% endif %}", value=-1, limit=None
+            ),
+            "N",
+        )
+
+    def test_process_if_lesser_undefined_none(self):
+        self.assertEqual(
+            self.render("{% if missing < limit %}Y{% else %}N{% endif %}", limit=None),
+            "N",
+        )
 
     def test_process_if_in_sequence(self):
         self.assertEqual(
