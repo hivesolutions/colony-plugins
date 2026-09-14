@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Client errors, such as requests for resources that do not exist, are no longer reported to Sentry - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Entity logging methods now defer the formatting of the message until it is effectively logged
 * Reading entities is now substantially faster, as the resolution of the relations, of the attributes and of their types is performed once per query instead of once per row
 * Template rendering is now around 3.9 times faster for typical pages and about 2.4 times faster for content heavy ones

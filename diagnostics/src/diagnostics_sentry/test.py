@@ -308,6 +308,19 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(client.events[0]["stacktrace"], dict(frames=["frame"]))
 
+    def test_request_end_client_error(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+        request = mocks.MockRequest()
+        _system.request_begin(request)
+
+        exception = ValueError("not found")
+        exception.status_code = 404
+        _system.request_end(request, exception)
+
+        self.assertEqual(len(client.events), 0)
+        self.assertEqual(_system._context().request, None)
+
     def test_request_end_swallows_error(self):
         client = mocks.MockRaisingSentryClient()
         _system = self._build_started(client=client)
@@ -338,6 +351,16 @@ class DiagnosticsSentryObserverTestCase(DiagnosticsSentryBaseTestCase):
             _system.request_exception(mocks.MockRequest(), exception, dict())
 
         self.assertEqual(client.events[0]["stacktrace"], dict(frames=["frame"]))
+
+    def test_request_exception_client_error(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+
+        exception = ValueError("forbidden")
+        exception.status_code = 403
+        _system.request_exception(mocks.MockRequest(), exception, dict())
+
+        self.assertEqual(len(client.events), 0)
 
     def test_request_exception_swallows_error(self):
         client = mocks.MockRaisingSentryClient()
@@ -536,6 +559,22 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(event["exception"].args[0], "invalid value")
         self.assertEqual(event["stacktrace"], dict(frames=["frame"]))
 
+    def test_capture_record_client_error(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+
+        try:
+            exception = ValueError("not found")
+            exception.status_code = 404
+            raise exception
+        except ValueError:
+            record = self._build_record("problem", exc_info=sys.exc_info())
+
+        result = _system.capture_record(record)
+
+        self.assertEqual(result, False)
+        self.assertEqual(len(client.events), 0)
+
     def test_capture_record_level(self):
         client = mocks.MockSentryClient()
         _system = self._build_started(client=client)
@@ -583,6 +622,31 @@ class DiagnosticsSentryCaptureTestCase(DiagnosticsSentryBaseTestCase):
 
         self.assertEqual(result, False)
         self.assertEqual(len(client.events), 0)
+
+    def test_capture_client_error(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+
+        exception = ValueError("not found")
+        exception.status_code = 404
+
+        result = _system.capture(exception=exception)
+
+        self.assertEqual(result, False)
+        self.assertEqual(len(client.events), 0)
+
+    def test_capture_client_error_message(self):
+        client = mocks.MockSentryClient()
+        _system = self._build_started(client=client)
+        request = mocks.MockRequest(status_code=404)
+
+        # the messages logged without an exception are still reported for a
+        # request answered with a client error, as they are explicitly logged
+        # by the server instead of being caused by the client
+        result = _system.capture(message="problem", request=request)
+
+        self.assertEqual(result, True)
+        self.assertEqual(len(client.events), 1)
 
     def test_capture_not_sampled(self):
         client = mocks.MockSentryClient()
@@ -1462,6 +1526,26 @@ class DiagnosticsSentryContextTestCase(DiagnosticsSentryBaseTestCase):
         self.assertEqual(_system.is_ignored(KeyError("missing")), True)
         self.assertEqual(_system.is_ignored(RuntimeError("problem")), False)
         self.assertEqual(_system.is_ignored(None), False)
+
+    def test_is_ignored_client_error(self):
+        _system = self._build_started()
+        status_codes = (
+            (400, True),
+            (404, True),
+            ("404", True),
+            (499, True),
+            (399, False),
+            (500, False),
+            ("not a number", False),
+            (None, False),
+        )
+
+        # only the status codes of the client errors are ignored, with the
+        # ones that are not numbers handled as internal server errors
+        for status_code, ignored in status_codes:
+            exception = ValueError("problem")
+            exception.status_code = status_code
+            self.assertEqual(_system.is_ignored(exception), ignored)
 
     def test_is_sampled(self):
         _system = self._build_started()

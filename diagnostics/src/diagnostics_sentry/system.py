@@ -1251,7 +1251,9 @@ class DiagnosticsSentry(colony.System):
     def is_ignored(self, exception):
         """
         Verifies if the provided exception is one of the ones that are
-        never reported, as they are part of the expected control flow.
+        never reported, as they are part of the expected control flow,
+        either because its class is explicitly ignored or because it
+        represents a client error (4XX status code).
 
         :type exception: Exception
         :param exception: The exception to be verified.
@@ -1261,7 +1263,14 @@ class DiagnosticsSentry(colony.System):
 
         if not exception:
             return False
-        return exception.__class__.__name__ in self.ignored
+        if exception.__class__.__name__ in self.ignored:
+            return True
+
+        # the exceptions that represent a client error (eg: a resource that
+        # does not exist) are caused by the client and not by a failure of
+        # the server, so they are never reported as they would only be noise
+        status_code = self.resolve_status_code(None, exception)
+        return status_code >= 400 and status_code < 500
 
     def is_sampled(self):
         """

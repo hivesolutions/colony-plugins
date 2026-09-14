@@ -49,6 +49,8 @@ The WSGI entrypoint only became a usable surface once it started logging the exc
 
 Lowering `SENTRY_LEVEL` below `ERROR` makes the warning that the `serialized` decorator logs for a handled controller exception a captured event of its own, so that failure is then reported both as a message and as an exception. The default level avoids it and the two events describe the same failure, so the duplication is a cost of the lower verbosity rather than a defect of it.
 
+Exceptions that represent a client error, with a 4XX status code (a resource that does not exist, for example), are never reported whatever the surface that captures them, as they are caused by the client rather than by a failure of the server. The messages logged without an exception are still reported, even for a request answered with a client error.
+
 ## Breadcrumbs
 
 The event vocabulary already emitted by the framework maps onto breadcrumbs at no additional instrumentation cost. They are held in a bounded sequence per request and are only attached once an event is effectively reported.
