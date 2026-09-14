@@ -1898,13 +1898,13 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
             self.render(
                 "{% if value >= limit %}Y{% else %}N{% endif %}", value=-1, limit=None
             ),
-            "Y",
+            "N",
         )
 
     def test_process_if_greater_equal_undefined_none(self):
         self.assertEqual(
             self.render("{% if missing >= limit %}Y{% else %}N{% endif %}", limit=None),
-            "Y",
+            "N",
         )
 
     def test_process_if_greater(self):
@@ -1931,7 +1931,7 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
             self.render(
                 "{% if value > limit %}Y{% else %}N{% endif %}", value=-1, limit=None
             ),
-            "Y",
+            "N",
         )
 
     def test_process_if_greater_undefined_none(self):
@@ -1947,7 +1947,7 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
 
     def test_process_if_lesser_equal_undefined(self):
         self.assertEqual(
-            self.render("{% if missing <= -1 %}Y{% else %}N{% endif %}"), "Y"
+            self.render("{% if missing <= -1 %}Y{% else %}N{% endif %}"), "N"
         )
 
     def test_process_if_lesser_equal_none(self):
@@ -1961,7 +1961,7 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
     def test_process_if_lesser_equal_undefined_none(self):
         self.assertEqual(
             self.render("{% if missing <= limit %}Y{% else %}N{% endif %}", limit=None),
-            "Y",
+            "N",
         )
 
     def test_process_if_lesser(self):
@@ -1969,7 +1969,7 @@ class VisitorTestCase(TemplateEngineBaseTestCase):
 
     def test_process_if_lesser_undefined(self):
         self.assertEqual(
-            self.render("{% if missing < -1 %}Y{% else %}N{% endif %}"), "Y"
+            self.render("{% if missing < -1 %}Y{% else %}N{% endif %}"), "N"
         )
 
     def test_process_if_lesser_none(self):

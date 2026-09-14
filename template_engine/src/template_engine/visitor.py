@@ -149,16 +149,16 @@ COMPARISION_FUNCTIONS = {
     "eq": lambda item, value: item == value,
     "neq": lambda item, value: not item == value,
     "gte": lambda item, value: (
-        True if value == None else False if item == None else item >= value
+        False if item == None or value == None else item >= value
     ),
     "gt": lambda item, value: (
-        False if item == None else True if value == None else item > value
+        False if item == None or value == None else item > value
     ),
     "lte": lambda item, value: (
-        True if item == None else False if value == None else item <= value
+        False if item == None or value == None else item <= value
     ),
     "lt": lambda item, value: (
-        False if value == None else True if item == None else item < value
+        False if item == None or value == None else item < value
     ),
     "len": lambda item, value: len(item) == value,
     "lengt": lambda item, value: len(item) > value,
@@ -168,8 +168,8 @@ COMPARISION_FUNCTIONS = {
 }
 """ The map containing the comparison functions (lambda) these
 are going to be used "inside" the visitor execution logic, note
-that the ordering functions consider an invalid (None) value to be
-smaller than any other value (as defined by Python 2) """
+that the ordering functions never match an invalid (None) value,
+evaluating as false whenever any of the operands is invalid """
 
 FILTERS = dict(
     e=lambda v, a, t: v if v == None else xml.sax.saxutils.escape(t._to_string(v)),
