@@ -32,6 +32,8 @@ import os
 
 import colony
 
+from . import exceptions
+
 
 class DataFileManager(colony.System):
     """
@@ -215,8 +217,10 @@ class FileManager(object):
 
         self.connection_parameters = connection_parameters
 
-    def get(self, file_name):
+    def get(self, file_name, raise_e=False):
         connection = self.get_connection()
+        if raise_e and not self.file_engine_plugin.exists(connection, file_name):
+            raise exceptions.FileNotFound(file_name)
         return self.file_engine_plugin.get(connection, file_name)
 
     def put(self, file_path, file_name=None):
@@ -232,21 +236,39 @@ class FileManager(object):
         connection = self.get_connection()
         return self.file_engine_plugin.put_data(connection, data, file_name)
 
-    def delete(self, file_name):
+    def delete(self, file_name, raise_e=False):
         connection = self.get_connection()
+        if raise_e and not self.file_engine_plugin.exists(connection, file_name):
+            raise exceptions.FileNotFound(file_name)
         return self.file_engine_plugin.delete(connection, file_name)
 
-    def list(self, directory_name):
+    def list(self, directory_name, raise_e=False):
         connection = self.get_connection()
+        if raise_e and not self.file_engine_plugin.exists_directory(
+            connection, directory_name
+        ):
+            raise exceptions.DirectoryNotFound(directory_name)
         return self.file_engine_plugin.list(connection, directory_name)
 
-    def size(self, file_name):
+    def size(self, file_name, raise_e=False):
         connection = self.get_connection()
+        if raise_e and not self.file_engine_plugin.exists(connection, file_name):
+            raise exceptions.FileNotFound(file_name)
         return self.file_engine_plugin.size(connection, file_name)
 
-    def mtime(self, file_name):
+    def mtime(self, file_name, raise_e=False):
         connection = self.get_connection()
+        if raise_e and not self.file_engine_plugin.exists(connection, file_name):
+            raise exceptions.FileNotFound(file_name)
         return self.file_engine_plugin.mtime(connection, file_name)
+
+    def exists(self, file_name):
+        connection = self.get_connection()
+        return self.file_engine_plugin.exists(connection, file_name)
+
+    def exists_directory(self, directory_name):
+        connection = self.get_connection()
+        return self.file_engine_plugin.exists_directory(connection, directory_name)
 
 
 class Connection(object):

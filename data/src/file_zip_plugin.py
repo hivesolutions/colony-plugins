@@ -42,7 +42,7 @@ class FileZipPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["file_engine"]
+    capabilities = ["file_engine", "test"]
     main_modules = ["file_zip"]
 
     def load_plugin(self):
@@ -50,6 +50,7 @@ class FileZipPlugin(colony.Plugin):
         import file_zip
 
         self.system = file_zip.FileZip(self)
+        self.test = file_zip.FileZipTest(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()
@@ -62,6 +63,9 @@ class FileZipPlugin(colony.Plugin):
 
     def close_connection(self, connection):
         return self.system.close_connection(connection)
+
+    def get(self, connection, file_name):
+        return self.system.get(connection, file_name)
 
     def put(self, connection, file_path, file_name):
         return self.system.put(connection, file_path, file_name)
@@ -83,3 +87,9 @@ class FileZipPlugin(colony.Plugin):
 
     def mtime(self, connection, file_name):
         return self.system.mtime(connection, file_name)
+
+    def exists(self, connection, file_name):
+        return self.system.exists(connection, file_name)
+
+    def exists_directory(self, connection, directory_name):
+        return self.system.exists_directory(connection, directory_name)
