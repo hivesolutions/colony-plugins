@@ -42,7 +42,7 @@ class FileGridFSPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["threads", "file_engine", "test"]
+    capabilities = ["threads", "file_engine"]
     dependencies = [
         colony.PackageDependency("MongoDB python bindings", "pymongo"),
         colony.PackageDependency("MongoDB GridFS python bindings", "gridfs"),
@@ -54,7 +54,6 @@ class FileGridFSPlugin(colony.Plugin):
         import file_gridfs
 
         self.system = file_gridfs.FileGridFS(self)
-        self.test = file_gridfs.FileGridFSTest(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()
