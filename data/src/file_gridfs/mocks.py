@@ -19,15 +19,35 @@
 # You should have received a copy of the Apache License along with
 # Hive Colony Framework. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import mocks
-from . import system
-from . import test
 
-from .system import FileGridFS
-from .test import FileGridFSTest
+class MockConnection(object):
+    """
+    Mock connection, holding the (engine) file connection
+    that is used by the file engine operations.
+    """
+
+    def __init__(self, file_connection):
+        self.file_connection = file_connection
+
+
+class MockGridFS(object):
+    """
+    Mock GridFS system, keeping the names of the files that
+    exist in it, so that no MongoDB server is required.
+    """
+
+    def __init__(self, file_names=None):
+        self.file_names = file_names or []
+
+    def exists(self, document_or_id=None, **kwargs):
+        file_name = kwargs.get("filename", None)
+        return file_name in self.file_names

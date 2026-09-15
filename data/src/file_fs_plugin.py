@@ -42,7 +42,7 @@ class FileFSPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["file_engine"]
+    capabilities = ["file_engine", "test"]
     main_modules = ["file_fs"]
 
     def load_plugin(self):
@@ -50,6 +50,7 @@ class FileFSPlugin(colony.Plugin):
         import file_fs
 
         self.system = file_fs.FileFS(self)
+        self.test = file_fs.FileFSTest(self)
 
     def get_engine_name(self):
         return self.system.get_engine_name()
@@ -86,3 +87,6 @@ class FileFSPlugin(colony.Plugin):
 
     def mtime(self, connection, file_name):
         return self.system.mtime(connection, file_name)
+
+    def exists(self, connection, file_name):
+        return self.system.exists(connection, file_name)

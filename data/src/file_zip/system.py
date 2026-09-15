@@ -199,6 +199,34 @@ class FileZip(colony.System):
     def mtime(self, connection, file_name):
         pass
 
+    def exists(self, connection, file_name):
+        # retrieves the base file connection and
+        # then uses it to retrieve the base path
+        file_connection = connection.file_connection
+        base_path = file_connection.base_path
+
+        # strips the file name in the left separators
+        file_name = file_name.lstrip("/")
+
+        # in case the zip file does not exist there's no
+        # file to be found in it (nothing has been put)
+        if not os.path.exists(base_path):
+            return False
+
+        # opens the zip file for reading
+        zip_file = zipfile.ZipFile(base_path, mode="r")
+
+        try:
+            # verifies if the file name is one of the
+            # names of the files contained in the zip file
+            exists = file_name in zip_file.namelist()
+        finally:
+            # closes the zip file
+            zip_file.close()
+
+        # returns if the file exists in the zip file
+        return exists
+
 
 class ZipConnection(object):
     """

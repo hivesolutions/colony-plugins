@@ -312,6 +312,22 @@ class FileFS(colony.System):
         target_file_path = os.path.normpath(target_file_path)
         return os.path.getmtime(target_file_path)
 
+    def exists(self, connection, file_name):
+        # retrieves the base file connection and
+        # then uses it to retrieve the base path
+        file_connection = connection.file_connection
+        base_path = file_connection.base_path
+
+        # strips the extra path separator values
+        # (avoids problems working with the file system)
+        file_name = file_name.lstrip("/")
+
+        # creates the target file path from the base path
+        # and uses it to verify if the file exists
+        target_file_path = os.path.join(base_path, file_name)
+        target_file_path = os.path.normpath(target_file_path)
+        return os.path.exists(target_file_path)
+
 
 class FsConnection(object):
     """

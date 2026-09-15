@@ -42,7 +42,7 @@ class FileManagerPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT]
-    capabilities = ["file_manager"]
+    capabilities = ["file_manager", "test"]
     capabilities_allowed = ["file_engine"]
     main_modules = ["file_manager"]
 
@@ -51,6 +51,7 @@ class FileManagerPlugin(colony.Plugin):
         import file_manager
 
         self.system = file_manager.DataFileManager(self)
+        self.test = file_manager.FileManagerTest(self)
 
     @colony.load_allowed
     def load_allowed(self, plugin, capability):

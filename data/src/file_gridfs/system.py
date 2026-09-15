@@ -209,3 +209,16 @@ class FileGridFS(colony.System):
 
     def mtime(self, connection, file_name):
         pass
+
+    def exists(self, connection, file_name):
+        # retrieves the base file connection as the
+        # GridFS system
+        gridfs_sytem = connection.file_connection
+
+        # adds the path separator value to the file name
+        # in case it's necessary
+        file_name = file_name.startswith("/") and file_name or "/" + file_name
+
+        # verifies if there's any file (version) with
+        # the given file name in the GridFS system
+        return gridfs_sytem.exists(filename=file_name)
