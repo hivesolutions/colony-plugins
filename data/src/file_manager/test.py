@@ -164,6 +164,7 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
         self.assertTrue(isinstance(exception, exceptions.FileManagerException))
         self.assertEqual(exception.message, "/images/hello.png")
+        self.assertEqual(exception.status_code, 404)
         self.assertEqual(str(exception), "File not found - /images/hello.png")
 
     def test_directory_not_found(self):
@@ -171,4 +172,5 @@ class ExceptionsTestCase(colony.ColonyTestCase):
 
         self.assertTrue(isinstance(exception, exceptions.FileManagerException))
         self.assertEqual(exception.message, "/images")
+        self.assertEqual(exception.status_code, 404)
         self.assertEqual(str(exception), "Directory not found - /images")

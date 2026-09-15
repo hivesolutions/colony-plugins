@@ -47,6 +47,10 @@ class FileNotFound(FileManagerException):
     of the kind of file engine that is being used.
     """
 
+    status_code = 404
+    """ The HTTP based status code to be used when
+    raising this exception through the pipeline """
+
     def __init__(self, message):
         """
         Constructor of the class.
@@ -75,6 +79,10 @@ class DirectoryNotFound(FileManagerException):
     requested does not exist in the underlying file engine,
     independently of the kind of file engine that is being used.
     """
+
+    status_code = 404
+    """ The HTTP based status code to be used when
+    raising this exception through the pipeline """
 
     def __init__(self, message):
         """
