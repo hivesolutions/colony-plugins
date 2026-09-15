@@ -67,3 +67,32 @@ class FileNotFound(FileManagerException):
         """
 
         return "File not found - %s" % self.message
+
+
+class DirectoryNotFound(FileManagerException):
+    """
+    The directory not found class, raised when the directory
+    requested does not exist in the underlying file engine,
+    independently of the kind of file engine that is being used.
+    """
+
+    def __init__(self, message):
+        """
+        Constructor of the class.
+
+        :type message: String
+        :param message: The message to be printed.
+        """
+
+        FileManagerException.__init__(self)
+        self.message = message
+
+    def __str__(self):
+        """
+        Returns the string representation of the class.
+
+        :rtype: String
+        :return: The string representation of the class.
+        """
+
+        return "Directory not found - %s" % self.message

@@ -33,8 +33,9 @@ class MockFileEnginePlugin(object):
     """
     Mock file engine plugin, keeping the files in memory as a map
     that associates the name of each file with its data and its
-    modification timestamp, the access to a file that does not exist
-    fails with a key error, the error "native" to the engine.
+    modification timestamp, the access to a file (or directory) that
+    does not exist fails with a key error, the error "native" to the
+    engine, with directories being the prefixes of the file names.
     """
 
     def __init__(self, files=None):
@@ -59,6 +60,15 @@ class MockFileEnginePlugin(object):
     def delete(self, connection, file_name):
         del self.files[file_name]
 
+    def list(self, connection, directory_name):
+        if not self.exists_directory(connection, directory_name):
+            raise KeyError(directory_name)
+        return [
+            file_name[len(directory_name) + 1 :]
+            for file_name in self.files
+            if file_name.startswith(directory_name + "/")
+        ]
+
     def size(self, connection, file_name):
         data, _mtime = self.files[file_name]
         return len(data)
@@ -69,6 +79,14 @@ class MockFileEnginePlugin(object):
 
     def exists(self, connection, file_name):
         return file_name in self.files
+
+    def exists_directory(self, connection, directory_name):
+        file_names = [
+            file_name
+            for file_name in self.files
+            if file_name.startswith(directory_name + "/")
+        ]
+        return True if file_names else False
 
 
 class MockFileConnection(object):

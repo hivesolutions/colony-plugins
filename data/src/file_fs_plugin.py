@@ -90,3 +90,6 @@ class FileFSPlugin(colony.Plugin):
 
     def exists(self, connection, file_name):
         return self.system.exists(connection, file_name)
+
+    def exists_directory(self, connection, directory_name):
+        return self.system.exists_directory(connection, directory_name)

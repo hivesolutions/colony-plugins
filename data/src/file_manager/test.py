@@ -58,9 +58,9 @@ class FileManagerTest(colony.Test):
 class FileManagerTestCase(colony.ColonyTestCase):
     """
     The file manager test case, verifying that the operations are
-    delegated to the file engine and that a file that does not exist
-    is reported with the file not found error, independently of the
-    file engine, when that's requested by the caller.
+    delegated to the file engine and that a file (or directory) that
+    does not exist is reported with the not found error, independently
+    of the file engine, when that's requested by the caller.
     """
 
     @staticmethod
@@ -69,9 +69,9 @@ class FileManagerTestCase(colony.ColonyTestCase):
 
     def setUp(self):
         colony.ColonyTestCase.setUp(self)
-        self.file_engine_plugin = mocks.MockFileEnginePlugin(
-            files=dict(hello=(b"hello", MTIME))
-        )
+        files = dict(hello=(b"hello", MTIME))
+        files["images/hello.png"] = (b"image", MTIME)
+        self.file_engine_plugin = mocks.MockFileEnginePlugin(files=files)
         self.file_manager = system.FileManager(self.file_engine_plugin)
 
     def test_get(self):
@@ -98,6 +98,26 @@ class FileManagerTestCase(colony.ColonyTestCase):
             exceptions.FileNotFound, self.file_manager.delete, "missing", raise_e=True
         )
 
+    def test_list(self):
+        self.assertEqual(self.file_manager.list("images"), ["hello.png"])
+        self.assertEqual(self.file_manager.list("images", raise_e=True), ["hello.png"])
+
+    def test_list_not_found(self):
+        # verifies that a file is not considered to be a directory, so
+        # that its listing fails as the listing of any other directory
+        # that does not exist, raising the directory not found error when
+        # the raising of the error is requested by the caller
+        self.assert_raises(KeyError, self.file_manager.list, "hello")
+        self.assert_raises(
+            exceptions.DirectoryNotFound, self.file_manager.list, "hello", raise_e=True
+        )
+        self.assert_raises(
+            exceptions.DirectoryNotFound,
+            self.file_manager.list,
+            "missing",
+            raise_e=True,
+        )
+
     def test_size(self):
         self.assertEqual(self.file_manager.size("hello"), 5)
         self.assertEqual(self.file_manager.size("hello", raise_e=True), 5)
@@ -122,6 +142,11 @@ class FileManagerTestCase(colony.ColonyTestCase):
         self.assertEqual(self.file_manager.exists("hello"), True)
         self.assertEqual(self.file_manager.exists("missing"), False)
 
+    def test_exists_directory(self):
+        self.assertEqual(self.file_manager.exists_directory("images"), True)
+        self.assertEqual(self.file_manager.exists_directory("hello"), False)
+        self.assertEqual(self.file_manager.exists_directory("missing"), False)
+
 
 class ExceptionsTestCase(colony.ColonyTestCase):
     @staticmethod
@@ -140,3 +165,10 @@ class ExceptionsTestCase(colony.ColonyTestCase):
         self.assertTrue(isinstance(exception, exceptions.FileManagerException))
         self.assertEqual(exception.message, "/images/hello.png")
         self.assertEqual(str(exception), "File not found - /images/hello.png")
+
+    def test_directory_not_found(self):
+        exception = exceptions.DirectoryNotFound("/images")
+
+        self.assertTrue(isinstance(exception, exceptions.FileManagerException))
+        self.assertEqual(exception.message, "/images")
+        self.assertEqual(str(exception), "Directory not found - /images")

@@ -30,6 +30,6 @@ from . import mocks
 from . import system
 from . import test
 
-from .exceptions import FileManagerException, FileNotFound
+from .exceptions import FileManagerException, FileNotFound, DirectoryNotFound
 from .system import DataFileManager
 from .test import FileManagerTest

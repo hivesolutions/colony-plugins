@@ -92,3 +92,27 @@ class FileZipTestCase(colony.ColonyTestCase):
         self.assertEqual(self.plugin.exists(self.connection, "hello.txt"), True)
         self.assertEqual(self.plugin.exists(self.connection, "/hello.txt"), True)
         self.assertEqual(self.plugin.exists(self.connection, "missing.txt"), False)
+
+    def test_exists_directory(self):
+        # verifies that no directory exists while the zip file has not
+        # been created, not even the root one, as nothing has been put
+        self.assertEqual(self.plugin.exists_directory(self.connection, "images"), False)
+        self.assertEqual(self.plugin.exists_directory(self.connection, ""), False)
+
+        self.plugin.put_data(self.connection, b"hello", "images/hello.png")
+
+        self.assertEqual(self.plugin.exists_directory(self.connection, "images"), True)
+        self.assertEqual(self.plugin.exists_directory(self.connection, "/images"), True)
+        self.assertEqual(self.plugin.exists_directory(self.connection, "images/"), True)
+        self.assertEqual(self.plugin.exists_directory(self.connection, ""), True)
+        self.assertEqual(
+            self.plugin.exists_directory(self.connection, "missing"), False
+        )
+
+        # verifies that neither the prefix of the name of a directory nor
+        # the name of a file are considered to be a directory, as a directory
+        # is only matched by the complete path of its files
+        self.assertEqual(self.plugin.exists_directory(self.connection, "imag"), False)
+        self.assertEqual(
+            self.plugin.exists_directory(self.connection, "images/hello.png"), False
+        )

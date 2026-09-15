@@ -227,6 +227,50 @@ class FileZip(colony.System):
         # returns if the file exists in the zip file
         return exists
 
+    def exists_directory(self, connection, directory_name):
+        # retrieves the base file connection and
+        # then uses it to retrieve the base path
+        file_connection = connection.file_connection
+        base_path = file_connection.base_path
+
+        # strips the directory name in the left separators
+        directory_name = directory_name.lstrip("/")
+
+        # in case the zip file does not exist there's no
+        # directory to be found in it (nothing has been put)
+        if not os.path.exists(base_path):
+            return False
+
+        # the root directory exists as soon as the zip
+        # file exists, there's nothing else to verify
+        if not directory_name:
+            return True
+
+        # sets the directory name according to the default separator
+        # value, so that it's used as the prefix of the file names
+        directory_name = (
+            directory_name.endswith("/") and directory_name or directory_name + "/"
+        )
+
+        # opens the zip file for reading
+        zip_file = zipfile.ZipFile(base_path, mode="r")
+
+        try:
+            # retrieves the names of the files contained in the zip
+            # file and filters the values based on the directory name
+            # prefix (the files contained in the directory)
+            file_name_list = zip_file.namelist()
+            file_name_list = [
+                value for value in file_name_list if value.startswith(directory_name)
+            ]
+        finally:
+            # closes the zip file
+            zip_file.close()
+
+        # returns if the directory exists in the zip file, meaning
+        # that there's at least one file contained in it
+        return True if file_name_list else False
+
 
 class ZipConnection(object):
     """

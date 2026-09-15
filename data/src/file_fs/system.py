@@ -328,6 +328,21 @@ class FileFS(colony.System):
         target_file_path = os.path.normpath(target_file_path)
         return os.path.exists(target_file_path)
 
+    def exists_directory(self, connection, directory_name):
+        # retrieves the base file connection and
+        # then uses it to retrieve the base path
+        file_connection = connection.file_connection
+        base_path = file_connection.base_path
+
+        # strips the extra path separator values
+        # (avoids problems working with the file system)
+        directory_name = directory_name.lstrip("/")
+
+        # creates the full directory name from the base path
+        # and uses it to verify if the directory exists
+        full_directory_name = os.path.join(base_path, directory_name)
+        return os.path.isdir(full_directory_name)
+
 
 class FsConnection(object):
     """

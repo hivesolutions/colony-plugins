@@ -222,3 +222,36 @@ class FileGridFS(colony.System):
         # verifies if there's any file (version) with
         # the given file name in the GridFS system
         return gridfs_sytem.exists(filename=file_name)
+
+    def exists_directory(self, connection, directory_name):
+        # retrieves the base file connection as the
+        # GridFS system
+        gridfs_sytem = connection.file_connection
+
+        # adds the path separator value to the directory name
+        # in case it's necessary
+        directory_name = (
+            directory_name.startswith("/") and directory_name or "/" + directory_name
+        )
+
+        # sets the directory name according to the default separator value
+        directory_name = (
+            directory_name.endswith("/") and directory_name or directory_name + "/"
+        )
+
+        # the root directory always exists, as there's
+        # no structure to be created for it in GridFS
+        if directory_name == "/":
+            return True
+
+        # retrieves the file name list from the
+        # GridFS system and filters the values
+        # based on the directory name prefix
+        file_name_list = gridfs_sytem.list()
+        file_name_list = [
+            value for value in file_name_list if value.startswith(directory_name)
+        ]
+
+        # returns if the directory exists in the GridFS system, meaning
+        # that there's at least one file contained in it
+        return True if file_name_list else False

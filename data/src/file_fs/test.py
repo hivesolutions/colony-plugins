@@ -75,17 +75,33 @@ class FileFSTestCase(colony.ColonyTestCase):
         colony.ColonyTestCase.tearDown(self)
 
     def test_exists(self):
-        self.plugin.put_data(self.connection, b"hello", "hello.txt")
+        self.plugin.put_data(self.connection, b"hello", "images/hello.txt")
 
-        self.assertEqual(self.plugin.exists(self.connection, "hello.txt"), True)
-        self.assertEqual(self.plugin.exists(self.connection, "/hello.txt"), True)
-        self.assertEqual(self.plugin.exists(self.connection, "missing.txt"), False)
+        self.assertEqual(self.plugin.exists(self.connection, "images/hello.txt"), True)
+        self.assertEqual(self.plugin.exists(self.connection, "/images/hello.txt"), True)
+        self.assertEqual(
+            self.plugin.exists(self.connection, "images/missing.txt"), False
+        )
 
-    def test_exists_directory(self):
         # verifies that a directory is considered to exist, so that its
         # retrieval as a file fails with the error of the file system (not
         # being reported as a file that does not exist)
-        self.plugin.put_data(self.connection, b"hello", "images/hello.txt")
-
         self.assertEqual(self.plugin.exists(self.connection, "images"), True)
         self.assertRaises(IOError, self.plugin.get, self.connection, "images")
+
+    def test_exists_directory(self):
+        self.plugin.put_data(self.connection, b"hello", "images/hello.txt")
+
+        self.assertEqual(self.plugin.exists_directory(self.connection, "images"), True)
+        self.assertEqual(self.plugin.exists_directory(self.connection, "/images"), True)
+        self.assertEqual(self.plugin.exists_directory(self.connection, "images/"), True)
+        self.assertEqual(self.plugin.exists_directory(self.connection, ""), True)
+        self.assertEqual(
+            self.plugin.exists_directory(self.connection, "missing"), False
+        )
+
+        # verifies that a file is not considered to be a directory, so
+        # that its listing is reported as a directory that does not exist
+        self.assertEqual(
+            self.plugin.exists_directory(self.connection, "images/hello.txt"), False
+        )

@@ -242,8 +242,12 @@ class FileManager(object):
             raise exceptions.FileNotFound(file_name)
         return self.file_engine_plugin.delete(connection, file_name)
 
-    def list(self, directory_name):
+    def list(self, directory_name, raise_e=False):
         connection = self.get_connection()
+        if raise_e and not self.file_engine_plugin.exists_directory(
+            connection, directory_name
+        ):
+            raise exceptions.DirectoryNotFound(directory_name)
         return self.file_engine_plugin.list(connection, directory_name)
 
     def size(self, file_name, raise_e=False):
@@ -261,6 +265,10 @@ class FileManager(object):
     def exists(self, file_name):
         connection = self.get_connection()
         return self.file_engine_plugin.exists(connection, file_name)
+
+    def exists_directory(self, directory_name):
+        connection = self.get_connection()
+        return self.file_engine_plugin.exists_directory(connection, directory_name)
 
 
 class Connection(object):
