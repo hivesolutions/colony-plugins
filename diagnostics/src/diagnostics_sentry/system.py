@@ -731,7 +731,7 @@ class DiagnosticsSentry(colony.System):
         scrubbed = dict()
         for name, value in colony.legacy.items(headers):
             name_l = name.lower()
-            if not self.send_user and name_l not in ANONYMOUS_HEADERS:
+            if not self.send_user and not name_l in ANONYMOUS_HEADERS:
                 continue
             if self.is_sensitive(name):
                 scrubbed[name] = SCRUBBED_VALUE
@@ -785,7 +785,7 @@ class DiagnosticsSentry(colony.System):
             if environ.get(name, None):
                 env[name] = environ[name]
         protocol_version = getattr(lower_request, "protocol_version", None)
-        if protocol_version and "SERVER_PROTOCOL" not in env:
+        if protocol_version and not "SERVER_PROTOCOL" in env:
             env["SERVER_PROTOCOL"] = protocol_version
         return env
 

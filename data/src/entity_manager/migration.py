@@ -663,7 +663,7 @@ def generate_cti_to_concrete_queries(
             # this hierarchy level (this class + all descendants)
             class_names = [cls.__name__]
             for desc in get_hierarchy_classes(cls):
-                if not desc == cls and desc.__name__ not in class_names:
+                if not desc == cls and not desc.__name__ in class_names:
                     class_names.append(desc.__name__)
             quoted_names = ", ".join(["'%s'" % n for n in class_names])
             where_clause = " where %s._class in (%s)" % (chain_table, quoted_names)
@@ -681,13 +681,13 @@ def generate_cti_to_concrete_queries(
     tables_to_drop = []
     for cls in reversed(hierarchy):
         table_name = cls.get_name()
-        if table_name not in tables_to_drop:
+        if not table_name in tables_to_drop:
             tables_to_drop.append(table_name)
         for parent in cls.get_all_parents():
             if parent.is_abstract():
                 continue
             parent_table = parent.get_name()
-            if parent_table not in tables_to_drop:
+            if not parent_table in tables_to_drop:
                 tables_to_drop.append(parent_table)
 
     for table_name in tables_to_drop:
@@ -776,9 +776,9 @@ def generate_concrete_to_cti_queries(
         for parent in cls.get_all_parents():
             if parent.is_abstract():
                 continue
-            if parent not in class_levels:
+            if not parent in class_levels:
                 class_levels.append(parent)
-        if cls not in class_levels:
+        if not cls in class_levels:
             class_levels.append(cls)
 
     # phase 1: create new per-level CTI tables
@@ -829,7 +829,7 @@ def generate_concrete_to_cti_queries(
         for level in class_levels:
             # checks if this level is an ancestor (or self) of cls
             all_parents = cls.get_all_parents()
-            if not level == cls and level not in all_parents:
+            if not level == cls and not level in all_parents:
                 continue
 
             level_table = level.get_name()
@@ -844,7 +844,7 @@ def generate_concrete_to_cti_queries(
                 select_cols.append(item_name)
 
             # adds the id field if not already included
-            if table_id not in select_cols:
+            if not table_id in select_cols:
                 select_cols.append(table_id)
 
             # adds _class for root level

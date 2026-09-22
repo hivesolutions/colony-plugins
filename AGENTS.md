@@ -120,7 +120,7 @@ def tearDown(self):
 - No type annotations should exist in the `.py` files and if the exist they should isolated in th `.pyi` files.
 - The style should respect the black formatting.
 - The implementation should be done in a way that is compatible with the existing codebase.
-- Prefer `item not in list` over `not item in list`.
+- Prefer `not item in list` over `item not in list`.
 - Prefer `item == None` over `item is None`.
 - The commenting style of the project is unique, try to keep commenting style consistent.
 
