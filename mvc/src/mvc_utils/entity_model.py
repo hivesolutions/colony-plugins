@@ -807,15 +807,6 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     if sort_order == "__default__":
         sort_order = None
 
-    # in case there's a valid sort value present (which includes the
-    # "__default__" and the "__identifier__" values) then builds the
-    # order by tuple with both the sort value and the sort order
-    # (which can be unset as None)
-    # if no sort value exists the default order by (that is set above
-    # in the function) is used
-    if sort_value:
-        order_by = ((sort_value, sort_order),)
-
     # tries to retrieve the proper value for the paged element
     # taking into account a possible boolean approach
     if paged_s:
@@ -915,10 +906,47 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
         # the target (class) and the top level name of the attribute
         return _filters, target, name
 
+    def sortable(attribute):
+        # in case the attribute is one of the special values that
+        # refer the identifier of the entity it's considered to be
+        # valid for sorting (no resolution is required)
+        if attribute in ("__default__", "__identifier__"):
+            return True
+
+        # splits the attribute (complete) name using the dot based
+        # separator and then retrieves the base (path) value and
+        # the trailing name value
+        path = attribute.rsplit(".")
+        base, name = path[:-1], path[-1]
+
+        # in case the base value is defined a resolution operation
+        # must occur to retrieve the target class, in case the returned
+        # relation is invalid (not eager loaded) the attribute is not
+        # considered to be valid for sorting
+        target = cls
+        if base:
+            relation, target = resolve(cls, eager, base)
+            if relation == None:
+                return False
+
+        # returns if the trailing name exists as an attribute in the
+        # context of the target class (security validation)
+        return target.has_name(name)
+
     # runs the resolution process for the eager sequence, meaning
     # that allowed relations will be set of the eager structure
     if eager_s:
         eager_r(eager_s)
+
+    # in case there's a valid sort value present (which includes the
+    # "__default__" and the "__identifier__" values) then builds the
+    # order by tuple with both the sort value and the sort order
+    # (which can be unset as None), note that the sort value must
+    # refer an attribute of the entity (or of an eager loaded relation)
+    # if no valid sort value exists the default order by (that is set
+    # above in the function) is used
+    if sort_value and sortable(sort_value):
+        order_by = ((sort_value, sort_order),)
 
     # in case the name is defined the "special" wildcard filter
     # is added to the list of filters to be used in the query

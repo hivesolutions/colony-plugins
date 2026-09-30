@@ -199,3 +199,34 @@ class MockTemplateVisitor(object):
 
     def _validate_accept_node(self, node, accept_node):
         return accept_node
+
+
+class MockEntityManager(object):
+    def normalize_options(self, options):
+        eager = options.get("eager", None)
+        if type(eager) in (list, tuple):
+            options["eager"] = dict([(name, dict()) for name in eager])
+        return options
+
+
+class MockEntity(object):
+    _entity_manager = MockEntityManager()
+    _names = ()
+    _targets = dict()
+
+    @classmethod
+    def has_name(cls, name):
+        return name in cls._names
+
+    @classmethod
+    def get_target(cls, relation_name):
+        return cls._targets.get(relation_name, cls)
+
+
+class MockAddress(MockEntity):
+    _names = ("object_id", "street")
+
+
+class MockPerson(MockEntity):
+    _names = ("object_id", "name", "age", "address")
+    _targets = dict(address=MockAddress)
