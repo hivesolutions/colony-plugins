@@ -199,3 +199,64 @@ class MockTemplateVisitor(object):
 
     def _validate_accept_node(self, node, accept_node):
         return accept_node
+
+
+class MockEntityManager(object):
+    def __init__(self, entities=None):
+        self.entities = entities or dict()
+
+    def get_entity(self, entity_name):
+        return self.entities.get(entity_name, None)
+
+    def normalize_options(self, options):
+        eager = options.get("eager", None)
+        if type(eager) in (list, tuple):
+            options["eager"] = dict([(name, dict()) for name in eager])
+        return options
+
+
+class MockEntity(object):
+    data_reference = False
+    _entity_manager = MockEntityManager()
+    _names = ()
+    _targets = dict()
+
+    @classmethod
+    def is_reference(cls):
+        return cls.data_reference
+
+    @classmethod
+    def has_name(cls, name):
+        return name in cls._names
+
+    @classmethod
+    def get_target(cls, relation_name):
+        return cls._targets.get(relation_name, cls)
+
+    @classmethod
+    def _cast_value(cls, name, value):
+        if not name in cls._names:
+            return None
+        return value
+
+
+class MockAddress(MockEntity):
+    _names = ("object_id", "street")
+
+
+class MockAddressReference(MockEntity):
+    data_reference = True
+
+
+class MockPerson(MockEntity):
+    _names = ("object_id", "name", "age", "address")
+    _targets = dict(address=MockAddress)
+
+
+class MockPersonReference(MockEntity):
+    data_reference = True
+
+
+class MockCompany(MockEntity):
+    _names = ("object_id", "name", "address", "owner")
+    _targets = dict(address=MockAddressReference, owner=MockPersonReference)

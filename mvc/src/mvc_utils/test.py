@@ -35,6 +35,7 @@ from . import mocks
 from . import system
 from . import controller
 from . import exceptions
+from . import entity_model
 
 
 class MVCUtilsTest(colony.Test):
@@ -52,6 +53,7 @@ class MVCUtilsTest(colony.Test):
             ValidateACLSessionTestCase,
             TemplateFileACLTestCase,
             TemplateProcessMethodsTestCase,
+            CreateFilterTestCase,
             ExceptionsTestCase,
         )
 
@@ -720,6 +722,239 @@ class TemplateProcessMethodsTestCase(colony.ColonyTestCase):
         process_method(visitor, node)
 
         self.assertEqual(child_node.accepted, False)
+
+
+class CreateFilterTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Create Filter test case"
+
+    def test_create_filter(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson, dict(), defaults=dict(order_by="object_id")
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+        self.assertEqual(filter["range"], (0, 5))
+        self.assertEqual(filter["filters"], [])
+
+        filter = entity_model._class_create_filter(mocks.MockPerson, dict())
+        self.assertEqual(filter["order_by"], ())
+
+    def test_create_filter_sort(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="name:ascending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], (("name", "ascending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(order="age:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], (("age", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson, dict(sort="name"), defaults=dict(order_by="object_id")
+        )
+        self.assertEqual(filter["order_by"], (("name", None),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="ascending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], (("__default__", "ascending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="__identifier__:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], (("__identifier__", "descending"),))
+
+    def test_create_filter_sort_default(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="default:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson, dict(sort="default"), defaults=dict(order_by="object_id")
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+    def test_create_filter_sort_invalid(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="unknown:ascending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(
+                sort='<font dir="auto" style="vertical-align: inherit;">'
+                + '<font dir="auto" style="vertical-align: inherit;">'
+                + "padrão</font></font>:descending"
+            ),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="name desc, age:ascending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson, dict(sort="unknown:ascending")
+        )
+        self.assertEqual(filter["order_by"], ())
+
+    def test_create_filter_sort_relation(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address.street:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+        )
+        self.assertEqual(filter["order_by"], (("address.street", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address.name:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="unknown.street:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address.street:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+    def test_create_filter_sort_relation_eager(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address.street:ascending", eager=["address"]),
+            defaults=dict(order_by="object_id", eager=dict(), allowed=("address",)),
+        )
+        self.assertEqual(filter["order_by"], (("address.street", "ascending"),))
+        self.assertEqual(filter["eager"], dict(address=dict(eager=dict())))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address.street:ascending", eager=["address"]),
+            defaults=dict(order_by="object_id", eager=dict(), allowed=()),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+        self.assertEqual(filter["eager"], dict())
+
+    def test_create_filter_sort_reserved(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="_mtime:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], (("_mtime", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address._class:ascending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+        )
+        self.assertEqual(filter["order_by"], (("address._class", "ascending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="_unknown:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+    def test_create_filter_sort_reference(self):
+        entity_manager = mocks.MockEntityManager(
+            entities=dict(
+                MockAddressReference=mocks.MockAddress,
+                MockPersonReference=mocks.MockPerson,
+            )
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="address.street:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(filter["order_by"], (("address.street", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="owner.address.street:descending"),
+            defaults=dict(
+                order_by="object_id",
+                eager=dict(owner=dict(eager=dict(address=dict()))),
+            ),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(filter["order_by"], (("owner.address.street", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="address.name:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="address.street:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+            entity_manager=mocks.MockEntityManager(),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+    def test_create_filter_filters_reference(self):
+        entity_manager = mocks.MockEntityManager(
+            entities=dict(MockAddressReference=mocks.MockAddress)
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(filters=["address.street:equals:main"]),
+            defaults=dict(eager=("address",)),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(
+            filter["eager"]["address"]["filters"],
+            [dict(type="equals", fields=dict(street="main"))],
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(filters=["address.street:equals:main"]),
+            defaults=dict(eager=("address",)),
+            entity_manager=mocks.MockEntityManager(),
+        )
+        self.assertEqual(
+            filter["eager"]["address"]["filters"],
+            [dict(type="equals", fields=dict(street=None))],
+        )
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

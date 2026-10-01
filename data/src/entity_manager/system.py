@@ -8183,6 +8183,11 @@ class EntityManager(object):
         # relation information into the name buffer for latter
         # processing
         for name_partial in name_partials:
+            # validates that the partial name exists in the context
+            # of the current entity class (this is a security validation
+            # to avoid possible injection)
+            entity_class._validate_name(name_partial)
+
             # write the relation name and prefix into the name
             # buffer for relation indication
             name_buffer.write("__")
@@ -8191,6 +8196,24 @@ class EntityManager(object):
             # updates the current entity class to the target
             # of the current relation (partial name)
             entity_class = entity_class.get_target(name_partial)
+
+            # checks if the target class is a "data reference" and
+            # in case it is, tries to resolve it into the appropriate
+            # concrete (real) class in case the resolution fails it's
+            # impossible to order by the relation (relation not joined)
+            target_is_reference = entity_class.is_reference()
+            if target_is_reference:
+                entity_class = self.get_entity(entity_class.__name__)
+            if not entity_class:
+                raise exceptions.ValidationError(
+                    "invalid name '%s', referenced class not found for '%s'"
+                    % (name, name_partial)
+                )
+
+        # validates that the final name exists in the context of the
+        # (target) entity class (this is a security validation to
+        # avoid possible injection)
+        entity_class._validate_name(final_name)
 
         # retrieves the name of the identifier attribute
         # for the current entity class
