@@ -98,3 +98,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Certificate parser now handles optional version field correctly, supporting both v1 certificates (no version) and v2/v3 certificates
 * Sorting a list by an unknown field, such as one sent by a translated page, now keeps the default order instead of failing - [#47](https://github.com/hivesolutions/colony-plugins/issues/47)
 * Filtering a list by a field of a related entity defined in another module no longer discards the filtered value
+* Requests for addresses that no service handles are now answered with a not found error instead of an internal error, and are no longer reported to Sentry
