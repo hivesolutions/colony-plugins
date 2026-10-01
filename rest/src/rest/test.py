@@ -120,6 +120,32 @@ class RESTSystemTestCase(colony.ColonyTestCase):
         mock_request.uri = "/dynamic/other"
         self.assertEqual(rest.is_request_handler(mock_request), False)
 
+    def test_handle_request_not_handled(self):
+        mock_plugin = mocks.MockPlugin()
+        rest = system.REST(mock_plugin, session_c=system.RESTSession)
+
+        mock_request = mocks.MockRequest()
+        mock_request.uri = "/dynamic/rest/test/path"
+        self.assertRaises(
+            exceptions.RESTRequestNotHandled, rest.handle_request, mock_request
+        )
+
+        service_plugin = mocks.MockRESTServicePlugin("test.plugin.id", ["other/.*"])
+        rest.load_rest_service_plugin(service_plugin)
+
+        try:
+            rest.handle_request(mock_request)
+        except exceptions.RESTRequestNotHandled as exception:
+            status_code = exception.status_code
+
+        self.assertEqual(status_code, 404)
+
+        # registers a route matching the request so that it's verified that
+        # it was the lack of such route that prevented its handling
+        service_plugin = mocks.MockRESTServicePlugin("other.plugin.id", ["test/.*"])
+        rest.load_rest_service_plugin(service_plugin)
+        rest.handle_request(mock_request)
+
     def test_load_rest_service_plugin(self):
         mock_plugin = mocks.MockPlugin()
         rest = system.REST(mock_plugin, session_c=system.RESTSession)
@@ -1177,6 +1203,15 @@ class ExceptionsTestCase(colony.ColonyTestCase):
     def test_rest_request_not_handled(self):
         exception = exceptions.RESTRequestNotHandled("no handler found")
         self.assertEqual(exception.message, "no handler found")
+        self.assertEqual(exception.status_code, 404)
+        self.assertEqual(str(exception), "REST Request Not handled - no handler found")
+
+    def test_rest_request_not_handled_custom_status(self):
+        exception = exceptions.RESTRequestNotHandled(
+            "no handler found", status_code=410
+        )
+        self.assertEqual(exception.message, "no handler found")
+        self.assertEqual(exception.status_code, 410)
         self.assertEqual(str(exception), "REST Request Not handled - no handler found")
 
     def test_invalid_path(self):
