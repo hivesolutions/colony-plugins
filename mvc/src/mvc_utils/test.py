@@ -864,6 +864,98 @@ class CreateFilterTestCase(colony.ColonyTestCase):
         self.assertEqual(filter["order_by"], "object_id")
         self.assertEqual(filter["eager"], dict())
 
+    def test_create_filter_sort_reserved(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="_mtime:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], (("_mtime", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="address._class:ascending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+        )
+        self.assertEqual(filter["order_by"], (("address._class", "ascending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="_unknown:descending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+    def test_create_filter_sort_reference(self):
+        entity_manager = mocks.MockEntityManager(
+            entities=dict(
+                MockAddressReference=mocks.MockAddress,
+                MockPersonReference=mocks.MockPerson,
+            )
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="address.street:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(filter["order_by"], (("address.street", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="owner.address.street:descending"),
+            defaults=dict(
+                order_by="object_id",
+                eager=dict(owner=dict(eager=dict(address=dict()))),
+            ),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(filter["order_by"], (("owner.address.street", "descending"),))
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="address.name:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(sort="address.street:descending"),
+            defaults=dict(order_by="object_id", eager=("address",)),
+            entity_manager=mocks.MockEntityManager(),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+    def test_create_filter_filters_reference(self):
+        entity_manager = mocks.MockEntityManager(
+            entities=dict(MockAddressReference=mocks.MockAddress)
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(filters=["address.street:equals:main"]),
+            defaults=dict(eager=("address",)),
+            entity_manager=entity_manager,
+        )
+        self.assertEqual(
+            filter["eager"]["address"]["filters"],
+            [dict(type="equals", fields=dict(street="main"))],
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockCompany,
+            dict(filters=["address.street:equals:main"]),
+            defaults=dict(eager=("address",)),
+            entity_manager=mocks.MockEntityManager(),
+        )
+        self.assertEqual(
+            filter["eager"]["address"]["filters"],
+            [dict(type="equals", fields=dict(street=None))],
+        )
+
 
 class ExceptionsTestCase(colony.ColonyTestCase):
     @staticmethod

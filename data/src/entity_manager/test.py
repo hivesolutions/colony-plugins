@@ -1497,6 +1497,78 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             "unknown.street",
         )
 
+    def test_order_by_reserved(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person entity and saves it so that there's
+        # a value to be retrieved by the ordered retrieval
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        self.entity_manager.save(person)
+
+        # retrieves the persons from the data source ordered by the
+        # modification time, which is a reserved name (not an attribute)
+        # and so it's valid for the ordering of the entities
+        persons = self.entity_manager.find(
+            mocks.Person, dict(order_by=(("_mtime", "descending"),))
+        )
+
+        # verifies that the person is retrieved from the data source
+        # even though the name is not an attribute of the entity class
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(persons[0].object_id, person.object_id)
+
+    def test_order_by_reference(self):
+        # creates a data reference for the address entity class without
+        # any of its attributes and a data reference for an entity class
+        # that is not registered in the entity manager (never resolved)
+        class Address(mocks.RootEntity):
+            data_reference = True
+
+        class Kennel(mocks.RootEntity):
+            data_reference = True
+            street = dict(type="text")
+
+        # creates an entity class with relations to both data references
+        # so that they must be resolved for the ordering
+        class Tenant(mocks.RootEntity):
+            address = dict(type="relation")
+            kennel = dict(type="relation")
+
+            @staticmethod
+            def _relation_address():
+                return dict(type="to-one", target=Address, is_mapper=True)
+
+            @staticmethod
+            def _relation_kennel():
+                return dict(type="to-one", target=Kennel, is_mapper=True)
+
+        # verifies that the name is resolved against the concrete address
+        # entity class, that contains the attribute (unlike the reference)
+        name = self.entity_manager._resolve_name(Tenant, "address.street")
+        self.assertEqual(name, "__address.street")
+
+        # verifies that ordering by an attribute that does not exist in
+        # the concrete class of the reference raises a validation error
+        self.assert_raises(
+            exceptions.ValidationError,
+            self.entity_manager._resolve_name,
+            Tenant,
+            "address.unknown",
+        )
+
+        # verifies that ordering through a data reference that is not
+        # resolved raises a validation error, even if the attribute is
+        # defined in the data reference (as the relation is not joined)
+        self.assert_raises(
+            exceptions.ValidationError,
+            self.entity_manager._resolve_name,
+            Tenant,
+            "kennel.street",
+        )
+
     def test_range(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.Person)

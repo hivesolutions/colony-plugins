@@ -79,6 +79,10 @@ SORT_TOKENS = ("asc", "ascending", "desc", "descending", "1", "-1", "__default__
 """ The list of tokens that may be used to represent the
 sort order in the entity manager """
 
+RESERVED_NAMES = ("_class", "_mtime")
+""" The tuple containing the names that are considered to be
+reserved (special cases) for the queries """
+
 DATA_TYPE_CAST_TYPES_MAP = dict(
     text=colony.legacy.UNICODE,
     string=colony.legacy.UNICODE,
@@ -859,10 +863,19 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
             return None, None
 
         # retrieves the base (name) value from the eager
-        # map and then in case there are no more names
-        # remaining returns this map (end of recursion)
+        # map and the target class of the relation
         map = eager[base]
         target = cls.get_target(base)
+
+        # checks if the target class is a "data reference" and
+        # in case it is, tries to resolve it into the appropriate
+        # concrete (real) class, as done by the entity manager for
+        # the relation, keeping the reference in case it fails
+        if target.is_reference():
+            target = entity_manager.get_entity(target.__name__) or target
+
+        # in case there are no more names remaining
+        # returns this map (end of recursion)
         if not remaining:
             return map, target
 
@@ -928,6 +941,11 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
             relation, target = resolve(cls, eager, base)
             if relation == None:
                 return False
+
+        # in case the trailing name is a reserved one, it's considered
+        # to be valid according to the entity manager structure
+        if name in RESERVED_NAMES:
+            return True
 
         # returns if the trailing name exists as an attribute in the
         # context of the target class (security validation)
