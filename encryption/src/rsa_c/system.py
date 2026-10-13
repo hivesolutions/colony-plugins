@@ -530,6 +530,10 @@ class RSAStructure(object):
         in length. This is a brute force based generation as a
         random number is generated and then tested for primality.
 
+        The two most significant bits of the prime number are always
+        set, so that the product of two generated prime numbers (eg:
+        the modulus of a key) has exactly twice the number of bits.
+
         :type number_bits: int
         :param number_bits: The number of bits to be used in
         the prime number generation.
@@ -541,8 +545,12 @@ class RSAStructure(object):
         # prime number as requested by the call
         while True:
             # generates a random number and then makes sure that
-            # it's an odd number (last bit to one)
+            # it has exactly the requested number of bits, discarding
+            # the extra ones (of the last byte) and setting the two most
+            # significant ones, and that it's an odd number (last bit to one)
             integer = self._generate_random_integer(number_bits)
+            integer &= (1 << number_bits) - 1
+            integer |= 3 << (number_bits - 2)
             integer |= 1
 
             # verifies if the generated integer value is a prime
