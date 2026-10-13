@@ -30,6 +30,8 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+from . import exceptions
+
 
 class RSATest(colony.Test):
     """
@@ -51,6 +53,66 @@ class RSABaseTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
         return "RSA Base test case"
+
+    def test_generate_keys(self):
+        for number_bits in (64, 128, 256):
+            for _index in colony.legacy.xrange(16):
+                self.rsa.generate_keys(number_bits)
+                public_key, private_key, _extras = self.rsa.get_keys()
+
+                # verifies that the modulus of the keys has exactly the
+                # requested number of bits, never a smaller number of them
+                modulus = private_key["p"] * private_key["q"]
+                self.assertEqual(public_key["n"], modulus)
+                self.assertEqual(modulus.bit_length(), number_bits)
+
+                # verifies that both the signature and its verification
+                # have the number of bytes of the modulus and that the
+                # message is the one recovered by the verification
+                signature = self.rsa.sign(b"Hello")
+                self.assertEqual(len(signature), number_bits // 8)
+                result = self.rsa.verify(signature)
+                self.assertEqual(len(result), number_bits // 8)
+                self.assertEqual(result.lstrip(b"\x00"), b"Hello")
+
+        # verifies that the keys with the minimum number of bits are
+        # generated, with a modulus of exactly that number of bits
+        for _index in colony.legacy.xrange(16):
+            self.rsa.generate_keys(10)
+            public_key, _private_key, _extras = self.rsa.get_keys()
+            self.assertEqual(public_key["n"].bit_length(), 10)
+
+        # verifies that the keys whose modulus could not have the
+        # requested number of bits are not generated, the ones with
+        # an odd number of bits and the ones with not enough bits for
+        # two distinct prime numbers, the current keys being kept
+        keys = self.rsa.get_keys()
+        for number_bits in (0, 2, 4, 6, 8, 9, 11, 65, 1023):
+            self.assert_raises(
+                exceptions.KeyGenerationError, self.rsa.generate_keys, number_bits
+            )
+            self.assertEqual(self.rsa.get_keys(), keys)
+
+    def test__generate_p_q_values(self):
+        for number_bits in (16, 32, 64, 128):
+            for _index in colony.legacy.xrange(16):
+                p_value, q_value = self.rsa._generate_p_q_values(number_bits)
+                self.assertNotEqual(p_value, q_value)
+                self.assertEqual(p_value.bit_length(), number_bits)
+                self.assertEqual(q_value.bit_length(), number_bits)
+                self.assertEqual((p_value * q_value).bit_length(), number_bits * 2)
+
+    def test__generate_prime_number(self):
+        for number_bits in (8, 12, 16, 50, 64, 128):
+            for _index in colony.legacy.xrange(16):
+                result = self.rsa._generate_prime_number(number_bits)
+
+                # verifies that the number is odd and that it has exactly
+                # the requested number of bits, with the two most significant
+                # ones set, even when these are not a whole number of bytes
+                self.assertEqual(result & 1, 1)
+                self.assertEqual(result.bit_length(), number_bits)
+                self.assertEqual(result >> (number_bits - 2), 3)
 
     def test__relatively_prime(self):
         result = self.rsa._relatively_prime(3, 1)

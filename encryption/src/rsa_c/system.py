@@ -36,6 +36,11 @@ import colony
 
 from . import exceptions
 
+MINIMUM_NUMBER_BITS = 10
+""" The minimum number of bits of the keys to be generated,
+with less than these there are no two distinct prime numbers
+with half of the bits and the two most significant ones set """
+
 
 class RSA(colony.System):
     """
@@ -75,6 +80,10 @@ class RSAStructure(object):
         Generates public, private and extra keys, using
         the given number of bits to generate the keys
 
+        The modulus of the generated keys has exactly the given
+        number of bits, which must be even and not lower than the
+        minimum one, otherwise a key generation error is raised.
+
         :type number_bits: int
         :param number_bits: The number of bits to be
         used in the generated keys.
@@ -82,6 +91,16 @@ class RSAStructure(object):
         :return: A tuple containing the public, private
         and extra keys.
         """
+
+        # in case the number of bits is odd or lower than the minimum
+        # one the modulus of the keys could not have that number of
+        # bits (as both prime numbers have half of them), raises the
+        # key generation error
+        if number_bits % 2 or number_bits < MINIMUM_NUMBER_BITS:
+            raise exceptions.KeyGenerationError(
+                "The number of bits '%d' is not even or is lower than '%d'"
+                % (number_bits, MINIMUM_NUMBER_BITS)
+            )
 
         # generates the keys for the given number
         # of bits
@@ -530,6 +549,10 @@ class RSAStructure(object):
         in length. This is a brute force based generation as a
         random number is generated and then tested for primality.
 
+        The two most significant bits of the prime number are always
+        set, so that the product of two generated prime numbers (eg:
+        the modulus of a key) has exactly twice the number of bits.
+
         :type number_bits: int
         :param number_bits: The number of bits to be used in
         the prime number generation.
@@ -541,8 +564,12 @@ class RSAStructure(object):
         # prime number as requested by the call
         while True:
             # generates a random number and then makes sure that
-            # it's an odd number (last bit to one)
+            # it has exactly the requested number of bits, discarding
+            # the extra ones (of the last byte) and setting the two most
+            # significant ones, and that it's an odd number (last bit to one)
             integer = self._generate_random_integer(number_bits)
+            integer &= (1 << number_bits) - 1
+            integer |= 3 << (number_bits - 2)
             integer |= 1
 
             # verifies if the generated integer value is a prime
