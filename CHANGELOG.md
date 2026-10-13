@@ -53,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Replaced short-circuit conditional clauses with explicit conditional statements in the MVC utilities for better readability
 * Updated the AT test webservice certificate (`certificate.crt`), private key (`key.pem`) and source bundle (`TesteWebservices.pfx`) to the version published on 2026-07-10, valid until 2027-01-06, replacing the previous one that expired on 2026-07-18
 * Faster JSON serialization of API responses and web pages, producing the exact same output as before
+* Generation of RSA keys with an odd size or with less than 10 bits is now refused, as such keys could not have the requested size
 
 ### Fixed
 

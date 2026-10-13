@@ -30,6 +30,8 @@ __license__ = "Apache License, Version 2.0"
 
 import colony
 
+from . import exceptions
+
 
 class RSATest(colony.Test):
     """
@@ -72,6 +74,24 @@ class RSABaseTestCase(colony.ColonyTestCase):
                 result = self.rsa.verify(signature)
                 self.assertEqual(len(result), number_bits // 8)
                 self.assertEqual(result.lstrip(b"\x00"), b"Hello")
+
+        # verifies that the keys with the minimum number of bits are
+        # generated, with a modulus of exactly that number of bits
+        for _index in colony.legacy.xrange(16):
+            self.rsa.generate_keys(10)
+            public_key, _private_key, _extras = self.rsa.get_keys()
+            self.assertEqual(public_key["n"].bit_length(), 10)
+
+        # verifies that the keys whose modulus could not have the
+        # requested number of bits are not generated, the ones with
+        # an odd number of bits and the ones with not enough bits for
+        # two distinct prime numbers, the current keys being kept
+        keys = self.rsa.get_keys()
+        for number_bits in (0, 2, 4, 6, 8, 9, 11, 65, 1023):
+            self.assert_raises(
+                exceptions.KeyGenerationError, self.rsa.generate_keys, number_bits
+            )
+            self.assertEqual(self.rsa.get_keys(), keys)
 
     def test__generate_p_q_values(self):
         for number_bits in (16, 32, 64, 128):
