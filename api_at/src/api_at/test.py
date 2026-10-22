@@ -60,6 +60,124 @@ class APIATBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "API AT Base test case"
 
+    def test_finish_series_test_mode(self):
+        """
+        Tests that `finish_series` submits the payload to the test series
+        endpoint, using the version 2 of the specification, when `test_mode`
+        is `True`.
+        """
+
+        # creates the XML response of a successful finish of a series, the
+        # one with the success code of the operation (`2004`)
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <finalizarSerieResp>
+                    <infoResultOper>
+                        <codResultOper>2004</codResultOper>
+                        <msgResultOper>Serie finalizada com sucesso</msgResultOper>
+                    </infoResultOper>
+                </finalizarSerieResp>
+            </S:Body>
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = mocks.MockATClient(
+            plugin=plugin,
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        data = client.finish_series("<ns0:finalizarSerie />")
+        self.assertEqual(data, xml_response)
+        self.assertEqual(
+            http_client.requests,
+            [(system.SERIES_BASE_TEST_URL, "POST", "<ns0:finalizarSerie />")],
+        )
+        self.assertEqual(
+            plugin.messages[0],
+            "Submitting AT document to '%s' using the version 2 of the "
+            "specification" % system.SERIES_BASE_TEST_URL,
+        )
+
+    def test_finish_series_production_mode(self):
+        """
+        Tests that `finish_series` submits the payload to the production series
+        endpoint, using the version 2 of the specification, when `test_mode`
+        is `False`.
+        """
+
+        # creates the XML response of a successful finish of a series, the
+        # one with the success code of the operation (`2004`)
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <finalizarSerieResp>
+                    <infoResultOper>
+                        <codResultOper>2004</codResultOper>
+                        <msgResultOper>Serie finalizada com sucesso</msgResultOper>
+                    </infoResultOper>
+                </finalizarSerieResp>
+            </S:Body>
+        </S:Envelope>"""
+
+        plugin = mocks.MockPlugin()
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = mocks.MockATClient(
+            plugin=plugin,
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=False,
+        )
+
+        data = client.finish_series("<ns0:finalizarSerie />")
+        self.assertEqual(data, xml_response)
+        self.assertEqual(
+            http_client.requests,
+            [(system.SERIES_BASE_URL, "POST", "<ns0:finalizarSerie />")],
+        )
+        self.assertEqual(
+            plugin.messages[0],
+            "Submitting AT document to '%s' using the version 2 of the "
+            "specification" % system.SERIES_BASE_URL,
+        )
+
+    def test_finish_series_error(self):
+        """
+        Tests that `finish_series` raises `ATAPIError` with the code and the
+        message of a finish refused by the AT.
+        """
+
+        # creates the XML response of a finish refused by the AT, the one with
+        # the error code of a series that cannot be finished (`4005`)
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <finalizarSerieResp>
+                    <infoResultOper>
+                        <codResultOper>4005</codResultOper>
+                        <msgResultOper>Nao foi possivel finalizar a Serie</msgResultOper>
+                    </infoResultOper>
+                </finalizarSerieResp>
+            </S:Body>
+        </S:Envelope>"""
+
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = mocks.MockATClient(
+            plugin=mocks.MockPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client.finish_series("<ns0:finalizarSerie />")
+        except exceptions.ATAPIError as exception:
+            raised = True
+            self.assertEqual(exception.error_code, 4005)
+            self.assertEqual(exception.message, "Nao foi possivel finalizar a Serie")
+        self.assertEqual(raised, True)
+
     def test_validate_credentials(self):
         """
         Tests that `validate_credentials` always returns `True` (API compatibility mock).
