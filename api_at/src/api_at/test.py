@@ -60,6 +60,81 @@ class APIATBaseTestCase(colony.ColonyTestCase):
     def get_description():
         return "API AT Base test case"
 
+    def test_finish_series(self):
+        """
+        Tests that `finish_series` submits the payload of the finish of a
+        series to the series endpoint of the AT (the test one in test mode
+        and the production one otherwise), using the version 2 of the
+        specification.
+        """
+
+        # creates the XML response of a successful finish of a series, one
+        # whose result code is of the success family (`2xxx`)
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <finalizarSerieResp>
+                    <infoResultOper>
+                        <codResultOper>2000</codResultOper>
+                        <msgResultOper>Success</msgResultOper>
+                    </infoResultOper>
+                </finalizarSerieResp>
+            </S:Body>
+        </S:Envelope>"""
+
+        for test_mode, url in (
+            (True, system.SERIES_BASE_TEST_URL),
+            (False, system.SERIES_BASE_URL),
+        ):
+            plugin = mocks.MockPlugin()
+            http_client = mocks.MockHTTPClient(received_message=xml_response)
+            client = mocks.MockATClient(
+                plugin=plugin,
+                client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+                test_mode=test_mode,
+            )
+
+            data = client.finish_series("<ns0:finalizarSerie />")
+            self.assertEqual(data, xml_response)
+            self.assertEqual(
+                http_client.requests, [(url, "POST", "<ns0:finalizarSerie />")]
+            )
+            self.assertEqual(
+                plugin.messages[0],
+                "Submitting AT document to '%s' using the version 2 of the "
+                "specification" % url,
+            )
+
+        # creates the XML response of a finish refused by the AT, whose
+        # error must be raised with its result code and message
+        xml_response = """<?xml version="1.0" encoding="utf-8"?>
+        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+            <S:Body>
+                <finalizarSerieResp>
+                    <infoResultOper>
+                        <codResultOper>4000</codResultOper>
+                        <msgResultOper>Invalid series</msgResultOper>
+                    </infoResultOper>
+                </finalizarSerieResp>
+            </S:Body>
+        </S:Envelope>"""
+
+        http_client = mocks.MockHTTPClient(received_message=xml_response)
+        client = mocks.MockATClient(
+            plugin=mocks.MockPlugin(),
+            client_http_plugin=mocks.MockClientHTTPPlugin(http_client=http_client),
+            test_mode=True,
+        )
+
+        raised = False
+        try:
+            client.finish_series("<ns0:finalizarSerie />")
+        except exceptions.ATAPIError as e:
+            raised = True
+            self.assertEqual(e.error_code, 4000)
+            self.assertEqual(e.message, "Invalid series")
+        self.assertEqual(raised, True)
+
     def test_validate_credentials(self):
         """
         Tests that `validate_credentials` always returns `True` (API compatibility mock).

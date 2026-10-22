@@ -455,6 +455,18 @@ class ATClient(object):
         data = self._submit_document(get_series_url, get_series_payload, version=2)
         return data
 
+    def finish_series(self, finish_series_payload):
+        # retrieves the proper based URL according to the current
+        # test mode and uses it to create the complete action URL
+        base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
+        finish_series_url = base_url
+
+        # submits the series document and returns the result
+        data = self._submit_document(
+            finish_series_url, finish_series_payload, version=2
+        )
+        return data
+
     def validate_credentials(self):
         """
         Validates that the credentials are valid, returning a flag
