@@ -457,6 +457,22 @@ class ATClient(object):
 
     def finish_series(self, finish_series_payload):
         """
+        Communicates the end of a series to the AT, indicating that
+        the series was valid for a set of documents but that it's no
+        longer going to be used after the last document issued.
+
+        The payload should identify the series (`serie`, `classeDoc`
+        and `tipoDoc`) and contain its validation code (`codValidacaoSerie`)
+        and the number of the last document issued (`seqUltimoDocEmitido`),
+        in case the AT refuses the finish an `ATAPIError` is raised with
+        the code and the message of the result of the operation.
+
+        :type finish_series_payload: String
+        :param finish_series_payload: The XML payload of the finish of
+        the series (`finalizarSerie`) to be used in the body of the envelope.
+        :rtype: String
+        :return: The XML data of the response of the AT, containing the
+        result of the operation and the information of the finished series.
         :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Negocios/Faturacao/Regras_mecanismos_comunicacao/Comunicacao_de_series_ATCUD/Comunicacao_Series_a_AT_e_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Especificos.pdf
         :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Negocios/Faturacao/Regras_mecanismos_comunicacao/Comunicacao_de_series_ATCUD/Comunicacao_Series_a_AT_e_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Genericos.pdf
         """
