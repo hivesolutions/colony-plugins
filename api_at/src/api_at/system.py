@@ -456,6 +456,11 @@ class ATClient(object):
         return data
 
     def finish_series(self, finish_series_payload):
+        """
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Negocios/Faturacao/Regras_mecanismos_comunicacao/Comunicacao_de_series_ATCUD/Comunicacao_Series_a_AT_e_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Especificos.pdf
+        :see: https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Negocios/Faturacao/Regras_mecanismos_comunicacao/Comunicacao_de_series_ATCUD/Comunicacao_Series_a_AT_e_ATCUD/Documents/Comunicacao_de_Series_Documentais_Manual_de_Integracao_de_SW_Aspetos_Genericos.pdf
+        """
+
         # retrieves the proper based URL according to the current
         # test mode and uses it to create the complete action URL
         base_url = SERIES_BASE_TEST_URL if self.test_mode else SERIES_BASE_URL
