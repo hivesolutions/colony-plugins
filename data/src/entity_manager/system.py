@@ -5141,12 +5141,6 @@ class EntityManager(object):
         start_record = options.get("start_record", -1)
         number_records = options.get("number_records", -1)
 
-        # in case the start record is not defined (or is negative)
-        # the first record is used as the start record, as a negative
-        # offset is not valid for some of the engines (eg: MySQL)
-        if start_record < 0:
-            start_record = 0
-
         # writes the limit part of the query to limit it
         # to the options defined limit, in case no limit is
         # defined no limit is written
@@ -5160,6 +5154,12 @@ class EntityManager(object):
         # according to the options defined offset, as the offset
         # requires a limit it's only written together with it
         if number_records > -1:
+            # in case the start record is not defined or is negative the
+            # first record is used as the start record, as a negative offset
+            # is not valid for some of the engines (eg: MySQL)
+            if start_record == None or start_record < 0:
+                start_record = 0
+
             # writes the offset part of the filter query
             # according to the defined start record
             query_buffer.write(" offset ")
