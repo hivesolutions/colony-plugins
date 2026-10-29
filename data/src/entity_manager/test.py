@@ -2326,14 +2326,13 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(person.double_age, 42)
 
         # verifies that an attribute that is neither set nor calculated
-        # raises an attribute error, as does a calculated attribute whose
-        # calculation fails, which is then not set in the person
+        # raises an attribute error and that a calculated attribute whose
+        # calculation fails is neither available nor set in the person
         person = mocks.Person()
         person.age = None
         self.assert_raises(AttributeError, getattr, person, "not_an_attribute")
-        self.assert_raises(AttributeError, getattr, person, "double_age")
-        self.assertFalse(person.has_value("double_age"))
         self.assertFalse(hasattr(person, "double_age"))
+        self.assertFalse(person.has_value("double_age"))
 
     def test_relation_cache(self):
         # retrieves the attributes of a relation twice and verifies that
