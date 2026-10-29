@@ -4509,45 +4509,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             self._get_connection_params(), self._get_engine()
         )
 
-        # in case the engine is SQLite the backup is a copy of the file
-        # of the database, opened as an independent connection so that
-        # the copied contents may be inspected
-        if self._get_engine() == "sqlite":
-            backup_connection = None
-            try:
-                backup_connection = sqlite3.connect(backup_path)
-                cursor = backup_connection.cursor()
-                try:
-                    # verifies that the tables of the hierarchy have been
-                    # copied into the backup
-                    self.assertTrue(
-                        migration.has_table(backup_connection, "_migration_root_entity")
-                    )
-                    self.assertTrue(
-                        migration.has_table(backup_connection, "_migration_person")
-                    )
-
-                    # verifies that the row values have been preserved by
-                    # the backup operation
-                    cursor.execute(
-                        "select name, age from _migration_person where object_id = 1"
-                    )
-                    row = cursor.fetchone()
-                    self.assertNotEqual(row, None)
-                    self.assertEqual(row[0], "backed_up_person")
-                    self.assertEqual(row[1], 42)
-                finally:
-                    cursor.close()
-            finally:
-                # closes the backup connection before removing the file so
-                # that the handle is released (required under Windows)
-                if backup_connection:
-                    backup_connection.close()
-                os.remove(backup_path)
-        # otherwise the backup is a dump (SQL) of the database, verifying
-        # that it contains the tables of the hierarchy and the values of
-        # the row, removing it afterwards
-        else:
+        # in case the engine is not SQLite the backup is a dump (SQL) of
+        # the database, verifying that it contains the tables of the
+        # hierarchy and the values of the row, removing it afterwards
+        if not self._get_engine() == "sqlite":
             try:
                 with open(backup_path) as file:
                     contents = file.read()
@@ -4556,6 +4521,41 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
                 self.assertTrue("backed_up_person" in contents)
             finally:
                 os.remove(backup_path)
+            return
+
+        # opens the backup as an independent connection so that the
+        # copied contents may be inspected
+        backup_connection = None
+        try:
+            backup_connection = sqlite3.connect(backup_path)
+            cursor = backup_connection.cursor()
+            try:
+                # verifies that the tables of the hierarchy have been
+                # copied into the backup
+                self.assertTrue(
+                    migration.has_table(backup_connection, "_migration_root_entity")
+                )
+                self.assertTrue(
+                    migration.has_table(backup_connection, "_migration_person")
+                )
+
+                # verifies that the row values have been preserved by
+                # the backup operation
+                cursor.execute(
+                    "select name, age from _migration_person where object_id = 1"
+                )
+                row = cursor.fetchone()
+                self.assertNotEqual(row, None)
+                self.assertEqual(row[0], "backed_up_person")
+                self.assertEqual(row[1], 42)
+            finally:
+                cursor.close()
+        finally:
+            # closes the backup connection before removing the file so
+            # that the handle is released (required under Windows)
+            if backup_connection:
+                backup_connection.close()
+            os.remove(backup_path)
 
     def test_backup_database_write_ahead_log(self):
         # creates a temporary database configured to use the write ahead
@@ -5150,19 +5150,20 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             skip_backup=True,
         )
 
-        # in case the engine is SQLite (the only one that treats the schema
-        # changes as part of the transaction) verifies that the request is
-        # honoured, the roll back is able to undo the schema changes under it
-        if self._get_engine() == "sqlite":
-            self.assertTrue(success, "; ".join(messages))
-            self.assertFalse(self._any_matching(messages, "backup created at"))
-        # otherwise verifies that the request is refused, as the backup is
-        # the only way back from a failure under the engine, nothing being
-        # migrated
-        else:
+        # in case the engine is not SQLite (the only one that treats the
+        # schema changes as part of the transaction) verifies that the
+        # request is refused, as the backup is the only way back from a
+        # failure under it, nothing being migrated
+        if not self._get_engine() == "sqlite":
             self.assertFalse(success)
             self.assertTrue(self._any_matching(messages, "may not be skipped"))
             self.assertFalse("status" in self._get_columns("_migration_person"))
+            return
+
+        # verifies that the request is honoured, the roll back is able
+        # to undo the schema changes under it
+        self.assertTrue(success, "; ".join(messages))
+        self.assertFalse(self._any_matching(messages, "backup created at"))
 
     def test_migrate_creates_backup(self):
         # creates the required entity classes so that the database
@@ -5542,13 +5543,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         kwargs.setdefault("connection_params", self._get_connection_params())
         kwargs.setdefault("skip_backup", engine == "sqlite")
         success, messages = migration.migrate(**kwargs)
-
-        # removes the backups created by the migration, so that no file
-        # is left behind by the tests
-        backups = [message for message in messages if "backup created at: " in message]
-        for backup in backups:
-            os.remove(backup.split("backup created at: ")[1])
-
+        for message in messages:
+            if not message.startswith("backup created at: "):
+                continue
+            os.remove(message[len("backup created at: ") :])
         return success, messages
 
     def _get_engine(self):
