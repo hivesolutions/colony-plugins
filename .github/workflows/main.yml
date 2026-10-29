@@ -210,7 +210,7 @@ jobs:
       - run: pip install -r requirements.txt pymysql
       - run: python setup.py test
         env:
-          DB_ENGINE: mysql
+          TEST_DB_ENGINE: mysql
           DB_HOST: mariadb
           DB_USER: root
           DB_PASSWORD: colony
@@ -247,7 +247,7 @@ jobs:
       - run: pip install -r requirements.txt psycopg2-binary
       - run: python setup.py test
         env:
-          DB_ENGINE: pgsql
+          TEST_DB_ENGINE: pgsql
           DB_HOST: postgres
           DB_USER: postgres
           DB_PASSWORD: colony

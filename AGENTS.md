@@ -21,6 +21,13 @@ pip install -r requirements.txt
 RUN_MODE=development DB_ENGINE=sqlite HTTPBIN=httpbin.bemisc.com PLUGIN_PATH=./*/src;./*/*src python setup.py test
 ```
 
+The entity manager tests run against SQLite unless `TEST_DB_ENGINE` selects another engine (`mysql` or `pgsql`), connecting with the usual `DB_HOST`, `DB_USER`, `DB_PASSWORD` and `DB_NAME` values (with the `pymysql` or `psycopg2-binary` driver and the `mysqldump` or `pg_dump` utility installed). The tests destroy the data source after each test (the MySQL database is dropped and created again, the PostgreSQL `public` schema is dropped), so point them only at a database used for testing. The engine is read from a variable of its own so that the `DB_ENGINE` of an application never makes them run against its database.
+
+```bash
+pip install pymysql
+RUN_MODE=development TEST_DB_ENGINE=mysql DB_HOST=localhost DB_USER=root DB_PASSWORD=root DB_NAME=colony_test HTTPBIN=httpbin.bemisc.com PLUGIN_PATH=./*/src;./*/*src python setup.py test
+```
+
 ### Writing Tests
 
 #### File Structure
