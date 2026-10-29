@@ -124,6 +124,17 @@ class EntityManagerTest(colony.Test):
         # against every one of the supported engines
         engine = colony.conf("DB_ENGINE", "sqlite")
 
+        # saves the global name of the database and, under the engines with a
+        # database server, replaces it by the one of the tests (created in case
+        # it doesn't exist), as the test cases destroy their data source and so
+        # the database of an application whose tests run in the same process
+        # would be dropped (eg: omni_test instead of omni)
+        test_case.db_name = colony.conf("DB_NAME")
+        if not engine == "sqlite":
+            db_name = (test_case.db_name or "colony") + "_test"
+            self._create_database(system, engine, db_name)
+            colony.conf_s("DB_NAME", db_name)
+
         # loads a new entity manager, extends it with the
         # entity manager test mocks opens it (loading and
         # generator creation) and begins a new  transaction
@@ -157,6 +168,59 @@ class EntityManagerTest(colony.Test):
         if test_case.db_file:
             colony.conf_s("DB_FILE", test_case.db_file)
 
+        # restores the global name of the database that was replaced for the
+        # execution of the current test case, after the destruction of the
+        # data source so that the destroyed database is always the one of the
+        # tests (removing it in case it was not defined)
+        if test_case.db_name:
+            colony.conf_s("DB_NAME", test_case.db_name)
+        else:
+            colony.conf_r("DB_NAME")
+
+    def _create_database(self, system, engine, db_name):
+        """
+        Creates the database with the provided name, in case it doesn't
+        exist yet, through a connection to the database of the global
+        configuration, that is closed (and never destroyed) afterwards.
+
+        :type system: EntityManagerSystem
+        :param system: The system to be used in the loading of the
+        entity manager of the database of the configuration.
+        :type engine: String
+        :param engine: The name of the engine of the database server.
+        :type db_name: String
+        :param db_name: The name of the database to be created.
+        """
+
+        # loads an entity manager for the database of the configuration and
+        # retrieves its underlying (raw) connection, no entities are created
+        # in it as it's only used to issue the creation of the database
+        entity_manager = system.load_entity_manager(engine)
+        entity_manager.open(start=False)
+        try:
+            connection = entity_manager.get_connection()
+            connection = connection._connection.get_connection()
+            cursor = connection.cursor()
+            try:
+                # under MySQL creates the database in case it doesn't exist,
+                # under PostgreSQL verifies its existence before creating it
+                # outside of a transaction, as required by the engine
+                if engine == "mysql":
+                    cursor.execute("create database if not exists %s" % db_name)
+                elif engine == "pgsql":
+                    connection.rollback()
+                    connection.autocommit = True
+                    cursor.execute(
+                        "select count(*) from pg_database where datname = '%s'"
+                        % db_name
+                    )
+                    if not cursor.fetchone()[0]:
+                        cursor.execute("create database %s" % db_name)
+            finally:
+                cursor.close()
+        finally:
+            entity_manager.close()
+
 
 class EntityManagerBaseTestCase(colony.ColonyTestCase):
     @staticmethod
@@ -182,6 +246,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         entity_manager = self.entity_manager
         data_inheritance = self.data_inheritance
         db_file = self.db_file
+        db_name = self.db_name
 
         colony.conf_s("DB_FILE", file_path)
         try:
@@ -209,6 +274,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             self.entity_manager = entity_manager
             self.data_inheritance = data_inheritance
             self.db_file = db_file
+            self.db_name = db_name
             os.remove(file_path)
 
     def test_create(self):
@@ -4787,6 +4853,34 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             migration.subprocess = original
             shutil.rmtree(directory_path)
 
+    def test_backup_database_port(self):
+        # replaces the subprocess module by one that records the issued
+        # commands so that the backup may be verified without the
+        # corresponding database utilities
+        subprocess = mocks.MockRecordingSubprocess()
+        original = migration.subprocess
+        migration.subprocess = subprocess
+
+        directory_path = tempfile.mkdtemp()
+        database = os.path.join(directory_path, "database")
+
+        try:
+            # creates the backup of a MySQL data source with a port defined
+            # and verifies that the port is passed to the utility, so that a
+            # server listening on a port other than the default is reached
+            migration.backup_database(dict(database=database, port=3307), "mysql")
+            args, _kwargs = subprocess.calls[0]
+            self.assertEqual(args[args.index("-P") + 1], "3307")
+
+            # creates the backup with no port defined and verifies that no
+            # port is passed, the utility using its default one
+            migration.backup_database(dict(database=database), "mysql")
+            args, _kwargs = subprocess.calls[1]
+            self.assertFalse("-P" in args)
+        finally:
+            migration.subprocess = original
+            shutil.rmtree(directory_path)
+
     def test_backup_database_failure(self):
         # replaces the subprocess module by one that fails the issued
         # commands after writing a (partial) output, as a dump of the
@@ -5701,6 +5795,7 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             return dict(file_path=_connection.get_file_path())
         return dict(
             host=_connection.host,
+            port=getattr(_connection, "port", None),
             database=_connection.database,
             user=_connection.user,
             password=_connection.password,
