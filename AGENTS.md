@@ -21,6 +21,8 @@ pip install -r requirements.txt
 RUN_MODE=development DB_ENGINE=sqlite HTTPBIN=httpbin.bemisc.com PLUGIN_PATH=./*/src;./*/*src python setup.py test
 ```
 
+The SQLite engine synchronizes every write of its databases to the disk by default (`DB_SYNCHRONOUS=2`, the `synchronous` pragma of SQLite). The tests destroy their databases after each test, so on a slow or busy disk set `DB_SYNCHRONOUS=0` to run them without the synchronization.
+
 ### Writing Tests
 
 #### File Structure

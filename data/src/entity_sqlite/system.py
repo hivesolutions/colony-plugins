@@ -117,6 +117,7 @@ class SQLiteEngine(object):
         debug_sql = colony.conf("DEBUG_SQL", True, cast=bool)
         file_path = colony.conf("DB_FILE", file_path)
         file_path = file_path or self._get_temporary()
+        synchronous = colony.conf("DB_SYNCHRONOUS", synchronous, cast=int)
         connection._connection = SQLiteConnection(
             file_path, cache_size=cache_size, synchronous=synchronous
         )

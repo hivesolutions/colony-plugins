@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Unit test suite for the template engine, covering parsing, rendering, inheritance and localization
 * Template compiler that translates templates into bytecode, falling back to the previous rendering for the constructs it does not cover - [#33](https://github.com/hivesolutions/colony-plugins/issues/33)
 * New `TEMPLATE_COMPILER` configuration option (default `True`) to control the compilation of templates
+* New `DB_SYNCHRONOUS` configuration option (default `2`) to control the synchronization of the writes of the SQLite databases to the disk, `0` running the tests in seconds on busy disks - [#61](https://github.com/hivesolutions/colony-plugins/issues/61)
 * Option to have a file or directory that does not exist reported with the same not found error for every file storage engine
 * Communication of the end of a series of documents to AT - [#314](https://github.com/hivesolutions/omni/issues/314)
 * Entity manager tests running against MySQL (MariaDB) and PostgreSQL, besides SQLite - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
