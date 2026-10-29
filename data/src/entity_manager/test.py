@@ -141,14 +141,6 @@ class EntityManagerTest(colony.Test):
         # context (for the current set of operations)
         test_case.entity_manager = system.load_entity_manager(engine)
         test_case.entity_manager.extend_module(mocks)
-
-        # under SQLite opens the data source of the tests without the
-        # synchronization of its writes to the disk, as it's destroyed
-        # after every test (its durability is irrelevant) and each of the
-        # synchronizations is expensive in a busy disk (eg: in the CI)
-        if engine == "sqlite":
-            test_case.entity_manager.set_connection_parameters(dict(synchronous=0))
-
         test_case.entity_manager.open(start=False)
         test_case.entity_manager.create_generator()
         test_case.entity_manager.begin()
@@ -285,16 +277,39 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             self.db_name = db_name
             os.remove(file_path)
 
-    def test_set_up_synchronous(self):
+    def test_synchronous(self):
         # the synchronization of the writes is only controlled for the
         # data source of the SQLite engine
         if not self.entity_manager.engine.get_engine_name() == "sqlite":
             return
 
-        # verifies that the data source of the tests doesn't synchronize
-        # its writes to the disk, as it's destroyed after every test
-        result_set = self.entity_manager.execute("pragma synchronous")
-        self.assertEqual(result_set[0][0], 0)
+        # saves the global synchronization mode of the writes, as it's
+        # going to be changed for each of the modes verified next
+        db_synchronous = colony.conf("DB_SYNCHRONOUS")
+
+        try:
+            # opens a data source for each of the synchronization modes of
+            # the configuration (and with none of them) and verifies that the
+            # mode is used by it, the full synchronization being the default
+            for value, expected in (("0", 0), ("1", 1), (None, 2)):
+                if value == None:
+                    colony.conf_r("DB_SYNCHRONOUS")
+                else:
+                    colony.conf_s("DB_SYNCHRONOUS", value)
+                entity_manager = self.plugin.system.load_entity_manager("sqlite")
+                entity_manager.open(start=False)
+                try:
+                    result_set = entity_manager.execute("pragma synchronous")
+                    self.assertEqual(result_set[0][0], expected)
+                finally:
+                    entity_manager.destroy()
+        finally:
+            # restores the global synchronization mode of the writes so that
+            # no state leaks into the other tests
+            if db_synchronous == None:
+                colony.conf_r("DB_SYNCHRONOUS")
+            else:
+                colony.conf_s("DB_SYNCHRONOUS", db_synchronous)
 
     def test_create(self):
         # creates the complete set of entities existent in the current
