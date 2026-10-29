@@ -1642,10 +1642,35 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         )
         self.assertTrue(query.endswith(" limit 2 offset 2"))
 
+        # generates the query of a page with an undefined start record and
+        # verifies that the first record is used as the offset
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(start_record=None, number_records=2)
+        )
+        self.assertTrue(query.endswith(" limit 2 offset 0"))
+
         # generates the query of a start record without number of records
         # and verifies that neither the limit nor the offset are written
         query, field_names = self.entity_manager._find_query(
             mocks.Person, dict(start_record=2)
+        )
+        self.assertFalse(" limit " in query)
+        self.assertFalse(" offset " in query)
+
+        # generates the query of an undefined range (eg: the default value
+        # of an optional range) and verifies that neither the limit nor the
+        # offset are written
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(range=None)
+        )
+        self.assertFalse(" limit " in query)
+        self.assertFalse(" offset " in query)
+
+        # generates the query of a range that is not a number of records
+        # (eg: an unrelated value) and verifies that it's ignored, as no
+        # limit is defined for it
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(range=object)
         )
         self.assertFalse(" limit " in query)
         self.assertFalse(" offset " in query)
@@ -1659,6 +1684,11 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(len(persons), 2)
         self.assertEqual(persons[0].object_id, 1)
         self.assertEqual(persons[1].object_id, 2)
+
+        # retrieves persons with an undefined range and verifies that all
+        # of them are retrieved
+        persons = self.entity_manager.find(mocks.Person, dict(range=None))
+        self.assertEqual(len(persons), 5)
 
         # retrieves persons using pagination with a negative start record
         # and verifies that the first page is retrieved

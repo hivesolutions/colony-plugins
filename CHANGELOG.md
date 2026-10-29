@@ -103,3 +103,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Requests for addresses that no service handles are now answered with a not found error instead of an internal error, and are no longer reported to Sentry
 * Generated RSA keys now always have the requested size, instead of sometimes being a few bits shorter
 * Paged queries without a start record are now valid for MySQL and MariaDB, starting at the first record - [#52](https://github.com/hivesolutions/colony-plugins/issues/52)
+* Queries with an undefined range, or with a range that is not a number, no longer fail with a type error
