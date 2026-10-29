@@ -109,6 +109,13 @@ class EntityManagerTest(colony.Test):
         test_case.data_inheritance = colony.conf("DATA_INHERITANCE")
         colony.conf_r("DATA_INHERITANCE")
 
+        # saves and removes the global file of the data source, the test
+        # cases destroy their data source and so an ambient file (eg: the
+        # one of an application whose tests run in the same process) would
+        # be removed, the (SQLite) engine using a temporary file instead
+        test_case.db_file = colony.conf("DB_FILE")
+        colony.conf_r("DB_FILE")
+
         # retrieves the entity manager (system)
         system = self.plugin.system
 
@@ -144,11 +151,65 @@ class EntityManagerTest(colony.Test):
         # current entity manager context
         test_case.entity_manager.destroy()
 
+        # restores the global file of the data source that was removed for
+        # the execution of the current test case, after the destruction of
+        # the data source so that the file is never the one destroyed
+        if test_case.db_file:
+            colony.conf_s("DB_FILE", test_case.db_file)
+
 
 class EntityManagerBaseTestCase(colony.ColonyTestCase):
     @staticmethod
     def get_description():
         return "Entity Manager Base test case"
+
+    def test_set_up_db_file(self):
+        # the global file of the data source is only used by the SQLite
+        # engine, under the other engines the data source is shared by the
+        # test cases set up in the same process, and the destruction of the
+        # one set up next would wait for the locks of the current test case
+        if not self.entity_manager.engine.get_engine_name() == "sqlite":
+            return
+
+        # creates the file of an ambient data source (eg: the one of an
+        # application whose tests run in the same process) and defines it
+        # as the global file of the data source
+        descriptor, file_path = tempfile.mkstemp(suffix=".db")
+        os.close(descriptor)
+
+        # saves the state of the current test case, as it's going to be
+        # replaced by the one of the test case set up (and torn down) next
+        entity_manager = self.entity_manager
+        data_inheritance = self.data_inheritance
+        db_file = self.db_file
+
+        colony.conf_s("DB_FILE", file_path)
+        try:
+            # sets up a test case and verifies that the global file is
+            # removed and not used as the data source of the tests
+            self.test.set_up(self)
+            connection = self.entity_manager.get_connection()
+            self.assertEqual(colony.conf("DB_FILE"), None)
+            self.assertNotEqual(connection._connection.get_file_path(), file_path)
+
+            # tears down the test case and verifies that the global file is
+            # restored and that it's not the one destroyed with the data source
+            self.test.tear_down(self)
+            self.assertEqual(colony.conf("DB_FILE"), file_path)
+            self.assertTrue(os.path.exists(file_path))
+        finally:
+            # restores the global file of the data source and the state of
+            # the current test case, removing the file of the ambient data
+            # source, so that the tear down of the current test case remains
+            # balanced and no state leaks into the other tests
+            if db_file:
+                colony.conf_s("DB_FILE", db_file)
+            else:
+                colony.conf_r("DB_FILE")
+            self.entity_manager = entity_manager
+            self.data_inheritance = data_inheritance
+            self.db_file = db_file
+            os.remove(file_path)
 
     def test_create(self):
         # creates the complete set of entities existent in the current

@@ -109,3 +109,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Destroying a MySQL data source no longer fails - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
 * A failed backup of a MySQL or PostgreSQL data source no longer leaves a partial backup behind - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
 * A backup of a MySQL data source no longer waits for the transactions writing to it, nor blocks their writes - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
+* Entity manager tests no longer remove the SQLite database of the application whose tests run in the same process - [#59](https://github.com/hivesolutions/colony-plugins/issues/59)
