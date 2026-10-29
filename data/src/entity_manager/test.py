@@ -4644,6 +4644,11 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             self.assertEqual(args[0], "mysqldump")
             self.assertEqual(kwargs["env"]["MYSQL_PWD"], "password")
             self.assertFalse(self._any_matching(args, "password"))
+
+            # verifies that the dump reads a consistent snapshot instead of
+            # locking the tables, as a lock waits for any transaction that
+            # is writing to them (eg: the one of the migration)
+            self.assertTrue("--single-transaction" in args)
         finally:
             migration.subprocess = original
             shutil.rmtree(directory_path)

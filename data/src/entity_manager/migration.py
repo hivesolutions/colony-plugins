@@ -437,11 +437,22 @@ def backup_database(connection_params, engine):
             environ["MYSQL_PWD"] = password
 
         # runs the dump of the database, removing the (partial) backup
-        # in case it fails so that it's not left behind as a valid one
+        # in case it fails so that it's not left behind as a valid one,
+        # the dump reads a consistent snapshot instead of locking the
+        # tables, that would wait for any transaction writing to them
+        # (eg: the one of the migration) and block the writes meanwhile
         try:
             with open(backup_path, "w") as file:
                 subprocess.check_call(
-                    ["mysqldump", "-h", host, "-u", user, database],
+                    [
+                        "mysqldump",
+                        "--single-transaction",
+                        "-h",
+                        host,
+                        "-u",
+                        user,
+                        database,
+                    ],
                     stdout=file,
                     env=environ,
                 )
