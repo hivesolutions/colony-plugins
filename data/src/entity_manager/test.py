@@ -141,6 +141,14 @@ class EntityManagerTest(colony.Test):
         # context (for the current set of operations)
         test_case.entity_manager = system.load_entity_manager(engine)
         test_case.entity_manager.extend_module(mocks)
+
+        # under SQLite opens the data source of the tests without the
+        # synchronization of its writes to the disk, as it's destroyed
+        # after every test (its durability is irrelevant) and each of the
+        # synchronizations is expensive in a busy disk (eg: in the CI)
+        if engine == "sqlite":
+            test_case.entity_manager.set_connection_parameters(dict(synchronous=0))
+
         test_case.entity_manager.open(start=False)
         test_case.entity_manager.create_generator()
         test_case.entity_manager.begin()
@@ -276,6 +284,17 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             self.db_file = db_file
             self.db_name = db_name
             os.remove(file_path)
+
+    def test_set_up_synchronous(self):
+        # the synchronization of the writes is only controlled for the
+        # data source of the SQLite engine
+        if not self.entity_manager.engine.get_engine_name() == "sqlite":
+            return
+
+        # verifies that the data source of the tests doesn't synchronize
+        # its writes to the disk, as it's destroyed after every test
+        result_set = self.entity_manager.execute("pragma synchronous")
+        self.assertEqual(result_set[0][0], 0)
 
     def test_create(self):
         # creates the complete set of entities existent in the current

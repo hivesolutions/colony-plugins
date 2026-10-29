@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Faster JSON serialization of API responses and web pages, producing the exact same output as before
 * Generation of RSA keys with an odd size or with less than 10 bits is now refused, as such keys could not have the requested size
 * Names of the tables of the entity classes cached per class, instead of being converted on every query - [#57](https://github.com/hivesolutions/colony-plugins/issues/57)
+* Entity manager tests open their SQLite databases without synchronizing the writes to the disk, running in seconds on busy disks - [#61](https://github.com/hivesolutions/colony-plugins/issues/61)
 
 ### Fixed
 
