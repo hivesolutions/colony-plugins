@@ -2166,6 +2166,175 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         valid_relation = self.entity_manager.validate_relation(person, "parent")
         self.assertEqual(valid_relation, True)
 
+    def test_getattribute(self):
+        # creates a person entity and sets a series of dictionary values
+        # in it, then verifies that both these and the other concrete
+        # values are returned as they are, as none of them is the class
+        # level description of an attribute
+        person = mocks.Person()
+        person.metadata = dict(occupation="student")
+        person.extra = dict(key="value")
+        self.assertEqual(person.name, "Anonymous")
+        self.assertEqual(person.metadata, dict(occupation="student"))
+        self.assertEqual(person.extra, dict(key="value"))
+        self.assertEqual(person._scope, {})
+        self.assertTrue(person.__dict__ is object.__getattribute__(person, "__dict__"))
+
+        # verifies that the attributes that are not set in the person
+        # resolve to their class level description, triggering a lazy
+        # load that is not possible as the person has no data source
+        self.assertTrue(person.weight is colony.Lazy)
+        self.assertTrue(person.parent is colony.Lazy)
+
+        # verifies that the descriptions inherited from the multiple
+        # parents of an entity class are resolved the same way
+        employee = mocks.Employee()
+        self.assertEqual(employee.salary, 200)
+        self.assertTrue(employee.weight is colony.Lazy)
+        self.assertTrue(employee.tax_number is colony.Lazy)
+
+    def test_getattribute_description(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person with a metadata value that is equal to the
+        # description of the metadata attribute and verifies that it is
+        # returned as a concrete value, not mistaken for the description
+        person = mocks.Person()
+        person.object_id = 1
+        person.metadata = dict(type="metadata")
+        self.assertEqual(person.metadata, dict(type="metadata"))
+
+        # saves the person and retrieves it from the data source, then
+        # verifies that the very same metadata value is retrieved, so
+        # that no lazy loading of it is attempted
+        self.entity_manager.save(person)
+        saved_person = self.entity_manager.get(mocks.Person, 1)
+        self.assertNotEqual(saved_person, None)
+        self.assertEqual(saved_person.metadata, dict(type="metadata"))
+
+    def test_getattribute_lazy(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person and its parent with some values and then
+        # saves both of them into the data source
+        parent = mocks.Person()
+        parent.object_id = 1
+        parent.name = "name_parent"
+        person = mocks.Person()
+        person.object_id = 2
+        person.name = "name_person"
+        person.parent = parent
+        self.entity_manager.save(parent)
+        self.entity_manager.save(person)
+
+        # retrieves the person using a polymorphic query so that only
+        # the root entity fields are populated and verifies that the
+        # person level attribute is lazy loaded from the data source
+        saved_person = self.entity_manager.get(mocks.RootEntity, 2)
+        self.assertNotEqual(saved_person, None)
+        self.assertFalse(saved_person.has_value("name"))
+        self.assertEqual(saved_person.name, "name_person")
+        self.assertTrue(saved_person.has_value("name"))
+
+        # verifies that the parent relation, that has not been loaded
+        # with the person, is also lazy loaded from the data source
+        self.assertFalse(saved_person.has_value("parent"))
+        self.assertEqual(saved_person.parent.object_id, 1)
+        self.assertEqual(saved_person.parent.name, "name_parent")
+        self.assertTrue(saved_person.has_value("parent"))
+
+    def test_getattribute_lazy_detached(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person and its parent with some values and then
+        # saves both of them into the data source
+        parent = mocks.Person()
+        parent.object_id = 1
+        parent.name = "name_parent"
+        person = mocks.Person()
+        person.object_id = 2
+        person.name = "name_person"
+        person.parent = parent
+        self.entity_manager.save(parent)
+        self.entity_manager.save(person)
+
+        # retrieves the person and detaches it from the data source,
+        # then verifies that the parent relation can not be loaded
+        saved_person = self.entity_manager.get(mocks.Person, 2)
+        self.assertNotEqual(saved_person, None)
+        saved_person.detach()
+        self.assertTrue(saved_person.parent is colony.Lazy)
+        self.assertFalse(saved_person.has_value("parent"))
+
+        # attaches the person back to the data source and verifies that
+        # the parent relation is now loaded from it
+        saved_person.attach()
+        self.assertEqual(saved_person.parent.object_id, 1)
+        self.assertTrue(saved_person.has_value("parent"))
+
+    def test_getattribute_lazy_unsaved(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person using the entity manager but without saving
+        # it, so that it has no identifier, and verifies that neither the
+        # attributes nor the relations can be loaded from the data source
+        person = mocks.Person.build(entity_manager=self.entity_manager)
+        self.assertTrue(person.weight is colony.Lazy)
+        self.assertTrue(person.parent is colony.Lazy)
+        self.assertFalse(person.has_value("weight"))
+        self.assertFalse(person.has_value("parent"))
+
+    def test_getattribute_lazy_removed(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a person and its parent with some values and then
+        # saves both of them into the data source
+        parent = mocks.Person()
+        parent.object_id = 1
+        parent.name = "name_parent"
+        person = mocks.Person()
+        person.object_id = 2
+        person.name = "name_person"
+        person.parent = parent
+        self.entity_manager.save(parent)
+        self.entity_manager.save(person)
+
+        # retrieves the person and removes it from the data source using
+        # another instance of it, then verifies that the loading of the
+        # parent relation fails as the person no longer exists
+        saved_person = self.entity_manager.get(mocks.Person, 2)
+        self.assertNotEqual(saved_person, None)
+        removed_person = self.entity_manager.get(mocks.Person, 2)
+        self.entity_manager.remove(removed_person)
+        self.assert_raises(RuntimeError, getattr, saved_person, "parent")
+
+    def test_getattribute_calculated(self):
+        # creates a person and verifies that a calculated attribute is
+        # resolved by its method and then set in the person, so that the
+        # calculation is not repeated on the following retrievals
+        person = mocks.Person()
+        person.age = 21
+        self.assertFalse(person.has_value("double_age"))
+        self.assertEqual(person.double_age, 42)
+        self.assertTrue(person.has_value("double_age"))
+        person.age = 22
+        self.assertEqual(person.double_age, 42)
+
+        # verifies that an attribute that is neither set nor calculated
+        # raises an attribute error, as does a calculated attribute whose
+        # calculation fails, which is then not set in the person
+        person = mocks.Person()
+        person.age = None
+        self.assert_raises(AttributeError, getattr, person, "not_an_attribute")
+        self.assert_raises(AttributeError, getattr, person, "double_age")
+        self.assertFalse(person.has_value("double_age"))
+        self.assertFalse(hasattr(person, "double_age"))
+
     def test_relation_cache(self):
         # retrieves the attributes of a relation twice and verifies that
         # the very same map is returned, meaning that the description is

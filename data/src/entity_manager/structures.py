@@ -481,16 +481,17 @@ class EntityClass(object):
 
         # extracts the parent class reference of the current
         # instance as it's going to be used through the various
-        # processing lines of the current method
-        cls = self.__class__
+        # processing lines of the current method, the type is used
+        # as the class attribute would re-enter this (hot) method
+        cls = type(self)
 
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
-        # of an entity attribute (it's a concrete value instead)
-        if not hasattr(cls, name):
-            return value
-        if not getattr(cls, name) == value:
+        # of an entity attribute (it's a concrete value instead), the
+        # identity is tested so that a concrete value equal to the
+        # description (eg: metadata) is not mistaken for it
+        if not getattr(cls, name, None) is value:
             return value
 
         # checks if the current attribute name refers a relation
