@@ -1608,6 +1608,72 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         )
         self.assertEqual(len(persons), 0)
 
+    def test_range_offset(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # creates a series of person entities to test the offset
+        # of the pagination
+        for i in range(1, 6):
+            person = mocks.Person()
+            person.object_id = i
+            person.name = "name_person_%d" % i
+            self.entity_manager.save(person)
+
+        # generates the query of a page without start record and verifies
+        # that the first record is used as the offset, as a negative offset
+        # is not valid for some of the engines (eg: MySQL)
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(number_records=2)
+        )
+        self.assertTrue(query.endswith(" limit 2 offset 0"))
+
+        # generates the query of a page with a negative start record and
+        # verifies that the first record is used as the offset
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(start_record=-1, number_records=2)
+        )
+        self.assertTrue(query.endswith(" limit 2 offset 0"))
+
+        # generates the query of a page with a start record and verifies
+        # that the start record is used as the offset
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(start_record=2, number_records=2)
+        )
+        self.assertTrue(query.endswith(" limit 2 offset 2"))
+
+        # generates the query of a start record without number of records
+        # and verifies that neither the limit nor the offset are written
+        query, field_names = self.entity_manager._find_query(
+            mocks.Person, dict(start_record=2)
+        )
+        self.assertFalse(" limit " in query)
+        self.assertFalse(" offset " in query)
+
+        # retrieves persons using pagination without start record and
+        # verifies that the first page is retrieved
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(number_records=2, order_by=(("object_id", "ascending"),)),
+        )
+        self.assertEqual(len(persons), 2)
+        self.assertEqual(persons[0].object_id, 1)
+        self.assertEqual(persons[1].object_id, 2)
+
+        # retrieves persons using pagination with a negative start record
+        # and verifies that the first page is retrieved
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(
+                start_record=-1,
+                number_records=2,
+                order_by=(("object_id", "ascending"),),
+            ),
+        )
+        self.assertEqual(len(persons), 2)
+        self.assertEqual(persons[0].object_id, 1)
+        self.assertEqual(persons[1].object_id, 2)
+
     def test_reload(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.Person)
