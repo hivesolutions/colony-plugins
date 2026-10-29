@@ -72,17 +72,18 @@ the data source, per engine, as each of them exposes the indexes
 through its own catalog """
 
 COLUMNS_QUERIES = dict(
-    sqlite="select name from pragma_table_info('%s')",
-    mysql="select column_name from information_schema.columns "
+    sqlite="pragma table_info(%s)",
+    mysql="select ordinal_position, column_name from information_schema.columns "
     "where table_schema = database() and table_name = '%s' "
     "order by ordinal_position",
-    pgsql="select column_name from information_schema.columns "
+    pgsql="select ordinal_position, column_name from information_schema.columns "
     "where table_schema = current_schema() and table_name = '%s' "
     "order by ordinal_position",
 )
-""" The queries that retrieve the names of the columns of the
-provided table in the data source, per engine, as each of them
-exposes the columns through its own catalog """
+""" The queries that retrieve the columns of the provided table in
+the data source, per engine, as each of them exposes the columns
+through its own catalog, the name of each column being the second
+value of its row (as in the table information of SQLite) """
 
 
 class EntityManagerTest(colony.Test):
@@ -5608,7 +5609,7 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         cursor = self._get_connection().cursor()
         try:
             cursor.execute(COLUMNS_QUERIES[self._get_engine()] % table_name)
-            return [row[0] for row in cursor.fetchall()]
+            return [row[1] for row in cursor.fetchall()]
         finally:
             cursor.close()
 
