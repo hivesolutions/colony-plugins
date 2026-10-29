@@ -2087,6 +2087,54 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person.set_sql_value("age", "22", data_type="text")
         self.assertEqual(person.age, "22")
 
+    def test_get_name_cache(self):
+        # retrieves the name of an entity class twice and verifies that
+        # the same name is resolved, the resolution is cached
+        self.assertEqual(mocks.Person.get_name(), "_person")
+        self.assertEqual(mocks.Person.get_name(), "_person")
+        self.assertEqual(mocks.Person.get_name(safe_character=None), "person")
+        self.assertEqual(mocks.Person.get_plain_name(), "person")
+        self.assertEqual(mocks.MigrationRootEntity.get_name(), "_migration_root_entity")
+
+        # verifies that the cache is stored in the class itself and that
+        # it holds the name in underscore notation, without the safe
+        # character, so that every safe character is served by it
+        self.assertTrue("_plain_name" in mocks.Person.__dict__)
+        self.assertEqual(mocks.Person._plain_name, "person")
+
+    def test_get_name_cache_subclass(self):
+        # resolves the name of the parent class so that it becomes cached
+        # at that level, then resolves the name of a subclass and verifies
+        # that each level is named after its own class, the cache of the
+        # parent must not be reused by the descendant
+        self.assertEqual(mocks.Person.get_name(), "_person")
+        self.assertEqual(mocks.Employee.get_name(), "_employee")
+        self.assertTrue("_plain_name" in mocks.Employee.__dict__)
+        self.assertEqual(mocks.Person.get_name(), "_person")
+
+        # verifies that the descendant of an abstract class is also named
+        # after its own class, even with the abstract class named before
+        self.assertEqual(mocks.ConcreteAbstract.get_name(), "_concrete_abstract")
+        self.assertEqual(
+            mocks.ConcreteAbstractPerson.get_name(), "_concrete_abstract_person"
+        )
+
+    def test_get_name_cache_not_a_field(self):
+        # resolves the names of an entity class and of an abstract class
+        # so that the cache is created in the classes, the cache of the
+        # abstract class reaching the items of its concrete descendants
+        mocks.Person.get_name()
+        mocks.ConcreteAbstract.get_name()
+        self.assertTrue("_plain_name" in mocks.Person._items())
+        self.assertTrue("_plain_name" in mocks.ConcreteAbstractPerson._items())
+
+        # verifies that the cache attribute is not mistaken for a field of
+        # the entities, which would create a spurious column
+        self.assertFalse("_plain_name" in mocks.Person.get_names())
+        self.assertFalse("_plain_name" in mocks.ConcreteAbstractPerson.get_names())
+        self.assertFalse("_plain_name" in mocks.Person.get_all_items())
+        self.assertFalse("_plain_name" in mocks.ConcreteAbstractPerson.get_all_items())
+
     def test_get_data_type_cache(self):
         # retrieves the data type of an attribute twice and verifies
         # that the same value is resolved, the resolution is cached
