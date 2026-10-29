@@ -114,11 +114,8 @@ class EntityManagerTest(colony.Test):
 
         # retrieves the engine to be used by the tests from the global
         # configuration (defaults to SQLite), so that the same tests run
-        # against every one of the supported engines, using a variable of
-        # its own as the data source is destroyed by the tests, so that the
-        # engine of an application (eg: DB_ENGINE) never makes them run
-        # against its database
-        engine = colony.conf("TEST_DB_ENGINE", "sqlite")
+        # against every one of the supported engines
+        engine = colony.conf("DB_ENGINE", "sqlite")
 
         # loads a new entity manager, extends it with the
         # entity manager test mocks opens it (loading and
