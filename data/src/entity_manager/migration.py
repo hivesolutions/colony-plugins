@@ -425,6 +425,7 @@ def backup_database(connection_params, engine):
 
     elif engine == "mysql":
         host = connection_params.get("host", "localhost")
+        port = connection_params.get("port", None)
         database = connection_params.get("database", "")
         user = connection_params.get("user", "root")
         password = connection_params.get("password", None)
@@ -436,6 +437,13 @@ def backup_database(connection_params, engine):
         if password:
             environ["MYSQL_PWD"] = password
 
+        # builds the arguments of the dump, the port of the server is only
+        # passed in case it's defined, the utility using its default one
+        args = ["mysqldump", "--single-transaction", "-h", host]
+        if port:
+            args += ["-P", str(port)]
+        args += ["-u", user, database]
+
         # runs the dump of the database, removing the (partial) backup
         # in case it fails so that it's not left behind as a valid one,
         # the dump reads a consistent snapshot instead of locking the
@@ -443,19 +451,7 @@ def backup_database(connection_params, engine):
         # (eg: the one of the migration) and block the writes meanwhile
         try:
             with open(backup_path, "w") as file:
-                subprocess.check_call(
-                    [
-                        "mysqldump",
-                        "--single-transaction",
-                        "-h",
-                        host,
-                        "-u",
-                        user,
-                        database,
-                    ],
-                    stdout=file,
-                    env=environ,
-                )
+                subprocess.check_call(args, stdout=file, env=environ)
         except Exception:
             if os.path.exists(backup_path):
                 os.remove(backup_path)
