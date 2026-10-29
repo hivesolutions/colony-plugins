@@ -2304,14 +2304,32 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.entity_manager.save(parent)
         self.entity_manager.save(person)
 
-        # retrieves the person and removes it from the data source using
-        # another instance of it, then verifies that the loading of the
-        # parent relation fails as the person no longer exists
-        saved_person = self.entity_manager.get(mocks.Person, 2)
+        # retrieves the person using a polymorphic query, so that only
+        # the root entity fields are populated, and removes it from the
+        # data source using another instance of it, then verifies that
+        # the person level attribute is considered to be missing as the
+        # person no longer exists, the error naming the attribute
+        saved_person = self.entity_manager.get(mocks.RootEntity, 2)
         self.assertNotEqual(saved_person, None)
         removed_person = self.entity_manager.get(mocks.Person, 2)
         self.entity_manager.remove(removed_person)
+        raised = False
+        try:
+            saved_person.name
+        except AttributeError as exception:
+            raised = True
+            self.assertEqual(
+                str(exception), "Not possible to load entity for attribute 'name'"
+            )
+        self.assertEqual(raised, True)
+        self.assertFalse(hasattr(saved_person, "name"))
+        self.assertEqual(getattr(saved_person, "name", "default"), "default")
+        self.assertFalse(saved_person.has_value("name"))
+
+        # verifies that the loading of the parent relation fails as well,
+        # as the person that holds it no longer exists
         self.assert_raises(RuntimeError, getattr, saved_person, "parent")
+        self.assertFalse(saved_person.has_value("parent"))
 
     def test_getattribute_calculated(self):
         # creates a person and verifies that a calculated attribute is

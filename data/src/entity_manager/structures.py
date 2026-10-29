@@ -5209,8 +5209,14 @@ class EntityClass(object):
 
         # runs the "finding" the appropriate (place holder) entity
         # then retrieves the attribute from it and retrieves the
-        # map of names to be used for the setting
+        # map of names to be used for the setting, in case no entity
+        # is found (no longer in the data source) the attribute is
+        # considered to be missing and an attribute error is raised
         _entity = self._entity_manager.get(self.__class__, table_id_value, options)
+        if not _entity:
+            raise AttributeError(
+                "Not possible to load entity for attribute '%s'" % name
+            )
         attribute = getattr(_entity, name)
         names_map = entity_class.get_names_map()
 
