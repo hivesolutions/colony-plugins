@@ -373,7 +373,8 @@ def backup_database(connection_params, engine):
     Creates a backup of the database before migration.
 
     For SQLite databases the file is copied, for PostgreSQL
-    and MySQL the appropriate dump utilities are used.
+    and MySQL the appropriate dump utilities are used, removing
+    the (partial) backup in case the dump fails.
 
     :type connection_params: dict
     :param connection_params: The connection parameters.
