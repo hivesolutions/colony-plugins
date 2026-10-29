@@ -1184,13 +1184,28 @@ class MockRecordingSubprocess(object):
     database utilities.
     """
 
-    def __init__(self):
+    def __init__(self, fails=False):
         """
         Constructor of the class.
+
+        :type fails: bool
+        :param fails: If the commands should fail after writing a
+        (partial) output, as a dump of the database that fails does.
         """
 
+        self.fails = fails
         self.calls = []
 
     def check_call(self, args, **kwargs):
         self.calls.append((args, kwargs))
+
+        # in case the commands should fail writes the (partial) output
+        # into the file of the command (if any) and raises an exception,
+        # as a dump of the database that fails in the middle does
+        if self.fails:
+            if "-f" in args:
+                with open(args[args.index("-f") + 1], "w") as file:
+                    file.write("-- partial dump")
+            raise RuntimeError("simulated dump failure")
+
         return 0

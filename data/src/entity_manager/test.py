@@ -41,6 +41,50 @@ from . import migration
 from . import structures
 from . import exceptions
 
+INTEGRITY_ERRORS = dict(
+    sqlite="IntegrityError", mysql="IntegrityError", pgsql="UniqueViolation"
+)
+""" The names of the errors raised by each of the engines for the
+saving of a duplicate identifier, PostgreSQL raises a specialization
+of the integrity error for the violation of the unique constraint """
+
+INDEX_QUERIES = dict(
+    sqlite="select count(*) from sqlite_master where type = 'index' and name = '%s'",
+    mysql="select count(distinct index_name) from information_schema.statistics "
+    "where table_schema = database() and index_name = '%s'",
+    pgsql="select count(*) from pg_indexes "
+    "where schemaname = current_schema() and indexname = '%s'",
+)
+""" The queries that count the indexes with the provided name in
+the data source, per engine, as each of them exposes the indexes
+through its own catalog """
+
+TABLE_INDEXES_QUERIES = dict(
+    sqlite="select count(*) from sqlite_master where type = 'index' "
+    "and tbl_name = '%s'",
+    mysql="select count(distinct index_name) from information_schema.statistics "
+    "where table_schema = database() and table_name = '%s'",
+    pgsql="select count(*) from pg_indexes "
+    "where schemaname = current_schema() and tablename = '%s'",
+)
+""" The queries that count the indexes of the provided table in
+the data source, per engine, as each of them exposes the indexes
+through its own catalog """
+
+COLUMNS_QUERIES = dict(
+    sqlite="pragma table_info(%s)",
+    mysql="select ordinal_position, column_name from information_schema.columns "
+    "where table_schema = database() and table_name = '%s' "
+    "order by ordinal_position",
+    pgsql="select ordinal_position, column_name from information_schema.columns "
+    "where table_schema = current_schema() and table_name = '%s' "
+    "order by ordinal_position",
+)
+""" The queries that retrieve the columns of the provided table in
+the data source, per engine, as each of them exposes the columns
+through its own catalog, the name of each column being the second
+value of its row (as in the table information of SQLite) """
+
 
 class EntityManagerTest(colony.Test):
     """
@@ -68,11 +112,16 @@ class EntityManagerTest(colony.Test):
         # retrieves the entity manager (system)
         system = self.plugin.system
 
+        # retrieves the engine to be used by the tests from the global
+        # configuration (defaults to SQLite), so that the same tests run
+        # against every one of the supported engines
+        engine = colony.conf("DB_ENGINE", "sqlite")
+
         # loads a new entity manager, extends it with the
         # entity manager test mocks opens it (loading and
         # generator creation) and begins a new  transaction
         # context (for the current set of operations)
-        test_case.entity_manager = system.load_entity_manager("sqlite")
+        test_case.entity_manager = system.load_entity_manager(engine)
         test_case.entity_manager.extend_module(mocks)
         test_case.entity_manager.open(start=False)
         test_case.entity_manager.create_generator()
@@ -1844,9 +1893,22 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         person.name = "name_person"
         self.entity_manager.save(person)
 
+        # commits the saved entity and begins a new transaction, as under
+        # some of the engines (eg: PostgreSQL) a failed statement aborts
+        # the transaction, which is then rolled back after every failure
+        self.entity_manager.commit()
+        self.entity_manager.begin()
+
+        # retrieves the name of the integrity error that is raised by the
+        # engine of the entity manager for a duplicate identifier
+        engine = self.entity_manager.engine.get_engine_name()
+        integrity_error = INTEGRITY_ERRORS[engine]
+
         # verifies that a second (duplicate) save of the entity would
         # result in an integrity error raises from the entity manager
-        self.assert_raises("IntegrityError", self.entity_manager.save, person)
+        self.assert_raises(integrity_error, self.entity_manager.save, person)
+        self.entity_manager.rollback()
+        self.entity_manager.begin()
 
         # creates a new employee entity (sub class of person) with the
         # same identifier as the created person
@@ -1857,7 +1919,9 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that saving the employee also raises an integrity
         # error because the class hierarchy overlaps and the identifier
         # is the same for both objects
-        self.assert_raises("IntegrityError", self.entity_manager.save, employee)
+        self.assert_raises(integrity_error, self.entity_manager.save, employee)
+        self.entity_manager.rollback()
+        self.entity_manager.begin()
 
         # creates a new employee entity (sub class of root entity and same
         # class hierarchy as the person) with the same identifier as the created
@@ -1869,7 +1933,7 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         # verifies that saving the car also raises an integrity
         # error because the class hierarchy overlaps and the identifier
         # is the same for both objects (person and car)
-        self.assert_raises("IntegrityError", self.entity_manager.save, car)
+        self.assert_raises(integrity_error, self.entity_manager.save, car)
 
     def test_validate_relation(self):
         # creates the required entity classes in the data source
@@ -4035,10 +4099,8 @@ class EntityManagerConcreteTableTestCase(colony.ColonyTestCase):
         :return: If the index is defined in the data source.
         """
 
-        result_set = self.entity_manager.execute(
-            "select count(*) from sqlite_master where type = 'index' "
-            "and name = '%s'" % index_name
-        )
+        engine = self.entity_manager.engine.get_engine_name()
+        result_set = self.entity_manager.execute(INDEX_QUERIES[engine] % index_name)
         return result_set[0][0] == 1
 
 
@@ -4055,14 +4117,24 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
         # verifies that the tables created for the hierarchy are
         # correctly detected in the data source catalog
-        self.assertTrue(migration.has_table(connection, "_migration_root_entity"))
-        self.assertTrue(migration.has_table(connection, "_migration_person"))
+        self.assertTrue(
+            migration.has_table(
+                connection, "_migration_root_entity", engine=self._get_engine()
+            )
+        )
+        self.assertTrue(
+            migration.has_table(
+                connection, "_migration_person", engine=self._get_engine()
+            )
+        )
 
     def test_has_table_missing(self):
         # verifies that a table that was never created is not
         # reported as existing in the data source
         connection = self._get_connection()
-        self.assertFalse(migration.has_table(connection, "_not_a_table"))
+        self.assertFalse(
+            migration.has_table(connection, "_not_a_table", engine=self._get_engine())
+        )
 
     def test_has_table_unknown_engine(self):
         # verifies that an unknown engine optimistically reports the
@@ -4398,18 +4470,21 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
     def test_backup_database(self):
         # creates the required entity classes in the data source so
-        # that the database file has some content to be copied
+        # that the database has some content to be backed up
         self.entity_manager.create(mocks.MigrationPerson)
-        file_path = self._get_file_path()
+        connection_params = self._get_connection_params()
 
         # creates the backup of the database and verifies that the
-        # resulting file exists and follows the naming convention
-        backup_path = migration.backup_database(dict(file_path=file_path), "sqlite")
+        # resulting file exists and follows the naming convention, the
+        # name of the backup starting with the file of the database
+        # (SQLite) or with the name of the database (other engines)
+        backup_path = migration.backup_database(connection_params, self._get_engine())
+        prefix = connection_params.get("file_path") or connection_params["database"]
         try:
             self.assertTrue(os.path.exists(backup_path))
             self.assertTrue(os.path.getsize(backup_path) > 0)
             self.assertTrue(".backup." in backup_path)
-            self.assertTrue(backup_path.startswith(file_path))
+            self.assertTrue(backup_path.startswith(prefix))
         finally:
             os.remove(backup_path)
 
@@ -4429,11 +4504,27 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.entity_manager.commit()
         self.entity_manager.begin()
 
-        # creates the backup and opens it as an independent connection
-        # so that the copied contents may be inspected
+        # creates the backup of the database of the entity manager
         backup_path = migration.backup_database(
-            dict(file_path=self._get_file_path()), "sqlite"
+            self._get_connection_params(), self._get_engine()
         )
+
+        # in case the engine is not SQLite the backup is a dump (SQL) of
+        # the database, verifying that it contains the tables of the
+        # hierarchy and the values of the row, removing it afterwards
+        if not self._get_engine() == "sqlite":
+            try:
+                with open(backup_path) as file:
+                    contents = file.read()
+                self.assertTrue("_migration_root_entity" in contents)
+                self.assertTrue("_migration_person" in contents)
+                self.assertTrue("backed_up_person" in contents)
+            finally:
+                os.remove(backup_path)
+            return
+
+        # opens the backup as an independent connection so that the
+        # copied contents may be inspected
         backup_connection = None
         try:
             backup_connection = sqlite3.connect(backup_path)
@@ -4553,6 +4644,11 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             self.assertEqual(args[0], "mysqldump")
             self.assertEqual(kwargs["env"]["MYSQL_PWD"], "password")
             self.assertFalse(self._any_matching(args, "password"))
+
+            # verifies that the dump reads a consistent snapshot instead of
+            # locking the tables, as a lock waits for any transaction that
+            # is writing to them (eg: the one of the migration)
+            self.assertTrue("--single-transaction" in args)
         finally:
             migration.subprocess = original
             shutil.rmtree(directory_path)
@@ -4582,13 +4678,41 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             migration.subprocess = original
             shutil.rmtree(directory_path)
 
+    def test_backup_database_failure(self):
+        # replaces the subprocess module by one that fails the issued
+        # commands after writing a (partial) output, as a dump of the
+        # database that fails in the middle does
+        subprocess = mocks.MockRecordingSubprocess(fails=True)
+        original = migration.subprocess
+        migration.subprocess = subprocess
+
+        directory_path = tempfile.mkdtemp()
+        database = os.path.join(directory_path, "database")
+
+        try:
+            # verifies that the failure of the backup of a PostgreSQL and
+            # of a MySQL data source is raised and that no (partial) backup
+            # is left behind, as if it was a valid backup of the database
+            for engine in ("pgsql", "mysql"):
+                self.assert_raises(
+                    RuntimeError,
+                    migration.backup_database,
+                    dict(database=database),
+                    engine,
+                )
+                self.assertEqual(os.listdir(directory_path), [])
+            self.assertEqual(len(subprocess.calls), 2)
+        finally:
+            migration.subprocess = original
+            shutil.rmtree(directory_path)
+
     def test_backup_database_unsupported_engine(self):
         # verifies that an unsupported engine raises an error instead
         # of silently skipping the backup step
         self.assert_raises(
             ValueError,
             migration.backup_database,
-            dict(file_path=self._get_file_path()),
+            self._get_connection_params(),
             "oracle",
         )
 
@@ -4653,7 +4777,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # reported for the consistent hierarchy
         messages = []
         is_valid = migration.validate_data(
-            self._get_connection(), mocks.MigrationRootEntity, messages
+            self._get_connection(),
+            mocks.MigrationRootEntity,
+            messages,
+            engine=self._get_engine(),
         )
         self.assertTrue(is_valid)
 
@@ -4680,7 +4807,7 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # detected and reported
         messages = []
         is_valid = migration.validate_data(
-            connection, mocks.MigrationRootEntity, messages
+            connection, mocks.MigrationRootEntity, messages, engine=self._get_engine()
         )
         self.assertFalse(is_valid)
         self.assertTrue(self._any_matching(messages, "orphaned"))
@@ -4894,11 +5021,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # runs the migration in validation only mode and verifies that
         # it succeeds without touching the data source
         self.entity_manager.create(mocks.MigrationPerson)
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
-            connection=self._get_connection(),
-            skip_backup=True,
             validate_only=True,
         )
         self.assertTrue(success)
@@ -4912,11 +5037,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # runs the migration towards the strategy already in use and
         # verifies that it is rejected before any change is made
         self.entity_manager.create(mocks.MigrationPerson)
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="class_table",
-            connection=self._get_connection(),
-            skip_backup=True,
         )
         self.assertFalse(success)
         self.assertTrue(self._any_matching(messages, "already uses"))
@@ -4943,11 +5066,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
         # runs the migration and verifies that it is aborted before any
         # of the tables is touched, the data loss must be reported
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
             connection=connection,
-            skip_backup=True,
         )
         self.assertFalse(success)
         self.assertTrue(self._any_matching(messages, "orphaned"))
@@ -4960,11 +5082,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # runs the migration towards a strategy that is not one of the
         # supported ones, so that no migration direction resolves
         self.entity_manager.create(mocks.MigrationPerson)
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="single_table",
-            connection=self._get_connection(),
-            skip_backup=True,
         )
 
         # verifies that the migration is refused and that the reason
@@ -4977,12 +5097,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # reported but never executed against the data source
         self.entity_manager.create(mocks.MigrationPerson)
         self.entity_manager.create(mocks.MigrationEmployee)
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
-            connection=self._get_connection(),
             dry_run=True,
-            skip_backup=True,
         )
         self.assertTrue(success)
         self.assertTrue(self._any_matching(messages, "dry-run mode"))
@@ -4991,7 +5109,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # verifies that the original tables are still present and that
         # the schema has not been flattened
         self.assertTrue(
-            migration.has_table(self._get_connection(), "_migration_person")
+            migration.has_table(
+                self._get_connection(), "_migration_person", engine=self._get_engine()
+            )
         )
         self.assertFalse("status" in self._get_columns("_migration_person"))
 
@@ -5020,15 +5140,25 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.entity_manager.create(mocks.MigrationPerson)
         self.entity_manager.create(mocks.MigrationEmployee)
 
-        # runs the migration for the engine that treats the schema
-        # changes as part of the transaction, asking for the backup
-        # to be skipped
+        # runs the migration for the engine of the entity manager, asking
+        # for the backup to be skipped
         success, messages = migration.migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
             connection=self._get_connection(),
+            engine=self._get_engine(),
             skip_backup=True,
         )
+
+        # in case the engine is not SQLite (the only one that treats the
+        # schema changes as part of the transaction) verifies that the
+        # request is refused, as the backup is the only way back from a
+        # failure under it, nothing being migrated
+        if not self._get_engine() == "sqlite":
+            self.assertFalse(success)
+            self.assertTrue(self._any_matching(messages, "may not be skipped"))
+            self.assertFalse("status" in self._get_columns("_migration_person"))
+            return
 
         # verifies that the request is honoured, the roll back is able
         # to undo the schema changes under it
@@ -5049,7 +5179,8 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             entity_class=mocks.MigrationConcreteRoot,
             target_strategy="class_table",
             connection=connection,
-            connection_params=dict(file_path=self._get_file_path()),
+            engine=self._get_engine(),
+            connection_params=self._get_connection_params(),
             skip_backup=False,
         )
 
@@ -5072,12 +5203,19 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.entity_manager.create(mocks.MigrationConcretePerson)
 
         # runs the migration pointing the backup at a path that cannot
-        # be written, so that the backup step fails
+        # be written (SQLite) or at a database that does not exist (other
+        # engines), so that the backup step fails
+        connection_params = self._get_connection_params()
+        if self._get_engine() == "sqlite":
+            connection_params["file_path"] = "/not/a/valid/path/database.db"
+        else:
+            connection_params["database"] = "_not_a_database"
         success, messages = migration.migrate(
             entity_class=mocks.MigrationConcreteRoot,
             target_strategy="class_table",
             connection=self._get_connection(),
-            connection_params=dict(file_path="/not/a/valid/path/database.db"),
+            engine=self._get_engine(),
+            connection_params=connection_params,
             skip_backup=False,
         )
 
@@ -5085,6 +5223,13 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # without a backup of the data source
         self.assertFalse(success)
         self.assertTrue(self._any_matching(messages, "failed to create backup"))
+
+        # verifies that no (partial) backup of the database that does not
+        # exist was left behind, as if it was a valid backup of it
+        backups = [
+            name for name in os.listdir(".") if name.startswith("_not_a_database.")
+        ]
+        self.assertEqual(backups, [])
 
         # verifies that the concrete table structure was left untouched
         self.assertTrue("status" in self._get_columns("_migration_concrete_person"))
@@ -5098,11 +5243,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # migration queries, leaving the migration partially applied
         connection = mocks.MockFailingConnection(self._get_connection(), fail_after=1)
 
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
             connection=connection,
-            skip_backup=True,
         )
 
         # verifies that the failure is reported and that the
@@ -5169,11 +5313,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             self._get_connection(), rollback_fails=True
         )
 
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
             connection=connection,
-            skip_backup=True,
         )
 
         # verifies that the failure is still reported, instead of the
@@ -5194,11 +5337,10 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
             self._get_connection(), fail_after=1000
         )
 
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
             connection=connection,
-            skip_backup=True,
         )
         self.assertTrue(success, "; ".join(messages))
 
@@ -5232,11 +5374,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertEqual(self._count_rows("_migration_employee"), 1)
 
         # runs the migration towards the concrete table strategy
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
-            connection=self._get_connection(),
-            skip_backup=True,
         )
         self.assertTrue(success, "; ".join(messages))
 
@@ -5302,11 +5442,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.assertTrue("status" in self._get_columns("_migration_concrete_person"))
 
         # runs the migration towards the class table strategy
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationConcreteRoot,
             target_strategy="class_table",
-            connection=self._get_connection(),
-            skip_backup=True,
         )
         self.assertTrue(success, "; ".join(messages))
 
@@ -5349,19 +5487,16 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.entity_manager.create(mocks.MigrationEmployee)
 
         # runs the migration towards the concrete table strategy
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationRootEntity,
             target_strategy="concrete_table",
-            connection=self._get_connection(),
-            skip_backup=True,
         )
         self.assertTrue(success, "; ".join(messages))
 
         # verifies that the indexes were recreated on the migrated
         # table, both for the primary key and the modified time
         row = self._fetch_row(
-            "select count(*) from sqlite_master where type='index' "
-            "and tbl_name='_migration_person'"
+            TABLE_INDEXES_QUERIES[self._get_engine()] % "_migration_person"
         )
         self.assertTrue(row[0] >= 4)
 
@@ -5378,11 +5513,9 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         self.entity_manager.create(mocks.MigrationConcreteEmployee)
 
         # runs the migration towards the class table strategy
-        success, messages = migration.migrate(
+        success, messages = self._migrate(
             entity_class=mocks.MigrationConcreteRoot,
             target_strategy="class_table",
-            connection=self._get_connection(),
-            skip_backup=True,
         )
         self.assertTrue(success, "; ".join(messages))
 
@@ -5391,6 +5524,42 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         # it, and only in it, as the descendant now shares its row
         self.assertTrue(self._has_index("_migration_concrete_person_name_hash"))
         self.assertFalse(self._has_index("_migration_concrete_employee_name_hash"))
+
+    def _migrate(self, **kwargs):
+        """
+        Runs the migration with the provided arguments against the data
+        source that backs the current entity manager, using its connection
+        and its engine unless provided, creating the backup only under the
+        engines that do not allow it to be skipped and removing it after.
+
+        :rtype: Tuple
+        :return: The tuple containing the success flag and the messages
+        of the migration.
+        """
+
+        engine = self._get_engine()
+        kwargs.setdefault("connection", self._get_connection())
+        kwargs.setdefault("engine", engine)
+        kwargs.setdefault("connection_params", self._get_connection_params())
+        kwargs.setdefault("skip_backup", engine == "sqlite")
+        success, messages = migration.migrate(**kwargs)
+        for message in messages:
+            if not message.startswith("backup created at: "):
+                continue
+            os.remove(message[len("backup created at: ") :])
+        return success, messages
+
+    def _get_engine(self):
+        """
+        Retrieves the name of the engine of the entity manager, to be
+        used in the migration operations and in the inspection of the
+        catalog of the data source.
+
+        :rtype: String
+        :return: The name of the engine of the current entity manager.
+        """
+
+        return self.entity_manager.engine.get_engine_name()
 
     def _get_connection(self):
         """
@@ -5406,17 +5575,27 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         connection = self.entity_manager.get_connection()
         return connection._connection.get_connection()
 
-    def _get_file_path(self):
+    def _get_connection_params(self):
         """
-        Retrieves the file path of the data source that backs the
-        current entity manager, to be used in the backup operations.
+        Retrieves the connection parameters of the data source that
+        backs the current entity manager, to be used in the backup
+        operations, the file path under SQLite and the host, database
+        and credentials under the other engines.
 
-        :rtype: String
-        :return: The file path of the current data source.
+        :rtype: Dictionary
+        :return: The connection parameters of the current data source.
         """
 
         connection = self.entity_manager.get_connection()
-        return connection._connection.get_file_path()
+        _connection = connection._connection
+        if self._get_engine() == "sqlite":
+            return dict(file_path=_connection.get_file_path())
+        return dict(
+            host=_connection.host,
+            database=_connection.database,
+            user=_connection.user,
+            password=_connection.password,
+        )
 
     def _get_columns(self, table_name):
         """
@@ -5431,7 +5610,7 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
 
         cursor = self._get_connection().cursor()
         try:
-            cursor.execute("pragma table_info(%s)" % table_name)
+            cursor.execute(COLUMNS_QUERIES[self._get_engine()] % table_name)
             return [row[1] for row in cursor.fetchall()]
         finally:
             cursor.close()
@@ -5460,10 +5639,7 @@ class EntityManagerMigrationTestCase(colony.ColonyTestCase):
         :return: If the index is defined in the data source.
         """
 
-        row = self._fetch_row(
-            "select count(*) from sqlite_master where type = 'index' "
-            "and name = '%s'" % index_name
-        )
+        row = self._fetch_row(INDEX_QUERIES[self._get_engine()] % index_name)
         return row[0] == 1
 
     def _fetch_row(self, query):
