@@ -236,11 +236,6 @@ class MySQLEngine(object):
         connection = self.entity_manager.get_connection()
         self.disconnect(connection)
 
-        # retrieves the underlying connection and destroys
-        # it, it should remove the remaining database files
-        _connection = connection._connection
-        _connection.destroy()
-
     def begin(self):
         connection = self.entity_manager.get_connection()
         _connection = connection._connection

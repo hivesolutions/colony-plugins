@@ -180,3 +180,77 @@ jobs:
         env:
           HTTPBIN: httpbin.bemisc.com
           PLUGIN_PATH: ./*/src;./*/*src
+  build-mariadb:
+    name: Build MariaDB
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: [
+          "3.13",
+          "3.14"
+        ]
+    runs-on: ubuntu-latest
+    container: python:${{ matrix.python-version }}
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: colony
+          MARIADB_DATABASE: colony
+        options: >-
+          --tmpfs /var/lib/mysql
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v6
+      - run: python --version
+      - run: apt-get update && apt-get install -y mariadb-client
+      - run: pip install -r requirements.txt pymysql
+      - run: python setup.py test
+        env:
+          DB_ENGINE: mysql
+          DB_HOST: mariadb
+          DB_USER: root
+          DB_PASSWORD: colony
+          DB_NAME: colony
+          HTTPBIN: httpbin.bemisc.com
+          PLUGIN_PATH: ./*/src;./*/*src
+  build-postgres:
+    name: Build PostgreSQL
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python-version: [
+          "3.13",
+          "3.14"
+        ]
+    runs-on: ubuntu-latest
+    container: python:${{ matrix.python-version }}
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: colony
+          POSTGRES_DB: colony
+        options: >-
+          --tmpfs /var/lib/postgresql/data
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v6
+      - run: python --version
+      - run: apt-get update && apt-get install -y postgresql-client
+      - run: pip install -r requirements.txt psycopg2-binary
+      - run: python setup.py test
+        env:
+          DB_ENGINE: pgsql
+          DB_HOST: postgres
+          DB_USER: postgres
+          DB_PASSWORD: colony
+          DB_NAME: colony
+          HTTPBIN: httpbin.bemisc.com
+          PLUGIN_PATH: ./*/src;./*/*src

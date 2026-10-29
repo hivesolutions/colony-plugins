@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * New `TEMPLATE_COMPILER` configuration option (default `True`) to control the compilation of templates
 * Option to have a file or directory that does not exist reported with the same not found error for every file storage engine
 * Communication of the end of a series of documents to AT - [#314](https://github.com/hivesolutions/omni/issues/314)
+* Entity manager tests running against MySQL (MariaDB) and PostgreSQL, besides SQLite - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
 
 ### Changed
 
@@ -104,3 +105,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Generated RSA keys now always have the requested size, instead of sometimes being a few bits shorter
 * Paged queries without a start record are now valid for MySQL and MariaDB, starting at the first record - [#52](https://github.com/hivesolutions/colony-plugins/issues/52)
 * Queries with an undefined range, or with a range that is not a number, no longer fail with a type error
+* Destroying a MySQL data source no longer fails - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
+* A failed backup of a MySQL or PostgreSQL data source no longer leaves a partial backup behind - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)

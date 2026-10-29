@@ -410,10 +410,17 @@ def backup_database(connection_params, engine):
         if password:
             environ["PGPASSWORD"] = password
 
-        subprocess.check_call(
-            ["pg_dump", "-h", host, "-U", user, "-f", backup_path, database],
-            env=environ,
-        )
+        # runs the dump of the database, removing the (partial) backup
+        # in case it fails so that it's not left behind as a valid one
+        try:
+            subprocess.check_call(
+                ["pg_dump", "-h", host, "-U", user, "-f", backup_path, database],
+                env=environ,
+            )
+        except Exception:
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+            raise
         return backup_path
 
     elif engine == "mysql":
@@ -429,12 +436,19 @@ def backup_database(connection_params, engine):
         if password:
             environ["MYSQL_PWD"] = password
 
-        with open(backup_path, "w") as file:
-            subprocess.check_call(
-                ["mysqldump", "-h", host, "-u", user, database],
-                stdout=file,
-                env=environ,
-            )
+        # runs the dump of the database, removing the (partial) backup
+        # in case it fails so that it's not left behind as a valid one
+        try:
+            with open(backup_path, "w") as file:
+                subprocess.check_call(
+                    ["mysqldump", "-h", host, "-u", user, database],
+                    stdout=file,
+                    env=environ,
+                )
+        except Exception:
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+            raise
         return backup_path
 
     raise ValueError("unsupported engine for backup: %s" % engine)
