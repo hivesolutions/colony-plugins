@@ -116,6 +116,7 @@ INVALID_NAMES = set(
         "_relations",
         "_relation_attributes",
         "_data_types",
+        "_plain_name",
         "_mapped_relations",
         "_unmapped_relations",
         "_direct_relations",
@@ -584,8 +585,20 @@ class EntityClass(object):
         for the current model class.
         """
 
+        # in case the plain name (the name of the class in underscore notation)
+        # is already "cached" in the current class it's used immediately (fast
+        # retrieval), note that the cache is looked up in the class own
+        # dictionary so that a descendant is not named after one of its parents
+        plain_name = cls.__dict__.get("_plain_name", None)
+        if plain_name == None:
+            # converts the name of the class into the underscore notation and
+            # caches it in the current class, so that the conversion (regular
+            # expression based) is only performed once per class
+            plain_name = colony.to_underscore(cls.__name__)
+            cls._plain_name = plain_name
+
         safe_character = safe_character or ""
-        return safe_character + colony.to_underscore(cls.__name__)
+        return safe_character + plain_name
 
     @classmethod
     def get_plain_name(cls):
