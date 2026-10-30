@@ -481,16 +481,17 @@ class EntityClass(object):
 
         # extracts the parent class reference of the current
         # instance as it's going to be used through the various
-        # processing lines of the current method
-        cls = self.__class__
+        # processing lines of the current method, the type is used
+        # as the class attribute would re-enter this (hot) method
+        cls = type(self)
 
         # checks if the value for the attribute name in the class
         # does not exists or is not the same as the retrieved value,
         # this test ensures that this is not a class level description
-        # of an entity attribute (it's a concrete value instead)
-        if not hasattr(cls, name):
-            return value
-        if not getattr(cls, name) == value:
+        # of an entity attribute (it's a concrete value instead), the
+        # identity is tested so that a concrete value equal to the
+        # description (eg: metadata) is not mistaken for it
+        if not getattr(cls, name, None) is value:
             return value
 
         # checks if the current attribute name refers a relation
@@ -5208,8 +5209,14 @@ class EntityClass(object):
 
         # runs the "finding" the appropriate (place holder) entity
         # then retrieves the attribute from it and retrieves the
-        # map of names to be used for the setting
+        # map of names to be used for the setting, in case no entity
+        # is found (no longer in the data source) the attribute is
+        # considered to be missing and an attribute error is raised
         _entity = self._entity_manager.get(self.__class__, table_id_value, options)
+        if not _entity:
+            raise AttributeError(
+                "Not possible to load entity for attribute '%s'" % name
+            )
         attribute = getattr(_entity, name)
         names_map = entity_class.get_names_map()
 

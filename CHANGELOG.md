@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Faster JSON serialization of API responses and web pages, producing the exact same output as before
 * Generation of RSA keys with an odd size or with less than 10 bits is now refused, as such keys could not have the requested size
 * Names of the tables of the entity classes cached per class, instead of being converted on every query - [#57](https://github.com/hivesolutions/colony-plugins/issues/57)
+* Faster reading of the entity attributes that hold dictionaries, a path taken by almost every entity operation - [#63](https://github.com/hivesolutions/colony-plugins/issues/63)
 
 ### Fixed
 
@@ -112,3 +113,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * A backup of a MySQL data source no longer waits for the transactions writing to it, nor blocks their writes - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
 * Entity manager tests use a data source of their own, no longer removing or dropping the database of the application whose tests run in the same process - [#59](https://github.com/hivesolutions/colony-plugins/issues/59)
 * A backup of a MySQL data source reaches a server listening on a port other than the default one - [#59](https://github.com/hivesolutions/colony-plugins/issues/59)
+* An entity value equal to the description of its attribute, such as a metadata value, is now read as it is instead of failing or reading as unloaded - [#63](https://github.com/hivesolutions/colony-plugins/issues/63)
+* Reading an attribute of an entity that no longer exists in the data source now fails with an error naming the attribute, instead of one about an undefined value - [#63](https://github.com/hivesolutions/colony-plugins/issues/63)
