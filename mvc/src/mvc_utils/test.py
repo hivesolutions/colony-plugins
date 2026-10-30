@@ -54,6 +54,7 @@ class MVCUtilsTest(colony.Test):
             TemplateFileACLTestCase,
             TemplateProcessMethodsTestCase,
             CreateFilterTestCase,
+            DeleteTestCase,
             ExceptionsTestCase,
         )
 
@@ -955,6 +956,160 @@ class CreateFilterTestCase(colony.ColonyTestCase):
             filter["eager"]["address"]["filters"],
             [dict(type="equals", fields=dict(street=None))],
         )
+
+
+class DeleteTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Delete test case"
+
+    def test_delete(self):
+        entity = mocks.MockDeleteEntity()
+        entity_model.delete(entity)
+
+        self.assertEqual(
+            entity.calls,
+            [
+                "pre_delete",
+                "pre_remove",
+                "on_delete",
+                "on_remove",
+                "remove",
+                "post_delete",
+                "post_remove",
+            ],
+        )
+        self.assertEqual(
+            entity.persist_types,
+            [entity_model.PERSIST_UPDATE | entity_model.PERSIST_SAVE] * 6,
+        )
+        self.assertEqual(entity.exceptions, [])
+        self.assertEqual(entity.entity_managers, [None])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "commit"])
+
+    def test_delete_persist_type(self):
+        entity = mocks.MockDeleteEntity()
+        entity_model.delete(entity, persist_type=entity_model.PERSIST_UPDATE)
+
+        self.assertEqual(
+            entity.calls,
+            [
+                "pre_delete",
+                "pre_remove",
+                "on_delete",
+                "on_remove",
+                "remove",
+                "post_delete",
+                "post_remove",
+            ],
+        )
+        self.assertEqual(entity.persist_types, [entity_model.PERSIST_UPDATE] * 6)
+        self.assertEqual(entity._entity_manager.calls, ["begin", "commit"])
+
+        # the hooks of the delete are controlled by the update persist
+        # type, without it none of them is called but the entity is
+        # still removed (the persist type only controls the hooks)
+        entity = mocks.MockDeleteEntity()
+        entity_model.delete(entity, persist_type=entity_model.PERSIST_SAVE)
+
+        self.assertEqual(entity.calls, ["remove"])
+        self.assertEqual(entity.persist_types, [])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "commit"])
+
+    def test_delete_no_hooks(self):
+        entity = mocks.MockDeleteEntityNoHooks()
+        entity_model.delete(entity)
+
+        self.assertEqual(entity.calls, ["remove"])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "commit"])
+
+    def test_delete_store_hooks(self):
+        # the hooks of the store are never called by the delete, even
+        # if the entity defines them together with the delete ones
+        entity = mocks.MockDeleteEntityStoreHooks()
+        entity_model.delete(entity)
+
+        self.assertEqual(
+            entity.calls,
+            [
+                "pre_delete",
+                "pre_remove",
+                "on_delete",
+                "on_remove",
+                "remove",
+                "post_delete",
+                "post_remove",
+            ],
+        )
+        self.assertEqual(entity._entity_manager.calls, ["begin", "commit"])
+
+    def test_delete_entity_manager(self):
+        entity_manager = mocks.MockEntityManager()
+
+        entity = mocks.MockDeleteEntity()
+        entity_model.delete(entity, entity_manager=entity_manager)
+
+        self.assertEqual(entity.entity_managers, [entity_manager])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "commit"])
+        self.assertEqual(entity_manager.calls, [])
+
+    def test_delete_fail_pre_delete(self):
+        # a failure in the pre hooks happens before the delete procedure
+        # starts, so the fail hooks are not called, but the transaction
+        # is still rolled back
+        entity = mocks.MockDeleteEntity(failure="pre_delete")
+        self.assertRaises(ValueError, entity_model.delete, entity)
+
+        self.assertEqual(entity.calls, ["pre_delete"])
+        self.assertEqual(entity.exceptions, [])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "rollback"])
+
+    def test_delete_fail_on_delete(self):
+        entity = mocks.MockDeleteEntity(failure="on_delete")
+        self.assertRaises(ValueError, entity_model.delete, entity)
+
+        self.assertEqual(
+            entity.calls,
+            ["pre_delete", "pre_remove", "on_delete", "fail_delete", "fail_remove"],
+        )
+        self.assertEqual(entity.entity_managers, [])
+        self.assertEqual(len(entity.exceptions), 2)
+        self.assert_type(entity.exceptions[0], ValueError)
+        self.assertEqual(entity.exceptions[1], entity.exceptions[0])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "rollback"])
+
+    def test_delete_fail_remove(self):
+        entity = mocks.MockDeleteEntity(failure="remove")
+        self.assertRaises(ValueError, entity_model.delete, entity)
+
+        self.assertEqual(
+            entity.calls,
+            [
+                "pre_delete",
+                "pre_remove",
+                "on_delete",
+                "on_remove",
+                "remove",
+                "fail_delete",
+                "fail_remove",
+            ],
+        )
+        self.assertEqual(
+            entity.persist_types,
+            [entity_model.PERSIST_UPDATE | entity_model.PERSIST_SAVE] * 6,
+        )
+        self.assertEqual(len(entity.exceptions), 2)
+        self.assert_type(entity.exceptions[0], ValueError)
+        self.assertEqual(str(entity.exceptions[0]), "invalid value")
+        self.assertEqual(entity.exceptions[1], entity.exceptions[0])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "rollback"])
+
+    def test_delete_fail_no_hooks(self):
+        entity = mocks.MockDeleteEntityNoHooks(failure="remove")
+        self.assertRaises(ValueError, entity_model.delete, entity)
+
+        self.assertEqual(entity.calls, ["remove"])
+        self.assertEqual(entity._entity_manager.calls, ["begin", "rollback"])
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

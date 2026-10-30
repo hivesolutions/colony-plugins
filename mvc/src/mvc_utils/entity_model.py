@@ -1179,9 +1179,9 @@ def delete(self, persist_type=PERSIST_UPDATE | PERSIST_SAVE, entity_manager=None
         # tries to call the on delete method, in order to notify the
         # current instance about the starting of the delete procedure
         if hasattr(self, "on_delete") and persist_type & PERSIST_UPDATE:
-            self.on_store(persist_type)
-        if hasattr(self, "on_remove") and persist_type & PERSIST_SAVE:
-            self.on_save(persist_type)
+            self.on_delete(persist_type)
+        if hasattr(self, "on_remove") and persist_type & PERSIST_UPDATE:
+            self.on_remove(persist_type)
 
         # removes the current entity from the data source defined in
         # the provided entity manager, this is a non reversible and

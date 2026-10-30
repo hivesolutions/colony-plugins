@@ -204,6 +204,7 @@ class MockTemplateVisitor(object):
 class MockEntityManager(object):
     def __init__(self, entities=None):
         self.entities = entities or dict()
+        self.calls = []
 
     def get_entity(self, entity_name):
         return self.entities.get(entity_name, None)
@@ -213,6 +214,15 @@ class MockEntityManager(object):
         if type(eager) in (list, tuple):
             options["eager"] = dict([(name, dict()) for name in eager])
         return options
+
+    def begin(self):
+        self.calls.append("begin")
+
+    def commit(self):
+        self.calls.append("commit")
+
+    def rollback(self):
+        self.calls.append("rollback")
 
 
 class MockEntity(object):
@@ -260,3 +270,73 @@ class MockPersonReference(MockEntity):
 class MockCompany(MockEntity):
     _names = ("object_id", "name", "address", "owner")
     _targets = dict(address=MockAddressReference, owner=MockPersonReference)
+
+
+class MockDeleteEntity(object):
+    def __init__(self, failure=None):
+        self._entity_manager = MockEntityManager()
+        self._failure = failure
+        self.calls = []
+        self.persist_types = []
+        self.exceptions = []
+        self.entity_managers = []
+
+    def pre_delete(self, persist_type):
+        self._call("pre_delete", persist_type)
+
+    def pre_remove(self, persist_type):
+        self._call("pre_remove", persist_type)
+
+    def on_delete(self, persist_type):
+        self._call("on_delete", persist_type)
+
+    def on_remove(self, persist_type):
+        self._call("on_remove", persist_type)
+
+    def fail_delete(self, persist_type, exception):
+        self._call("fail_delete", persist_type)
+        self.exceptions.append(exception)
+
+    def fail_remove(self, persist_type, exception):
+        self._call("fail_remove", persist_type)
+        self.exceptions.append(exception)
+
+    def post_delete(self, persist_type):
+        self._call("post_delete", persist_type)
+
+    def post_remove(self, persist_type):
+        self._call("post_remove", persist_type)
+
+    def remove(self, entity_manager=None):
+        self.entity_managers.append(entity_manager)
+        self._call("remove")
+
+    def _call(self, name, persist_type=None):
+        self.calls.append(name)
+        if not persist_type == None:
+            self.persist_types.append(persist_type)
+        if name == self._failure:
+            raise ValueError("invalid value")
+
+
+class MockDeleteEntityNoHooks(object):
+    def __init__(self, failure=None):
+        self._entity_manager = MockEntityManager()
+        self._failure = failure
+        self.calls = []
+
+    def remove(self, entity_manager=None):
+        self.calls.append("remove")
+        if self._failure == "remove":
+            raise ValueError("invalid value")
+
+
+class MockDeleteEntityStoreHooks(MockDeleteEntity):
+    def on_store(self, persist_type):
+        self._call("on_store", persist_type)
+
+    def on_save(self, persist_type):
+        self._call("on_save", persist_type)
+
+    def on_update(self, persist_type):
+        self._call("on_update", persist_type)
