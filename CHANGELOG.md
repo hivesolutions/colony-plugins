@@ -115,3 +115,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * A backup of a MySQL data source reaches a server listening on a port other than the default one - [#59](https://github.com/hivesolutions/colony-plugins/issues/59)
 * An entity value equal to the description of its attribute, such as a metadata value, is now read as it is instead of failing or reading as unloaded - [#63](https://github.com/hivesolutions/colony-plugins/issues/63)
 * Reading an attribute of an entity that no longer exists in the data source now fails with an error naming the attribute, instead of one about an undefined value - [#63](https://github.com/hivesolutions/colony-plugins/issues/63)
+* Deleting an entity now notifies it through its delete hooks, instead of failing or calling its saving hooks - [#65](https://github.com/hivesolutions/colony-plugins/issues/65)
