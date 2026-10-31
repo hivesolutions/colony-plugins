@@ -1896,7 +1896,9 @@ def relation(self, name, options={}, force=True, entity_manager=None):
     loading of an object's relation.
 
     In case the relation is already loaded/set there's
-    no reloading if the force flag is not set.
+    no reloading if the force flag is not set, even if
+    its value is empty (eg: an empty list or an unset
+    to-one relation).
 
     :type options: Dictionary
     :param options: The map of options for the (partial) loading
@@ -1918,10 +1920,11 @@ def relation(self, name, options={}, force=True, entity_manager=None):
 
     # retrieve the value for the provided name (avoiding
     # the loading of the relation) and in case the force
-    # flag is not set and there's a valid value returns
-    # immediately avoiding a reloading of the relation
+    # flag is not set and the relation is loaded (even if
+    # empty) returns immediately avoiding a reloading of
+    # the relation, as an empty value is still a value
     value = self.get_value(name)
-    if not force and value:
+    if not force and self.has_value(name):
         return value
 
     # loads a relation with the provided options (partial

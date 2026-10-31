@@ -55,6 +55,7 @@ class MVCUtilsTest(colony.Test):
             TemplateProcessMethodsTestCase,
             CreateFilterTestCase,
             DeleteTestCase,
+            RelationTestCase,
             ExceptionsTestCase,
         )
 
@@ -1110,6 +1111,63 @@ class DeleteTestCase(colony.ColonyTestCase):
 
         self.assertEqual(entity.calls, ["remove"])
         self.assertEqual(entity._entity_manager.calls, ["begin", "rollback"])
+
+
+class RelationTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Relation test case"
+
+    def test_relation(self):
+        # the relation is loaded (by the entity manager) by default, even
+        # if it's already loaded, as the force flag is set by default
+        entity = mocks.MockRelationEntity(address="address")
+        result = entity_model.relation(entity, "address", dict(eager=("street",)))
+
+        self.assertEqual(result, "loaded")
+        self.assertEqual(entity._entity_manager.calls, ["relation"])
+        self.assertEqual(
+            entity._entity_manager.relations, [("address", dict(eager=("street",)))]
+        )
+
+    def test_relation_not_force(self):
+        # the relation that is already loaded is not loaded again in case
+        # the force flag is not set, its current value being returned
+        entity = mocks.MockRelationEntity(address="address")
+        result = entity_model.relation(entity, "address", force=False)
+
+        self.assertEqual(result, "address")
+        self.assertEqual(entity._entity_manager.calls, [])
+
+    def test_relation_not_force_empty(self):
+        # the relation that is loaded but empty (an empty list of a to-many
+        # relation or an unset to-one relation) is not loaded again either
+        for value in ([], None):
+            entity = mocks.MockRelationEntity(address=value)
+            result = entity_model.relation(entity, "address", force=False)
+
+            self.assertEqual(result, value)
+            self.assertEqual(entity._entity_manager.calls, [])
+
+    def test_relation_not_force_not_loaded(self):
+        # the relation that was never loaded is loaded even if the force
+        # flag is not set, with the default (empty) options
+        entity = mocks.MockRelationEntity()
+        result = entity_model.relation(entity, "address", force=False)
+
+        self.assertEqual(result, "loaded")
+        self.assertEqual(entity._entity_manager.calls, ["relation"])
+        self.assertEqual(entity._entity_manager.relations, [("address", dict())])
+
+    def test_relation_entity_manager(self):
+        entity_manager = mocks.MockEntityManager()
+
+        entity = mocks.MockRelationEntity()
+        result = entity_model.relation(entity, "address", entity_manager=entity_manager)
+
+        self.assertEqual(result, "loaded")
+        self.assertEqual(entity_manager.calls, ["relation"])
+        self.assertEqual(entity._entity_manager.calls, [])
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

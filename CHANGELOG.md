@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Generation of RSA keys with an odd size or with less than 10 bits is now refused, as such keys could not have the requested size
 * Names of the tables of the entity classes cached per class, instead of being converted on every query - [#57](https://github.com/hivesolutions/colony-plugins/issues/57)
 * Faster reading of the entity attributes that hold dictionaries, a path taken by almost every entity operation - [#63](https://github.com/hivesolutions/colony-plugins/issues/63)
+* Relations of the entities that are loaded but empty are no longer loaded again unless the reload is forced - [#69](https://github.com/hivesolutions/colony-plugins/issues/69)
 
 ### Fixed
 
