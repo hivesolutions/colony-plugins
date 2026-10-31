@@ -205,6 +205,7 @@ class MockEntityManager(object):
     def __init__(self, entities=None):
         self.entities = entities or dict()
         self.calls = []
+        self.relations = []
 
     def get_entity(self, entity_name):
         return self.entities.get(entity_name, None)
@@ -223,6 +224,11 @@ class MockEntityManager(object):
 
     def rollback(self):
         self.calls.append("rollback")
+
+    def relation(self, entity, name, options):
+        self.calls.append("relation")
+        self.relations.append((name, options))
+        return "loaded"
 
 
 class MockEntity(object):
@@ -270,6 +276,18 @@ class MockPersonReference(MockEntity):
 class MockCompany(MockEntity):
     _names = ("object_id", "name", "address", "owner")
     _targets = dict(address=MockAddressReference, owner=MockPersonReference)
+
+
+class MockRelationEntity(object):
+    def __init__(self, **values):
+        self._entity_manager = MockEntityManager()
+        self.values = values
+
+    def has_value(self, name):
+        return name in self.values
+
+    def get_value(self, name, default=None):
+        return self.values.get(name, default)
 
 
 class MockDeleteEntity(object):
