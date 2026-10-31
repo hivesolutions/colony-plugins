@@ -1918,14 +1918,12 @@ def relation(self, name, options={}, force=True, entity_manager=None):
     # default "embedded" entity manager
     entity_manager = entity_manager or self._entity_manager
 
-    # retrieve the value for the provided name (avoiding
-    # the loading of the relation) and in case the force
-    # flag is not set and the relation is loaded (even if
-    # empty) returns immediately avoiding a reloading of
-    # the relation, as an empty value is still a value
-    value = self.get_value(name)
+    # in case the force flag is not set and the relation
+    # is loaded (even if empty) returns its value immediately
+    # (avoiding the loading of the relation) so that there's
+    # no reloading of it, as an empty value is still a value
     if not force and self.has_value(name):
-        return value
+        return self.get_value(name)
 
     # loads a relation with the provided options (partial
     # loading) using the entity manager
