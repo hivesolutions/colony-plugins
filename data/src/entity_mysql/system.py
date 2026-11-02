@@ -117,6 +117,15 @@ class MySQLEngine(object):
     def get_internal_version(self):
         return MySQLdb.get_client_info()
 
+    def get_server_version(self):
+        query = self._server_version_query()
+        cursor = self.execute_query(query)
+        try:
+            result = self._server_version_result(cursor)
+        finally:
+            cursor.close()
+        return result
+
     def get_host(self):
         connection = self.entity_manager.get_connection()
         host = connection._host
@@ -675,6 +684,31 @@ class MySQLEngine(object):
         # returns the result of the retrieval of the database
         # size from the data source
         return database_size
+
+    def _server_version_query(self):
+        # creates the query for the retrieval of the version
+        # of the database server
+        query = "select version()"
+
+        # returns the generated server version query
+        return query
+
+    def _server_version_result(self, cursor):
+        # selects all the elements from the cursor the
+        # server version should be the first element, then
+        # closes the cursor
+        try:
+            versions = cursor.fetchall()
+        finally:
+            cursor.close()
+
+        # retrieves the server version as the first element
+        # of the first retrieved row
+        server_version = versions[0][0]
+
+        # returns the result of the retrieval of the server
+        # version from the data source
+        return server_version
 
     def _collate_query(self):
         return "collate utf8_general_ci"

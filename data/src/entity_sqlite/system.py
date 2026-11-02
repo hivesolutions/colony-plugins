@@ -82,6 +82,9 @@ class SQLiteEngine(object):
     def get_internal_version(self):
         return sqlite3.sqlite_version
 
+    def get_server_version(self):
+        return sqlite3.sqlite_version
+
     def get_host(self):
         return None
 
