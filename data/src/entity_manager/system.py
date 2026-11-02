@@ -476,6 +476,22 @@ class EntityManager(object):
 
         return self.engine.get_internal_version()
 
+    def get_server_version(self):
+        """
+        Retrieves the version of the database server for the
+        current connection (using the internal engine).
+
+        Unlike the internal version (the one of the client library
+        for the engines backed by a server) the server version is
+        the one reported by the underlying data source system.
+
+        :rtype: String
+        :return: The version of the database server for the
+        current connection.
+        """
+
+        return self.engine.get_server_version()
+
     def get_host(self):
         return self.engine.get_host()
 

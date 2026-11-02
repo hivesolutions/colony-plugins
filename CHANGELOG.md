@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Option to have a file or directory that does not exist reported with the same not found error for every file storage engine
 * Communication of the end of a series of documents to AT - [#314](https://github.com/hivesolutions/omni/issues/314)
 * Entity manager tests running against MySQL (MariaDB) and PostgreSQL, besides SQLite - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
+* Version of the database server, as reported by the database itself, for every engine of the entity manager - [#71](https://github.com/hivesolutions/colony-plugins/issues/71)
 
 ### Changed
 

@@ -85,6 +85,15 @@ the data source, per engine, as each of them exposes the columns
 through its own catalog, the name of each column being the second
 value of its row (as in the table information of SQLite) """
 
+SERVER_VERSION_QUERIES = dict(
+    sqlite="select sqlite_version()",
+    mysql="select version()",
+    pgsql="show server_version",
+)
+""" The queries that retrieve the version of the database server
+from the data source, per engine, the one of the library under
+SQLite (embedded in the process) """
+
 
 class EntityManagerTest(colony.Test):
     """
@@ -310,6 +319,19 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
                 colony.conf_r("DB_SYNCHRONOUS")
             else:
                 colony.conf_s("DB_SYNCHRONOUS", db_synchronous)
+
+    def test_get_server_version(self):
+        # retrieves the version of the database server through the
+        # entity manager, a dotted version (eg: 3.46.1, 11.8.2-MariaDB)
+        server_version = self.entity_manager.get_server_version()
+        self.assertNotEqual(server_version, None)
+        self.assertTrue("." in server_version)
+
+        # verifies that the version is the one reported by the data
+        # source itself, through the query of its engine
+        engine = self.entity_manager.engine.get_engine_name()
+        result_set = self.entity_manager.execute(SERVER_VERSION_QUERIES[engine])
+        self.assertEqual(server_version, result_set[0][0])
 
     def test_create(self):
         # creates the complete set of entities existent in the current
