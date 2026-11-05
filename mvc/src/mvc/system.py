@@ -456,9 +456,12 @@ class MVC(colony.System):
         # if the current environment is development oriented if that's
         # the environment should be cleared to avoid incompatibilities,
         # this is done by setting the clear (session) pending flag so
-        # that the sessions are cleared for the next handling tick
+        # that the sessions are cleared for the next handling tick, unless
+        # the sessions are meant to be kept, as clearing a store that is
+        # shared by other processes (eg: Redis) flushes all of its sessions
         plugin_manager = self.plugin.manager
-        self.clear_pending = plugin_manager.is_development()
+        session_keep = colony.conf("SESSION_KEEP", False, cast=bool)
+        self.clear_pending = plugin_manager.is_development() and not session_keep
 
         # verifies the existence of all the method in the facade of the plugin
         # that are going to be used fore retrieval of patterns so that only the

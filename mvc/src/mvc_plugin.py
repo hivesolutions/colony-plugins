@@ -42,7 +42,7 @@ class MVCPlugin(colony.Plugin):
     version = "1.0.0"
     author = "Hive Solutions Lda. <development@hive.pt>"
     platforms = [colony.CPYTHON_ENVIRONMENT, colony.JYTHON_ENVIRONMENT]
-    capabilities = ["mvc", "rest_service"]
+    capabilities = ["mvc", "rest_service", "test"]
     capabilities_allowed = ["mvc_service"]
     dependencies = [
         colony.PluginDependency("pt.hive.colony.plugins.format.mime"),
@@ -63,6 +63,7 @@ class MVCPlugin(colony.Plugin):
         import mvc
 
         self.system = mvc.MVC(self)
+        self.test = mvc.MVCTest(self)
 
     def end_load_plugin(self):
         colony.Plugin.end_load_plugin(self)
