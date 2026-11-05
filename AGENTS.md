@@ -1,5 +1,9 @@
 # AGENTS.md file
 
+## Python Virtual Environment (venv)
+
+The Python virtual environment for this repository is typically located in `.venv`.
+
 ## Formatting
 
 Always format the code before commiting using, making sure that the Python code is properly formatted using:
@@ -115,6 +119,7 @@ def tearDown(self):
 ## Style Guide
 
 - Always update `CHANGELOG.md` according to semantic versioning, mentioning your changes in the unreleased section.
+- Document every new configuration value in the [Configuration](README.md#configuration) section of `README.md`, in the table of its area (name, type, default and description).
 - Write commit messages using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 - Never bump the internal package version in `setup.py`. This is handled automatically by the release process.
 - Python files use CRLF as the line ending.
@@ -126,6 +131,51 @@ def tearDown(self):
 - Prefer `item == None` over `item is None`.
 - The commenting style of the project is unique, try to keep commenting style consistent.
 
+## Commit Messages
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) with the following structure:
+
+```text
+<type>: <description>
+
+<body>
+```
+
+### Commit Types
+
+| Type       | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | A new feature or functionality                          |
+| `fix`      | A bug fix                                               |
+| `docs`     | Documentation only changes                              |
+| `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `chore`    | Maintenance tasks, dependency updates, build changes    |
+| `test`     | Adding or updating tests                                |
+| `version`  | Version bump commits (reserved for releases)            |
+
+### Guidelines
+
+- Use lowercase for the type prefix.
+- Use imperative mood in the description (e.g., "Add feature" not "Added feature").
+- Keep the first line under 50 characters.
+- Reference issue/PR numbers when applicable using `(#123)` at the end.
+- For version releases, use the format `version: X.Y.Z`.
+- Add an extra newline between subject and body.
+- Make the body a series of bullet points about the commit.
+- Be descriptive always making use of the body of the message.
+
+### Examples
+
+```text
+feat: Add user authentication with OAuth 2.0 support (#138)
+fix: Resolve race condition in database connection pool
+docs: Add API endpoint documentation for v2 routes
+refactor: Extract validation logic into reusable utility module
+chore: Update dependencies to latest stable versions
+test: Add integration tests for payment processing flow
+version: 1.8.0
+```
+
 ## Pre-Commit Checklist
 
 Before committing, ensure that the following operations items check:
@@ -133,9 +183,17 @@ Before committing, ensure that the following operations items check:
 - [ ] Code is formatted with `black .`
 - [ ] Tests pass: `RUN_MODE=development DB_ENGINE=sqlite HTTPBIN=httpbin.bemisc.com PLUGIN_PATH="./*/src;./*/*src" python setup.py test`
 - [ ] CHANGELOG.md is updated in [Unreleased] section
+- [ ] New configuration values are documented in the Configuration section of README.md
 - [ ] No debugging print statements or commented-out code
 - [ ] CRLF line endings are preserved
 - [ ] No type annotations in .py files (use .pyi if needed)
+
+## New Release
+
+There is no manual release process, every push to `master` is released by the Deploy Workflow (`.github/workflows/deploy.yml`):
+
+- The unit tests are run and must pass.
+- Every plugin is uploaded to the Colony repository with `cpm upload`.
 
 ## License
 
