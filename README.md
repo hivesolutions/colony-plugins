@@ -53,14 +53,15 @@ Controls the data source of the entity manager: its engine, the connection to th
 
 Configures the sessions of the REST layer, and so of every MVC solution: the store that keeps them and how long they last. A Redis database is shared by every process that uses it (eg: the instances of a solution), so each solution should have a database of its own.
 
-| Name                    | Type  | Default     | Description                                                                                                                                                        |
-| ----------------------- | ----- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **SESSION**             | `str` | `redis`     | The store of the sessions: `redis` or `shelve` (also `file`), the sessions being kept in memory when the store fails to load (eg: no `REDISTOGO_URL` for `redis`). |
-| **REDISTOGO_URL**       | `str` | `None`      | The URL of the Redis database of the `redis` sessions (eg: `redis://:password@localhost:6379/1`).                                                                  |
-| **SESSION_PATH**        | `str` | `""`        | The directory of the `session.shelve` file of the `shelve` sessions, the working directory while empty.                                                            |
-| **SESSION_TIMEOUT**     | `int` | `2419200`   | The lifetime in seconds of a session since its last access (twenty eight days).                                                                                    |
-| **SESSION_MAX_TIMEOUT** | `int` | `154828800` | The maximum lifetime in seconds of a session since its creation, whatever its accesses (sixty four times the default timeout).                                     |
-| **SESSION_FACTOR**      | `int` | `None`      | The factor applied to `SESSION_TIMEOUT` to obtain the maximum lifetime of a session, overriding `SESSION_MAX_TIMEOUT`.                                             |
+| Name                    | Type   | Default     | Description                                                                                                                                                                                                                     |
+| ----------------------- | ------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SESSION**             | `str`  | `redis`     | The store of the sessions: `redis` or `shelve` (also `file`), the sessions being kept in memory when the store fails to load (eg: no `REDISTOGO_URL` for `redis`).                                                              |
+| **REDISTOGO_URL**       | `str`  | `None`      | The URL of the Redis database of the `redis` sessions (eg: `redis://:password@localhost:6379/1`).                                                                                                                               |
+| **SESSION_PATH**        | `str`  | `""`        | The directory of the `session.shelve` file of the `shelve` sessions, the working directory while empty.                                                                                                                         |
+| **SESSION_TIMEOUT**     | `int`  | `2419200`   | The lifetime in seconds of a session since its last access (twenty eight days).                                                                                                                                                 |
+| **SESSION_MAX_TIMEOUT** | `int`  | `154828800` | The maximum lifetime in seconds of a session since its creation, whatever its accesses (sixty four times the default timeout).                                                                                                  |
+| **SESSION_FACTOR**      | `int`  | `None`      | The factor applied to `SESSION_TIMEOUT` to obtain the maximum lifetime of a session, overriding `SESSION_MAX_TIMEOUT`.                                                                                                          |
+| **SESSION_KEEP**        | `bool` | `False`     | If the sessions are kept when the MVC service plugins are unloaded in development mode (eg: when the process stops), instead of cleared, as clearing a store shared by other processes (eg: Redis) flushes all of its sessions. |
 
 ### HTTP
 

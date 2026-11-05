@@ -30,6 +30,7 @@ from . import communication
 from . import exceptions
 from . import file_handler
 from . import system
+from . import test
 
 from .handlers import *
 from .communication import (
@@ -50,3 +51,4 @@ from .exceptions import (
 )
 from .file_handler import MVCFileHandler, ChunkHandler
 from .system import MVC
+from .test import MVCTest
