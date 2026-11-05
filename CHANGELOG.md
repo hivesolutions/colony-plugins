@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Communication of the end of a series of documents to AT - [#314](https://github.com/hivesolutions/omni/issues/314)
 * Entity manager tests running against MySQL (MariaDB) and PostgreSQL, besides SQLite - [#54](https://github.com/hivesolutions/colony-plugins/issues/54)
 * Version of the database server, as reported by the database itself, for every engine of the entity manager - [#71](https://github.com/hivesolutions/colony-plugins/issues/71)
+* Documentation of every configuration value in the README, grouped by area with its type, default and description, as in the README of Colony and Omni - [#75](https://github.com/hivesolutions/colony-plugins/issues/75)
 
 ### Changed
 
