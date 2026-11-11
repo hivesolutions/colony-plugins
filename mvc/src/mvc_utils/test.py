@@ -32,6 +32,7 @@ import colony
 
 from . import utils
 from . import mocks
+from . import model
 from . import system
 from . import controller
 from . import exceptions
@@ -56,6 +57,7 @@ class MVCUtilsTest(colony.Test):
             CreateFilterTestCase,
             DeleteTestCase,
             RelationTestCase,
+            ApplyTestCase,
             ExceptionsTestCase,
         )
 
@@ -1168,6 +1170,70 @@ class RelationTestCase(colony.ColonyTestCase):
         self.assertEqual(result, "loaded")
         self.assertEqual(entity_manager.calls, ["relation"])
         self.assertEqual(entity._entity_manager.calls, [])
+
+
+class ApplyTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Apply test case"
+
+    def test_apply_to_one(self):
+        # the map of a to-one relation is merged into the target entity
+        # already loaded in the relation, as it has no identifier
+        address = mocks.MockApplyAddress(object_id=1)
+        entity = mocks.MockApplyPerson(address=address)
+        model.apply(entity, dict(address=dict(street="Main Street")))
+
+        self.assertEqual(entity.address, address)
+        self.assertEqual(address.object_id, 1)
+        self.assertEqual(address.street, "Main Street")
+        self.assertEqual(entity.resolved, [])
+
+    def test_apply_to_one_same(self):
+        # the map with the identifier of the loaded target entity is merged
+        # into it as well, even if the identifier is not casted (string)
+        address = mocks.MockApplyAddress(object_id=1)
+        entity = mocks.MockApplyPerson(address=address)
+        model.apply(entity, dict(address=dict(object_id="1", street="Main Street")))
+
+        self.assertEqual(entity.address, address)
+        self.assertEqual(address.street, "Main Street")
+        self.assertEqual(entity.resolved, [])
+
+    def test_apply_to_one_other(self):
+        # the map that references another entity is resolved instead of
+        # merged, the loaded target entity keeping its identifier, as it
+        # may be shared by the other models of the same scope
+        address = mocks.MockApplyAddress(object_id=1)
+        entity = mocks.MockApplyPerson(address=address)
+        model.apply(entity, dict(address=dict(object_id="2")))
+
+        self.assertNotEqual(entity.address, address)
+        self.assertEqual(entity.address.object_id, 2)
+        self.assertEqual(address.object_id, 1)
+        self.assertEqual(address.maps, [])
+        self.assertEqual(entity.resolved, [dict(object_id="2")])
+
+    def test_apply_to_one_unset(self):
+        # the map with an empty identifier is resolved as well, unsetting
+        # the relation without changing the loaded target entity
+        address = mocks.MockApplyAddress(object_id=1)
+        entity = mocks.MockApplyPerson(address=address)
+        model.apply(entity, dict(address=dict(object_id="")))
+
+        self.assertEqual(entity.address, None)
+        self.assertEqual(address.object_id, 1)
+        self.assertEqual(address.maps, [])
+        self.assertEqual(entity.resolved, [dict(object_id="")])
+
+    def test_apply_to_one_not_loaded(self):
+        # the map of a relation with no target entity is resolved, loading
+        # the referenced entity (as it was before)
+        entity = mocks.MockApplyPerson()
+        model.apply(entity, dict(address=dict(object_id="2")))
+
+        self.assertEqual(entity.address.object_id, 2)
+        self.assertEqual(entity.resolved, [dict(object_id="2")])
 
 
 class ExceptionsTestCase(colony.ColonyTestCase):

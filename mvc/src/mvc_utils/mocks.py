@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+from . import model
 from . import controller
 
 
@@ -358,3 +359,56 @@ class MockDeleteEntityStoreHooks(MockDeleteEntity):
 
     def on_update(self, persist_type):
         self._call("on_update", persist_type)
+
+
+class MockApplyAddress(object):
+    def __init__(self, object_id=None):
+        self.object_id = object_id
+        self.maps = []
+
+    @classmethod
+    def get_id(cls):
+        return "object_id"
+
+    @classmethod
+    def _get_data_type(cls, name):
+        return "integer"
+
+    def get_id_attribute_value(self):
+        return self.object_id
+
+    def apply(self, map, permissive=False):
+        self.maps.append(map)
+        for name, value in map.items():
+            setattr(self, name, value)
+
+
+class MockApplyPerson(object):
+    address = dict(type="relation")
+
+    _cast_safe = model._cast_safe
+
+    def __init__(self, address=None):
+        self.resolved = []
+        if address:
+            self.address = address
+
+    @staticmethod
+    def _relation_address():
+        return dict(type="to-one", target=MockApplyAddress)
+
+    def detach(self, force=True):
+        pass
+
+    def attach(self, force=True):
+        pass
+
+    def get_value(self, name, default=None):
+        return self.__dict__.get(name, default)
+
+    def resolve_to_one(self, map, model_class, permissive):
+        self.resolved.append(map)
+        object_id = map.get("object_id", None)
+        if object_id == "":
+            return None
+        return model_class(object_id=int(object_id))

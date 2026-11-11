@@ -519,6 +519,22 @@ def apply(self, map, permissive=False):
                     # entity to be used for the application
                     target_entity = self.get_value(item_name)
 
+                    # in case there's a target entity but the item value
+                    # references another entity (by its identifier) the
+                    # target entity can't be re-used, as merging the item
+                    # value into it would change its identifier (and so the
+                    # one of every model that shares it) instead of changing
+                    # the target of the relation, that is resolved instead
+                    if not target_entity == None:
+                        id_name = target_model.get_id()
+                        id_data_type = target_model._get_data_type(id_name)
+                        id_cast_type = DATA_TYPE_CAST_TYPES_MAP.get(id_data_type, None)
+                        id_value = target_entity.get_id_attribute_value()
+                        item_id_value = item_value.get(id_name, id_value)
+                        item_id_value = self._cast_safe(item_id_value, id_cast_type)
+                        if not item_id_value == id_value:
+                            target_entity = None
+
                     # in case there is no item (target entity)
                     # in the entity one must be created
                     if target_entity == None:
