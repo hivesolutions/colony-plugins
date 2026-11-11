@@ -534,7 +534,8 @@ class REST(colony.System):
                 rest_request.except_handle(exception)
                 raise
             else:
-                rest_request.post_handle()
+                if not getattr(rest_request.request, "coroutine", None):
+                    rest_request.post_handle()
             return True
 
         # in case the control flow reaches this places there has been no processing

@@ -40,6 +40,10 @@ from . import controller
 from . import exceptions
 from . import entity_model
 
+model_a = None
+if colony.legacy.PYTHON_V >= 370:
+    from . import entity_model_a as model_a
+
 NAME_REFERENCE_VALUE = "__name__"
 """ The name reference value """
 
@@ -460,6 +464,8 @@ class MVCUtils(colony.System):
             # as model and entity model)
             self._set_module_functions(model, base_entity_model)
             self._set_module_functions(entity_model, base_entity_model)
+            if model_a:
+                self._set_module_functions(model_a, base_entity_model)
 
             # creates and sets the start method as the new
             # start method (also backs up the old start method)

@@ -29,6 +29,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import re
+import inspect
 import types
 
 import colony
@@ -893,9 +894,13 @@ class MVC(colony.System):
         # request flow) note that the call is done using the safe
         # call method so that only the valid arguments are passed
         # to the handler method (pattern names validation)
-        colony.call_safe(
+        result = colony.call_safe(
             handler_method, rest_request, parameters=parameters, **pattern_names
         )
+        iscoroutine = getattr(inspect, "iscoroutine", None)
+        if iscoroutine and iscoroutine(result):
+            rest_request.request.coroutine = result
+            rest_request.request.rest_request = rest_request
 
     def _process_request(self, rest_request):
         """

@@ -545,6 +545,9 @@ class EntityManager(object):
             return None
         return self.engine.get_insensitive_collate()
 
+    def _lazy_guard(self, entity, name):
+        pass
+
     def get_connection(self):
         """
         Retrieves the current available connection.
@@ -8497,3 +8500,9 @@ class EntityManager(object):
         first_name = first_class.get_name()
         second_name = second_class.get_name()
         return cmp(first_name, second_name)  # @UndefinedVariable
+
+
+if colony.legacy.PYTHON_V >= 370:
+    from . import system_a
+
+    system_a.extend(EntityManager)

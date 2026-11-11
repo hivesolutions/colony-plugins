@@ -188,12 +188,23 @@ class WSGI(colony.System):
         # the default request) then provides the rest plugin
         # with the request for handling, handling the resulting
         # data or setting the exception values
-        request = WSGIRequest(
+        request = environ.get("colony.asgi.request", None)
+        request = request or WSGIRequest(
             self, environ, prefix=prefix, alias=alias, rewrite=rewrite
         )
         try:
-            rest_plugin.handle_request(request)
-            request.finish()
+            if "colony.asgi.request" in environ:
+                error = environ.get("colony.asgi.error", None)
+                if error:
+                    raise error
+                request.finish()
+            else:
+                rest_plugin.handle_request(request)
+                if getattr(request, "coroutine", None) and environ.get(
+                    "colony.asgi", False
+                ):
+                    return request
+                request.finish()
         except Exception as exception:
             has_code = hasattr(exception, "status_code")
             code = exception.status_code if has_code else 500

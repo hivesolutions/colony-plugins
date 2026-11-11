@@ -5088,6 +5088,10 @@ class EntityClass(object):
         if not self._entity_manager:
             return colony.Lazy
 
+        # in an async context a lazy load would block the event loop
+        # (and run outside the task's transaction) so it is refused
+        self._entity_manager._lazy_guard(self, name)
+
         # checks if the current entity (and diffusion scope) is
         # attached to the data source in case it's not a lazy
         # loading object is returned (not possible to load it)
@@ -5182,6 +5186,10 @@ class EntityClass(object):
         # so the attribute must be considered to be lazy
         if not self._entity_manager:
             return colony.Lazy
+
+        # in an async context a lazy load would block the event loop
+        # (and run outside the task's transaction) so it is refused
+        self._entity_manager._lazy_guard(self, name)
 
         # checks if the current entity (and diffusion scope) is
         # attached to the data source in case it's not a lazy
