@@ -1,6 +1,6 @@
 # Asyncio Runtime Prototype
 
-> **Throwaway prototype, never merge this branch.** It backs the OMN-023 design issue of Omni (asyncio runtime), where the decisions, the measurements and the work items are described.
+> **Throwaway prototype, never merge this branch.** It backs the OMN-023 design issue of Omni, [hivesolutions/omni#451](https://github.com/hivesolutions/omni/issues/451), where the decisions, the measurements and the work items are described.
 
 The branch holds the changes the prototype made to the plugins, all of them still parsed by Python 2:
 
@@ -64,4 +64,4 @@ $PY proto/asyncio/bench.py --ports 18700 --fast 16 --slow 32 \
 | 4 slow calls of 2 s    | 137 req/s, p95 1.5 s            | 503 req/s, p95 37 ms              | 506 req/s, p95 36 ms    |
 | 32 slow calls of 2 s   | 31 req/s, p95 2.0 s             | 6.7 req/s, p50 2.0 s              | 501 req/s, p95 39 ms    |
 
-The complete results (netius modes, isolation, WebSockets, pre-fork workers) are in the OMN-023 issue.
+The complete results (netius modes, isolation, WebSockets, pre-fork workers) are in [hivesolutions/omni#451](https://github.com/hivesolutions/omni/issues/451).
