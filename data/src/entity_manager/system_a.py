@@ -11,8 +11,10 @@ a context variable instead of the thread identifier, as every task of
 the event loop shares the same thread.
 """
 
+import os
 import sys
 import asyncio
+import weakref
 import contextvars
 
 POOL_SIZE = 16
@@ -23,6 +25,12 @@ CONNECTION = contextvars.ContextVar("colony_entity_connection", default=None)
 
 ASYNC = contextvars.ContextVar("colony_entity_async", default=False)
 """ If the current task runs async code (lazy loading is refused) """
+
+POOLS = []
+""" The (loop, entity manager, pool) tuples of the open async pools """
+
+INSTANCES = weakref.WeakSet()
+""" The entity managers created, reset in the child of a fork """
 
 
 class LazyLoadError(RuntimeError):
@@ -130,6 +138,7 @@ class EntityManagerAsync(object):
                 % _connection.isolation,
             )
             pools[loop] = pool
+            POOLS.append((loop, self, pool))
         return pool
 
     def transaction_a(self):
@@ -191,8 +200,59 @@ class EntityManagerAsync(object):
         entity.data_state = module.UPDATED_STATE_VALUE
 
 
+async def close_a():
+    """
+    Closes the async pools of the running loop, to be awaited by the
+    shutdown of the server (before the loop itself is closed).
+    """
+
+    loop = asyncio.get_running_loop()
+    for item in list(POOLS):
+        _loop, entity_manager, pool = item
+        if not _loop == loop:
+            continue
+        pool.close()
+        await pool.wait_closed()
+        entity_manager.__dict__.get("_pools_a", {}).pop(loop, None)
+        POOLS.remove(item)
+
+
+def after_fork():
+    """
+    Drops, in the child of a fork, the connections inherited from the
+    parent (opened while the plugins were loaded), as the socket and the
+    TLS session of a connection can not be shared between processes, so
+    every worker opens its own connections on demand.
+    """
+
+    del POOLS[:]
+    for entity_manager in list(INSTANCES):
+        entity_manager.__dict__.pop("_pools_a", None)
+        entity_manager.__dict__.pop("_locks_a", None)
+        connection = entity_manager.__dict__.get("connection", None)
+        _connection = getattr(connection, "_connection", None)
+        if _connection == None:
+            continue
+        if hasattr(_connection, "connections_map"):
+            _connection.connections_map = {}
+        if hasattr(_connection, "transaction_level_map"):
+            _connection.transaction_level_map = {}
+
+
 def extend(cls):
     for name, value in EntityManagerAsync.__dict__.items():
         if name.startswith("__"):
             continue
         setattr(cls, name, value)
+
+    init = cls.__init__
+
+    def __init__(self, *args, **kwargs):
+        init(self, *args, **kwargs)
+        INSTANCES.add(self)
+
+    cls.__init__ = __init__
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=after_fork)

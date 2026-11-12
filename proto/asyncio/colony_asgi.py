@@ -11,9 +11,15 @@ are awaited on the event loop between the dispatch half and the
 response half of the WSGI plugin handling. WebSocket connections are
 routed to the handlers exposed by the plugins.
 
-Usage (netius in asyncio mode, the only one with real asyncio tasks):
+It is a plain ASGI application, so any ASGI server runs it, either
+through the SERVER variable (netius, uvicorn or hypercorn, as with
+colony_wsgi) or directly through the server's own command line, with
+CHILDREN setting the number of worker processes for every server:
 
-    $ ASYNCIO=1 PORT=8080 python colony_asgi.py
+    $ SERVER=netius PORT=8080 python colony_asgi.py
+    $ SERVER=uvicorn CHILDREN=4 PORT=8080 python colony_asgi.py
+    $ uvicorn colony_asgi:application --port 8080 --workers 4
+    $ hypercorn colony_asgi:application --bind 127.0.0.1:8080
 """
 
 import io
@@ -43,6 +49,21 @@ EXECUTOR = concurrent.futures.ThreadPoolExecutor(
 )
 
 WEBSOCKETS = None
+
+
+def load_plugins():
+    """
+    Loads every plugin up front, as Colony loads most of them lazily on
+    their first use, so that the first request of a worker is not delayed,
+    a worker that is first reached by a WebSocket has its handlers and the
+    workers forked after the import (netius, gunicorn preload) share the
+    loaded plugins instead of loading them one by one.
+    """
+
+    for plugin in plugin_manager.get_all_plugins():
+        if plugin.is_loaded():
+            continue
+        plugin_manager.load_plugin(plugin.id, type="full_load")
 
 
 def get_wsgi_plugin():
@@ -83,6 +104,7 @@ async def handle_lifespan(scope, receive, send):
         if message["type"] == "lifespan.startup":
             await send(dict(type="lifespan.startup.complete"))
         elif message["type"] == "lifespan.shutdown":
+            await system_a.close_a()
             EXECUTOR.shutdown(wait=False)
             await send(dict(type="lifespan.shutdown.complete"))
             return
@@ -246,19 +268,95 @@ class WebSocket(object):
         await self._send(dict(type="websocket.close", code=code))
 
 
-def main():
+load_plugins()
+
+
+def serve(server="netius", host="127.0.0.1", port=8080, children=0):
+    _globals = globals()
+    method = _globals.get("serve_" + server, None)
+    if not method:
+        raise colony.PluginSystemException("ASGI server '%s' not supported" % server)
+    version_method = _globals.get("version_" + server, None)
+    server_version = version_method() if version_method else None
+    sys.stderr.write(
+        "Starting Colony ASGI with '%s' version '%s' ...\n" % (server, server_version)
+    )
+    method(host, port, children=children)
+
+
+def serve_netius(host, port, children=0):
     import netius.servers
 
-    host = colony.conf("HOST", "127.0.0.1")
-    port = colony.conf("PORT", 8080, cast=int)
+    # the asyncio mode is the only one that runs real asyncio tasks, the
+    # (short) poll timeout works around the stepping of its asyncio loop
     poll_timeout = colony.conf("POLL_TIMEOUT", 0.002, cast=float)
     server = netius.servers.ASGIServer(
         app=application,
         asyncio=True,
         poll_timeout=poll_timeout,
+        children=children,
         level=logging.WARNING,
     )
     server.serve(host=host, port=port, env=True)
+
+
+def serve_uvicorn(host, port, children=0):
+    import uvicorn
+
+    # multiple workers are spawned (not forked) by uvicorn and import
+    # the application by its name, so each one loads its own plugins
+    app = "colony_asgi:application" if children > 1 else application
+    uvicorn.run(
+        app,
+        host=host,
+        port=port,
+        workers=children or None,
+        log_level="warning",
+        access_log=False,
+    )
+
+
+def serve_hypercorn(host, port, children=0):
+    import hypercorn.run
+    import hypercorn.config
+    import hypercorn.asyncio
+
+    config = hypercorn.config.Config()
+    config.bind = ["%s:%d" % (host, port)]
+    config.accesslog = None
+    config.loglevel = "WARNING"
+    if children > 1:
+        config.workers = children
+        config.application_path = "colony_asgi:application"
+        hypercorn.run.run(config)
+    else:
+        asyncio.run(hypercorn.asyncio.serve(application, config))
+
+
+def version_netius():
+    import netius
+
+    return netius.VERSION
+
+
+def version_uvicorn():
+    import uvicorn
+
+    return uvicorn.__version__
+
+
+def version_hypercorn():
+    import importlib.metadata
+
+    return importlib.metadata.version("hypercorn")
+
+
+def main():
+    server = colony.conf("SERVER", "netius")
+    host = colony.conf("HOST", "127.0.0.1")
+    port = colony.conf("PORT", 8080, cast=int)
+    children = colony.conf("CHILDREN", 0, cast=int)
+    serve(server=server, host=host, port=port, children=children)
 
 
 if __name__ == "__main__":

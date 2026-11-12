@@ -1,3 +1,4 @@
+import json
 import time
 import random
 import asyncio
@@ -11,8 +12,28 @@ models = colony.__import__("models")
 mvc_utils = colony.__import__("mvc_utils")
 
 SUBSCRIBERS = set()
-""" The queues of the open POS WebSocket sessions (single process,
-multiple workers need a shared broker such as Redis pub/sub) """
+""" The queues of the open POS WebSocket sessions, used when there's
+no Redis (single process only, workers need the shared broker) """
+
+CHANNEL = "omni:pos"
+""" The Redis pub/sub channel of the POS events, shared by every worker """
+
+REDIS = dict()
+""" The Redis client of each event loop (one per worker) """
+
+
+def _redis():
+    url = colony.conf("REDISTOGO_URL", None)
+    if not url:
+        return None
+    import redis.asyncio
+
+    loop = asyncio.get_running_loop()
+    client = REDIS.get(loop, None)
+    if client == None:
+        client = redis.asyncio.from_url(url)
+        REDIS[loop] = client
+    return client
 
 
 class Rollback(Exception):
@@ -176,9 +197,14 @@ class MainController(BaseController):
         id = int(request.field("id", "405"))
         delta = int(request.field("delta", "-1"))
         event = dict(event="stock", product=id, delta=delta, timestamp=time.time())
-        for queue in list(SUBSCRIBERS):
-            queue.put_nowait(event)
-        self.serialize(request, dict(notified=len(SUBSCRIBERS)))
+        client = _redis()
+        if client:
+            notified = await client.publish(CHANNEL, json.dumps(event))
+        else:
+            for queue in list(SUBSCRIBERS):
+                queue.put_nowait(event)
+            notified = len(SUBSCRIBERS)
+        self.serialize(request, dict(notified=notified))
 
     async def ws_progress(self, websocket):
         # a long sync job (eg: SAF-T export) runs in the thread pool and
@@ -208,7 +234,21 @@ class MainController(BaseController):
     async def ws_pos(self, websocket):
         await websocket.accept()
         queue = asyncio.Queue()
-        SUBSCRIBERS.add(queue)
+        client = _redis()
+        pubsub = None
+        relay = None
+        if client:
+            pubsub = client.pubsub()
+            await pubsub.subscribe(CHANNEL)
+
+            async def relay_events():
+                async for message in pubsub.listen():
+                    if message["type"] == "message":
+                        queue.put_nowait(json.loads(message["data"]))
+
+            relay = asyncio.ensure_future(relay_events())
+        else:
+            SUBSCRIBERS.add(queue)
         try:
             await websocket.send_json(dict(event="subscribed"))
             receiver = asyncio.ensure_future(websocket.receive())
@@ -223,3 +263,8 @@ class MainController(BaseController):
                 await websocket.send_json(getter.result())
         finally:
             SUBSCRIBERS.discard(queue)
+            if relay:
+                relay.cancel()
+            if pubsub:
+                await pubsub.unsubscribe(CHANNEL)
+                await pubsub.aclose()

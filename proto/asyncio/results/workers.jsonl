@@ -1,0 +1,36 @@
+{"label": "netius r1 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.029951 0.012773 0.024359 0.012939 0.013019 0.012829 0.012905 0.012805"}
+{"label": "netius r1 4 workers products_sync", "rps": 1526.4, "p50": 19.91868019104004, "p95": 34.847259521484375, "p99": 42.236328125, "max": 90.24214744567871, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 544.31640625, "uss_mb": 315.1171875}
+{"label": "netius r1 4 workers products_async", "rps": 1380.5, "p50": 21.346569061279297, "p95": 41.68868064880371, "p99": 52.69503593444824, "max": 104.6757698059082, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 556.08984375, "uss_mb": 329.1484375}
+{"label": "netius r1 log", "tracebacks": 0}
+{"label": "uvicorn r1 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.007606 0.003649 0.007059 0.003070 0.002893 0.003125 0.002941 0.003102"}
+{"label": "uvicorn r1 4 workers products_sync", "rps": 1638.0, "p50": 19.217491149902344, "p95": 24.87349510192871, "p99": 28.52487564086914, "max": 90.82770347595215, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 498.796875, "uss_mb": 394.5390625}
+{"label": "uvicorn r1 4 workers products_async", "rps": 1521.5, "p50": 20.058870315551758, "p95": 38.19131851196289, "p99": 51.32699012756348, "max": 86.07220649719238, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 516.96484375, "uss_mb": 412.70703125}
+{"label": "uvicorn r1 log", "tracebacks": 0}
+{"label": "gunicorn-uvicorn r1 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.011417 0.009987 0.009307 0.005315 0.003144 0.003186 0.003379 0.002898"}
+{"label": "gunicorn-uvicorn r1 4 workers products_sync", "rps": 1648.15, "p50": 19.092559814453125, "p95": 24.76811408996582, "p99": 28.729915618896484, "max": 85.89839935302734, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 530.1796875, "uss_mb": 291.96875}
+{"label": "gunicorn-uvicorn r1 4 workers products_async", "rps": 1553.3, "p50": 19.908905029296875, "p95": 36.894798278808594, "p99": 48.37751388549805, "max": 90.63935279846191, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 547.1640625, "uss_mb": 309.50390625}
+{"label": "gunicorn-uvicorn r1 log", "tracebacks": 0}
+{"label": "hypercorn r1 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.007816 0.007560 0.007629 0.008043 0.015933 0.007166 0.008042 0.009058"}
+{"label": "hypercorn r1 4 workers products_sync", "rps": 1358.4, "p50": 21.8353271484375, "p95": 41.17250442504883, "p99": 64.64338302612305, "max": 178.7731647491455, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 521.0078125, "uss_mb": 424.62109375}
+{"label": "hypercorn r1 4 workers products_async", "rps": 1306.4, "p50": 23.504257202148438, "p95": 38.77711296081543, "p99": 51.55301094055176, "max": 90.05904197692871, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 534.16796875, "uss_mb": 437.78125}
+{"label": "hypercorn r1 log", "tracebacks": 0}
+{"label": "netius r2 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.025508 0.024073 0.029252 0.012724 0.012880 0.012856 0.012670 0.013206"}
+{"label": "netius r2 4 workers products_sync", "rps": 1501.55, "p50": 20.122528076171875, "p95": 35.65549850463867, "p99": 43.82061958312988, "max": 115.31591415405273, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 545.0078125, "uss_mb": 317.57421875}
+{"label": "netius r2 4 workers products_async", "rps": 1367.5, "p50": 21.624088287353516, "p95": 41.814565658569336, "p99": 51.91540718078613, "max": 100.94833374023438, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 555.22265625, "uss_mb": 329.5625}
+{"label": "netius r2 log", "tracebacks": 0}
+{"label": "uvicorn r2 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.007249 0.003117 0.002952 0.007229 0.003094 0.003097 0.002847 0.003039"}
+{"label": "uvicorn r2 4 workers products_sync", "rps": 1639.9, "p50": 19.22011375427246, "p95": 24.824142456054688, "p99": 28.063297271728516, "max": 84.10072326660156, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 498.6171875, "uss_mb": 394.14453125}
+{"label": "uvicorn r2 4 workers products_async", "rps": 1521.25, "p50": 20.175695419311523, "p95": 32.4249267578125, "p99": 50.7204532623291, "max": 98.45924377441406, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 515.296875, "uss_mb": 410.82421875}
+{"label": "uvicorn r2 log", "tracebacks": 0}
+{"label": "gunicorn-uvicorn r2 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.011392 0.003179 0.003361 0.002998 0.011142 0.003126 0.003130 0.009271"}
+{"label": "gunicorn-uvicorn r2 4 workers products_sync", "rps": 1651.85, "p50": 19.04606819152832, "p95": 24.672746658325195, "p99": 28.347253799438477, "max": 88.45758438110352, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 530.9921875, "uss_mb": 294.26171875}
+{"label": "gunicorn-uvicorn r2 4 workers products_async", "rps": 1534.8, "p50": 19.536256790161133, "p95": 42.63114929199219, "p99": 51.889896392822266, "max": 97.02897071838379, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 548.12890625, "uss_mb": 312.0078125}
+{"label": "gunicorn-uvicorn r2 log", "tracebacks": 0}
+{"label": "hypercorn r2 cold", "websockets": "ok ok ok ok ok ok ok ok", "first_requests_s": " 0.007929 0.003370 0.003396 0.007305 0.003330 0.003327 0.003275 0.007498"}
+{"label": "hypercorn r2 4 workers products_sync", "rps": 1407.45, "p50": 21.454811096191406, "p95": 39.41798210144043, "p99": 49.38054084777832, "max": 109.48514938354492, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 521.2734375, "uss_mb": 425.4140625}
+{"label": "hypercorn r2 4 workers products_async", "rps": 1321.85, "p50": 23.302555084228516, "p95": 37.62650489807129, "p99": 48.79403114318848, "max": 94.55490112304688, "errors": 0, "error_kinds": [], "processes": 6, "rss_mb": 532.34375, "uss_mb": 436.484375}
+{"label": "hypercorn r2 log", "tracebacks": 0}
+{"label": "gunicorn-uvicorn r1 4 workers products_sync", "rps": 1631.3, "p50": 19.20294761657715, "p95": 25.103330612182617, "p99": 30.635833740234375, "max": 90.35038948059082, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 531.28515625, "uss_mb": 300.59375}
+{"label": "netius r1 4 workers products_sync", "rps": 1516.85, "p50": 19.759178161621094, "p95": 36.10396385192871, "p99": 46.40913009643555, "max": 98.37102890014648, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 544.390625, "uss_mb": 321.90625}
+{"label": "gunicorn-uvicorn r2 4 workers products_sync", "rps": 1632.05, "p50": 19.181489944458008, "p95": 25.149106979370117, "p99": 30.300140380859375, "max": 92.1790599822998, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 528.18359375, "uss_mb": 297.93359375}
+{"label": "netius r2 4 workers products_sync", "rps": 1511.3, "p50": 19.850969314575195, "p95": 35.61234474182129, "p99": 44.33941841125488, "max": 99.98559951782227, "errors": 0, "error_kinds": [], "processes": 5, "rss_mb": 543.6953125, "uss_mb": 321.1015625}

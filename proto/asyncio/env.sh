@@ -19,4 +19,7 @@ export META_PATH="$ROOT/../colony-config/*;$ROOT/../omni-config/*"
 export COLONY_PREFIX=/mvc
 export ALIAS_PATH=$P/alias.json
 export AT_TEST_MODE=1
+# workers need shared sessions and the shared broker of the POS events
+export SESSION=redis
+export REDISTOGO_URL=${REDISTOGO_URL:-redis://127.0.0.1:63791}
 export HOST=127.0.0.1
