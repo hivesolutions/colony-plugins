@@ -1,0 +1,11 @@
+pylib/
+__pycache__/
+conformance/*.log
+conformance/*.pid
+conformance/*.jsonl
+conformance/cookies-*
+conformance/page-*
+conformance/plain-*
+conformance/gzip-*
+conformance/ws_check_*
+conformance/results.txt

@@ -17,7 +17,8 @@ And two new Python 3.7+ modules:
 
 This folder holds the rest:
 
-- `colony_asgi.py`: the ASGI adapter (sibling of `colony_wsgi`), a plain ASGI application served by netius (asyncio mode), uvicorn, hypercorn or gunicorn with the uvicorn worker, which loads every plugin up front and closes the async pools on shutdown
+- `colony_asgi.py`: the ASGI adapter (sibling of `colony_wsgi`), depending only on the ASGI specification (netius is the default, uvicorn fully compatible, hypercorn, granian, daphne and gunicorn with the uvicorn worker verified), which loads every plugin up front, compresses the responses and applies the forwarded protocol itself, and closes the async pools on shutdown
+- `conformance/`: the server neutral conformance suite, `run_all.sh` runs the Omni checks (pages, login, isolation, ORM writes, WebSockets, compression, forwarded headers) on every server with one process and with workers, `probe.sh` records what each server hands to a bare ASGI application
 - `plugins/proto_async`: a throwaway Omni plugin with sync and async twins of a few actions and the WebSocket handlers
 - `probe_app.py` and `probe_run.sh`: a bare ASGI application probing the netius native and asyncio modes
 - `bench.py`: the mixed load generator (fast and slow clients, round robin over ports)
@@ -30,7 +31,7 @@ This folder holds the rest:
 ```bash
 # the async libraries and the ASGI servers, kept out of the main environment
 python -m pip install --target proto/asyncio/pylib aiomysql websockets psutil \
-    "uvicorn[standard]" hypercorn gunicorn uvicorn-worker
+    "uvicorn[standard]" hypercorn gunicorn uvicorn-worker granian daphne
 
 # a scratch MariaDB with the Omni demo data
 docker run -d --rm --name omni-asyncio-proto-db -e MARIADB_ROOT_PASSWORD=root \
@@ -45,11 +46,16 @@ cd proto/asyncio
 SERVER=netius PORT=18700 $PY colony_asgi.py
 SERVER=uvicorn CHILDREN=4 PORT=18700 $PY colony_asgi.py
 
-# or the server's own command line
-$PY -m uvicorn colony_asgi:application --port 18700 --workers 4
-$PY -m hypercorn colony_asgi:application --bind 127.0.0.1:18700 --workers 4
+# or the server's own command line, with its proxy header processing off
+$PY -m uvicorn colony_asgi:application --port 18700 --workers 4 --no-proxy-headers
 $PY -m gunicorn colony_asgi:application -k uvicorn_worker.UvicornWorker \
-    --workers 4 --preload --bind 127.0.0.1:18700
+    --workers 4 --preload --forwarded-allow-ips= --bind 127.0.0.1:18700
+$PY -m hypercorn colony_asgi:application --bind 127.0.0.1:18700 --workers 4
+$PY -m granian --interface asgi --port 18700 --workers 4 colony_asgi:application
+$PY -m daphne -p 18700 colony_asgi:application
+
+# the conformance suite on every server
+conformance/run_all.sh && cat conformance/results.txt
 
 # today's runtime for the comparison (one port, and the 64 ports of LDJ)
 SERVER=netius PORT=18800 $PY -m colony_wsgi

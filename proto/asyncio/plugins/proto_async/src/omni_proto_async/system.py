@@ -24,6 +24,7 @@ class OmniProtoAsync(colony.System):
             (r"omni_proto/isolation_async", main.isolation_async, "get", "json"),
             (r"omni_proto/isolation_naive", main.isolation_naive, "get", "json"),
             (r"omni_proto/stock_bump", main.stock_bump, "get", "json"),
+            (r"omni_proto/request_info", main.request_info, "get", "json"),
         )
 
     def get_websocket_patterns(self):

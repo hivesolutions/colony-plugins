@@ -70,6 +70,20 @@ class MainController(BaseController):
         await asyncio.sleep(ms / 1000.0)
         self.serialize(request, dict(result="slow_async", ms=ms, thread=_thread()))
 
+    def request_info(self, request):
+        # what the application sees of the request, the same on every
+        # ASGI server (forwarded headers applied by the application)
+        environ = request.request.environ
+        self.serialize(
+            request,
+            dict(
+                secure=request.request.is_secure(),
+                scheme=environ.get("wsgi.url_scheme", None),
+                remote_addr=environ.get("REMOTE_ADDR", None),
+                server_port=environ.get("SERVER_PORT", None),
+            ),
+        )
+
     def products_sync(self, request):
         products = models.Product.find(
             dict(

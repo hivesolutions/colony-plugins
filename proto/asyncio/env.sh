@@ -15,11 +15,12 @@ export DB_USER=root
 export DB_PASSWORD=root
 export DB_NAME=omni_proto
 export PLUGIN_PATH="$OMNI/*/src;$OMNI/*/*src;$ROOT/*/src;$ROOT/*/*src;$P/plugins/*/src"
-export META_PATH="$ROOT/../colony-config/*;$ROOT/../omni-config/*"
+export META_PATH=${META_PATH:-"$ROOT/../colony-config/*;$ROOT/../omni-config/*"}
 export COLONY_PREFIX=/mvc
 export ALIAS_PATH=$P/alias.json
 export AT_TEST_MODE=1
 # workers need shared sessions and the shared broker of the POS events
 export SESSION=redis
+export SERVER_ENCODING=${SERVER_ENCODING:-gzip}
 export REDISTOGO_URL=${REDISTOGO_URL:-redis://127.0.0.1:63791}
 export HOST=127.0.0.1

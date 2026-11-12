@@ -28,6 +28,7 @@ import re
 import sys
 import json
 import time
+import zlib
 import asyncio
 import logging
 import concurrent.futures
@@ -43,6 +44,14 @@ plugin_manager = colony_wsgi.plugin_manager
 WORKERS = colony.conf("ASGI_WORKERS", 16, cast=int)
 """ The number of threads that run the sync actions, bounds the
 number of sync actions (and DB connections) in flight """
+
+ENCODING = colony.conf("SERVER_ENCODING", None)
+""" The encoding of the responses (gzip compresses them), applied by the
+application itself so that every ASGI server serves the same bytes (the
+same variable that today makes netius compress them) """
+
+COMPRESSED_LIMIT = colony.conf("COMPRESSED_LIMIT", 5242880, cast=int)
+""" The maximum size of a response that is compressed (as in netius) """
 
 EXECUTOR = concurrent.futures.ThreadPoolExecutor(
     max_workers=WORKERS, thread_name_prefix="colony-asgi"
@@ -155,16 +164,67 @@ async def handle_http(scope, receive, send):
         result = await loop.run_in_executor(EXECUTOR, handle)
 
     status = int(response["status"].split(" ", 1)[0])
+    headers, body = encode(scope, status, list(response["headers"]), b"".join(result))
     headers = [
         (name.lower().encode("latin-1"), str(value).encode("latin-1"))
-        for name, value in response["headers"]
+        for name, value in headers
     ]
     await send(dict(type="http.response.start", status=status, headers=headers))
-    for chunk in result:
-        if not chunk:
-            continue
-        await send(dict(type="http.response.body", body=chunk, more_body=True))
-    await send(dict(type="http.response.body", body=b"", more_body=False))
+    await send(dict(type="http.response.body", body=body, more_body=False))
+
+
+def encode(scope, status, headers, body):
+    """
+    Compresses the response in the application, with the rules netius
+    applies today: gzip accepted by the client, HTTP/1.1 or newer, a non
+    empty body up to the limit and no ranges (as their offsets refer to
+    the uncompressed content).
+    """
+
+    if not ENCODING == "gzip":
+        return headers, body
+    if not body or status in (204, 304) or len(body) > COMPRESSED_LIMIT:
+        return headers, body
+    if scope.get("http_version", "1.1") in ("0.9", "1.0"):
+        return headers, body
+    names = dict((name.lower(), value) for name, value in headers)
+    if "content-encoding" in names or "content-range" in names:
+        return headers, body
+    if names.get("accept-ranges", None) == "bytes":
+        return headers, body
+    accept = get_header(scope, b"accept-encoding") or ""
+    encodings = [value.split(";", 1)[0].strip() for value in accept.split(",")]
+    if not "gzip" in encodings:
+        return headers, body
+    compressor = zlib.compressobj(6, zlib.DEFLATED, zlib.MAX_WBITS | 16)
+    body = compressor.compress(body) + compressor.flush()
+    headers = [item for item in headers if not item[0].lower() == "content-length"]
+    headers.append(("Content-Encoding", "gzip"))
+    headers.append(("Content-Length", str(len(body))))
+    headers.append(("Vary", "Accept-Encoding"))
+    return headers, body
+
+
+def get_header(scope, name):
+    for _name, value in scope.get("headers", []):
+        if _name.lower() == name:
+            return value.decode("latin-1")
+    return None
+
+
+def get_scheme(scope, default="http"):
+    """
+    Resolves the scheme of the request from the forwarded protocol, as
+    netius does today for the WSGI runtime, never from what the server
+    may or may not have applied (servers differ, the key is optional).
+    """
+
+    forwarded = get_header(scope, b"x-forwarded-proto")
+    if forwarded:
+        forwarded = forwarded.split(",", 1)[0].strip().lower()
+    if forwarded and scope["type"] == "websocket":
+        return "wss" if forwarded == "https" else "ws"
+    return forwarded or scope.get("scheme", None) or default
 
 
 async def handle_websocket(scope, receive, send):
@@ -216,7 +276,7 @@ def build_environ(scope, body):
         REMOTE_PORT=str(client[1]),
     )
     environ["wsgi.version"] = (1, 0)
-    environ["wsgi.url_scheme"] = scope.get("scheme", "http")
+    environ["wsgi.url_scheme"] = get_scheme(scope)
     environ["wsgi.input"] = io.BytesIO(body)
     environ["wsgi.errors"] = sys.stderr
     environ["wsgi.multithread"] = True
@@ -243,6 +303,7 @@ class WebSocket(object):
         self._receive = receive
         self._send = send
         self.executor = EXECUTOR
+        self.scheme = get_scheme(scope, default="ws")
         query = scope.get("query_string", b"").decode("latin-1")
         self.query = dict(urllib.parse.parse_qsl(query))
 
@@ -311,6 +372,7 @@ def serve_uvicorn(host, port, children=0):
         host=host,
         port=port,
         workers=children or None,
+        proxy_headers=False,
         log_level="warning",
         access_log=False,
     )
