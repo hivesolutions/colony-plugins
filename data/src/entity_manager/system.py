@@ -29,6 +29,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import os
+import sys
 import copy
 import uuid
 import math
@@ -8502,7 +8503,7 @@ class EntityManager(object):
         return cmp(first_name, second_name)  # @UndefinedVariable
 
 
-if colony.legacy.PYTHON_V >= 370:
+if sys.version_info >= (3, 7):
     from . import system_a
 
     system_a.extend(EntityManager)

@@ -41,7 +41,7 @@ from . import exceptions
 from . import entity_model
 
 model_a = None
-if colony.legacy.PYTHON_V >= 370:
+if sys.version_info >= (3, 7):
     from . import entity_model_a as model_a
 
 NAME_REFERENCE_VALUE = "__name__"
