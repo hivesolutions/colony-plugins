@@ -716,6 +716,16 @@ def _class_filter(cls, context, *args, **kwargs):
 
     controller = cls.get_controller_g(context)
     form_data_map = controller.process_form_data(context)
+
+    # in case the JSON data of the request has been processed, as it's
+    # read and set by the fields of the controller (eg: a filter that
+    # is appended by an action), it's applied over the form data (eg:
+    # the query string) so that the filter is created from both of them
+    json_data_map = context.get_parameter("_json_data")
+    if json_data_map:
+        form_data_map = dict(form_data_map)
+        form_data_map.update(json_data_map)
+
     return cls.create_filter(form_data_map, *args, **kwargs)
 
 

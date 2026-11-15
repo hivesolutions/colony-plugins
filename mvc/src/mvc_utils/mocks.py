@@ -28,8 +28,11 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
+
 from . import model
 from . import controller
+from . import entity_model
 
 
 class MockPlugin(object):
@@ -268,6 +271,44 @@ class MockAddressReference(MockEntity):
 class MockPerson(MockEntity):
     _names = ("object_id", "name", "age", "address")
     _targets = dict(address=MockAddress)
+
+
+class MockFilterPerson(MockPerson):
+    get_controller_g = classmethod(model._class_get_controller_g)
+    create_filter = classmethod(entity_model._class_create_filter)
+
+
+class MockFilterController(object):
+    get_field = controller.get_field
+    set_field = controller.set_field
+    process_json_data = controller.process_json_data
+
+    def __init__(self, form_data=None):
+        self.form_data = form_data or dict()
+        self.json_plugin = json
+
+    def process_form_data(self, request):
+        return self.form_data
+
+
+class MockFilterRequest(object):
+    def __init__(self, type=None, contents=None, form_data=None):
+        self.type = type
+        self.contents = contents
+        self.parameters = dict()
+        self.controller = MockFilterController(form_data=form_data)
+
+    def get_type(self):
+        return self.type
+
+    def read(self):
+        return self.contents
+
+    def get_parameter(self, name):
+        return self.parameters.get(name, None)
+
+    def set_parameter(self, name, value):
+        self.parameters[name] = value
 
 
 class MockPersonReference(MockEntity):

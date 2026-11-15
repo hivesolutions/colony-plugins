@@ -55,6 +55,7 @@ class MVCUtilsTest(colony.Test):
             TemplateFileACLTestCase,
             TemplateProcessMethodsTestCase,
             CreateFilterTestCase,
+            FilterTestCase,
             DeleteTestCase,
             RelationTestCase,
             ApplyTestCase,
@@ -959,6 +960,84 @@ class CreateFilterTestCase(colony.ColonyTestCase):
             filter["eager"]["address"]["filters"],
             [dict(type="equals", fields=dict(street=None))],
         )
+
+
+class FilterTestCase(colony.ColonyTestCase):
+    @staticmethod
+    def get_description():
+        return "Filter test case"
+
+    def test_filter(self):
+        request = mocks.MockFilterRequest(
+            type="application/x-www-form-urlencoded",
+            form_data=dict(filters=["name:equals:name_a"], number_records="10"),
+        )
+        filter = entity_model._class_filter(
+            mocks.MockFilterPerson, request, dict(order_by="object_id")
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+        self.assertEqual(filter["range"], (0, 10))
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(name="name_a"))]
+        )
+
+        filters = request.controller.get_field(request, "filters", [])
+        filters.append("object_id:equals:1")
+        request.controller.set_field(request, "filters", filters)
+        filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+        self.assertEqual(
+            filter["filters"],
+            [
+                dict(type="equals", fields=dict(name="name_a")),
+                dict(type="equals", fields=dict(object_id="1")),
+            ],
+        )
+
+    def test_filter_json(self):
+        request = mocks.MockFilterRequest(
+            type="application/json",
+            contents=b'{"filters": ["name:equals:name_a"]}',
+            form_data=dict(filters=["name:equals:name_b"], number_records="10"),
+        )
+        filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+        self.assertEqual(filter["range"], (0, 10))
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(name="name_b"))]
+        )
+
+        filters = request.controller.get_field(request, "filters", [])
+        self.assertEqual(filters, ["name:equals:name_a"])
+        filters.append("object_id:equals:1")
+        request.controller.set_field(request, "filters", filters)
+        filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+        self.assertEqual(filter["range"], (0, 10))
+        self.assertEqual(
+            filter["filters"],
+            [
+                dict(type="equals", fields=dict(name="name_a")),
+                dict(type="equals", fields=dict(object_id="1")),
+            ],
+        )
+        self.assertEqual(
+            request.controller.form_data,
+            dict(filters=["name:equals:name_b"], number_records="10"),
+        )
+
+    def test_filter_json_empty(self):
+        for contents in (None, b"", b"{}"):
+            request = mocks.MockFilterRequest(
+                type="application/json",
+                contents=contents,
+                form_data=dict(filters=["name:equals:name_b"]),
+            )
+            filters = request.controller.get_field(request, "filters", [])
+            self.assertEqual(filters, [])
+            filters.append("object_id:equals:1")
+            request.controller.set_field(request, "filters", filters)
+            filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+            self.assertEqual(
+                filter["filters"], [dict(type="equals", fields=dict(object_id="1"))]
+            )
 
 
 class DeleteTestCase(colony.ColonyTestCase):
