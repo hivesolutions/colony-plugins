@@ -1096,14 +1096,14 @@ class FilterTestCase(colony.ColonyTestCase):
         request = mocks.MockFilterRequest(
             type="application/json",
             contents=b'{"filters": "object_id:equals:1", "limit": null, "paged": true, "sort": "name:descending"}',
-            form_data=dict(find_d="name:equals:name_b", number_records="10"),
+            form_data=dict(find_d="name:equals:name_b", limit="10", paged="1"),
         )
         request.controller.get_field(request, "filters", [])
         filter = entity_model._class_filter(
             mocks.MockFilterPerson, request, dict(order_by="object_id")
         )
         self.assertEqual(filter["range"], (0, 10))
-        self.assertEqual(filter["paged"], False)
+        self.assertEqual(filter["paged"], True)
         self.assertEqual(filter["order_by"], "object_id")
         self.assertEqual(
             filter["filters"],
