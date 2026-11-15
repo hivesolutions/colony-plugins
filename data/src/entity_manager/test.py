@@ -30,6 +30,7 @@ __license__ = "Apache License, Version 2.0"
 
 import os
 import sys
+import json
 import shutil
 import sqlite3
 import tempfile
@@ -1601,6 +1602,52 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
             mocks.Person, dict(map=True, entities=entities)
         )
         self.assertEqual(persons[0]["name"], "name_person")
+
+    def test_export_private(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Address)
+        self.entity_manager.create(mocks.Dog)
+        self.entity_manager.create(mocks.Car)
+        self.entity_manager.create(mocks.Employee)
+
+        # creates a person with a secret, an address (to one relation)
+        # and a dog (to many relation) and saves all of them
+        address = mocks.Address()
+        address.object_id = 1
+        address.street = "street_address"
+        person = mocks.Person()
+        person.object_id = 2
+        person.name = "name_person"
+        person.secret = "secret_person"
+        person.address = address
+        dog = mocks.Dog()
+        dog.object_id = 3
+        dog.name = "name_dog"
+        dog.owner = person
+        self.entity_manager.save(address)
+        self.entity_manager.save(person)
+        self.entity_manager.save(dog)
+
+        # exports the persons and verifies that the private attribute is
+        # part of the exporting, as it must contain all of the data (eg:
+        # for a later importing), together with the other attributes and
+        # with the relations reduced to their identifiers
+        persons = json.loads(self.entity_manager._export_class(mocks.Person, json))
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(persons[0]["object_id"], 2)
+        self.assertEqual(persons[0]["name"], "name_person")
+        self.assertEqual(persons[0]["age"], 18)
+        self.assertEqual(persons[0]["secret"], "secret_person")
+        self.assertEqual(persons[0]["address"]["object_id"], 1)
+        self.assertFalse("street" in persons[0]["address"])
+        self.assertEqual(len(persons[0]["dogs"]), 1)
+        self.assertEqual(persons[0]["dogs"][0]["object_id"], 3)
+
+        # verifies that the private attribute is still left out of the
+        # maps, as only the exporting explicitly requests it
+        persons = self.entity_manager.find(mocks.Person, dict(map=True))
+        self.assertFalse("secret" in persons[0])
 
     def test_order_by(self):
         # creates the required entity classes in the data source

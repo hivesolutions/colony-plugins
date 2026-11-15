@@ -7301,6 +7301,17 @@ class EntityManager(object):
         # better performance in query unpacking
         options["map"] = True
 
+        # sets the reserved names and the complete set of field names
+        # of the entity class as the names to be retrieved, so that the
+        # private fields (eg: secrets), left out of the maps unless they
+        # are explicitly requested, are also exported, as the exporting
+        # must contain all of the data (eg: for a later importing)
+        names = list(RESERVED_NAMES)
+        items_map = self._get_items_map(entity_class, ancestors=False)
+        for table_fields in colony.legacy.values(items_map):
+            names.extend(table_fields)
+        options["names"] = names
+
         # sets the list holding eager loading relations in the
         # options map to use them in the find operation
         options["eager"] = eager
