@@ -246,6 +246,33 @@ class Breeder(Person):
         return dict(type="to-many", target=BreedDog, reverse="owner")
 
 
+class Agent(Person):
+    """
+    The specialized version of a person whose identity is kept
+    private, redefining the inherited name as a private attribute,
+    with a private code name calculated from its age.
+    """
+
+    name = dict(type="text", indexed=True, private=True)
+    """ The name of the agent, redefined as private so that it's
+    only part of its maps when explicitly requested """
+
+    code_name = dict(type="text", private=True)
+    """ The code name of the agent, calculated from its age
+    when not set and private as its name """
+
+    partner = dict(type="relation")
+    """ The partner of the agent, another agent """
+
+    @staticmethod
+    def _relation_partner():
+        return dict(type="to-one", target=Agent, is_mapper=True)
+
+    @classmethod
+    def _attr_code_name(cls, instance):
+        return "agent_%d" % cls._attr(instance, "age")
+
+
 class Address(RootEntity):
     """
     The address entity class, representing the typical

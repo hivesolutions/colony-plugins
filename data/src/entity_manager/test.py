@@ -1396,6 +1396,81 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(person_map["name"], "name_person")
         self.assertFalse("secret" in person_map)
 
+    def test_map_private_redefined(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Agent)
+
+        # verifies that the name redefined by the agent with the private
+        # flag is private for the agent, not being private for the person
+        self.assertEqual(mocks.Agent.is_private("name"), True)
+        self.assertEqual(mocks.Person.is_private("name"), False)
+
+        # creates two agents, the second one being the partner of the
+        # first one, and saves both of them
+        agent_a = mocks.Agent()
+        agent_a.object_id = 1
+        agent_a.name = "name_agent_a"
+        agent_b = mocks.Agent()
+        agent_b.object_id = 2
+        agent_b.name = "name_agent_b"
+        agent_a.partner = agent_b
+        self.entity_manager.save(agent_b)
+        self.entity_manager.save(agent_a)
+
+        # retrieves the first agent as a map eagerly loading its partner
+        # and verifies that the redefined private attribute is part of
+        # neither of them, although it's also stored in the table of the
+        # person (where it's not private), the other ones being kept
+        agent = self.entity_manager.get(
+            mocks.Agent, 1, dict(map=True, eager=("partner",))
+        )
+        self.assertEqual(agent["age"], 18)
+        self.assertEqual(agent["partner"]["object_id"], 2)
+        self.assertFalse("name" in agent)
+        self.assertFalse("name" in agent["partner"])
+
+        # retrieves the agent as a map explicitly requesting the redefined
+        # private attribute in the names, verifying that it's retrieved
+        agent = self.entity_manager.get(
+            mocks.Agent,
+            1,
+            dict(map=True, names=("_class", "_mtime", "object_id", "name")),
+        )
+        self.assertEqual(agent["name"], "name_agent_a")
+
+        # retrieves the agent as an entity, verifying that the redefined
+        # private attribute is retrieved (only the maps leave it out)
+        agent = self.entity_manager.get(mocks.Agent, 1)
+        self.assertEqual(agent.name, "name_agent_a")
+
+    def test_map_private_calculated(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Agent)
+
+        # creates an agent without code name (calculated) and saves it
+        agent = mocks.Agent()
+        agent.object_id = 1
+        agent.name = "name_agent"
+        agent.age = 30
+        self.entity_manager.save(agent)
+
+        # retrieves the agent as a map and verifies that the private code
+        # name is not calculated into it, the (public) calculated double
+        # age being calculated as usual
+        agents = self.entity_manager.find(mocks.Agent, dict(map=True))
+        self.assertEqual(agents[0]["double_age"], 60)
+        self.assertFalse("code_name" in agents[0])
+
+        # retrieves the agent as a map explicitly requesting the private
+        # code name in the names, verifying that it's then calculated
+        agents = self.entity_manager.find(
+            mocks.Agent,
+            dict(map=True, names=("_class", "_mtime", "object_id", "age", "code_name")),
+        )
+        self.assertEqual(agents[0]["code_name"], "agent_30")
+
     def test_map_relations(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.Person)

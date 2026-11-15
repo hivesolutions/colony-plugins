@@ -4459,8 +4459,10 @@ class EntityManager(object):
 
                 # in case the map flag is set and no names are defined the
                 # private fields (eg: secrets) must avoid retrieval, as they
-                # are only retrieved when explicitly requested in the names
-                if map and not names and _entity_class.is_private(field_name):
+                # are only retrieved when explicitly requested in the names,
+                # the check is made in the queried class (not in the class of
+                # the table) as it may redefine a field of a parent as private
+                if map and not names and entity_class.is_private(field_name):
                     continue
 
                 # writes the comma to the query buffer only in case the
@@ -4632,11 +4634,13 @@ class EntityManager(object):
 
                             # in case the map flag is set and no names are defined
                             # the private fields (eg: secrets) of the relation must
-                            # avoid retrieval, only retrieved when explicitly requested
+                            # avoid retrieval, only retrieved when explicitly requested,
+                            # checked in the target class of the relation (as in the
+                            # queried class) and not in the class of the table
                             if (
                                 map
                                 and not names
-                                and __entity_class.is_private(field_name)
+                                and target_class.is_private(field_name)
                             ):
                                 continue
 
@@ -7260,6 +7264,11 @@ class EntityManager(object):
         # and retrieves the associated method for calculus then updates
         # the value in the structure
         for name, _class in colony.legacy.iteritems(attr_methods):
+            # in case the attribute is private and is not part of the
+            # map (not explicitly requested) it's not calculated, as
+            # the private attributes are left out of the maps
+            if entity_class.is_private(name) and not name in map:
+                continue
             method = getattr(entity_class, "_attr_" + name)
             try:
                 attribute = method(map)
