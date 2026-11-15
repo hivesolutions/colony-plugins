@@ -961,6 +961,45 @@ class CreateFilterTestCase(colony.ColonyTestCase):
             [dict(type="equals", fields=dict(street=None))],
         )
 
+    def test_create_filter_private(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(filters=["secret:greater:a", "name:equals:name_a"]),
+        )
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(name="name_a"))]
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(sort="secret:ascending"),
+            defaults=dict(order_by="object_id"),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(
+                filters=["address.code:greater:a", "address.street:equals:main"],
+                sort="address.code:descending",
+            ),
+            defaults=dict(order_by="object_id", eager=("address",)),
+        )
+        self.assertEqual(filter["order_by"], "object_id")
+        self.assertEqual(
+            filter["eager"]["address"]["filters"],
+            [dict(type="equals", fields=dict(street="main"))],
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson,
+            dict(),
+            defaults=dict(filters=[dict(type="equals", fields=dict(secret="a"))]),
+        )
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(secret="a"))]
+        )
+
 
 class FilterTestCase(colony.ColonyTestCase):
     @staticmethod

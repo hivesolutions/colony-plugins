@@ -239,6 +239,7 @@ class MockEntity(object):
     data_reference = False
     _entity_manager = MockEntityManager()
     _names = ()
+    _private = ()
     _targets = dict()
 
     @classmethod
@@ -248,6 +249,10 @@ class MockEntity(object):
     @classmethod
     def has_name(cls, name):
         return name in cls._names
+
+    @classmethod
+    def is_private(cls, name):
+        return name in cls._private
 
     @classmethod
     def get_target(cls, relation_name):
@@ -261,7 +266,8 @@ class MockEntity(object):
 
 
 class MockAddress(MockEntity):
-    _names = ("object_id", "street")
+    _names = ("object_id", "street", "code")
+    _private = ("code",)
 
 
 class MockAddressReference(MockEntity):
@@ -269,7 +275,8 @@ class MockAddressReference(MockEntity):
 
 
 class MockPerson(MockEntity):
-    _names = ("object_id", "name", "age", "address")
+    _names = ("object_id", "name", "age", "address", "secret")
+    _private = ("secret",)
     _targets = dict(address=MockAddress)
 
 

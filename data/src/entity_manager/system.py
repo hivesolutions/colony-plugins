@@ -4379,6 +4379,12 @@ class EntityManager(object):
         # complete list of names is retrieve from the data source
         names = options.get("names", None)
 
+        # retrieves the map flag from the options, in the map mode
+        # the private fields (eg: secrets) are only retrieved when
+        # explicitly requested in the names, as the maps are the
+        # representation that is sent to the clients
+        map = options.get("map", False)
+
         # creates the list to hold the already visited names, this
         # is a holder for the various name string values, only in
         # case the order names flag is set
@@ -4449,6 +4455,12 @@ class EntityManager(object):
                 if is_minimal and not field_name == table_id:
                     continue
                 if _entity_class.is_relation(field_name):
+                    continue
+
+                # in case the map flag is set and no names are defined the
+                # private fields (eg: secrets) must avoid retrieval, as they
+                # are only retrieved when explicitly requested in the names
+                if map and not names and _entity_class.is_private(field_name):
                     continue
 
                 # writes the comma to the query buffer only in case the
@@ -4616,6 +4628,16 @@ class EntityManager(object):
                             # names in the joins may occurs an an invalid result
                             # set would be returned (problem in final unpacking)
                             if __entity_class.is_relation(field_name):
+                                continue
+
+                            # in case the map flag is set and no names are defined
+                            # the private fields (eg: secrets) of the relation must
+                            # avoid retrieval, only retrieved when explicitly requested
+                            if (
+                                map
+                                and not names
+                                and __entity_class.is_private(field_name)
+                            ):
                                 continue
 
                             # writes the comma to the query buffer only in case the
@@ -7236,8 +7258,15 @@ class EntityManager(object):
 
         # iterates over all the names that are meant to be calculated
         # and retrieves the associated method for calculus then updates
-        # the value in the structure
+        # the value in the structure, note that a calculation only sees
+        # the fields selected for the map, so one that reads a field that
+        # is not selected (eg: a private one) gets no value for it
         for name, _class in colony.legacy.iteritems(attr_methods):
+            # in case the attribute is private and is not part of the
+            # map (not explicitly requested) it's not calculated, as
+            # the private attributes are left out of the maps
+            if entity_class.is_private(name) and not name in map:
+                continue
             method = getattr(entity_class, "_attr_" + name)
             try:
                 attribute = method(map)
@@ -7278,6 +7307,17 @@ class EntityManager(object):
         # this option will provide a better structure for serialization and
         # better performance in query unpacking
         options["map"] = True
+
+        # sets the reserved names and the complete set of field names
+        # of the entity class as the names to be retrieved, so that the
+        # private fields (eg: secrets), left out of the maps unless they
+        # are explicitly requested, are also exported, as the exporting
+        # must contain all of the data (eg: for a later importing)
+        names = list(RESERVED_NAMES)
+        items_map = self._get_items_map(entity_class, ancestors=False)
+        for table_fields in colony.legacy.values(items_map):
+            names.extend(table_fields)
+        options["names"] = names
 
         # sets the list holding eager loading relations in the
         # options map to use them in the find operation
@@ -7462,7 +7502,7 @@ class EntityManager(object):
         # relations to be loaded in an eager fashion
         # as the complete set of to many relations in
         # in the entity class
-        eager = colony.legacy.eager(entity_class.get_to_many())
+        eager = colony.legacy.keys(entity_class.get_to_many())
 
         # retrieves the name of the id attribute for the entity class
         # and then retrieves the value of it from the various entity

@@ -143,6 +143,10 @@ class Person(RootEntity):
     weight = dict(type="decimal")
     """ The weight of the person """
 
+    secret = dict(type="text", private=True)
+    """ The secret of the person (eg: a password), that
+    is only part of its maps when explicitly requested """
+
     parent = dict(type="relation")
     """ The parent for the current person """
 
@@ -240,6 +244,22 @@ class Breeder(Person):
     @staticmethod
     def _relation_dogs():
         return dict(type="to-many", target=BreedDog, reverse="owner")
+
+
+class Agent(Person):
+    """
+    The specialized version of a person with a private code
+    name calculated from its age.
+    """
+
+    code_name = dict(type="text", private=True)
+    """ The code name of the agent, calculated from its age
+    when not set and only part of its maps when explicitly
+    requested """
+
+    @classmethod
+    def _attr_code_name(cls, instance):
+        return "agent_%d" % cls._attr(instance, "age")
 
 
 class Address(RootEntity):
