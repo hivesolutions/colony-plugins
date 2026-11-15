@@ -1053,6 +1053,7 @@ class FilterTestCase(colony.ColonyTestCase):
         self.assertEqual(
             filter["filters"],
             [
+                dict(type="equals", fields=dict(name="name_b")),
                 dict(type="equals", fields=dict(name="name_a")),
                 dict(type="equals", fields=dict(object_id="1")),
             ],
@@ -1060,6 +1061,26 @@ class FilterTestCase(colony.ColonyTestCase):
         self.assertEqual(
             request.controller.form_data,
             dict(filters=["name:equals:name_b"], number_records="10"),
+        )
+
+        request = mocks.MockFilterRequest(
+            type="application/json",
+            contents=b'{"filters": "object_id:equals:1", "limit": null, "paged": true, "sort": "name:descending"}',
+            form_data=dict(find_d="name:equals:name_b", number_records="10"),
+        )
+        request.controller.get_field(request, "filters", [])
+        filter = entity_model._class_filter(
+            mocks.MockFilterPerson, request, dict(order_by="object_id")
+        )
+        self.assertEqual(filter["range"], (0, 10))
+        self.assertEqual(filter["paged"], False)
+        self.assertEqual(filter["order_by"], "object_id")
+        self.assertEqual(
+            filter["filters"],
+            [
+                dict(type="equals", fields=dict(name="name_b")),
+                dict(type="equals", fields=dict(object_id="1")),
+            ],
         )
 
     def test_filter_json_empty(self):
@@ -1071,11 +1092,19 @@ class FilterTestCase(colony.ColonyTestCase):
             )
             filters = request.controller.get_field(request, "filters", [])
             self.assertEqual(filters, [])
+            filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+            self.assertEqual(
+                filter["filters"], [dict(type="equals", fields=dict(name="name_b"))]
+            )
             filters.append("object_id:equals:1")
             request.controller.set_field(request, "filters", filters)
             filter = entity_model._class_filter(mocks.MockFilterPerson, request)
             self.assertEqual(
-                filter["filters"], [dict(type="equals", fields=dict(object_id="1"))]
+                filter["filters"],
+                [
+                    dict(type="equals", fields=dict(name="name_b")),
+                    dict(type="equals", fields=dict(object_id="1")),
+                ],
             )
 
 
