@@ -248,8 +248,8 @@ class Breeder(Person):
 
 class Agent(Person):
     """
-    The specialized version of a person whose identity is kept
-    private, with a private code name calculated from its age.
+    The specialized version of a person with a private code
+    name calculated from its age.
     """
 
     code_name = dict(type="text", private=True)
