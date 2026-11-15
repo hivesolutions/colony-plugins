@@ -721,7 +721,8 @@ def _class_filter(cls, context, *args, **kwargs):
     # read and set by the fields of the controller, its filters (eg: one
     # appended by an action) are added to the ones of the form data (eg:
     # the query string), as both restrict the result, the other values
-    # of the filter are still the ones of the form data
+    # of the filter are still the ones of the form data, only the string
+    # filters of the JSON data are used, as the ones of the form data
     json_data_map = context.get_parameter("_json_data")
     json_filters = json_data_map.get("filters", None) if json_data_map else None
     if json_filters:
@@ -731,6 +732,9 @@ def _class_filter(cls, context, *args, **kwargs):
             form_filters = (form_filters,)
         if not type(json_filters) in (list, tuple):
             json_filters = (json_filters,)
+        json_filters = [
+            value for value in json_filters if type(value) in colony.legacy.STRINGS
+        ]
         form_data_map = dict(form_data_map)
         form_data_map["filters"] = list(form_filters) + list(json_filters)
 

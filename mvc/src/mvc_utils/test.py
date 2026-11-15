@@ -1083,6 +1083,32 @@ class FilterTestCase(colony.ColonyTestCase):
             ],
         )
 
+        request = mocks.MockFilterRequest(
+            type="application/json",
+            contents=b'{"filters": [{"name": "x"}, 1, true, "name:equals:name_a"]}',
+            form_data=dict(filters=["name:equals:name_b"]),
+        )
+        request.controller.get_field(request, "filters", [])
+        filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+        self.assertEqual(
+            filter["filters"],
+            [
+                dict(type="equals", fields=dict(name="name_b")),
+                dict(type="equals", fields=dict(name="name_a")),
+            ],
+        )
+
+        request = mocks.MockFilterRequest(
+            type="application/json",
+            contents=b'{"filters": {"name": "x"}}',
+            form_data=dict(filters=["name:equals:name_b"]),
+        )
+        request.controller.get_field(request, "filters", [])
+        filter = entity_model._class_filter(mocks.MockFilterPerson, request)
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(name="name_b"))]
+        )
+
     def test_filter_json_empty(self):
         for contents in (None, b"", b"{}"):
             request = mocks.MockFilterRequest(
