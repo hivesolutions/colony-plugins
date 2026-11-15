@@ -2860,6 +2860,30 @@ class EntityClass(object):
         return is_immutable
 
     @classmethod
+    def is_private(cls, attribute_name):
+        # in case the attribute name does not exists
+        # in the class, it sure is not a private
+        if not hasattr(cls, attribute_name):
+            # returns invalid, if the value
+            # does not exists it cannot be
+            # a private name
+            return False
+
+        # retrieves the attribute from the class, and
+        # tests it for the expected dictionary type
+        # if that's the case tries to retrieve the
+        # meta data information from it
+        attribute = getattr(cls, attribute_name)
+        attribute_type = type(attribute)
+        if not attribute_type == dict:
+            return False
+        is_private = attribute.get("private", False)
+
+        # returns the value of the private checking
+        # value
+        return is_private
+
+    @classmethod
     def is_relation(cls, attribute_name):
         """
         Checks if the attribute for the given attribute name refers
@@ -3560,6 +3584,13 @@ class EntityClass(object):
             # model and in case it does not continues the loop
             has_value = self.has_value(name)
             if not has_value:
+                continue
+
+            # checks if the current name refers a private attribute
+            # (eg: a secret) and in case it does continues the loop,
+            # as the private attributes are never part of the map
+            is_private = entity_class.is_private(name)
+            if is_private:
                 continue
 
             # checks if the current name refers a relation in the

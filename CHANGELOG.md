@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Private entity fields (eg: secrets), left out of the maps of the entities unless explicitly requested by name, and never filtered or sorted by the requests - [hivesolutions/omni#453](https://github.com/hivesolutions/omni/issues/453)
 * Error reporting to Sentry for any MVC based solution, covering controllers, the HTTP stack and background tasks - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Request, user and breadcrumb context in the reported errors, with sensitive values withheld unless explicitly enabled - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Reported errors now describe the operating system, the installed package versions, the plugin manager and the process in which they happened - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
@@ -68,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Exporting the entities with to many relations no longer fails under Python 2
 * Files stored with the zip file storage engine can now be retrieved
 * Diagnostics gathering no longer fails when a request ends with an error - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * A request that fails before it starts being handled is now logged instead of being reported only to the client - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)

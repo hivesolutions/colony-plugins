@@ -947,6 +947,12 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
         if name in RESERVED_NAMES:
             return True
 
+        # in case the trailing name refers a private attribute (eg: a
+        # secret) it's not valid for sorting, as the order of the entities
+        # would reveal its values (security validation)
+        if target.is_private(name):
+            return False
+
         # returns if the trailing name exists as an attribute in the
         # context of the target class (security validation)
         return target.has_name(name)
@@ -1024,6 +1030,13 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
         # attribute (the last result of the split)
         _filters, target, name = resolve_s(attribute)
         if _filters == None:
+            continue
+
+        # in case the attribute is private (eg: a secret) the filter is
+        # ignored, as filtering it from the request data would reveal its
+        # values (eg: comparing it with a prefix), the filters that are
+        # defined in code (eg: in the defaults) are not affected
+        if target.is_private(name):
             continue
 
         # casts the value for the current name using the target
