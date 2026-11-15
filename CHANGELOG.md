@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Private entity fields (eg: secrets), left out of the maps of the entities unless explicitly requested by name - [hivesolutions/omni#453](https://github.com/hivesolutions/omni/issues/453)
+* Private entity fields (eg: secrets), left out of the maps of the entities unless explicitly requested by name, and never filtered or sorted by the requests - [hivesolutions/omni#453](https://github.com/hivesolutions/omni/issues/453)
 * Error reporting to Sentry for any MVC based solution, covering controllers, the HTTP stack and background tasks - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Request, user and breadcrumb context in the reported errors, with sensitive values withheld unless explicitly enabled - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * Reported errors now describe the operating system, the installed package versions, the plugin manager and the process in which they happened - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)

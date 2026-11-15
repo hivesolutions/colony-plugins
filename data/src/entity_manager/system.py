@@ -4459,10 +4459,8 @@ class EntityManager(object):
 
                 # in case the map flag is set and no names are defined the
                 # private fields (eg: secrets) must avoid retrieval, as they
-                # are only retrieved when explicitly requested in the names,
-                # the check is made in the queried class (not in the class of
-                # the table) as it may redefine a field of a parent as private
-                if map and not names and entity_class.is_private(field_name):
+                # are only retrieved when explicitly requested in the names
+                if map and not names and _entity_class.is_private(field_name):
                     continue
 
                 # writes the comma to the query buffer only in case the
@@ -4634,13 +4632,11 @@ class EntityManager(object):
 
                             # in case the map flag is set and no names are defined
                             # the private fields (eg: secrets) of the relation must
-                            # avoid retrieval, only retrieved when explicitly requested,
-                            # checked in the target class of the relation (as in the
-                            # queried class) and not in the class of the table
+                            # avoid retrieval, only retrieved when explicitly requested
                             if (
                                 map
                                 and not names
-                                and target_class.is_private(field_name)
+                                and __entity_class.is_private(field_name)
                             ):
                                 continue
 
@@ -7262,7 +7258,9 @@ class EntityManager(object):
 
         # iterates over all the names that are meant to be calculated
         # and retrieves the associated method for calculus then updates
-        # the value in the structure
+        # the value in the structure, note that a calculation only sees
+        # the fields selected for the map, so one that reads a field that
+        # is not selected (eg: a private one) gets no value for it
         for name, _class in colony.legacy.iteritems(attr_methods):
             # in case the attribute is private and is not part of the
             # map (not explicitly requested) it's not calculated, as
