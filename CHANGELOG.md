@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Listing filters of JSON requests now include the filters set by the controllers, together with the ones of the query string
+* Listing filters of JSON requests now include the filters of their JSON data once it's read (eg: the ones set by the controllers), together with the ones of the query string
 * JSON requests without a body are now read as empty data instead of failing
 * Listing filters given as a single value of the query string no longer fail the request
 * Exporting the entities with to many relations no longer fails under Python 2
