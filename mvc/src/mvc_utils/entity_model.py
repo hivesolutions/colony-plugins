@@ -716,6 +716,28 @@ def _class_filter(cls, context, *args, **kwargs):
 
     controller = cls.get_controller_g(context)
     form_data_map = controller.process_form_data(context)
+
+    # in case the JSON data of the request has been processed, as it's
+    # read and set by the fields of the controller, its filters (eg: one
+    # appended by an action) are added to the ones of the form data (eg:
+    # the query string), as both restrict the result, the other values
+    # of the filter are still the ones of the form data, only the string
+    # filters of the JSON data are used, as the ones of the form data
+    json_data_map = context.get_parameter("_json_data")
+    json_filters = json_data_map.get("filters", None) if json_data_map else None
+    if json_filters:
+        form_filters = form_data_map.get("find_d", None)
+        form_filters = form_data_map.get("filters", form_filters) or []
+        if not type(form_filters) in (list, tuple):
+            form_filters = (form_filters,)
+        if not type(json_filters) in (list, tuple):
+            json_filters = (json_filters,)
+        json_filters = [
+            value for value in json_filters if type(value) in colony.legacy.STRINGS
+        ]
+        form_data_map = dict(form_data_map)
+        form_data_map["filters"] = list(form_filters) + list(json_filters)
+
     return cls.create_filter(form_data_map, *args, **kwargs)
 
 
@@ -772,7 +794,7 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     paged_s = data.get("paged", "0")
     eager_s = data.get("eager", [])
     filters_s = data.get("find_d", [])
-    filters_s = data.get("filters", filters_s)
+    filters_s = data.get("filters", filters_s) or []
     start_record = data.get("offset", 0)
     start_record = data.get("skip", start_record)
     start_record = data.get("start_record", start_record)
@@ -789,6 +811,12 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # problems handling immutable types (tuples) resulting from
     # the normalization process
     filters = list(filters)
+
+    # in case the serialized filters are a single string (eg: a filter
+    # of the query string without the sequence notation) converts them
+    # into a sequence, so that the value is used as a single filter
+    if type(filters_s) in colony.legacy.STRINGS:
+        filters_s = (filters_s,)
 
     # in case the sort value exists but contains no separator
     # them we try to determine if the sort value is a sort token,

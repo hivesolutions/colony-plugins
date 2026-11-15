@@ -1509,15 +1509,16 @@ def process_json_data(self, request, encoding="utf-8", force=False):
         return data_map
 
     # reads the contents from the request and then "loads"
-    # the JSON structure from them, in case the value is not a
-    # dictionary converts it into one settings the loaded contents
+    # the JSON structure from them (empty contents, eg: a request
+    # without body, resulting in an empty structure), in case the value
+    # is not a dictionary converts it into one settings the loaded contents
     # in a new dictionary "under" the root key value then stores the result
     # in the private JSON data value and returns the data map
     contents = request.read()
     is_bytes = colony.legacy.is_bytes(contents)
     if is_bytes:
         contents = contents.decode(encoding)
-    data_map = self.json_plugin.loads(contents)
+    data_map = self.json_plugin.loads(contents) if contents else dict()
     is_valid = type(data_map) == dict
     data_map = data_map if is_valid else dict(root=data_map)
     request.set_parameter("_json_data", data_map)
