@@ -979,6 +979,18 @@ class CreateFilterTestCase(colony.ColonyTestCase):
         filter = entity_model._class_create_filter(mocks.MockPerson, dict(filters=""))
         self.assertEqual(filter["filters"], [])
 
+        for filters in (
+            set(["name:equals:name_a"]),
+            (value for value in ["name:equals:name_a"]),
+            dict(name_a="name:equals:name_a").values(),
+        ):
+            filter = entity_model._class_create_filter(
+                mocks.MockPerson, dict(filters=filters)
+            )
+            self.assertEqual(
+                filter["filters"], [dict(type="equals", fields=dict(name="name_a"))]
+            )
+
     def test_create_filter_private(self):
         filter = entity_model._class_create_filter(
             mocks.MockPerson,

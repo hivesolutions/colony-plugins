@@ -812,10 +812,10 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # the normalization process
     filters = list(filters)
 
-    # in case the serialized filters are a single value (eg: a filter
+    # in case the serialized filters are a single string (eg: a filter
     # of the query string without the sequence notation) converts them
     # into a sequence, so that the value is used as a single filter
-    if not type(filters_s) in (list, tuple):
+    if type(filters_s) in colony.legacy.STRINGS:
         filters_s = (filters_s,)
 
     # in case the sort value exists but contains no separator
