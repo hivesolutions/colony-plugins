@@ -961,6 +961,24 @@ class CreateFilterTestCase(colony.ColonyTestCase):
             [dict(type="equals", fields=dict(street=None))],
         )
 
+    def test_create_filter_filters_single(self):
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson, dict(filters="name:equals:name_a")
+        )
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(name="name_a"))]
+        )
+
+        filter = entity_model._class_create_filter(
+            mocks.MockPerson, dict(find_d="name:equals:name_a")
+        )
+        self.assertEqual(
+            filter["filters"], [dict(type="equals", fields=dict(name="name_a"))]
+        )
+
+        filter = entity_model._class_create_filter(mocks.MockPerson, dict(filters=""))
+        self.assertEqual(filter["filters"], [])
+
     def test_create_filter_private(self):
         filter = entity_model._class_create_filter(
             mocks.MockPerson,

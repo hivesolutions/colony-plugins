@@ -794,7 +794,7 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     paged_s = data.get("paged", "0")
     eager_s = data.get("eager", [])
     filters_s = data.get("find_d", [])
-    filters_s = data.get("filters", filters_s)
+    filters_s = data.get("filters", filters_s) or []
     start_record = data.get("offset", 0)
     start_record = data.get("skip", start_record)
     start_record = data.get("start_record", start_record)
@@ -811,6 +811,12 @@ def _class_create_filter(cls, data, defaults={}, entity_manager=None):
     # problems handling immutable types (tuples) resulting from
     # the normalization process
     filters = list(filters)
+
+    # in case the serialized filters are a single value (eg: a filter
+    # of the query string without the sequence notation) converts them
+    # into a sequence, so that the value is used as a single filter
+    if not type(filters_s) in (list, tuple):
+        filters_s = (filters_s,)
 
     # in case the sort value exists but contains no separator
     # them we try to determine if the sort value is a sort token,
