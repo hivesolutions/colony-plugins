@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* Exporting the entities with to many relations no longer fails under Python 2
 * Files stored with the zip file storage engine can now be retrieved
 * Diagnostics gathering no longer fails when a request ends with an error - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
 * A request that fails before it starts being handled is now logged instead of being reported only to the client - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)

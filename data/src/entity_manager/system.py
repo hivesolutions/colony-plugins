@@ -7495,7 +7495,7 @@ class EntityManager(object):
         # relations to be loaded in an eager fashion
         # as the complete set of to many relations in
         # in the entity class
-        eager = colony.legacy.eager(entity_class.get_to_many())
+        eager = colony.legacy.keys(entity_class.get_to_many())
 
         # retrieves the name of the id attribute for the entity class
         # and then retrieves the value of it from the various entity
