@@ -71,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Listing filters of JSON requests now include the filters set by the controllers, together with the ones of the query string
 * JSON requests without a body are now read as empty data instead of failing
+* Listing filters given as a single value of the query string no longer fail the request
 * Exporting the entities with to many relations no longer fails under Python 2
 * Files stored with the zip file storage engine can now be retrieved
 * Diagnostics gathering no longer fails when a request ends with an error - [#38](https://github.com/hivesolutions/colony-plugins/issues/38)
