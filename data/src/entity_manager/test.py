@@ -1351,6 +1351,50 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertTrue("name" in persons[0])
         self.assertTrue("object_id" in persons[0])
 
+    def test_map_private(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+
+        # verifies that only the attribute with the private flag
+        # is private, the unknown and the non field ones not being
+        self.assertEqual(mocks.Person.is_private("secret"), True)
+        self.assertEqual(mocks.Person.is_private("name"), False)
+        self.assertEqual(mocks.Person.is_private("unknown"), False)
+        self.assertEqual(mocks.Person.is_private("get_map"), False)
+
+        # creates a person with a secret and saves it
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.secret = "secret_person"
+        self.entity_manager.save(person)
+
+        # retrieves the person as a map and verifies that the private
+        # attribute is not part of it, the other ones being kept
+        persons = self.entity_manager.find(mocks.Person, dict(map=True))
+        self.assertEqual(len(persons), 1)
+        self.assertEqual(persons[0]["name"], "name_person")
+        self.assertEqual(persons[0]["age"], 18)
+        self.assertFalse("secret" in persons[0])
+
+        # retrieves the person as a map explicitly requesting the private
+        # attribute in the names, verifying that it's then retrieved
+        persons = self.entity_manager.find(
+            mocks.Person,
+            dict(map=True, names=("_class", "_mtime", "object_id", "secret")),
+        )
+        self.assertEqual(persons[0]["secret"], "secret_person")
+        self.assertFalse("name" in persons[0])
+
+        # retrieves the person as an entity, verifying that the private
+        # attribute is retrieved (only the maps leave it out) and that
+        # the map of the entity doesn't contain it
+        person = self.entity_manager.get(mocks.Person, 1)
+        self.assertEqual(person.secret, "secret_person")
+        person_map = person.get_map()
+        self.assertEqual(person_map["name"], "name_person")
+        self.assertFalse("secret" in person_map)
+
     def test_map_relations(self):
         # creates the required entity classes in the data source
         self.entity_manager.create(mocks.Person)
@@ -1436,6 +1480,61 @@ class EntityManagerBaseTestCase(colony.ColonyTestCase):
         self.assertEqual(dogs[0]["owner"]["name"], "name_person")
         self.assertEqual(type(dogs[0]["owner"]["address"]), dict)
         self.assertEqual(dogs[0]["owner"]["address"]["street"], "street_address")
+
+    def test_map_relations_private(self):
+        # creates the required entity classes in the data source
+        self.entity_manager.create(mocks.Person)
+        self.entity_manager.create(mocks.Address)
+        self.entity_manager.create(mocks.Dog)
+
+        # creates a dog owned by a person with a secret, so that the
+        # private attribute is part of an eagerly loaded relation
+        person = mocks.Person()
+        person.object_id = 1
+        person.name = "name_person"
+        person.secret = "secret_person"
+        dog = mocks.Dog()
+        dog.object_id = 2
+        dog.name = "name_dog"
+        dog.owner = person
+        self.entity_manager.save(person)
+        self.entity_manager.save(dog)
+
+        # retrieves the dog eagerly loading its owner and verifies that
+        # the private attribute is not part of the nested map, even when
+        # the names of the dog are defined (they're the dog's own names)
+        dogs = self.entity_manager.find(mocks.Dog, dict(map=True, eager=("owner",)))
+        self.assertEqual(dogs[0]["owner"]["name"], "name_person")
+        self.assertFalse("secret" in dogs[0]["owner"])
+        dogs = self.entity_manager.find(
+            mocks.Dog,
+            dict(
+                map=True,
+                names=("_class", "_mtime", "object_id", "name", "owner"),
+                eager=("owner",),
+            ),
+        )
+        self.assertEqual(dogs[0]["name"], "name_dog")
+        self.assertFalse("secret" in dogs[0]["owner"])
+
+        # retrieves the dog explicitly requesting the private attribute in
+        # the names of the relation, verifying that it's then retrieved
+        dogs = self.entity_manager.find(
+            mocks.Dog,
+            dict(
+                map=True,
+                eager=dict(
+                    owner=dict(names=("_class", "_mtime", "object_id", "secret"))
+                ),
+            ),
+        )
+        self.assertEqual(dogs[0]["owner"]["secret"], "secret_person")
+        self.assertFalse("name" in dogs[0]["owner"])
+
+        # retrieves the dog as an entity eagerly loading its owner, the
+        # private attribute of the relation being retrieved (not a map)
+        dog = self.entity_manager.get(mocks.Dog, 2, dict(eager=("owner",)))
+        self.assertEqual(dog.owner.secret, "secret_person")
 
     def test_map_relations_undefined(self):
         # creates the required entity classes in the data source

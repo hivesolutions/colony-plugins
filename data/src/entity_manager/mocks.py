@@ -143,6 +143,10 @@ class Person(RootEntity):
     weight = dict(type="decimal")
     """ The weight of the person """
 
+    secret = dict(type="text", private=True)
+    """ The secret of the person (eg: a password), that
+    is only part of its maps when explicitly requested """
+
     parent = dict(type="relation")
     """ The parent for the current person """
 

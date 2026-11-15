@@ -4379,6 +4379,12 @@ class EntityManager(object):
         # complete list of names is retrieve from the data source
         names = options.get("names", None)
 
+        # retrieves the map flag from the options, in the map mode
+        # the private fields (eg: secrets) are only retrieved when
+        # explicitly requested in the names, as the maps are the
+        # representation that is sent to the clients
+        map = options.get("map", False)
+
         # creates the list to hold the already visited names, this
         # is a holder for the various name string values, only in
         # case the order names flag is set
@@ -4449,6 +4455,12 @@ class EntityManager(object):
                 if is_minimal and not field_name == table_id:
                     continue
                 if _entity_class.is_relation(field_name):
+                    continue
+
+                # in case the map flag is set and no names are defined the
+                # private fields (eg: secrets) must avoid retrieval, as they
+                # are only retrieved when explicitly requested in the names
+                if map and not names and _entity_class.is_private(field_name):
                     continue
 
                 # writes the comma to the query buffer only in case the
@@ -4616,6 +4628,16 @@ class EntityManager(object):
                             # names in the joins may occurs an an invalid result
                             # set would be returned (problem in final unpacking)
                             if __entity_class.is_relation(field_name):
+                                continue
+
+                            # in case the map flag is set and no names are defined
+                            # the private fields (eg: secrets) of the relation must
+                            # avoid retrieval, only retrieved when explicitly requested
+                            if (
+                                map
+                                and not names
+                                and __entity_class.is_private(field_name)
+                            ):
                                 continue
 
                             # writes the comma to the query buffer only in case the
