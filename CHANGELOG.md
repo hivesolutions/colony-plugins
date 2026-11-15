@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Documentation of every configuration value in the README, grouped by area with its type, default and description, as in the README of Colony and Omni - [#75](https://github.com/hivesolutions/colony-plugins/issues/75)
 * New `SESSION_KEEP` configuration option (default `False`) to keep the sessions in development mode when the MVC service plugins are unloaded, as clearing a store shared by other processes (eg: Redis) flushes all of its sessions - [#73](https://github.com/hivesolutions/colony-plugins/issues/73)
 * Tests for `handle_rest_request()` and `unload_mvc_service_plugin()` in `MVC` covering the clearing of the sessions in development mode - [#73](https://github.com/hivesolutions/colony-plugins/issues/73)
+* Review of every pull request by Claude
 
 ### Changed
 
